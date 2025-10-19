@@ -12,18 +12,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ipp.estg.trabalho_cmu.ui.theme.Trabalho_CMUTheme
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         setContent {
-            Trabalho_CMUTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    FirebaseTestScreen()
                 }
             }
         }
@@ -31,17 +39,61 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun FirebaseTestScreen() {
+    var status by remember { mutableStateOf("🔄 Testando Firebase...") }
+    var isLoading by remember { mutableStateOf(true) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Trabalho_CMUTheme {
-        Greeting("Android")
+    LaunchedEffect(Unit) {
+        try {
+            val db = Firebase.firestore
+
+            val testData = hashMapOf(
+                "app" to "TailWagger",
+                "timestamp" to System.currentTimeMillis(),
+                "test" to "Ligação com Firebase OK!"
+            )
+
+            val docRef = db.collection("test_connection")
+                .add(testData)
+                .await()
+
+            status = "Firebase ligado!\n\n" +
+                    "Documento ID: ${docRef.id}\n\n" +
+                    "Verifica na Console do Firebase!"
+
+        } catch (e: Exception) {
+            status = "❌ Erro:\n${e.message}"
+        } finally {
+            isLoading = false
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Teste Firebase",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                Text(text = status)
+            }
+        }
     }
 }
