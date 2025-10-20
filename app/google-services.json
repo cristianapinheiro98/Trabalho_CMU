@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912901653363",
+    "project_id": "tailwaggers-5db12",
+    "storage_bucket": "tailwaggers-5db12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912901653363:android:8e543c4205cb13194afb06",
+        "android_client_info": {
+          "package_name": "pt.ipp.estg.trabalho_cmu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfm3Mf0gTCqAsX5m0ZEQTQBwCxq9SoIhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
