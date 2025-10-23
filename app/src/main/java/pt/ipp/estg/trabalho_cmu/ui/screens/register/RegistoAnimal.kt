@@ -42,6 +42,7 @@ fun RegistoAnimal(
     var raca by remember { mutableStateOf(TextFieldValue("")) }
     var fotoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var erros by remember { mutableStateOf(listOf<String>()) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
 
     // ---- DatePicker (Material 3) ----
     //controla a janela do calendario
@@ -179,15 +180,15 @@ fun RegistoAnimal(
                     erros = problemas
                 } else {
                     erros = emptyList()
-                    onGuardar(
-                        AnimalForm(
+                    val animalForm = AnimalForm(
                             nome = nome.text.trim(),
                             dataNascimento = dataNasc,
                             cor = cor.text.trim().ifBlank { null },
                             raca = raca.text.trim(),
                             fotoBitmap = fotoBitmap
-                        )
                     )
+                    onGuardar(animalForm)
+                    showSuccessDialog = true
                 }
             },
             modifier = Modifier
@@ -196,6 +197,18 @@ fun RegistoAnimal(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C63FF))
         ) {
             Text("Guardar", color = Color.White, fontSize = 16.sp)
+        }
+        if(showSuccessDialog){
+            AlertDialog(
+                onDismissRequest = { onNavigateBack()},
+                title = { Text("Sucesso") },
+                text = { Text("O animal foi guardado com sucesso!") },
+                confirmButton = {
+                    TextButton(onClick = { onNavigateBack() }) {
+                        Text("OK")
+                    }
+                }
+            )
         }
         Spacer(Modifier.height(16.dp))
     }

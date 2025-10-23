@@ -26,7 +26,8 @@ import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.register.PedidosAdocao
 import pt.ipp.estg.trabalho_cmu.ui.screens.register.RegistoAnimal
-
+import androidx.compose.material.icons.outlined.LocalHospital
+import androidx.compose.material.icons.outlined.Vaccines
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,18 +133,32 @@ fun DrawerItem(
 @Composable
 fun TailwaggerNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "Home") {
-        composable( "Home"){ AdminHomeScreen(onRegisterClick = {navController.navigate("RegistoAnimal")},
-            onRequestsClick = {navController.navigate("PedidosAdocao")}) }
-        composable("RegistoAnimal") { RegistoAnimal() }
+        composable("Home") {
+            AdminHomeScreen(
+                onRegisterClick = { navController.navigate("RegistoAnimal") },
+                onRequestsClick = { navController.navigate("PedidosAdocao") })
+        }
+        composable("RegistoAnimal") {
+            RegistoAnimal(
+                onGuardar = { animalForm, onSucesso ->
+                    println("A guardar o animal: ${animalForm.nome}")
+                    onSucesso() // Isto fará o diálogo aparecer
+                    // ------------------------------------
+                },
+                onNavigateBack = {
+                    navController.popBackStack() // Volta para o ecrã anterior (AdminHomeScreen)
+                })
+        }
         composable("PedidosAdocao") { PedidosAdocao() }
-        composable("Perfil") { Text("Ecrã de Perfil") }
-        composable("Notificações") { Text("Ecrã de Notificações") }
-        composable("Sair") { Text("Sessão terminada") }
+        composable("Perfil") { Text("Ecrã de Perfil") }//alterar isto
+        composable("Notificações") { Text("Ecrã de Notificações") }//alterar isto
+        composable("Sair") { Text("Sessão terminada") }//alterar isto
     }
 }
 
 private fun prepareDrawerItems(): List<DrawerData> {
     return listOf(
+        DrawerData("Veterinários", Icons.Outlined.Vaccines),
         DrawerData("Perfil", Icons.Outlined.Person),
         DrawerData("Notificações", Icons.Outlined.Notifications),
         DrawerData("Sair", Icons.Outlined.ExitToApp)
