@@ -131,10 +131,8 @@ fun DrawerItem(
 
 @Composable
 fun TailwaggerNavHost(navController: NavHostController) {
-    val routeRegistoAnimal = "registo_animal"
-    val routePedidosAdocao = "pedidos_adocao"
-    NavHost(navController = navController, startDestination = "Início") {
-        composable("Início") { AdminHomeScreen(onRegisterClick = {navController.navigate("RegistoAnimal")},
+    NavHost(navController = navController, startDestination = "Home") {
+        composable( "Home"){ AdminHomeScreen(onRegisterClick = {navController.navigate("RegistoAnimal")},
             onRequestsClick = {navController.navigate("PedidosAdocao")}) }
         composable("RegistoAnimal") { RegistoAnimal() }
         composable("PedidosAdocao") { PedidosAdocao() }
@@ -146,7 +144,6 @@ fun TailwaggerNavHost(navController: NavHostController) {
 
 private fun prepareDrawerItems(): List<DrawerData> {
     return listOf(
-        DrawerData("Início", Icons.Outlined.Person),
         DrawerData("Perfil", Icons.Outlined.Person),
         DrawerData("Notificações", Icons.Outlined.Notifications),
         DrawerData("Sair", Icons.Outlined.ExitToApp)
