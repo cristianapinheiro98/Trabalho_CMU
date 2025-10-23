@@ -18,9 +18,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import pt.ipp.estg.trabalho_cmu.ui.components.navigation.NavigationDrawerScaffold
+import pt.ipp.estg.trabalho_cmu.ui.components.navigation.TailwaggerScaffold
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +36,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    FirebaseTestScreen()
+                    //FirebaseTestScreen()
+                    NavigationDrawerScaffold()
                 }
             }
         }
