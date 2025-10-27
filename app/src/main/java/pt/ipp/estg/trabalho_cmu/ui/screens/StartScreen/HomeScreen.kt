@@ -1,16 +1,12 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import pt.ipp.estg.trabalho_cmu.R
 
 @Composable
 fun HomeScreen(

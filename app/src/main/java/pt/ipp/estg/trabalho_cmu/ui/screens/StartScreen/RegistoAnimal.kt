@@ -29,7 +29,6 @@ import pt.ipp.estg.trabalho_cmu.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-// 1. REMOVIDO o @RequiresApi(Build.VERSION_CODES.P) daqui
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistoAnimal(
