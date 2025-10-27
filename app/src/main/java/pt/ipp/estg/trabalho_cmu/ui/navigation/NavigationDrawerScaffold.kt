@@ -194,7 +194,12 @@ fun TailwaggerNavHost(navController: NavHostController) {
         composable("Veterinários") { Text("Ecrã de Veterinários") }
         composable("Perfil") { Text("Ecrã de Perfil") }
         composable("Notificações") { Text("Ecrã de Notificações") }
-        composable("Sair") { Text("Sessão terminada") }
+        composable("Sair") {
+            navController.navigate("Start") {
+                popUpTo("AdminHome") { inclusive = true } // limpa o histórico até ao AdminHome
+                launchSingleTop = true
+            }
+        }
     }
 }
 
