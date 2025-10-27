@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.register
+package pt.ipp.estg.trabalho_cmu.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text

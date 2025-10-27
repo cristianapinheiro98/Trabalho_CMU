@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.register
+package pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen
 
 import android.graphics.ImageDecoder
 import android.os.Build

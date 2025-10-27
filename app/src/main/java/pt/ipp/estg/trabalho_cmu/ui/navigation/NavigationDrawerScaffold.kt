@@ -21,12 +21,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.register.PedidosAdocao
-import pt.ipp.estg.trabalho_cmu.ui.screens.register.RegistoAnimal
+import pt.ipp.estg.trabalho_cmu.ui.screens.PedidosAdocao
+import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.HomeScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.LoginScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegisterScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegistoAnimal
 
 // ✅ 1. Corrigido: organização + tipo e imports limpos
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,9 +41,14 @@ fun NavigationDrawerScaffold() {
     val drawerItems = prepareDrawerItems()
     var selectedItem by remember { mutableStateOf(drawerItems[0]) }
     val scope = rememberCoroutineScope()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val gesturesEnabled = currentRoute !in listOf("Start", "LoginScreen", "RegisterScreen")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = gesturesEnabled,
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(Modifier.height(16.dp))
@@ -72,6 +81,8 @@ fun NavigationDrawerScaffold() {
 @Composable
 fun TailwaggerScaffold(drawerState: DrawerState, navController: NavHostController) {
     val scope = rememberCoroutineScope()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
         topBar = {
@@ -94,13 +105,14 @@ fun TailwaggerScaffold(drawerState: DrawerState, navController: NavHostControlle
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Abrir menu",
-                            tint = Color(0xFF37474F)
-                        )
-                    }
+                    if (currentRoute != "Start" && currentRoute != "LoginScreen" && currentRoute != "RegisterScreen")
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Abrir menu",
+                                tint = Color(0xFF37474F)
+                            )
+                        }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White
@@ -132,8 +144,13 @@ fun DrawerItem(
 
 @Composable
 fun TailwaggerNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "Home") {
-        composable("Home") {
+    NavHost(navController = navController, startDestination = "Start") {
+        composable("Start") {
+            HomeScreen(
+                onLoginClick = { navController.navigate("LoginScreen") },
+                onRegisterClick = { navController.navigate("RegisterScreen") })
+        }
+        composable("AdminHome") {
             AdminHomeScreen(
                 onRegisterClick = { navController.navigate("RegistoAnimal") },
                 onRequestsClick = { navController.navigate("PedidosAdocao") }
@@ -141,10 +158,34 @@ fun TailwaggerNavHost(navController: NavHostController) {
         }
         composable("RegistoAnimal") {
             RegistoAnimal(
-                onGuardar = { animalForm->
+                onGuardar = { animalForm ->
                     println("A guardar o animal: ${animalForm.nome}")
                 },
-                onNavigateBack = {navController.popBackStack()}
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("LoginScreen") {
+            LoginScreen(onLoginSuccess = {
+                // ✅ navegar para o ecrã principal
+                navController.navigate("AdminHome") {
+                    popUpTo("Start") { inclusive = true } // limpa o ecrã inicial
+                    launchSingleTop = true
+                }
+            }
+
+            )
+        }
+        composable("RegisterScreen") {
+            RegisterScreen(
+                onNavigateBack = { navController.popBackStack() },// Botão "Voltar"
+                onRegisterSuccess = {
+                    // Após criar conta → vai para o Login
+                    navController.navigate("LoginScreen") {
+                        // Remove "RegisterScreen" da back stack para não voltar para aqui ao pressionar Back
+                        popUpTo("RegisterScreen") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable("PedidosAdocao") { PedidosAdocao() }
@@ -156,6 +197,7 @@ fun TailwaggerNavHost(navController: NavHostController) {
         composable("Sair") { Text("Sessão terminada") }
     }
 }
+
 
 // ✅ Corrigido: label e ícones em lista coerente com o NavHost
 private fun prepareDrawerItems(): List<DrawerData> {
