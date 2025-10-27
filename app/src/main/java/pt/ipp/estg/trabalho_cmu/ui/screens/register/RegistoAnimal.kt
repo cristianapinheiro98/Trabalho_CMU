@@ -33,7 +33,8 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistoAnimal(
-    onGuardar: (AnimalForm) -> Unit = {}
+    onGuardar: (AnimalForm) -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
     // ---- Estado do formulário ----
     var nome by remember { mutableStateOf(TextFieldValue("")) }

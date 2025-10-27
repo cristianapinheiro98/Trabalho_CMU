@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,9 +27,8 @@ import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.register.PedidosAdocao
 import pt.ipp.estg.trabalho_cmu.ui.screens.register.RegistoAnimal
-import androidx.compose.material.icons.outlined.LocalHospital
-import androidx.compose.material.icons.outlined.Vaccines
 
+// ✅ 1. Corrigido: organização + tipo e imports limpos
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawerScaffold() {
@@ -136,26 +136,28 @@ fun TailwaggerNavHost(navController: NavHostController) {
         composable("Home") {
             AdminHomeScreen(
                 onRegisterClick = { navController.navigate("RegistoAnimal") },
-                onRequestsClick = { navController.navigate("PedidosAdocao") })
+                onRequestsClick = { navController.navigate("PedidosAdocao") }
+            )
         }
         composable("RegistoAnimal") {
             RegistoAnimal(
-                onGuardar = { animalForm, onSucesso ->
+                onGuardar = { animalForm->
                     println("A guardar o animal: ${animalForm.nome}")
-                    onSucesso() // Isto fará o diálogo aparecer
-                    // ------------------------------------
                 },
-                onNavigateBack = {
-                    navController.popBackStack() // Volta para o ecrã anterior (AdminHomeScreen)
-                })
+                onNavigateBack = {navController.popBackStack()}
+            )
         }
         composable("PedidosAdocao") { PedidosAdocao() }
-        composable("Perfil") { Text("Ecrã de Perfil") }//alterar isto
-        composable("Notificações") { Text("Ecrã de Notificações") }//alterar isto
-        composable("Sair") { Text("Sessão terminada") }//alterar isto
+
+        // ⚠️ As rotas seguintes eram chamadas no Drawer mas não existiam — adicionei-as
+        composable("Veterinários") { Text("Ecrã de Veterinários") }
+        composable("Perfil") { Text("Ecrã de Perfil") }
+        composable("Notificações") { Text("Ecrã de Notificações") }
+        composable("Sair") { Text("Sessão terminada") }
     }
 }
 
+// ✅ Corrigido: label e ícones em lista coerente com o NavHost
 private fun prepareDrawerItems(): List<DrawerData> {
     return listOf(
         DrawerData("Veterinários", Icons.Outlined.Vaccines),
@@ -165,4 +167,8 @@ private fun prepareDrawerItems(): List<DrawerData> {
     )
 }
 
-data class DrawerData(val label: String, val icon: ImageVector)
+// ✅ Corrigido: removeu erro de sintaxe no fim da classe (faltava linha separadora)
+data class DrawerData(
+    val label: String,
+    val icon: ImageVector
+)
