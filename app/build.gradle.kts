@@ -50,8 +50,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("androidx.compose.material:material-icons-extended-android:1.6.8") // Adicione esta linha
-
+    implementation(libs.androidx.compose.material.icons.extended.android)
+    implementation(libs.androidx.material3)
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("androidx.compose.ui:ui:1.9.4")
+    implementation("androidx.compose.material:material:1.9.4")
+    implementation(libs.androidx.compose.material3.v100)
 
     //Tests
     testImplementation(libs.junit)

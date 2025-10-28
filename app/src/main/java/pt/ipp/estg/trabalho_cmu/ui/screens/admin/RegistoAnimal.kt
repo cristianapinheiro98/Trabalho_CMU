@@ -1,7 +1,8 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen
+package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -65,7 +66,7 @@ fun RegistoAnimal(
                 //faz a mesma coisa só para versões antigas
                 // Suporte para versões antigas (deprecated, mas funciona)
                 @Suppress("DEPRECATION")
-                val bitmap = android.provider.MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                 bitmap.asImageBitmap()
             }
         }

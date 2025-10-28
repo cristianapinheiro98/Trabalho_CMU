@@ -1,6 +1,12 @@
 package pt.ipp.estg.trabalho_cmu.ui.theme
 
-import android.app.Activity
+import pt.ipp.estg.trabalho_cmu.ui.theme.*
+import pt.ipp.estg.trabalho_cmu.ui.theme.Purple80
+import pt.ipp.estg.trabalho_cmu.ui.theme.PurpleGrey80
+import pt.ipp.estg.trabalho_cmu.ui.theme.Pink80
+import pt.ipp.estg.trabalho_cmu.ui.theme.Purple40
+import pt.ipp.estg.trabalho_cmu.ui.theme.PurpleGrey40
+import pt.ipp.estg.trabalho_cmu.ui.theme.Pink40
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

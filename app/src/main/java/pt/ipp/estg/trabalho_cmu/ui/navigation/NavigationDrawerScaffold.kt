@@ -30,7 +30,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.PedidosAdocao
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.LoginScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegisterScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegistoAnimal
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.RegistoAnimal
 
 // ✅ 1. Corrigido: organização + tipo e imports limpos
 @OptIn(ExperimentalMaterial3Api::class)

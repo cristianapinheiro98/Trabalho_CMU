@@ -1,3 +1,63 @@
 <resources>
     <string name="app_name">Trabalho_CMU</string>
+    <!-- Terms and Conditions Screen -->
+    <string name="terms_title">Informações Importantes e Termos Contratuais:</string>
+    <string name="terms_content">Após candidatar-se para Adotar de forma Especial a Mariana a sua candidatura vai ser analisada e acompanhada através de e-mail e pelo contacto fornecido pela sua conta.\n\n• O/a utilizador/a será o titular do animal afetivo, o que implica uma vontade válida. Legalmente será o dono do animal do qual fará a adoção especial.\n\n• Todas as despesas do animal serão mantidas por si. Estas despesas são relacionadas com alimentação, saúde, e acompanhamento\n\n• O animal mantém-se no abrigo mas poderá vê-lo e ficar com ele sempre que assim o entender, através de agendamentos prévios com o abrigo.\n\n• Será feito débitos mensais para cobrir todas necessidades quotidianas do animal (um valor que é acordado entre o CAA e o utilizador).\n\n• Qualquer doença que o animal possa vir a ter é da sua responsabilidade e seu tratamento.\n\n• Para continuar com o pedido, é obrigatório a leitura dos termos contratuais e a adoção especial só será efetivada quando o contrato for assinado por ambas as partes. Esta assinação dos termos contratuais não formaliza a adoção especial do animal.</string>
+    <string name="terms_accept_checkbox">Aceito os termos contratuais</string>
+    <string name="terms_continue_button">Continuar</string>
+    <string name="terms_warning_message">Só pode continuar depois de aceitar os termos e condições</string>
+
+    <!-- Ownership Form Screen -->
+    <string name="ownership_title">Formulário de Ownership</string>
+    <string name="ownership_subtitle">Preencha as suas informações pessoais</string>
+    <string name="ownership_account_number">Número de conta:</string>
+    <string name="ownership_owner_name">Nome do titular:</string>
+    <string name="ownership_cvv">CVV:</string>
+    <string name="ownership_card_passport">Cartão cidadão/ Passport:</string>
+    <string name="ownership_password">Password</string>
+    <string name="ownership_submit_button">Adotar Especial</string>
+
+    <!-- Ownership Confirmation Screen -->
+    <string name="confirmation_title">Obrigado %1$s!</string>
+    <string name="confirmation_message">Enviamos o seu pedido para o abrigo Animais Fofos onde a Mariana está alojada!</string>
+    <string name="confirmation_notification">Esteja Atento às suas notificações!</string>
+    <string name="confirmation_back_button">Ir para o menu principal</string>
+
+    <!-- Visit Scheduling Screen -->
+    <string name="visit_title">Olá, vens-me ver?</string>
+    <string name="visit_start_label">Início:</string>
+    <string name="visit_end_label">Fim:</string>
+    <string name="visit_pickup_time">Hora de levantamento:</string>
+    <string name="visit_delivery_time">Hora de Entrega:</string>
+    <string name="visit_schedule_button">Vamos agendar!</string>
+
+    <!-- Visits History Screen -->
+    <string name="appointment_title">Agendamentos Ativos</string>
+    <string name="shelter">Abrigo</string>
+    <string name="contact">Contato</string>
+    <string name="address">Morada</string>
+    <string name="pickup_date">Data de Levantamento</string>
+    <string name="pickup_time">Hora de Levantamento</string>
+    <string name="delivery_date">Data de Entrega</string>
+    <string name="delivery_time">Hora de Entrega</string>
+    <string name="view_location">Ver localização no Google Maps</string>
+
+    <!-- SocialTails Ranking -->
+    <string name="socialtails_ranking">SocialTails Ranking</string>
+    <string name="forever">De Sempre</string>
+    <string name="this_month">Este Mês</string>
+
+    <!-- Overall Ranking -->
+    <string name="ranking_overall_1_name">Salazar, do Manuel</string>
+    <string name="ranking_overall_1_distance">25</string>
+    <string name="ranking_overall_2_name">Silvestre, do António</string>
+    <string name="ranking_overall_2_distance">23</string>
+    <string name="ranking_overall_3_name">Mini, da Carla</string>
+    <string name="ranking_overall_3_distance">22</string>
+
+    <!-- SocialTails Comunity -->
+    <string name="socialtails_comunity">SocialTails Community</string>
+    <string name="activity_1">Hoje o Miguel passeou a Maria durante 5km</string>
+    <string name="activity_2">Mais 3km para a Meggy</string>
+    <string name="view_ranking">Ver Ranking</string>
 </resources>
