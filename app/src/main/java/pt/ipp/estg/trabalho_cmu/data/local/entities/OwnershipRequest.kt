@@ -1,9 +1,9 @@
 package pt.ipp.estg.trabalho_cmu.data.local.entities
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 
 /**
  * Represents a "special adoption" (ownership) request.
@@ -54,7 +54,5 @@ data class OwnershipRequest(
     @ColumnInfo(defaultValue = "PENDING")
     val status: OwnershipStatus = OwnershipStatus.PENDING,
 
-    // Terms acceptance and timestamp
-    val acceptedTerms: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )

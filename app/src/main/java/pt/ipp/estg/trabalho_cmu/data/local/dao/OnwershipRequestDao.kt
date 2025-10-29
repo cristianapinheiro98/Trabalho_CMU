@@ -1,16 +1,16 @@
-package pt.ipp.estg.trabalho_cmu.data.dao
+package pt.ipp.estg.trabalho_cmu.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import pt.ipp.estg.trabalho_cmu.data.local.entities.OwnershipRequest
-import pt.ipp.estg.trabalho_cmu.data.local.entities.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 
 /**
  * DAO for accessing and managing ownership requests.
  * LiveData automatically notifies observers when data changes.
  */
 @Dao
-interface OwnershipDao {
+interface OnwershipRequestDao {
 
     @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId ORDER BY createdAt DESC")
     fun getOwnershipsByUser(userId: String): LiveData<List<OwnershipRequest>>

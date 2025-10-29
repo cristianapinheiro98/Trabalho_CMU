@@ -1,10 +1,14 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
+import OwnershipRequestViewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
@@ -22,17 +26,49 @@ fun NavGraphUser(navController: NavHostController) {
         composable("Favourites") { Text("Animais favoritos") }
         composable("Community") { Text("Comunidade SocialTails") }
         composable("Veterinarians") { Text("Lista de Veterinários") }
-        composable("TermsAndConditions") {
+        composable(
+            route = "TermsAndConditions/{animalId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
+
             TermsAndConditionsScreen(
-                onAccept = { navController.navigate("OwnershipForm") }
+                onAccept = {
+                    navController.navigate("OwnershipForm/$animalId")
+                }
             )
         }
 
-        composable("OwnershipForm") {
+        composable(
+            route = "OwnershipForm/{animalId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
+            val userId = "current_user_id" // TODO: Obter do utilizador logado
+
+            val ownershipViewModel: OwnershipRequestViewModel = viewModel(
+                factory = OwnershipRequestViewModel.Factory(
+                    ownershipRepository = TODO("Injetar repository"),
+                    //animalRepository = TODO("Injetar repository")
+                )
+            )
+
             OwnershipFormScreen(
-                onSubmit = { navController.navigate("OwnershipConfirmation") }
+                viewModel = ownershipViewModel,
+                userId = userId,
+                animalId = animalId,
+                onSubmitSuccess = {
+                    navController.navigate("OwnershipConfirmation") {
+                        popUpTo("OwnershipForm/$animalId") { inclusive = true }
+                    }
+                }
             )
         }
+
         composable("OwnershipConfirmation") {
             OwnershipConfirmationScreen(
                 onBackToHome = {
