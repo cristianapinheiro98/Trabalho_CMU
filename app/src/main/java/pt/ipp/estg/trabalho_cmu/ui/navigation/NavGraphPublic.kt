@@ -9,7 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 @Composable
-fun NavGraphPublic(navController: NavHostController) {
+fun NavGraphPublic(
+    navController: NavHostController,
+    onLoginSuccess: (isAdmin: Boolean) -> Unit
+) {
     NavHost(navController = navController, startDestination = "Home") {
         composable("Home") {
             HomeScreen(
@@ -20,16 +23,12 @@ fun NavGraphPublic(navController: NavHostController) {
         composable("Login") {
             LoginScreen(
                 onLoginSuccess = { isAdmin ->
-                    // Se for admin, vai para AdminHome, senão UserHome
-                    val destino = if (isAdmin) "AdminHome" else "UserHome"
-                    navController.navigate(destino) {
-                        popUpTo("Home") { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    onLoginSuccess(isAdmin)
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
+
 
         composable("Register") {
             RegisterScreen(
@@ -43,3 +42,5 @@ fun NavGraphPublic(navController: NavHostController) {
         }
     }
 }
+
+

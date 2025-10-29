@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,11 +34,10 @@ fun AppTopBar(
     onNotificationsClick: () -> Unit,
     onVeterinariansClick: () -> Unit
 ) {
-    // 🔹 Mostrar seta apenas nos ecrãs de detalhe do admin
-    val showBackArrow = isAdmin && currentRoute in listOf("AnimalCreation", "AdoptionRequest")
+
 
     // 🔹 Mostrar menu apenas para utilizadores normais
-    val showMenuIcon = isLoggedIn && !isAdmin && !showBackArrow
+    val showMenuIcon = isLoggedIn && !isAdmin
 
     TopAppBar(
         title = {
@@ -50,7 +50,7 @@ fun AppTopBar(
                         .padding(end = 8.dp)
                 )
                 Text(
-                    text = "Tailwagger",
+                    text = stringResource(id = R.string.app_name),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF212121)
@@ -59,15 +59,6 @@ fun AppTopBar(
         },
         navigationIcon = {
             when {
-                showBackArrow -> {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Voltar",
-                            tint = Color(0xFF37474F)
-                        )
-                    }
-                }
                 showMenuIcon -> {
                     IconButton(onClick = onMenuClick) {
                         Icon(

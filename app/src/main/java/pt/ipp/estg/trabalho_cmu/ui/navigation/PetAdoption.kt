@@ -3,33 +3,57 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 import AppScaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun PetAdoptionApp(
-    isLoggedIn: Boolean = false,
-    isAdmin: Boolean = false
-) {
+fun PetAdoptionApp() {
+    var isLoggedIn by remember { mutableStateOf(false) }
+    var isAdmin by remember { mutableStateOf(false) }
+
     MaterialTheme {
-        AppScaffold(isLoggedIn = isLoggedIn, isAdmin = isAdmin)
+        // Passa o estado e callbacks para o AppScaffold
+        AppScaffold(
+            isLoggedIn = isLoggedIn,
+            isAdmin = isAdmin,
+            onLoginSuccess = { admin ->
+                isLoggedIn = true
+                isAdmin = admin
+            },
+            onLogout = {
+                isLoggedIn = false
+                isAdmin = false
+            }
+        )
     }
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewPublicApp() {
-    PetAdoptionApp(isLoggedIn = false, isAdmin = false)
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
 fun PreviewUserApp() {
-    PetAdoptionApp(isLoggedIn = true, isAdmin = false)
+    MaterialTheme {
+        AppScaffold(
+            isLoggedIn = true,
+            isAdmin = false,
+            onLoginSuccess = {},
+            onLogout = {}
+        )
+    }
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewAdminApp() {
-    PetAdoptionApp(isLoggedIn = true, isAdmin = true)
+    MaterialTheme {
+        AppScaffold(
+            isLoggedIn = true,
+            isAdmin = true,
+            onLoginSuccess = {},
+            onLogout = {}
+        )
+    }
 }

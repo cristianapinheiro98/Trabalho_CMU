@@ -78,7 +78,6 @@ fun SocialTailsCommunityScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Botão "Ver Ranking"
             Button(
                 onClick = onViewRanking,
                 modifier = Modifier
