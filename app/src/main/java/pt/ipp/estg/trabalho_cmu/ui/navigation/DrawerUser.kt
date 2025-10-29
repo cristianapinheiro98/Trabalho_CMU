@@ -8,7 +8,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Home
