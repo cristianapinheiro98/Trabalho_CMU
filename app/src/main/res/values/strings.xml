@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Trabalho_CMU</string>
+    <string name="app_name">Tailwagger</string>
+
     <!-- Terms and Conditions Screen -->
     <string name="terms_title">Informações Importantes e Termos Contratuais:</string>
     <string name="terms_content">Após candidatar-se para Adotar de forma Especial a Mariana a sua candidatura vai ser analisada e acompanhada através de e-mail e pelo contacto fornecido pela sua conta.\n\n• O/a utilizador/a será o titular do animal afetivo, o que implica uma vontade válida. Legalmente será o dono do animal do qual fará a adoção especial.\n\n• Todas as despesas do animal serão mantidas por si. Estas despesas são relacionadas com alimentação, saúde, e acompanhamento\n\n• O animal mantém-se no abrigo mas poderá vê-lo e ficar com ele sempre que assim o entender, através de agendamentos prévios com o abrigo.\n\n• Será feito débitos mensais para cobrir todas necessidades quotidianas do animal (um valor que é acordado entre o CAA e o utilizador).\n\n• Qualquer doença que o animal possa vir a ter é da sua responsabilidade e seu tratamento.\n\n• Para continuar com o pedido, é obrigatório a leitura dos termos contratuais e a adoção especial só será efetivada quando o contrato for assinado por ambas as partes. Esta assinação dos termos contratuais não formaliza a adoção especial do animal.</string>

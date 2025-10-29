@@ -56,6 +56,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.9.4")
     implementation("androidx.compose.material:material:1.9.4")
     implementation(libs.androidx.compose.material3.v100)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.foundation.layout)
 
     //Tests
     testImplementation(libs.junit)

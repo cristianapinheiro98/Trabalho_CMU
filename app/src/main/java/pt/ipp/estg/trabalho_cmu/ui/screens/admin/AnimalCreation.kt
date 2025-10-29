@@ -32,8 +32,8 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistoAnimal(
-    onGuardar: (AnimalForm) -> Unit = {},
+fun AnimalCreation(
+    onSave: (AnimalForm) -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
     // ---- Estado do formulário ----
@@ -188,7 +188,7 @@ fun RegistoAnimal(
                             raca = raca.text.trim(),
                             fotoBitmap = fotoBitmap
                     )
-                    onGuardar(animalForm)
+                    onSave(animalForm)
                     showSuccessDialog = true
                 }
             },
@@ -254,7 +254,7 @@ data class AnimalForm(
 private fun PreviewRegistoAnimal() {
     // Para a Preview funcionar bem, é bom envolvê-la num tema
     // MaterialTheme {
-    RegistoAnimal()
+    AnimalCreation()
     // }
 }
 

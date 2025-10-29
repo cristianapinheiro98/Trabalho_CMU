@@ -1,3 +1,4 @@
+/* EM PRINCIPIO PARA APAGAR
 package pt.ipp.estg.trabalho_cmu.ui.components.navigation
 
 import androidx.compose.foundation.Image
@@ -26,11 +27,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.PedidosAdocao
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.LoginScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegisterScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.RegistoAnimal
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AnimalCreation
 
 // ✅ 1. Corrigido: organização + tipo e imports limpos
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,8 +157,8 @@ fun TailwaggerNavHost(navController: NavHostController) {
             )
         }
         composable("RegistoAnimal") {
-            RegistoAnimal(
-                onGuardar = { animalForm ->
+            AnimalCreation(
+                onSave = { animalForm ->
                     println("A guardar o animal: ${animalForm.nome}")
                 },
                 onNavigateBack = { navController.popBackStack() }
@@ -219,3 +219,4 @@ data class DrawerData(
     val label: String,
     val icon: ImageVector
 )
+*/
