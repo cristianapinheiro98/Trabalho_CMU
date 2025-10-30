@@ -1,8 +1,9 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens
+package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
@@ -23,10 +24,10 @@ data class PedidoAdocao(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PedidosAdocao(
-    onAcceptanceSuccess: () -> Unit = {}
+fun AdoptionRequest(
+    onAcceptanceSuccess: () -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
-    // 🔹 Lista de pedidos simulada (poderá vir de API futuramente)
     val pedidos = remember {
         mutableStateListOf(
             PedidoAdocao("José Lemos", "joselemos@example.com", "Bolinhas", "512549462689496"),
@@ -44,15 +45,31 @@ fun PedidosAdocao(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Pedidos de Adoção",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF37474F),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
 
-        // Se não houver pedidos
+        // 🔹 Linha superior com o título e o botão "Voltar"
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Voltar",
+                    tint = Color(0xFF37474F)
+                )
+            }
+            Text(
+                text = "Pedidos de Adoção",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF37474F),
+                modifier = Modifier.padding(end = 32.dp)
+            )
+        }
+
         if (pedidos.isEmpty()) {
             Text(
                 text = "Sem pedidos pendentes",
@@ -81,7 +98,7 @@ fun PedidosAdocao(
         }
     }
 
-    // ✅ AlertDialog
+    // ✅ Dialog de confirmação
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -89,13 +106,9 @@ fun PedidosAdocao(
                 TextButton(
                     onClick = {
                         showDialog = false
-                        if (isSuccessDialog) {
-                            onAcceptanceSuccess()
-                        }
+                        if (isSuccessDialog) onAcceptanceSuccess()
                     }
-                ) {
-                    Text("OK")
-                }
+                ) { Text("OK") }
             },
             title = { Text(if (isSuccessDialog) "Sucesso" else "Aviso") },
             text = { Text(dialogMessage) }
@@ -109,7 +122,6 @@ fun PedidoCard(
     onAprovar: () -> Unit,
     onRejeitar: () -> Unit
 ) {
-    // 🔹 Cabeçalho + ícones
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,7 +156,6 @@ fun PedidoCard(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    // 🔹 Card do pedido
     Card(
         modifier = Modifier
             .fillMaxWidth()

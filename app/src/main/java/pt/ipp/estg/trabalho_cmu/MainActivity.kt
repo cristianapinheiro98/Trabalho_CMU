@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
-import pt.ipp.estg.trabalho_cmu.ui.components.navigation.NavigationDrawerScaffold
+import pt.ipp.estg.trabalho_cmu.ui.navigation.PetAdoptionApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     //FirebaseTestScreen()
-                    NavigationDrawerScaffold()
+                    PetAdoptionApp()
                 }
             }
         }

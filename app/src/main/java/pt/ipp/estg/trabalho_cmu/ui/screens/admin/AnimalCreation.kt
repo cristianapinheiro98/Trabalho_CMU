@@ -1,7 +1,8 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen
+package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -31,8 +34,8 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistoAnimal(
-    onGuardar: (AnimalForm) -> Unit = {},
+fun AnimalCreation(
+    onSave: (AnimalForm) -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
     // ---- Estado do formulário ----
@@ -65,7 +68,7 @@ fun RegistoAnimal(
                 //faz a mesma coisa só para versões antigas
                 // Suporte para versões antigas (deprecated, mas funciona)
                 @Suppress("DEPRECATION")
-                val bitmap = android.provider.MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                 bitmap.asImageBitmap()
             }
         }
@@ -80,11 +83,26 @@ fun RegistoAnimal(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-        Text(
-            "Registar Animal",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold,
-        )
+
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween)
+        {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Voltar",
+                    tint = Color(0xFF37474F)
+                )
+            }
+            Text(
+                "Registar Animal",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
         Spacer(Modifier.height(24.dp))
 
         // Formulário...
@@ -187,7 +205,7 @@ fun RegistoAnimal(
                             raca = raca.text.trim(),
                             fotoBitmap = fotoBitmap
                     )
-                    onGuardar(animalForm)
+                    onSave(animalForm)
                     showSuccessDialog = true
                 }
             },
@@ -253,7 +271,7 @@ data class AnimalForm(
 private fun PreviewRegistoAnimal() {
     // Para a Preview funcionar bem, é bom envolvê-la num tema
     // MaterialTheme {
-    RegistoAnimal()
+    AnimalCreation()
     // }
 }
 
