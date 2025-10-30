@@ -3,7 +3,6 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
@@ -14,107 +13,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
 
-data class PedidoAdocao(
-    val nome: String,
-    val email: String,
-    val animal: String,
-    val id: String
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdoptionRequest(
-    onAcceptanceSuccess: () -> Unit = {},
+    viewModel: AdminViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
-    val pedidos = remember {
-        mutableStateListOf(
-            PedidoAdocao("José Lemos", "joselemos@example.com", "Bolinhas", "512549462689496"),
-            PedidoAdocao("Maria Silva", "maria@example.com", "Luna", "875694236875432")
-        )
-    }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var dialogMessage by remember { mutableStateOf("") }
-    var isSuccessDialog by remember { mutableStateOf(false) }
-
+    val state by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // 🔹 Linha superior com o título e o botão "Voltar"
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Voltar",
-                    tint = Color(0xFF37474F)
-                )
-            }
-            Text(
-                text = "Pedidos de Adoção",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                modifier = Modifier.padding(end = 32.dp)
-            )
-        }
-
-        if (pedidos.isEmpty()) {
+        if (state.pedidos.isEmpty()) {
             Text(
                 text = "Sem pedidos pendentes",
                 color = Color.Gray,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(top = 40.dp)
             )
-        }
-
-        pedidos.forEach { pedido ->
-            PedidoCard(
-                pedido = pedido,
-                onAprovar = {
-                    pedidos.remove(pedido)
-                    dialogMessage = "Pedido de ${pedido.nome} aceite com sucesso!"
-                    isSuccessDialog = true
-                    showDialog = true
-                },
-                onRejeitar = {
-                    pedidos.remove(pedido)
-                    dialogMessage = "Pedido de ${pedido.nome} rejeitado!"
-                    isSuccessDialog = false
-                    showDialog = true
-                }
-            )
+        } else {
+            state.pedidos.forEach { pedido ->
+                PedidoCard(
+                    pedido = pedido,
+                    onAprovar = { viewModel.aprovarPedido(pedido) },
+                    onRejeitar = { viewModel.rejeitarPedido(pedido) }
+                )
+            }
         }
     }
 
-    // ✅ Dialog de confirmação
-    if (showDialog) {
+    state.dialogMessage?.let { msg ->
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { viewModel.fecharDialogo() },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDialog = false
-                        if (isSuccessDialog) onAcceptanceSuccess()
-                    }
-                ) { Text("OK") }
+                TextButton(onClick = { viewModel.fecharDialogo() }) { Text("OK") }
             },
-            title = { Text(if (isSuccessDialog) "Sucesso" else "Aviso") },
-            text = { Text(dialogMessage) }
+            title = { Text(if (state.isSuccessDialog) "Sucesso" else "Aviso") },
+            text = { Text(msg) }
         )
     }
 }
+
 
 @Composable
 fun PedidoCard(
@@ -164,11 +107,7 @@ fun PedidoCard(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(pedido.nome, fontWeight = FontWeight.Bold)
             Text(pedido.email)
             Spacer(modifier = Modifier.height(4.dp))

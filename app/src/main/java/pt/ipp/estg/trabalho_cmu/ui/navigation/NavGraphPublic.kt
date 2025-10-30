@@ -1,8 +1,8 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
-import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.HomeScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.LoginScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.StartScreen.RegisterScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.startScreen.HomeScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.startScreen.LoginScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.startScreen.RegisterScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
