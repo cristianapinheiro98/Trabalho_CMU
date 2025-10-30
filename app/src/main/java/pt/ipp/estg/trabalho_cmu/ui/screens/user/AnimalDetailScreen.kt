@@ -57,10 +57,10 @@ fun AnimalDetailScreen(
     } ?: Box(
         Modifier
             .fillMaxSize()
-            .padding(padding),
+            .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
         Text("Animal não encontrado.")
     }
 }
-}
+

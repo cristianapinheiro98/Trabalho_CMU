@@ -19,7 +19,7 @@ fun NavGraphAdmin(navController: NavHostController) {
         }
         composable("AnimalCreation") {
             AnimalCreation(
-                onSave = { /* guardar animal */ },
+
                 onNavigateBack = { navController.popBackStack() }
             )
         }

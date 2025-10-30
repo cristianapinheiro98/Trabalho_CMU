@@ -10,14 +10,14 @@ import kotlinx.coroutines.launch
 //import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+//import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 import javax.inject.Inject
 
 @HiltViewModel  // ← Adiciona isto!
 class OwnershipViewModel @Inject constructor(
     private val repository: OwnershipRepository,
-    private val animalRepository: AnimalRepository
+    //private val animalRepository: AnimalRepository
 ) : ViewModel() {
 
     private val _userId = MutableLiveData<String>()
