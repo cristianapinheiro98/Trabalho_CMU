@@ -24,7 +24,7 @@
     <string name="confirmation_notification">Esteja Atento às suas notificações!</string>
     <string name="confirmation_back_button">Ir para o menu principal</string>
 
-    <!-- Visit Scheduling Screen -->
+    <!-- Activity Scheduling Screen -->
     <string name="visit_title">Olá, vens-me ver?</string>
     <string name="visit_start_label">Início:</string>
     <string name="visit_end_label">Fim:</string>
@@ -32,7 +32,7 @@
     <string name="visit_delivery_time">Hora de Entrega:</string>
     <string name="visit_schedule_button">Vamos agendar!</string>
 
-    <!-- Visits History Screen -->
+    <!-- Activities History Screen -->
     <string name="appointment_title">Agendamentos Ativos</string>
     <string name="shelter">Abrigo</string>
     <string name="contact">Contato</string>
@@ -42,6 +42,7 @@
     <string name="delivery_date">Data de Entrega</string>
     <string name="delivery_time">Hora de Entrega</string>
     <string name="view_location">Ver localização no Google Maps</string>
+    <string name="no_activities_scheduled">Sem atividades agendadas</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>

@@ -7,14 +7,14 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-//import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 import javax.inject.Inject
 
-@HiltViewModel  // ← Adiciona isto!
+@HiltViewModel
 class OwnershipViewModel @Inject constructor(
     private val repository: OwnershipRepository,
     private val animalRepository: AnimalRepository
@@ -33,16 +33,16 @@ class OwnershipViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // LiveData para o animal
-    //private val _animal = MutableLiveData<Animal?>()
-    //val animal: LiveData<Animal?> = _animal
+
+    private val _animal = MutableLiveData<Animal?>()
+    val animal: LiveData<Animal?> = _animal
 
     fun loadOwnershipsForUser(userId: String) {
         _userId.value = userId
     }
 
-    // Carregar detalhes do animal
-    /*fun loadAnimalDetails(animalId: String) {
+    //Carregar detalhes do animal
+    fun loadAnimalDetails(animalId: String) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
@@ -55,7 +55,7 @@ class OwnershipViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
-    }*/
+    }
 
     fun submitOwnership(request: Ownership) {
         viewModelScope.launch {

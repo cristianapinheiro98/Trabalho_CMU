@@ -58,6 +58,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
     implementation(libs.androidx.adapters)
+    implementation(libs.androidx.ui)
 
     //Tests
     testImplementation(libs.junit)
