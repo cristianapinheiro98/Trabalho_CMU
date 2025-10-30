@@ -2,20 +2,20 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 
 
 import androidx.lifecycle.LiveData
-import pt.ipp.estg.trabalho_cmu.data.local.dao.OnwershipRequestDao
-import pt.ipp.estg.trabalho_cmu.data.local.entities.OwnershipRequest
+import pt.ipp.estg.trabalho_cmu.data.local.dao.OnwershipDao
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 
 /**
  * Repository that handles data operations for Ownerships.
  * Provides a clean API for ViewModels and hides data source details.
  */
-open class OwnershipRequestRepository(private val ownershipDao: OnwershipRequestDao) {
+open class OwnershipRepository(private val ownershipDao: OnwershipDao) {
 
-    open fun getOwnershipsByUser(userId: String): LiveData<List<OwnershipRequest>> =
+    open fun getOwnershipsByUser(userId: String): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByUser(userId)
 
-    open suspend fun addOwnership(ownership: OwnershipRequest) {
+    open suspend fun addOwnership(ownership: Ownership) {
         ownershipDao.insertOwnership(ownership)
     }
 
@@ -23,7 +23,7 @@ open class OwnershipRequestRepository(private val ownershipDao: OnwershipRequest
         ownershipDao.updateOwnershipStatus(id, status)
     }
 
-    open suspend fun deleteOwnership(ownership: OwnershipRequest) {
+    open suspend fun deleteOwnership(ownership: Ownership) {
         ownershipDao.deleteOwnership(ownership)
     }
 }

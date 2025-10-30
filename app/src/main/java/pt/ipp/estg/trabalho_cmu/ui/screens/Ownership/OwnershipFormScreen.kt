@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
-import OwnershipRequestViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,28 +20,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
-import pt.ipp.estg.trabalho_cmu.data.local.entities.OwnershipRequest
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 
 @Composable
 fun OwnershipFormScreen(
-    viewModel: OwnershipRequestViewModel,
+    viewModel: OwnershipViewModel,
     userId: String,
     animalId: String,
+    shelterId: String = "temp_shelter", // PARA APAGAR: temporário até ter AnimalRepository
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
 
+    // TODO: Descomentar quando AnimalRepository estiver pronto
     // Buscar o animal para obter o shelterId
+    /*
     LaunchedEffect(animalId) {
         viewModel.loadAnimalDetails(animalId)
     }
 
-    /*val animal by viewModel.animal.observeAsState()
+    val animal by viewModel.animal.observeAsState()
 
     animal?.let { animalData ->
+    */
+    // PARA APAGAR: Temporário - mostra diretamente o formulário
         OwnershipFormContent(
             isLoading = isLoading,
             error = error,
@@ -51,10 +55,13 @@ fun OwnershipFormScreen(
             },
             userId = userId,
             animalId = animalId,
-            shelterId = animalData.shelterId, // Obtido automaticamente do animal
+            //shelterId = animalData.shelterId, // Obtido automaticamente do animal
+            shelterId = shelterId, //APAGAR DEPOIS
             onSubmitSuccess = onSubmitSuccess,
             modifier = modifier
-        )*
+        )
+    // TODO: Descomentar quando AnimalRepository estiver pronto
+    /*
     } ?: run {
         // Loading enquanto carrega os dados do animal
         Box(
@@ -72,7 +79,7 @@ fun OwnershipFormScreen(
 private fun OwnershipFormContent(
     isLoading: Boolean,
     error: String?,
-    onSubmit: (OwnershipRequest) -> Unit,
+    onSubmit: (Ownership) -> Unit,
     userId: String,
     animalId: String,
     shelterId: String,
@@ -88,14 +95,19 @@ private fun OwnershipFormContent(
     var ownerName by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    // password removido
+
+    // Regras de comprimento
+    val maxAccountDigits = 25
+    val maxCardDigits = 8
 
     // Validação dos campos
     val isFormValid = accountNumber.isNotBlank() &&
+            accountNumber.length <= maxAccountDigits &&
             ownerName.isNotBlank() &&
             cvv.length == 3 &&
             cardNumber.isNotBlank() &&
-            password.isNotBlank()
+            cardNumber.length <= maxCardDigits
 
     // Mostrar erro se existir
     LaunchedEffect(error) {
@@ -159,12 +171,24 @@ private fun OwnershipFormContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Número de conta
+                        // Número de conta(IBAN)
                         OwnershipTextField(
                             value = accountNumber,
-                            onValueChange = { accountNumber = it },
-                            label = stringResource(R.string.ownership_account_number),
-                            enabled = !isLoading
+                            onValueChange = {
+                                // aceita apenas dígitos e até 21 (parte do NIB)
+                                val filtered = it.filter { ch -> ch.isDigit() }
+                                if (filtered.length <= 21) accountNumber = filtered
+                            },
+                            label = "Número de Conta (IBAN)",
+                            enabled = !isLoading,
+                            leadingIcon = {
+                                Text(
+                                    text = "PT50",
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF2C8B7E),
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            }
                         )
 
                         // Nome do titular
@@ -175,7 +199,7 @@ private fun OwnershipFormContent(
                             enabled = !isLoading
                         )
 
-                        // CVV
+                        // CVV (3 dígitos)
                         OwnershipTextField(
                             value = cvv,
                             onValueChange = {
@@ -188,28 +212,17 @@ private fun OwnershipFormContent(
                             placeholder = "123"
                         )
 
-                        // Cartão cidadão/Passport
+                        // Cartão de Cidadão
                         OwnershipTextField(
                             value = cardNumber,
-                            onValueChange = { cardNumber = it },
-                            label = stringResource(R.string.ownership_card_passport),
+                            onValueChange = {
+                                val filtered = it.filter { ch -> ch.isDigit() }
+                                if (filtered.length <= maxCardDigits) cardNumber = filtered
+                            },
+                            label = "Cartão de Cidadão",
                             enabled = !isLoading,
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = null,
-                                    tint = Color(0xFF757575)
-                                )
-                            }
-                        )
+                            placeholder = "12345678"
 
-                        // Password
-                        OwnershipTextField(
-                            value = password,
-                            onValueChange = { password = it },
-                            label = stringResource(R.string.ownership_password),
-                            enabled = !isLoading,
-                            isPassword = true
                         )
                     }
                 }
@@ -220,21 +233,20 @@ private fun OwnershipFormContent(
                 Button(
                     onClick = {
                         if (isFormValid) {
-                            val ownershipRequest = OwnershipRequest(
+                            val ownership = Ownership(
                                 id = 0,
                                 userId = userId,
                                 animalId = animalId,
                                 shelterId = shelterId,
                                 ownerName = ownerName,
-                                accountNumber = accountNumber,
+                                accountNumber ="PT50$accountNumber",
                                 cvv = cvv,
                                 cardNumber = cardNumber,
-                                password = password,
                                 status = OwnershipStatus.PENDING,
                                 createdAt = System.currentTimeMillis()
                             )
 
-                            onSubmit(ownershipRequest)
+                            onSubmit(ownership)
 
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
@@ -289,6 +301,7 @@ private fun OwnershipFormContent(
     }
 }
 
+
 // Componente reutilizável para os campos de texto
 @Composable
 private fun OwnershipTextField(
@@ -297,7 +310,7 @@ private fun OwnershipTextField(
     label: String,
     enabled: Boolean = true,
     placeholder: String? = null,
-    isPassword: Boolean = false,
+    leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
     Column(
@@ -315,7 +328,6 @@ private fun OwnershipTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            visualTransformation = if (isPassword) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White,
                 focusedContainerColor = Color.White,
@@ -325,6 +337,7 @@ private fun OwnershipTextField(
             ),
             shape = RoundedCornerShape(8.dp),
             placeholder = placeholder?.let { { Text(it) } },
+            leadingIcon = leadingIcon,
             trailingIcon = trailingIcon
         )
     }
@@ -346,19 +359,3 @@ fun OwnershipFormScreenPreview() {
     }
 }
 
-// Preview com loading
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun OwnershipFormScreenLoadingPreview() {
-    MaterialTheme {
-        OwnershipFormContent(
-            isLoading = true,
-            error = null,
-            onSubmit = { },
-            userId = "preview_user_123",
-            animalId = "animal_456",
-            shelterId = "shelter_789",
-            onSubmitSuccess = { }
-        )
-    }
-}
