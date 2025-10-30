@@ -15,9 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.tasks.await
-import pt.ipp.estg.trabalho_cmu.ui.navigation.PetAdoptionApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

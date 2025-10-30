@@ -34,7 +34,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
         )
     ]*/
 )
-data class OwnershipRequest(
+data class Ownership(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
@@ -48,7 +48,6 @@ data class OwnershipRequest(
     val accountNumber: String,
     val cvv: String,
     val cardNumber: String,
-    val password: String,
 
     // Ownership status
     @ColumnInfo(defaultValue = "PENDING")

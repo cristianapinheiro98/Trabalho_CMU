@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.navigation
+package pt.ipp.estg.trabalho_cmu
 
 import AppScaffold
 import androidx.compose.material3.MaterialTheme
