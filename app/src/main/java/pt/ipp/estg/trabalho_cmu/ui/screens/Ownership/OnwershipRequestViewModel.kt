@@ -1,22 +1,28 @@
+package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.entities.OwnershipRequest
+//import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
-import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRequestRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
+import javax.inject.Inject
 
-class OwnershipRequestViewModel(
-    private val repository: OwnershipRequestRepository,
-    //private val animalRepository: AnimalRepository // Adicionar
+@HiltViewModel  // ← Adiciona isto!
+class OwnershipViewModel @Inject constructor(
+    private val repository: OwnershipRepository,
+    private val animalRepository: AnimalRepository
 ) : ViewModel() {
 
     private val _userId = MutableLiveData<String>()
 
-    val ownerships: LiveData<List<OwnershipRequest>> =
+    val ownerships: LiveData<List<Ownership>> =
         _userId.switchMap { id ->
             repository.getOwnershipsByUser(id)
         }
@@ -27,21 +33,21 @@ class OwnershipRequestViewModel(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // Novo: LiveData para o animal
-    /*private val _animal = MutableLiveData<Animal?>()
-    val animal: LiveData<Animal?> = _animal*/
+    // LiveData para o animal
+    //private val _animal = MutableLiveData<Animal?>()
+    //val animal: LiveData<Animal?> = _animal
 
     fun loadOwnershipsForUser(userId: String) {
         _userId.value = userId
     }
 
-    // Novo: Carregar detalhes do animal
-    fun loadAnimalDetails(animalId: String) {
+    // Carregar detalhes do animal
+    /*fun loadAnimalDetails(animalId: String) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-               // val animalData = animalRepository.getAnimalById(animalId)
-                //_animal.value = animalData
+                val animalData = animalRepository.getAnimalById(animalId)
+                _animal.value = animalData
                 _error.value = null
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar animal: ${e.message}"
@@ -49,9 +55,9 @@ class OwnershipRequestViewModel(
                 _isLoading.value = false
             }
         }
-    }
+    }*/
 
-    fun submitOwnership(request: OwnershipRequest) {
+    fun submitOwnership(request: Ownership) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
@@ -75,26 +81,13 @@ class OwnershipRequestViewModel(
         }
     }
 
-    fun deleteOwnership(ownership: OwnershipRequest) {
+    fun deleteOwnership(ownership: Ownership) {
         viewModelScope.launch {
             try {
                 repository.deleteOwnership(ownership)
             } catch (e: Exception) {
                 _error.value = "Error deleting ownership: ${e.message}"
             }
-        }
-    }
-
-    class Factory(
-        private val ownershipRepository: OwnershipRequestRepository,
-        //private val animalRepository: AnimalRepository
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(OwnershipRequestViewModel::class.java)) {
-                //@Suppress("UNCHECKED_CAST")
-                //return OwnershipViewModel(OwnershipRequestViewModel, animalRepository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

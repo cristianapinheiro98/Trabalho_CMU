@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ExitToApp
@@ -97,13 +98,13 @@ fun AppTopBar(
                 // 🚪 Logout — aparece para ambos
                 IconButton(onClick = onLogoutClick) {
                     Icon(
-                        imageVector = Icons.Outlined.ExitToApp,
+                        imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
                         contentDescription = "Logout",
                         tint = Color(0xFF37474F)
                     )
                 }
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
     )
 }

@@ -1,9 +1,8 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
-import OwnershipRequestViewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.VisitSchedulingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.VisitsHistoryScreen
@@ -26,6 +26,7 @@ fun NavGraphUser(navController: NavHostController) {
         composable("Favourites") { Text("Animais favoritos") }
         composable("Community") { Text("Comunidade SocialTails") }
         composable("Veterinarians") { Text("Lista de Veterinários") }
+
         composable(
             route = "TermsAndConditions/{animalId}",
             arguments = listOf(
@@ -49,18 +50,15 @@ fun NavGraphUser(navController: NavHostController) {
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
             val userId = "current_user_id" // TODO: Obter do utilizador logado
+            val shelterId = "temp_shelter_123" // APAGAR: Remover quando animal estiver pronto
 
-            val ownershipViewModel: OwnershipRequestViewModel = viewModel(
-                factory = OwnershipRequestViewModel.Factory(
-                    ownershipRepository = TODO("Injetar repository"),
-                    //animalRepository = TODO("Injetar repository")
-                )
-            )
+            val ownershipViewModel: OwnershipViewModel = hiltViewModel()
 
             OwnershipFormScreen(
                 viewModel = ownershipViewModel,
                 userId = userId,
                 animalId = animalId,
+                shelterId = shelterId, //APAGAR DEPOIS QUANDO TIVER O ANIMAL
                 onSubmitSuccess = {
                     navController.navigate("OwnershipConfirmation") {
                         popUpTo("OwnershipForm/$animalId") { inclusive = true }
@@ -73,17 +71,13 @@ fun NavGraphUser(navController: NavHostController) {
             OwnershipConfirmationScreen(
                 onBackToHome = {
                     navController.navigate("UserHome") {
-                        // Limpa todas as telas do fluxo (Terms, Form, Confirmation)
-                        // popUpTo remove todos os destinos até UserHome
                         popUpTo("UserHome") {
-                            inclusive = true // Não inclui UserHome, pois estamos a navegar para lá
-                            saveState = false
+                            inclusive = false
                         }
                     }
                 }
             )
         }
-
 
         composable("VisitScheduling") {
             VisitSchedulingScreen()
@@ -92,7 +86,6 @@ fun NavGraphUser(navController: NavHostController) {
         composable("VisitsHistory") {
             VisitsHistoryScreen()
         }
-
 
         composable("SocialTailsCommunity") {
             SocialTailsCommunityScreen(
@@ -107,16 +100,3 @@ fun NavGraphUser(navController: NavHostController) {
         }
     }
 }
-
-
-
-/*Depois de termos os ecrãs todos criados ficará assim:
-*  composable("UserHome") { UserHomeScreen(onNavigate = { route -> navController.navigate(route) }) } --> porque este ecrã terá outras rotas la´dentro, que serão defininidas como on navigate
-    composable("UserProfile") { UserProfileScreen() }
-    composable("Catalogue") { CatalogueScreen() }
-    composable("Favourites") { FavouritesScreen() }
-    composable("Community") { CommunityScreen() }
-    composable("Veterinarians") { VeterinariansScreen() }
-    *
-    * FALTAM TODOS OS OUTROS ECRÃS
-}*/

@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
@@ -22,43 +23,41 @@ fun AdoptionRequest(
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (state.pedidos.isEmpty()) {
-            Text(
-                text = "Sem pedidos pendentes",
-                color = Color.Gray,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 40.dp)
-            )
-        } else {
-            state.pedidos.forEach { pedido ->
-                PedidoCard(
-                    pedido = pedido,
-                    onAprovar = { viewModel.aprovarPedido(pedido) },
-                    onRejeitar = { viewModel.rejeitarPedido(pedido) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (state.pedidos.isEmpty()) {
+                Text(
+                    text = "Sem pedidos pendentes",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 40.dp)
                 )
+            } else {
+                state.pedidos.forEach { pedido ->
+                    PedidoCard(
+                        pedido = pedido,
+                        onAprovar = { viewModel.aprovarPedido(pedido) },
+                        onRejeitar = { viewModel.rejeitarPedido(pedido) }
+                    )
+                }
             }
         }
+
+        state.dialogMessage?.let { msg ->
+            AlertDialog(
+                onDismissRequest = { viewModel.fecharDialogo() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.fecharDialogo() }) { Text("OK") }
+                },
+                title = { Text(if (state.isSuccessDialog) "Sucesso" else "Aviso") },
+                text = { Text(msg) }
+            )
+        }
     }
-
-    state.dialogMessage?.let { msg ->
-        AlertDialog(
-            onDismissRequest = { viewModel.fecharDialogo() },
-            confirmButton = {
-                TextButton(onClick = { viewModel.fecharDialogo() }) { Text("OK") }
-            },
-            title = { Text(if (state.isSuccessDialog) "Sucesso" else "Aviso") },
-            text = { Text(msg) }
-        )
-    }
-}
-
-
 @Composable
 fun PedidoCard(
     pedido: PedidoAdocao,
@@ -111,7 +110,7 @@ fun PedidoCard(
             Text(pedido.nome, fontWeight = FontWeight.Bold)
             Text(pedido.email)
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Nome Animal: ${pedido.animal}")
+            Text("Animal: ${pedido.animal}")
             Text("ID: ${pedido.id}")
         }
     }

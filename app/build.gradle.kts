@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
+    implementation(libs.androidx.adapters)
 
     //Tests
     testImplementation(libs.junit)
