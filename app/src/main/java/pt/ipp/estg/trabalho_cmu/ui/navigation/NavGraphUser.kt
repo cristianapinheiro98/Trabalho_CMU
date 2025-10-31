@@ -12,8 +12,8 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.VisitSchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.VisitsHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 
@@ -79,12 +79,32 @@ fun NavGraphUser(navController: NavHostController) {
             )
         }
 
-        composable("VisitScheduling") {
-            VisitSchedulingScreen()
+        composable(
+            route = "ActivityScheduling/{animalId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
+            val userId = "current_user_id" // TODO: Obter do utilizador logado
+
+            ActivitySchedulingScreen(
+                userId = userId,
+                animalId = animalId,
+                onScheduleSuccess = {
+                    navController.navigate("ActivitiesHistory") {
+                        popUpTo("ActivityScheduling/$animalId") { inclusive = true }
+                    }
+                }
+            )
         }
 
-        composable("VisitsHistory") {
-            VisitsHistoryScreen()
+        composable("ActivitiesHistory") {
+            val userId = "current_user_id" // TODO: Obter do utilizador logado
+
+            ActivitiesHistoryScreen(
+                userId = userId
+            )
         }
 
         composable("SocialTailsCommunity") {

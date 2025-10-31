@@ -20,6 +20,14 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 
 @Composable
+/*Depois quanto tiver ViewModel:
+OwnershipConfirmationScreen(
+    userName = userViewModel.userName,
+    animalName = adoptionViewModel.animalName,
+    shelterName = adoptionViewModel.shelterName
+)*/
+
+
 fun OwnershipConfirmationScreen(
     userName: String = "Miguel",
     animalName: String = "Mariana",
@@ -155,10 +163,3 @@ fun OwnershipConfirmationScreenPreview() {
     OwnershipConfirmationScreen()
 }
 
-/*Depois quanto tiver BD:
-* // Ou de um ViewModel
-OwnershipConfirmationScreen(
-    userName = userViewModel.userName,
-    animalName = adoptionViewModel.animalName,
-    shelterName = adoptionViewModel.shelterName
-)*/

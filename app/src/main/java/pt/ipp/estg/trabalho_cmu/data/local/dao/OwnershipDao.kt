@@ -10,7 +10,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
  * LiveData automatically notifies observers when data changes.
  */
 @Dao
-interface OnwershipDao {
+interface OwnershipDao {
 
     @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId ORDER BY createdAt DESC")
     fun getOwnershipsByUser(userId: String): LiveData<List<Ownership>>

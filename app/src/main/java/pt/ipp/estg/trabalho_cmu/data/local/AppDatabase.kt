@@ -1,19 +1,20 @@
 package pt.ipp.estg.trabalho_cmu.data.local
 
 import android.content.Context
-import pt.ipp.estg.trabalho_cmu.data.local.Converters
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import pt.ipp.estg.trabalho_cmu.data.local.dao.OnwershipDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 
 @Database(
+    // Adiciona aqui todas as outras entities
     entities = [
-        Ownership::class
-        // Adiciona aqui todas as outras entities
+        Ownership::class,
+        Activity::class
     ],
     version = 1,
     exportSchema = false
@@ -22,7 +23,8 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 abstract class AppDatabase : RoomDatabase() {
 
     // Declara todos os DAOs
-    abstract fun ownershipDao(): OnwershipDao
+    abstract fun ownershipDao(): OwnershipDao
+    abstract fun activityDao(): ActivityDao
 
     companion object {
         @Volatile

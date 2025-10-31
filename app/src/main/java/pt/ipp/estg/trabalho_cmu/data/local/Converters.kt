@@ -6,12 +6,13 @@ import java.util.Date
 
 class Converters {
 
-    // Converter para Date
+    // Converte Long (timestamp) de volta para Date
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
+    fun TimestampToDate(value: Long?): Date? {
         return value?.let { Date(it) }
     }
 
+    // Converte a data para Long (timestamp)
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? {
         return date?.time
