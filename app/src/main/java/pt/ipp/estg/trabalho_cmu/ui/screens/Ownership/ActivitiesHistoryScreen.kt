@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -24,17 +24,24 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.MapLocationButton
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDateTimeCard
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
 
-
+/**
+ * Screen showing the user's activity history (scheduled visits).
+ * Now works WITHOUT Hilt - ViewModel is obtained using viewModel()
+ */
 @Composable
 fun ActivitiesHistoryScreen(
     userId: String,
-    modifier: Modifier = Modifier,
-    viewModel: ActivityViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
+    // Get ViewModel instance (without Hilt)
+    val viewModel: ActivityViewModel = viewModel()
+
     val scrollState = rememberScrollState()
 
-    // Carregar atividades do utilizador
+    // Load user activities
     LaunchedEffect(userId) {
         viewModel.loadActivitiesForUser(userId)
     }
@@ -74,7 +81,10 @@ fun ActivitiesHistoryScreen(
 
             else -> {
                 ActivitiesHistoryContent(
-                    activitiesWithRelations = activitiesWithRelations
+                    activitiesWithRelations = activitiesWithRelations,
+                    onDeleteActivity = { activity ->
+                        viewModel.deleteActivity(activity)
+                    }
                 )
             }
         }
@@ -84,6 +94,7 @@ fun ActivitiesHistoryScreen(
 @Composable
 private fun ActivitiesHistoryContent(
     activitiesWithRelations: List<ActivityWithAnimalAndShelter>,
+    onDeleteActivity: (Activity) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -132,19 +143,31 @@ private fun ActivitiesHistoryContent(
 
                     MapLocationButton(
                         onClick = {
-                            // TODO: Abrir Google Maps com o endereço
+                            // TODO: Open Google Maps with address
                         }
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // ✅ Datas já são String, não precisa formatar
                     ActivityDateTimeCard(
                         pickupDate = activity.pickupDate,
                         pickupTime = activity.pickupTime,
                         deliveryDate = activity.deliveryDate,
                         deliveryTime = activity.deliveryTime
                     )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Cancel button
+                    Button(
+                        onClick = { onDeleteActivity(activity) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE57373)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Cancelar Visita")
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -152,12 +175,11 @@ private fun ActivitiesHistoryContent(
     }
 }
 
-// ✅ PREVIEW - COM dados mock String
+// Preview with mock data
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ActivitiesHistoryContentPreview() {
     MaterialTheme {
-        //  Mock data com datas STRING
         val mockActivities = listOf(
             ActivityWithAnimalAndShelter(
                 activity = Activity(
