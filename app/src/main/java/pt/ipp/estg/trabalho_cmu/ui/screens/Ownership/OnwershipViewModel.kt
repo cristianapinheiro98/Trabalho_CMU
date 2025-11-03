@@ -1,47 +1,78 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
+package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
-import javax.inject.Inject
 
-@HiltViewModel
-class OwnershipViewModel @Inject constructor(
-    private val repository: OwnershipRepository,
+/**
+ * ViewModel for managing Ownership requests.
+ * Uses AndroidViewModel approach from class lectures (no Hilt).
+ *
+ * Features:
+ * - Load ownerships for a specific user
+ * - Load animal details for ownership form
+ * - Submit new ownership requests
+ * - Update ownership status
+ * - Delete ownerships
+ * - Loading states and error handling
+ */
+class OwnershipViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val ownershipRepository: OwnershipRepository
     private val animalRepository: AnimalRepository
-) : ViewModel() {
 
+    init {
+        val database = AppDatabase.getDatabase(application)
+        ownershipRepository = OwnershipRepository(database.ownershipDao())
+        animalRepository = AnimalRepository(database.animalDao())
+    }
+
+    // User ID for filtering ownerships
     private val _userId = MutableLiveData<String>()
 
+    /**
+     * LiveData that automatically updates when ownerships change in database.
+     * Filtered by user ID.
+     */
     val ownerships: LiveData<List<Ownership>> =
         _userId.switchMap { id ->
-            repository.getOwnershipsByUser(id)
+            ownershipRepository.getOwnershipsByUser(id)
         }
 
+    // Loading state
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
+    // Error message
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-
+    // Animal data for ownership form screen
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
+    /**
+     * Set the user ID to filter ownerships.
+     * This triggers the ownerships LiveData to update.
+     */
     fun loadOwnershipsForUser(userId: String) {
         _userId.value = userId
     }
 
-    //Carregar detalhes do animal
+    /**
+     * Load animal details for the ownership form screen.
+     * Used when user wants to request ownership for a specific animal.
+     */
     fun loadAnimalDetails(animalId: String) {
         viewModelScope.launch {
             try {
@@ -51,43 +82,64 @@ class OwnershipViewModel @Inject constructor(
                 _error.value = null
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar animal: ${e.message}"
+                _animal.value = null
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    /**
+     * Submit a new ownership request.
+     * Shows loading state and handles errors.
+     */
     fun submitOwnership(request: Ownership) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                repository.addOwnership(request)
+                ownershipRepository.addOwnership(request)
                 _error.value = null
             } catch (e: Exception) {
-                _error.value = "Error adding ownership: ${e.message}"
+                _error.value = "Erro ao submeter pedido: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    /**
+     * Update the status of an ownership request.
+     * Used by admins to approve/reject requests.
+     */
     fun updateOwnershipStatus(id: Int, status: OwnershipStatus) {
         viewModelScope.launch {
             try {
-                repository.updateOwnershipStatus(id, status)
+                ownershipRepository.updateOwnershipStatus(id, status)
+                _error.value = null
             } catch (e: Exception) {
-                _error.value = "Error updating status: ${e.message}"
+                _error.value = "Erro ao atualizar status: ${e.message}"
             }
         }
     }
 
+    /**
+     * Delete an ownership request.
+     */
     fun deleteOwnership(ownership: Ownership) {
         viewModelScope.launch {
             try {
-                repository.deleteOwnership(ownership)
+                ownershipRepository.deleteOwnership(ownership)
+                _error.value = null
             } catch (e: Exception) {
-                _error.value = "Error deleting ownership: ${e.message}"
+                _error.value = "Erro ao eliminar pedido: ${e.message}"
             }
         }
+    }
+
+    /**
+     * Clear error message.
+     */
+    fun clearError() {
+        _error.value = null
     }
 }

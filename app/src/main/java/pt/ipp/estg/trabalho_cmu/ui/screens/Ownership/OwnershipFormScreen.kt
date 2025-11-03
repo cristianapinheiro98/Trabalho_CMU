@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -15,29 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
+/**
+ * Screen for submitting an ownership request.
+ */
 @Composable
 fun OwnershipFormScreen(
-    viewModel: OwnershipViewModel,
     userId: String,
     animalId: String,
-    shelterId: String = "temp_shelter", // PARA APAGAR: temporário até ter AnimalRepository
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: OwnershipViewModel = viewModel()
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
 
-    // TODO: Descomentar quando AnimalRepository estiver pronto
-    // Buscar o animal para obter o shelterId
-    /*
+    // Load animal details to get shelter ID
     LaunchedEffect(animalId) {
         viewModel.loadAnimalDetails(animalId)
     }
@@ -45,8 +45,6 @@ fun OwnershipFormScreen(
     val animal by viewModel.animal.observeAsState()
 
     animal?.let { animalData ->
-    */
-    // PARA APAGAR: Temporário - mostra diretamente o formulário
         OwnershipFormContent(
             isLoading = isLoading,
             error = error,
@@ -55,15 +53,12 @@ fun OwnershipFormScreen(
             },
             userId = userId,
             animalId = animalId,
-            //shelterId = animalData.shelterId, // Obtido automaticamente do animal
-            shelterId = shelterId, //APAGAR DEPOIS
+            shelterId = animalData.shelterId.toString(),
             onSubmitSuccess = onSubmitSuccess,
             modifier = modifier
         )
-    // TODO: Descomentar quando AnimalRepository estiver pronto
-    /*
     } ?: run {
-        // Loading enquanto carrega os dados do animal
+        // Loading while fetching animal data
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -72,7 +67,7 @@ fun OwnershipFormScreen(
                 color = Color(0xFF2C8B7E)
             )
         }
-    }*/
+    }
 }
 
 @Composable
@@ -90,18 +85,17 @@ private fun OwnershipFormContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    // Estados do formulário
+    // Form states
     var accountNumber by remember { mutableStateOf("") }
     var ownerName by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
-    // password removido
 
-    // Regras de comprimento
-    val maxAccountDigits = 25
+    // Length rules
+    val maxAccountDigits = 21
     val maxCardDigits = 8
 
-    // Validação dos campos
+    // Form validation
     val isFormValid = accountNumber.isNotBlank() &&
             accountNumber.length <= maxAccountDigits &&
             ownerName.isNotBlank() &&
@@ -109,7 +103,7 @@ private fun OwnershipFormContent(
             cardNumber.isNotBlank() &&
             cardNumber.length <= maxCardDigits
 
-    // Mostrar erro se existir
+    // Show error if exists
     LaunchedEffect(error) {
         error?.let {
             snackbarHostState.showSnackbar(
@@ -134,7 +128,7 @@ private fun OwnershipFormContent(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Título
+                // Title
                 Text(
                     text = stringResource(R.string.ownership_title),
                     fontSize = 24.sp,
@@ -143,7 +137,7 @@ private fun OwnershipFormContent(
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                 )
 
-                // Subtítulo
+                // Subtitle
                 Text(
                     text = stringResource(R.string.ownership_subtitle),
                     fontSize = 16.sp,
@@ -151,7 +145,7 @@ private fun OwnershipFormContent(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Card com o formulário
+                // Form card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -171,13 +165,12 @@ private fun OwnershipFormContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Número de conta(IBAN)
+                        // Account Number (IBAN)
                         OwnershipTextField(
                             value = accountNumber,
                             onValueChange = {
-                                // aceita apenas dígitos e até 21 (parte do NIB)
                                 val filtered = it.filter { ch -> ch.isDigit() }
-                                if (filtered.length <= 21) accountNumber = filtered
+                                if (filtered.length <= maxAccountDigits) accountNumber = filtered
                             },
                             label = "Número de Conta (IBAN)",
                             enabled = !isLoading,
@@ -191,7 +184,7 @@ private fun OwnershipFormContent(
                             }
                         )
 
-                        // Nome do titular
+                        // Owner Name
                         OwnershipTextField(
                             value = ownerName,
                             onValueChange = { ownerName = it },
@@ -199,7 +192,7 @@ private fun OwnershipFormContent(
                             enabled = !isLoading
                         )
 
-                        // CVV (3 dígitos)
+                        // CVV (3 digits)
                         OwnershipTextField(
                             value = cvv,
                             onValueChange = {
@@ -212,7 +205,7 @@ private fun OwnershipFormContent(
                             placeholder = "123"
                         )
 
-                        // Cartão de Cidadão
+                        // Citizen Card
                         OwnershipTextField(
                             value = cardNumber,
                             onValueChange = {
@@ -222,14 +215,13 @@ private fun OwnershipFormContent(
                             label = "Cartão de Cidadão",
                             enabled = !isLoading,
                             placeholder = "12345678"
-
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botão Adotar Especial
+                // Submit button
                 Button(
                     onClick = {
                         if (isFormValid) {
@@ -239,7 +231,7 @@ private fun OwnershipFormContent(
                                 animalId = animalId,
                                 shelterId = shelterId,
                                 ownerName = ownerName,
-                                accountNumber ="PT50$accountNumber",
+                                accountNumber = "PT50$accountNumber",
                                 cvv = cvv,
                                 cardNumber = cardNumber,
                                 status = OwnershipStatus.PENDING,
@@ -301,8 +293,7 @@ private fun OwnershipFormContent(
     }
 }
 
-
-// Componente reutilizável para os campos de texto
+// Reusable text field component
 @Composable
 private fun OwnershipTextField(
     value: String,
@@ -358,4 +349,3 @@ fun OwnershipFormScreenPreview() {
         )
     }
 }
-
