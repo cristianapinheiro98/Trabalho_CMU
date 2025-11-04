@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
@@ -25,15 +25,22 @@ import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
 
+/**
+ * Screen for scheduling a visit to see an animal at a shelter.
+ * Now works WITHOUT Hilt - ViewModel is obtained using viewModel()
+ */
 @Composable
 fun ActivitySchedulingScreen(
     userId: String,
     animalId: String,
     onScheduleSuccess: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: ActivityViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
+    // Get ViewModel instance (without Hilt)
+    val viewModel: ActivityViewModel = viewModel()
+
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -49,10 +56,12 @@ fun ActivitySchedulingScreen(
     val animal by viewModel.animal.observeAsState()
     val shelter by viewModel.shelter.observeAsState()
 
+    // Load animal and shelter data when screen opens
     LaunchedEffect(animalId) {
         viewModel.loadAnimalAndShelter(animalId)
     }
 
+    // Navigate when activity is scheduled
     LaunchedEffect(activityScheduled) {
         if (activityScheduled) {
             coroutineScope.launch {
@@ -67,6 +76,7 @@ fun ActivitySchedulingScreen(
         }
     }
 
+    // Show error if exists
     LaunchedEffect(error) {
         error?.let {
             snackbarHostState.showSnackbar(
@@ -82,13 +92,12 @@ fun ActivitySchedulingScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                // ✅ Gradiente suave de fundo
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFFE8F5F3),  // Verde claro no topo
-                            Color(0xFFF8FFFE),  // Branco suave no meio
-                            Color(0xFFE8F5F3)   // Verde claro no fundo
+                            Color(0xFFE8F5F3),  // Light green at top
+                            Color(0xFFF8FFFE),  // Soft white in middle
+                            Color(0xFFE8F5F3)   // Light green at bottom
                         )
                     )
                 )
@@ -170,19 +179,18 @@ private fun ActivitySchedulingContent(
             text = stringResource(id = R.string.visit_title),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF2C8B7E),  // ✅ Verde mais forte
+            color = Color(0xFF2C8B7E),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // ✅ Card com elevation e sombra mais suave
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White  // ✅ Branco puro no card
+                containerColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp  // ✅ Mais elevation para destacar
+                defaultElevation = 8.dp
             )
         ) {
             Column(
@@ -264,7 +272,6 @@ private fun ActivitySchedulingContentPreview() {
     var pickupTime by remember { mutableStateOf("09:00") }
     var deliveryTime by remember { mutableStateOf("18:00") }
 
-    // ✅ Preview com fundo
     Box(
         modifier = Modifier
             .fillMaxSize()

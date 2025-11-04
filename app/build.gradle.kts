@@ -3,8 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services") // Firebase plugin
-    id("com.google.dagger.hilt.android") version "2.57.2" // Hilt (Injeção de dependências)
-    id("kotlin-kapt") // processador de anotações para Kotlin
+    id("kotlin-kapt") // Still needed for Room annotation processing
 }
 
 android {
@@ -72,39 +71,23 @@ dependencies {
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
 
-    // TODO: Add the dependencies for Firebase products
-    // When using the BoM, don't specify versions in Firebase dependencies
+    // Firebase products
     implementation("com.google.firebase:firebase-analytics")
-
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
-    // Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
-
-    // Cloud Firestore
     implementation("com.google.firebase:firebase-firestore")
-
-    // Cloud Storage
     implementation("com.google.firebase:firebase-storage")
-
-    // Cloud Messaging (Notificações)
     implementation("com.google.firebase:firebase-messaging")
 
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.9.5")
 
-    // Hilt (Injeção de Dependências)
-    implementation("com.google.dagger:hilt-android:2.57.2")
-    kapt("com.google.dagger:hilt-compiler:2.57.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-
-    // Retrofit (para Dog/Cat API)
+    // Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.2.1")
 
-    // Room (Base de dados local)
+    // Room
     implementation("androidx.room:room-runtime:2.8.3")
     implementation("androidx.room:room-ktx:2.8.3")
     kapt("androidx.room:room-compiler:2.8.3")
@@ -113,7 +96,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
     implementation("androidx.compose.runtime:runtime-livedata")
 
-    // Coil (Carregar imagens)
+    // Coil (Load images)
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     // Google Play Services - Location (GPS)

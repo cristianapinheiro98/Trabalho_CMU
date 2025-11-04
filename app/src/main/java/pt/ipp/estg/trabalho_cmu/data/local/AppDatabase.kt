@@ -6,15 +6,21 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 
 @Database(
     // Adiciona aqui todas as outras entities
     entities = [
         Ownership::class,
-        Activity::class
+        Activity::class,
+        Animal::class,
+        Shelter::class
     ],
     version = 1,
     exportSchema = false
@@ -25,6 +31,8 @@ abstract class AppDatabase : RoomDatabase() {
     // Declara todos os DAOs
     abstract fun ownershipDao(): OwnershipDao
     abstract fun activityDao(): ActivityDao
+    abstract fun animalDao(): AnimalDao
+    abstract fun shelterDao(): ShelterDao
 
     companion object {
         @Volatile

@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    id("com.google.gms.google-services") version "4.4.4" apply false // Configuração firebase
-    id("com.github.ben-manes.versions") version "0.53.0" // Configuração das versões (android studio deve bastar)
-    id("com.google.dagger.hilt.android") version "2.57.2" apply false // Hilt (Injeção de dependências)
-
+    id("com.google.gms.google-services") version "4.4.4" apply false // Firebase configuration
+    id("com.github.ben-manes.versions") version "0.53.0" // Version management
 }
