@@ -1,32 +1,30 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimalCreation(
-    viewModel: AdminViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+fun AnimalCreationScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: AdminViewModel = viewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val form = state.animalForm
-
-
-
+    val form by viewModel.animalForm.observeAsState()
+    val message by viewModel.message.observeAsState()
+    val error by viewModel.error.observeAsState()
     Column(
         Modifier
             .fillMaxSize()
@@ -34,54 +32,54 @@ fun AnimalCreation(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = form.nome,
-            onValueChange = viewModel::onNomeChange,
+            value = form?.name ?: "",
+            onValueChange = { viewModel.onNameChange(it) },
             label = { Text("Nome") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = form.raca,
-            onValueChange = viewModel::onRacaChange,
+            value = form?.breed ?: "",
+            onValueChange = { viewModel.onBreedChange(it) },
             label = { Text("Raça") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = form.cor,
-            onValueChange = viewModel::onCorChange,
-            label = { Text("Cor") },
+            value = form?.species ?: "",
+            onValueChange = { viewModel.onSpeciesChange(it) },
+            label = { Text("Espécie") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = form.dataNascimento,
-            onValueChange = viewModel::onDataNascimentoChange,
+            value = form?.size ?: "",
+            onValueChange = viewModel::onSizeChange,
+            label = { Text("Tamanho") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = form?.birthDate ?: "",
+            onValueChange = { viewModel.onBirthDateChange(it) },
             label = { Text("Data de Nascimento") },
             modifier = Modifier.fillMaxWidth()
         )
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween)
-        {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Voltar",
-                    tint = Color(0xFF37474F)
-                )
-            }
-            Text(
-                "Registar Animal",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
+
+        Spacer(Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = form?.imageUrl ?.toString()?: "",
+            onValueChange = viewModel::onImageUrlChange,
+            label = { Text("Imagem") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(Modifier.height(24.dp))
 
         Button(
@@ -92,17 +90,37 @@ fun AnimalCreation(
         ) {
             Text("Guardar", fontSize = 16.sp)
         }
+    }
 
-        state.dialogMessage?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.fecharDialogo() },
-                confirmButton = {
-                    TextButton(onClick = onNavigateBack) { Text("OK") }
-                },
-                title = { Text(if (state.isSuccessDialog) "Sucesso" else "Aviso") },
-                text = { Text(it) }
-            )
-        }
+// 🔹 Diálogo de sucesso
+    message?.let {
+        AlertDialog(
+            onDismissRequest = { viewModel.clearMessage() },
+            confirmButton = {
+                TextButton(onClick = onNavigateBack) { Text("OK") }
+            },
+            title = { Text("Sucesso") },
+            text = { Text(it) }
+        )
+    }
+
+// 🔹 Diálogo de erro
+    error?.let {
+        AlertDialog(
+            onDismissRequest = { viewModel.clearError() },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+            },
+            title = { Text("Erro") },
+            text = { Text(it) }
+        )
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalCreationPreview() {
+    MaterialTheme {
+        AnimalCreationScreen(onNavigateBack = {})
+    }
+}

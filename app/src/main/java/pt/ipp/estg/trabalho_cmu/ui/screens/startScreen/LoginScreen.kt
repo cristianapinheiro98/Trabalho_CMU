@@ -3,30 +3,49 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.startScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = viewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val error by viewModel.error.observeAsState()
+    val message by viewModel.message.observeAsState()
+    val isAuthenticated by viewModel.isAuthenticated.observeAsState(false)
+
+    val email by viewModel.email.observeAsState("")
+    val password by viewModel.password.observeAsState("")
+
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            val tipo = viewModel.tipoConta.value
+            val isAdmin = tipo?.name?.equals("ABRIGO", ignoreCase = true) == true
+            onLoginSuccess(isAdmin)
+            viewModel.clearMessage()
+        }
+    }
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+            .padding(horizontal = 32.dp, vertical = 16.dp)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = state.email,
-            onValueChange = { viewModel.onEmailChange(it) },
+            value = email,
+            onValueChange = { viewModel.email.value = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -34,8 +53,8 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = state.password,
-            onValueChange = { viewModel.onPasswordChange(it) },
+            value = password,
+            onValueChange = { viewModel.password.value = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -43,28 +62,66 @@ fun LoginScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        Button(onClick = { viewModel.login() }, modifier = Modifier.fillMaxWidth()) {
-            Text("Entrar")
+        Button(
+            onClick = { viewModel.login() },
+            enabled = !isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(22.dp)
+                )
+            } else {
+                Text("Entrar")
+            }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
 
-        OutlinedButton(onClick = onNavigateBack, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = onNavigateBack,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("Voltar")
         }
-    }
 
-    if (state.showDialog) {
-        AlertDialog(
-            onDismissRequest = { viewModel.dismissDialog() },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.dismissDialog()
-                    if (state.isSuccess) onLoginSuccess(state.isAdmin)
-                }) { Text("OK") }
-            },
-            title = { Text(if (state.isSuccess) "Sucesso" else "Aviso") },
-            text = { Text(state.dialogMessage) }
+        // 🔹 Mensagem de erro
+        error?.let {
+            AlertDialog(
+                onDismissRequest = { viewModel.clearError() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+                },
+                title = { Text("Erro") },
+                text = { Text(it) }
+            )
+        }
+
+        // 🔹 Mensagem de sucesso
+        message?.let {
+            AlertDialog(
+                onDismissRequest = { viewModel.clearMessage() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.clearMessage() }) { Text("OK") }
+                },
+                title = { Text("Sucesso") },
+                text = { Text(it) }
+            )
+        }
+    }
+}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginScreenPreview() {
+    MaterialTheme {
+        // Usa placeholders de navegação
+        LoginScreen(
+            onLoginSuccess = {},
+            onNavigateBack = {}
         )
     }
 }

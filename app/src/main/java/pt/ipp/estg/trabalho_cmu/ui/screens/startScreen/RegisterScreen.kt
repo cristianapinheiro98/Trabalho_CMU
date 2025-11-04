@@ -5,23 +5,34 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onRegisterSuccess: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = viewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val tiposConta = UserType.values()
+    // Observa o estado do ViewModel
+    val nome by viewModel.nome.observeAsState("")
+    val morada by viewModel.morada.observeAsState("")
+    val telefone by viewModel.telefone.observeAsState("")
+    val email by viewModel.email.observeAsState("")
+    val password by viewModel.password.observeAsState("")
+    val tipoConta by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
+
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val error by viewModel.error.observeAsState()
+    val message by viewModel.message.observeAsState()
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -35,62 +46,65 @@ fun RegisterScreen(
         Text("Criar Conta", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(24.dp))
 
+        // Campos de entrada
         OutlinedTextField(
-            value = state.nome,
-            onValueChange = viewModel::onNomeChange,
+            value = nome,
+            onValueChange = { viewModel.nome.value = it },
             label = { Text("Nome completo") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = state.morada,
-            onValueChange = viewModel::onMoradaChange,
+            value = morada,
+            onValueChange = { viewModel.morada.value = it },
             label = { Text("Morada") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = state.telefone,
-            onValueChange = viewModel::onTelefoneChange,
+            value = telefone,
+            onValueChange = { viewModel.telefone.value = it },
             label = { Text("Telefone") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = state.email,
-            onValueChange = viewModel::onEmailChange,
+            value = email,
+            onValueChange = { viewModel.email.value = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = state.password,
-            onValueChange = viewModel::onPasswordChange,
+            value = password,
+            onValueChange = { viewModel.password.value = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(8.dp))
 
+        // 🔹 Tipo de conta (dropdown)
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
-                value = state.tipoConta.label,
+                value = tipoConta.label,
                 onValueChange = {},
                 label = { Text("Tipo de conta") },
                 readOnly = true,
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                tiposConta.forEach { tipo ->
+                UserType.values().forEach { tipo ->
                     DropdownMenuItem(
                         text = { Text(tipo.label) },
                         onClick = {
-                            viewModel.onTipoContaChange(tipo)
+                            viewModel.tipoConta.value = tipo
                             expanded = false
                         }
                     )
@@ -100,8 +114,23 @@ fun RegisterScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        Button(onClick = { viewModel.register() }, modifier = Modifier.fillMaxWidth()) {
-            Text("Criar Conta")
+        // Botão Criar Conta
+        Button(
+            onClick = { viewModel.register() },
+            enabled = !isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(22.dp)
+                )
+            } else {
+                Text("Criar Conta")
+            }
         }
 
         Spacer(Modifier.height(16.dp))
@@ -111,17 +140,40 @@ fun RegisterScreen(
         }
     }
 
-    if (state.showDialog) {
+    // 🔹 Mensagem de erro
+    error?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.dismissDialog() },
+            onDismissRequest = { viewModel.clearError() },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+            },
+            title = { Text("Erro") },
+            text = { Text(it) }
+        )
+    }
+
+    // 🔹 Mensagem de sucesso
+    message?.let {
+        AlertDialog(
+            onDismissRequest = { viewModel.clearMessage() },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.dismissDialog()
-                    if (state.isSuccess) onRegisterSuccess()
+                    viewModel.clearMessage()
+                    onRegisterSuccess()
                 }) { Text("OK") }
             },
-            title = { Text(if (state.isSuccess) "Sucesso" else "Aviso") },
-            text = { Text(state.dialogMessage) }
+            title = { Text("Sucesso") },
+            text = { Text(it) }
+        )
+    }
+}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun RegisterScreenPreview() {
+    MaterialTheme {
+        RegisterScreen(
+            onNavigateBack = {},
+            onRegisterSuccess = {}
         )
     }
 }

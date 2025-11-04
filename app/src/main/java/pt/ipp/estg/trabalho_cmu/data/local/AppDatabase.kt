@@ -9,6 +9,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -33,6 +34,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun activityDao(): ActivityDao
     abstract fun animalDao(): AnimalDao
     abstract fun shelterDao(): ShelterDao
+
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

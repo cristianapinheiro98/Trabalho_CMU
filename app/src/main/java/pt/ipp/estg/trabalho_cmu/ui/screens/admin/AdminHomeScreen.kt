@@ -50,7 +50,7 @@ fun AdminHomeScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAdminHomeScreen() {
     AdminHomeScreen()

@@ -1,54 +1,66 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.user
+package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import android.app.Application
+import androidx.lifecycle.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import javax.inject.Inject
+import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 
-data class UserUiState(
-    val animals: List<Animal> = emptyList(),
-    val favorites: List<Animal> = emptyList(),
-    val selectedAnimal: Animal? = null
-)
+class UserViewModel(application: Application) : AndroidViewModel(application) {
 
-@HiltViewModel
-class UserViewModel @Inject constructor() : ViewModel() {
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _uiState = MutableStateFlow(UserUiState())
-    val uiState: StateFlow<UserUiState> = _uiState
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> = _error
 
-    init {
-        carregarAnimais()
-    }
+    private val _message = MutableLiveData<String?>()
+    val message: LiveData<String?> = _message
 
-    private fun carregarAnimais() {
-        // Aqui podes puxar de Room ou Firebase depois
-        val lista = listOf(
-            Animal("1", "Luna", 2, "https://placekitten.com/300/300", "Gata muito dócil"),
-            Animal("2", "Bolinhas", 3, "https://placekitten.com/301/300", "Adora brincar"),
-            Animal("3", "Rocky", 1, "https://placekitten.com/302/300", "Muito energético")
-        )
-        _uiState.value = _uiState.value.copy(animals = lista)
-    }
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
 
-    fun toggleFavorite(animal: Animal) {
-        viewModelScope.launch {
-            val favoritos = _uiState.value.favorites.toMutableList()
-            if (favoritos.any { it.id == animal.id }) {
-                favoritos.removeAll { it.id == animal.id }
+    // 🔹 Simula o carregamento de um utilizador por email
+    fun loadUserByEmail(email: String) = viewModelScope.launch {
+        try {
+            _isLoading.value = true
+            delay(500) // simula latência
+
+            if (email.isNotBlank()) {
+                _user.value = User(
+                    id = 1,
+                    name = "Utilizador Demo",
+                    email = email,
+                    password = "1234"
+                )
+                _message.value = "Utilizador carregado com sucesso!"
+                _error.value = null
             } else {
-                favoritos.add(animal)
+                _error.value = "Email inválido"
+                _user.value = null
             }
-            _uiState.value = _uiState.value.copy(favorites = favoritos)
+        } catch (e: Exception) {
+            _error.value = "Erro a carregar utilizador: ${e.message}"
+        } finally {
+            _isLoading.value = false
         }
     }
 
-    fun selecionarAnimal(id: String) {
-        val animal = _uiState.value.animals.find { it.id == id }
-        _uiState.value = _uiState.value.copy(selectedAnimal = animal)
+    // 🔹 Simula uma atualização de perfil
+    fun updateUser(u: User) = viewModelScope.launch {
+        try {
+            _isLoading.value = true
+            delay(500)
+            _user.value = u.copy(name = u.name.ifBlank { "Nome Atualizado" })
+            _message.value = "Perfil atualizado com sucesso!"
+            _error.value = null
+        } catch (e: Exception) {
+            _error.value = "Erro a atualizar: ${e.message}"
+        } finally {
+            _isLoading.value = false
+        }
     }
+
+    fun clearMessage() { _message.value = null }
+    fun clearError() { _error.value = null }
 }

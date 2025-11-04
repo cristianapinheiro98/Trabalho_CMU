@@ -1,82 +1,118 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
-import javax.inject.Inject
+import pt.ipp.estg.trabalho_cmu.data.repository.AdminRepository
 
-data class AdminUiState(
-    val pedidos: List<PedidoAdocao> = emptyList(),
-    val dialogMessage: String? = null,
-    val isSuccessDialog: Boolean = false,
-    val animalForm: AnimalForm = AnimalForm(),
-)
+class AdminViewModel(application: Application) : AndroidViewModel(application) {
 
-@HiltViewModel
-class AdminViewModel @Inject constructor() : ViewModel() {
+    private val repository = AdminRepository(AppDatabase.getDatabase(application))
 
-    private val _uiState = MutableStateFlow(AdminUiState())
-    val uiState: StateFlow<AdminUiState> = _uiState
+    private val _pedidos = MutableLiveData<List<PedidoAdocao>>(emptyList())
+    val pedidos: LiveData<List<PedidoAdocao>> = _pedidos
 
-    init {
-        carregarPedidos()
-    }
+    private val _animalForm = MutableLiveData(AnimalForm())
+    val animalForm: LiveData<AnimalForm> = _animalForm
 
-    // 🔹 Pedidos de adoção
-    private fun carregarPedidos() {
-        _uiState.value = _uiState.value.copy(
-            pedidos = listOf(
-                PedidoAdocao("1", "José Lemos", "joselemos@example.com", "Bolinhas"),
-                PedidoAdocao("2", "Maria Silva", "maria@example.com", "Luna")
-            )
-        )
-    }
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
 
-    fun aprovarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido aceite com sucesso!", true)
-    fun rejeitarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido rejeitado!", false)
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> = _error
 
-    private fun atualizarPedido(p: PedidoAdocao, msg: String, sucesso: Boolean) {
+    private val _message = MutableLiveData<String?>()
+    val message: LiveData<String?> = _message
+
+    init { carregarPedidos() }
+
+    fun carregarPedidos() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                pedidos = _uiState.value.pedidos.filterNot { it.id == p.id },
-                dialogMessage = msg,
-                isSuccessDialog = sucesso
-            )
+            try {
+                _isLoading.value = true
+                _pedidos.value = repository.getAllPedidos()
+                _error.value = null
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar pedidos: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
-    fun fecharDialogo() {
-        _uiState.value = _uiState.value.copy(dialogMessage = null)
+    fun aprovarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido aprovado com sucesso!")
+    fun rejeitarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido rejeitado.")
+
+    private fun atualizarPedido(pedido: PedidoAdocao, msg: String) {
+        viewModelScope.launch {
+            try {
+                repository.deletePedidoById(pedido.id) // placeholder
+                _pedidos.value = _pedidos.value?.filterNot { it.id == pedido.id }
+                _message.value = msg
+            } catch (e: Exception) {
+                _error.value = "Erro ao atualizar pedido: ${e.message}"
+            }
+        }
     }
 
-    // 🔹 Formulário de registo de animal
-    fun onNomeChange(value: String) = updateForm { copy(nome = value) }
-    fun onRacaChange(value: String) = updateForm { copy(raca = value) }
-    fun onCorChange(value: String) = updateForm { copy(cor = value) }
-    fun onDataNascimentoChange(value: String) = updateForm { copy(dataNascimento = value) }
+    // -------- Form (nomes iguais à entidade) --------
+    fun onNameChange(value: String)     = updateForm { copy(name = value) }
+    fun onBreedChange(value: String)    = updateForm { copy(breed = value) }
+    fun onSpeciesChange(value: String)  = updateForm { copy(species = value) }
+    fun onSizeChange(value: String)     = updateForm { copy(size = value) }
+    fun onBirthDateChange(value: String)= updateForm { copy(birthDate = value) }
+    fun onImageUrlChange(value: String) {
+        val parsed = value.toIntOrNull() ?: 0
+        updateForm { copy(imageUrl = parsed) }
+    }
+
 
     private inline fun updateForm(block: AnimalForm.() -> AnimalForm) {
-        _uiState.value = _uiState.value.copy(animalForm = _uiState.value.animalForm.block())
+        _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
     fun guardarAnimal() {
-        val form = _uiState.value.animalForm
-        if (form.nome.isBlank() || form.raca.isBlank()) {
-            _uiState.value = _uiState.value.copy(
-                dialogMessage = "Preenche todos os campos obrigatórios.",
-                isSuccessDialog = false
-            )
-        } else {
-            _uiState.value = _uiState.value.copy(
-                dialogMessage = "Animal guardado com sucesso!",
-                isSuccessDialog = true,
-                animalForm = AnimalForm() // limpa o formulário
-            )
+        val form = _animalForm.value ?: AnimalForm()
+
+        if (form.name.isBlank() || form.breed.isBlank()) {
+            _message.value = "Preenche pelo menos o Nome e a Raça."
+            _error.value = null
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+
+                val novoAnimal = Animal(
+                    name = form.name.trim(),
+                    breed = form.breed.trim(),
+                    species = form.species.ifBlank { "Desconhecida" }.trim(),
+                    size = form.size.ifBlank { "Médio" }.trim(),
+                    birthDate = form.birthDate.trim(),
+                    imageUrl = form.imageUrl,
+                    shelterId = 1
+                )
+                repository.addAnimal(novoAnimal)
+
+                _animalForm.value = AnimalForm()
+                _message.value = "Animal guardado com sucesso!"
+                _error.value = null
+            } catch (e: Exception) {
+                _error.value = "Erro ao guardar animal: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
+
+    fun clearMessage() { _message.value = null }
+    fun clearError()   { _error.value = null }
 }
