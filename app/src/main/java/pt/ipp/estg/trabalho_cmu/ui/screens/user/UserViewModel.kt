@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
+import pt.ipp.estg.trabalho_cmu.data.models.UserType
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -31,7 +32,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     id = 1,
                     name = "Utilizador Demo",
                     email = email,
-                    password = "1234"
+                    adress = "Rua de Exemplo, 123",
+                    phone = "912345678",
+                    password = "1234",
+                    userType= UserType.UTILIZADOR
+
                 )
                 _message.value = "Utilizador carregado com sucesso!"
                 _error.value = null
