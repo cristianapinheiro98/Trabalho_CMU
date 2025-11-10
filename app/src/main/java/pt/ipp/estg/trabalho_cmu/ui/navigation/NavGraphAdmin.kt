@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminHomeScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdoptionRequest
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AnimalCreation
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AnimalCreationScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdoptionRequestScreen
 
 @Composable
 fun NavGraphAdmin(navController: NavHostController) {
@@ -18,13 +18,13 @@ fun NavGraphAdmin(navController: NavHostController) {
             )
         }
         composable("AnimalCreation") {
-            AnimalCreation(
+            AnimalCreationScreen(
 
                 onNavigateBack = { navController.popBackStack() }
             )
         }
         composable("AdoptionRequest") {
-            AdoptionRequest (onNavigateBack = { navController.popBackStack() })
+            AdoptionRequestScreen (onNavigateBack = { navController.popBackStack() })
         }
     }
 }

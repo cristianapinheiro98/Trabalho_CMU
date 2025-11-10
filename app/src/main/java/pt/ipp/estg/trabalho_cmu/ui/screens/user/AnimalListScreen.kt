@@ -1,64 +1,100 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalListScreen(
-    onAnimalClick: (Int) -> Unit,
-    onNavigateToLogin: () -> Unit,
-    authViewModel: AuthViewModel,
-    viewModel: AnimalViewModel = viewModel()
+    onAnimalClick: (Int) -> Unit = {}
 ) {
-    val animals by viewModel.animals.observeAsState(emptyList())
-    val favorites by viewModel.favorites.observeAsState(emptyList())
-    val isAuthenticated by authViewModel.isAuthenticated.observeAsState(false)
-
-    if(!isAuthenticated){
-        GuestScreen (onLoginClick = onNavigateToLogin)
-    }
+    var favorites by remember { mutableStateOf(listOf<Int>()) } // IDs favoritos
     var search by remember { mutableStateOf("") }
 
-    Column {
-        // 🔹 Barra de pesquisa
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = search,
-                onValueChange = { search = it },
-                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
-                placeholder = { Text("Pesquisar") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+    val animals = listOf(
+        Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
+        Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
+        Animal(3, "Tito", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato3, 1)
+    )
 
-        // 🔹 Grelha dos animais
-        LazyVerticalGrid(columns = GridCells.Fixed(2), contentPadding = PaddingValues(8.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp)
+    ) {
+        // 🔍 Barra de pesquisa
+        OutlinedTextField(
+            value = search,
+            onValueChange = { search = it },
+            leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
+            placeholder = { Text("Pesquisar") },
+            trailingIcon = {
+                Row {
+                    IconButton(onClick = { /* TODO: Filtro */ }) {
+                        Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
+                    }
+                    IconButton(onClick = { /* TODO: Ordenar */ }) {
+                        Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
+                    }
+                }
+            },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
+        )
+
+        // 🐾 Grelha de animais
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(animals.filter { it.name.contains(search, ignoreCase = true) }) { animal ->
                 AnimalCard(
                     animal = animal,
-                    isFavorite = favorites.any { it.id == animal.id },
+                    isFavorite = favorites.contains(animal.id),
                     onClick = { onAnimalClick(animal.id) },
-                    onToggleFavorite = if (isAuthenticated) { { viewModel.toggleFavorite(animal) } } else null
+                    onToggleFavorite = {
+                        favorites = if (favorites.contains(animal.id)) {
+                            favorites - animal.id
+                        } else {
+                            favorites + animal.id
+                        }
+                    }
                 )
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreview() {
+    MaterialTheme {
+        AnimalListScreen()
     }
 }

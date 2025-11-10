@@ -1,47 +1,100 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
-    onAnimalClick: (Int) -> Unit,
-    onNavigateToLogin: () -> Unit,
-    authViewModel: AuthViewModel,
-    viewModel: AnimalViewModel = viewModel()
+    favorites: List<Animal> = emptyList(),
+    onAnimalClick: (Int) -> Unit = {},
+    onToggleFavorite: ((Animal) -> Unit)? = null
 ) {
-    val favorites by viewModel.favorites.observeAsState(emptyList())
-    val isAuthenticated by authViewModel.isAuthenticated.observeAsState(false)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        // 🔹 Título
+        Text(
+            text = "Favoritos ❤️",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 16.dp),
+            textAlign = TextAlign.Center
+        )
 
-    if (!isAuthenticated) {
-        GuestScreen(onLoginClick = onNavigateToLogin)
-        return
-    }
-
-    if (favorites.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Nenhum animal adicionado aos favoritos.")
-        }
-    } else {
-        LazyVerticalGrid(columns = GridCells.Fixed(2), contentPadding = PaddingValues(8.dp)) {
-            items(favorites) { animal ->
-                AnimalCard(
-                    animal = animal,
-                    isFavorite = true,
-                    onClick = { onAnimalClick(animal.id) },
-                    onToggleFavorite = { viewModel.toggleFavorite(animal) }
+        if (favorites.isEmpty()) {
+            // 🔸 Estado vazio
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Ainda não adicionaste nenhum animal aos favoritos 🐾",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(24.dp)
                 )
             }
+        } else {
+            // 🐾 Lista de favoritos
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(favorites) { animal ->
+                    AnimalCard(
+                        animal = animal,
+                        isFavorite = true, // ❤️ mostra o coração
+                        onClick = { onAnimalClick(animal.id) },
+                        onToggleFavorite = {
+                            onToggleFavorite?.invoke(animal)
+                        }
+                    )
+                }
+            }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun FavoritesScreenPreview() {
+    val mockFavorites = listOf(
+        Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
+        Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
+        Animal(3, "Molly", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato4, 1)
+    )
+
+    MaterialTheme {
+        FavoritesScreen(favorites = mockFavorites)
     }
 }

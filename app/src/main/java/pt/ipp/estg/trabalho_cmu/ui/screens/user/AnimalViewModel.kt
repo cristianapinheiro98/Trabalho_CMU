@@ -2,18 +2,25 @@ package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.R
+import kotlinx.coroutines.withContext
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+import retrofit2.HttpException
+import java.io.IOException
 
-class AnimalViewModel(application: Application) : AndroidViewModel(application) {
+open class AnimalViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val animalDao = AppDatabase.getDatabase(application).animalDao()
+    private val repository = AnimalRepository(animalDao)
 
     private val _animals = MutableLiveData<List<Animal>>(emptyList())
     val animals: LiveData<List<Animal>> = _animals
 
     private val _favorites = MutableLiveData<List<Animal>>(emptyList())
-    val favorites: LiveData<List<Animal>> = _favorites
+    open val favorites: LiveData<List<Animal>> = _favorites
 
     private val _selectedAnimal = MutableLiveData<Animal?>()
     val selectedAnimal: LiveData<Animal?> = _selectedAnimal
@@ -31,23 +38,40 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         loadAnimals()
     }
 
-    /** 🔹 Simula o carregamento dos animais **/
-    fun loadAnimals() = viewModelScope.launch {
+    /**
+     * 🔹 Carrega animais do Room e tenta atualizar com a API
+     */
+    fun loadAnimals(sortBy: String? = null, order: String? = null) = viewModelScope.launch {
         _isLoading.value = true
-        delay(400)
-        _animals.value = listOf(
-            Animal(1, "Leia", "Siamês", "Gato", "Pequeno", "5", R.drawable.gato1, 1),
-            Animal(2, "Noa", "Europeu", "Gato", "Médio", "2", R.drawable.gato2, 1),
-            Animal(3, "Tito", "Maine Coon", "Gato", "Grande", "13", R.drawable.gato3, 1),
-            Animal(4, "Pintas", "Europeu", "Gato", "Pequeno", "6", R.drawable.gato4, 1),
-            Animal(5, "Branquinho", "Persa", "Gato", "Pequeno", "8", R.drawable.gato5, 1),
-            Animal(6, "Riscas", "Europeu", "Gato", "Pequeno", "8", R.drawable.gato6, 1)
-        )
-        _isLoading.value = false
+        try {
+            // 1️⃣ Lê dados locais do Room
+            val localAnimals = withContext(Dispatchers.IO) {
+                animalDao.getAllAnimals().value ?: emptyList()
+            }
+            _animals.value = localAnimals
+
+            // 2️⃣ Busca os dados da API
+            val remoteAnimals = repository.refreshAnimals(sortBy, order)
+
+            if (remoteAnimals.isNotEmpty()) {
+                _animals.value = remoteAnimals // atualiza UI com os novos
+            } else if (localAnimals.isEmpty()) {
+                _error.value = "Não foi possível carregar os dados nem localmente nem da API."
+            }
+
+        } catch (e: IOException) {
+            _error.value = "Erro de rede: ${e.message}"
+        } catch (e: HttpException) {
+            _error.value = "Erro do servidor: ${e.code()}"
+        } catch (e: Exception) {
+            _error.value = "Erro inesperado: ${e.message}"
+        } finally {
+            _isLoading.value = false
+        }
     }
 
-    /** 🔹 Alternar favoritos **/
-    fun toggleFavorite(animal: Animal) {
+    /** ❤️ Alternar favoritos */
+    open fun toggleFavorite(animal: Animal) {
         val current = _favorites.value ?: emptyList()
         _favorites.value = if (current.any { it.id == animal.id }) {
             current.filterNot { it.id == animal.id }
@@ -56,7 +80,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    /** 🔹 Selecionar animal para detalhe **/
+    /** 🔍 Selecionar animal */
     fun selecionarAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
     }

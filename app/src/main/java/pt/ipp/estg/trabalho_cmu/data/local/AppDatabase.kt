@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 
 @Database(
     // Adiciona aqui todas as outras entities
@@ -21,7 +22,8 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
         Ownership::class,
         Activity::class,
         Animal::class,
-        Shelter::class
+        Shelter::class,
+        User::class
     ],
     version = 1,
     exportSchema = false

@@ -1,67 +1,118 @@
 package pt.ipp.estg.trabalho_cmu.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCard(
     animal: Animal,
-    isFavorite: Boolean,
-    onClick: () -> Unit,
+    isFavorite: Boolean = false,
+    onClick: (() -> Unit)? = null,
     onToggleFavorite: (() -> Unit)? = null
 ) {
+    val idade = calcularIdade(animal.birthDate)
+
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable(enabled = onClick != null) { onClick?.invoke() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box {
-                Image(
-                    painter = painterResource(animal.imageUrl),
-                    contentDescription = animal.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    contentScale = ContentScale.Crop
-                )
+                // 🔹 Imagem local ou remota
+                if (animal.imageUrl is Int) {
+                    Image(
+                        painter = painterResource(id = animal.imageUrl as Int),
+                        contentDescription = animal.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    AsyncImage(
+                        model = animal.imageUrl,
+                        contentDescription = animal.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
+                // ❤️ Coração clicável
                 if (onToggleFavorite != null) {
                     IconButton(
-                        onClick = { onToggleFavorite() },
-                        modifier = Modifier.align(Alignment.BottomEnd)
+                        onClick = onToggleFavorite, // ← esta função é chamada ao clicar
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(4.dp)
                     ) {
                         Icon(
-                            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Favorito",
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            tint = if (isFavorite) Color.Red else Color.White
                         )
                     }
                 }
             }
 
-            Text(
-                "${animal.name} – ${animal.birthDate} anos",
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(8.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = animal.name,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${idade ?: "?"} anos",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun calcularIdade(birthDate: String?): Int? {
+    if (birthDate.isNullOrBlank()) return null
+    return try {
+        val anoNascimento =
+            LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).year
+        val anoAtual = LocalDate.now().year
+        anoAtual - anoNascimento
+    } catch (e: DateTimeParseException) {
+        null
     }
 }

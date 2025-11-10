@@ -1,74 +1,78 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuestScreen(
-    onLoginClick: () -> Unit
-) {
-    Box(
+fun GuestScreen(onLoginClick: () -> Unit = {}) {
+    var search by remember { mutableStateOf("") }
+
+    val sampleAnimals = listOf(
+        Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
+        Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
+        Animal(3, "Tito", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato3, 1),
+        Animal(4, "Pintas", "Unknown", "Dog", "Large", "2018-01-01", R.drawable.dog_image, 1),
+        Animal(5, "Branquinho", "Unknown", "Cat", "Small", "2017-01-01", R.drawable.gato4, 1),
+        Animal(6, "Riscas", "Unknown", "Cat", "Small", "2017-01-01", R.drawable.gato5, 1)
+    )
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 12.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        // 🔍 Barra de pesquisa
+        OutlinedTextField(
+            value = search,
+            onValueChange = { search = it },
+            leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
+            placeholder = { Text("Pesquisar") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
+        )
+
+        // 🐾 Lista de animais (sem favoritos)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.cat_login),
-                contentDescription = "Gato convidado",
-                modifier = Modifier
-                    .height(200.dp)
-                    .padding(bottom = 16.dp)
-            )
-
-            Text(
-                "Olá! 🐾",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Faz login para poderes guardar os teus animais favoritos e enviar pedidos de adoção.",
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(Modifier.height(24.dp))
-
-            Button(
-                onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth(0.7f)
-            ) {
-                Text("Iniciar sessão")
+            items(sampleAnimals.filter { it.name.contains(search, ignoreCase = true) }) { animal ->
+                // 🔹 Usa o mesmo AnimalCard mas sem o coração
+                AnimalCard(
+                    animal = animal,
+                    onClick = { /* Talvez abrir detalhes ou pedir login */ }
+                    // ⚠️ Não passamos onToggleFavorite → não aparece o coração ❤️
+                )
             }
         }
     }
 }
-// Adicione este bloco de código ao final do seu ficheiro GuestScreen.kt
-@Preview(showBackground = true)
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GuestScreenPreview() {
     MaterialTheme {
-        GuestScreen(
-            onLoginClick = {} // Para o preview, podemos passar uma função vazia
-        )
+        GuestScreen()
     }
 }
-
-

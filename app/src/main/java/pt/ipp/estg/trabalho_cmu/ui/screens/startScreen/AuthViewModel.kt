@@ -8,7 +8,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
+open class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val userRepository = UserRepository(AppDatabase.getDatabase(application).userDao())
     private val _isLoading = MutableLiveData(false)
@@ -21,7 +21,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val message: LiveData<String?> = _message
 
     private val _isAuthenticated = MutableLiveData(false)
-    val isAuthenticated: LiveData<Boolean> = _isAuthenticated
+    open val isAuthenticated: LiveData<Boolean> = _isAuthenticated
 
     private val _isRegistered = MutableLiveData(false)
     val isRegistered: LiveData<Boolean> = _isRegistered

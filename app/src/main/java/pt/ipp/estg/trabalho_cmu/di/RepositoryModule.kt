@@ -1,9 +1,10 @@
 package pt.ipp.estg.trabalho_cmu.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import com.google.android.datatransport.runtime.dagger.Provides
+//import dagger.Module
+//import dagger.Provides
+//import dagger.hilt.InstallIn
+//import dagger.hilt.components.SingletonComponent
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.repository.ActivityRepository
@@ -11,8 +12,8 @@ import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
+//@Module
+//@InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
     //adicionar repositórios aqui
@@ -31,5 +32,7 @@ object RepositoryModule {
     ): ActivityRepository {
         return ActivityRepository(activityDao)
     }
+
+
 
 }

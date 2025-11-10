@@ -3,7 +3,6 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.admin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
@@ -18,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
