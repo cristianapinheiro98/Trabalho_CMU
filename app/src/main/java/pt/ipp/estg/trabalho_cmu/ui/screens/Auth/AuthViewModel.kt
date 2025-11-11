@@ -11,6 +11,7 @@ import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
 open class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val userRepository = UserRepository(AppDatabase.getDatabase(application).userDao())
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -26,6 +27,9 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     private val _isRegistered = MutableLiveData(false)
     val isRegistered: LiveData<Boolean> = _isRegistered
 
+    // 🆕 CURRENT USER - Usuário logado
+    private val _currentUser = MutableLiveData<User?>()
+    val currentUser: LiveData<User?> = _currentUser
 
     val nome = MutableLiveData("")
     val morada = MutableLiveData("")
@@ -34,7 +38,9 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     val password = MutableLiveData("")
     val tipoConta = MutableLiveData(UserType.UTILIZADOR)
 
-
+    // ------------------------------------------------------
+    // 🔹 Login
+    // ------------------------------------------------------
     fun login() = viewModelScope.launch {
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
@@ -48,15 +54,18 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
             _isLoading.value = true
             val user = userRepository.getUserByEmail(emailValue)
             if (user != null && user.password == passwordValue) {
+                _currentUser.value = user // 🆕 Guarda o usuário logado
                 _isAuthenticated.value = true
                 _message.value = "Login efetuado com sucesso!"
                 _error.value = null
             } else {
                 _error.value = "Credenciais inválidas."
                 _isAuthenticated.value = false
+                _currentUser.value = null // 🆕 Limpa usuário
             }
         } catch (e: Exception) {
             _error.value = "Erro ao fazer login: ${e.message}"
+            _currentUser.value = null
         } finally {
             _isLoading.value = false
         }
@@ -124,6 +133,7 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     // ------------------------------------------------------
     fun logout() {
         _isAuthenticated.value = false
+        _currentUser.value = null
         clearFields()
     }
 
@@ -139,4 +149,8 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
     fun resetRegistration() { _isRegistered.value = false }
+
+    fun getCurrentUserId(): Int {
+        return _currentUser.value?.id ?: 0
+    }
 }

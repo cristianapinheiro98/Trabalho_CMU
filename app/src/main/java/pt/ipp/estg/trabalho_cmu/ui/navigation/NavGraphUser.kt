@@ -23,6 +23,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 /**
@@ -32,6 +33,8 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraphUser(navController: NavHostController) {
+    val authViewModel: AuthViewModel = viewModel()
+
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
         composable("UserProfile") { Text("Página de Perfil") }
@@ -60,7 +63,7 @@ fun NavGraphUser(navController: NavHostController) {
             )
         ) { backStackEntry ->
             val animalId = 1
-            val userId = 1// TODO: Get from logged user
+            val userId =  authViewModel.getCurrentUserId()
 
             // ViewModel is obtained automatically inside OwnershipFormScreen
             OwnershipFormScreen(
@@ -105,7 +108,7 @@ fun NavGraphUser(navController: NavHostController) {
             )
         ) { backStackEntry ->
             val animalId = 1
-            val userId = 1 // TODO: Get from logged user
+            val userId = authViewModel.getCurrentUserId()
 
             // ViewModel is obtained automatically inside ActivitySchedulingScreen
             ActivitySchedulingScreen(
@@ -120,7 +123,7 @@ fun NavGraphUser(navController: NavHostController) {
         }
 
         composable("ActivitiesHistory") {
-            val userId = "current_user_id" // TODO: Get from logged user
+            val userId = authViewModel.getCurrentUserId()
 
             // ViewModel is obtained automatically inside ActivitiesHistoryScreen
             ActivitiesHistoryScreen(
