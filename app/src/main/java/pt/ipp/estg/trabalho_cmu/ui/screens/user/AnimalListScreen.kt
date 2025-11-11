@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
@@ -12,17 +13,20 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,18 +35,17 @@ fun AnimalListScreen(
     viewModel: AnimalViewModel,
     onAnimalClick: (Int) -> Unit = {}
 ) {
-    var favorites by remember { mutableStateOf(listOf<Int>()) } // IDs favoritos
+    var favorites by remember { mutableStateOf(listOf<Int>()) }
     var search by remember { mutableStateOf("") }
 
-    // ✅ Observa os animais do ViewModel (StateFlow)
-    val animals by viewModel.animals.collectAsState()
+    val animals by viewModel.animals.observeAsState(emptyList())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
-        // 🔍 Barra de pesquisa
+
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -50,10 +53,10 @@ fun AnimalListScreen(
             placeholder = { Text("Pesquisar") },
             trailingIcon = {
                 Row {
-                    IconButton(onClick = { /* TODO: Filtro */ }) {
+                    IconButton(onClick = {  }) {
                         Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
                     }
-                    IconButton(onClick = { /* TODO: Ordenar */ }) {
+                    IconButton(onClick = { }) {
                         Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
                     }
                 }
@@ -65,7 +68,6 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
-        // 🐾 Grelha de animais
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -90,18 +92,20 @@ fun AnimalListScreen(
         }
     }
 }
+class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
-// 🧩 Mock do ViewModel (só para Preview)
-class MockAnimalViewModel : AnimalViewModel() {
-    val animals: StateFlow<List<Animal>> = MutableStateFlow(
+    override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
-            Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
-            Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
-            Animal(3, "Tito", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato3, 1)
+            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", R.drawable.gato1, 1),
+            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", R.drawable.gato2, 1),
+            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", R.drawable.gato3, 1)
         )
     )
+
 }
 
+
+@SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

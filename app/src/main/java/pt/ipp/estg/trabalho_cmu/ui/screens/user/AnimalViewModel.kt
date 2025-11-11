@@ -1,20 +1,16 @@
 package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
-import retrofit2.HttpException
-import java.io.IOException
 
 open class AnimalViewModel(
-    private val repository: AnimalRepository
+    private val repository: AnimalRepository? = null
 ) : ViewModel() {
 
     private val _animals = MutableLiveData<List<Animal>>(emptyList())
-    val animals: LiveData<List<Animal>> = _animals
+    open val animals: LiveData<List<Animal>> = _animals
 
     private val _favorites = MutableLiveData<List<Animal>>(emptyList())
     open val favorites: LiveData<List<Animal>> = _favorites
@@ -32,44 +28,20 @@ open class AnimalViewModel(
     val message: LiveData<String?> = _message
 
     init {
-        loadAnimals()
+        repository?.let { loadAnimals() }
     }
 
     fun loadAnimals() = viewModelScope.launch {
-        _isLoading.value = true
-        try {
-            _animals.value = repository.fetchAnimals()
-        } finally {
-            _isLoading.value = false
-        }
+        loadDataSafely { repository?.fetchAnimals() ?: emptyList() }
+    }
+    private fun applyFilter(filterAction: suspend () -> List<Animal>) = viewModelScope.launch {
+        loadDataSafely(filterAction)
     }
 
-    fun applyFilters(
-        species: String? = null,
-        breed: String? = null,
-        size: String? = null,
-        color: String? = null,
-        gender: String? = null
-    ) = viewModelScope.launch {
-        _isLoading.value = true
-        try {
-            _animals.value = repository.filterAnimals(species, breed, size, color, gender)
-        } finally {
-            _isLoading.value = false
-        }
-    }
+    fun filterBySpecies(species: String) = applyFilter { repository?.filterBySpecies(species) ?: emptyList() }
+    fun filterBySize(size: String) = applyFilter { repository?.filterBySize(size) ?: emptyList() }
+    fun filterByGender(gender: String) = applyFilter { repository?.filterByGender(gender) ?: emptyList() }
 
-    fun applySort(
-        sortBy: String,
-        order: String
-    ) = viewModelScope.launch {
-        _isLoading.value = true
-        try {
-            _animals.value = repository.sortAnimals(sortBy, order)
-        } finally {
-            _isLoading.value = false
-        }
-    }
 
     open fun toggleFavorite(animal: Animal) {
         val current = _favorites.value ?: emptyList()
@@ -80,8 +52,19 @@ open class AnimalViewModel(
         }
     }
 
-    fun selecionarAnimal(id: Int) {
+    fun selectAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
+    }
+
+    private suspend fun loadDataSafely(block: suspend () -> List<Animal>) {
+        _isLoading.value = true
+        try {
+            _animals.value = block()
+        } catch (e: Exception) {
+            _error.value = e.message
+        } finally {
+            _isLoading.value = false
+        }
     }
 
     fun clearMessage() { _message.value = null }

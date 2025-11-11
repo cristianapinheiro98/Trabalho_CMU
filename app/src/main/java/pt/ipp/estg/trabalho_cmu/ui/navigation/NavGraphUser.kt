@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +21,8 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.user.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
 /**
  * Navigation graph for user screens.
@@ -134,11 +137,15 @@ fun NavGraphUser(navController: NavHostController) {
                 }
             )
         }
+
         composable("Catalogue") {
+            val animalViewModel: AnimalViewModel = viewModel()
+
             AnimalListScreen(
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
-                }
+                },
+                viewModel = animalViewModel
             )
         }
         composable(
