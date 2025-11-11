@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.startScreen
+package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,7 +10,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

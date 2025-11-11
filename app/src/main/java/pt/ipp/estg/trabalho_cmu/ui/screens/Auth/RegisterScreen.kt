@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,14 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onRegisterSuccess: () -> Unit,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel
 ) {
     // Observa o estado do ViewModel
     val nome by viewModel.nome.observeAsState("")
@@ -211,13 +212,33 @@ fun RegisterScreen(
     }
 }
 
+
+@Composable
+fun MockAuthViewModel(): AuthViewModel {
+    return object : AuthViewModel() { // ou adapta ao teu construtor real
+        init {
+            nome.value = "Maria Silva"
+            morada.value = "Rua das Flores 123"
+            telefone.value = "912345678"
+            email.value = "maria@example.com"
+            tipoConta.value = UserType.ABRIGO
+        }
+    }
+}
+
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
+    val mockViewModel = MockAuthViewModel()
+
     MaterialTheme {
         RegisterScreen(
+            viewModel = mockViewModel,
             onNavigateBack = {},
             onRegisterSuccess = {}
         )
     }
 }
+
+
