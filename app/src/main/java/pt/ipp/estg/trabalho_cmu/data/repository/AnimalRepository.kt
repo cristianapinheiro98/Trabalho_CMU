@@ -10,15 +10,15 @@ import java.io.IOException
 
 class AnimalRepository(private val animalDao: AnimalDao) {
     fun getAllAnimals() : LiveData<List<Animal>> = animalDao.getAllAnimals()
-    suspend fun getAnimalById(animalId: String) = animalDao.getAnimalById(animalId)
+    suspend fun getAnimalById(animalId: Int) = animalDao.getAnimalById(animalId)
     suspend fun insertAnimal(animal: Animal) = animalDao.insertAnimal(animal)
 
-    suspend fun refreshAnimals(
+    /*suspend fun refreshAnimals(
         sortBy: String? = null,
         order: String? = null
     ): List<Animal> = withContext(Dispatchers.IO) {
         try {
-            // 🔹 1. Vai buscar dados remotos
+            // Vai buscar dados remotos
             val remoteAnimals = RetrofitInstance.api.getAnimais(sortBy, order)
 
             // 🔹 2. Atualiza a base de dados local de forma eficiente
@@ -32,7 +32,7 @@ class AnimalRepository(private val animalDao: AnimalDao) {
             // 🔹 4. Em caso de erro de rede, retorna dados locais
             animalDao.getAllAnimals()
         } as List<Animal>
-    }
+    }*/
 
 
 }

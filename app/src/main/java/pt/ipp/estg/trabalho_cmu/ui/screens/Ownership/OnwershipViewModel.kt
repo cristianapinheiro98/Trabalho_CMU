@@ -62,7 +62,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
      * Load animal details for the ownership form screen.
      * Used when user wants to request ownership for a specific animal.
      */
-    fun loadAnimalDetails(animalId: String) {
+    fun loadAnimalDetails(animalId: Int) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true

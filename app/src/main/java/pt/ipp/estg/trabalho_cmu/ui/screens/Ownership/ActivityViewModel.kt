@@ -56,7 +56,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 .switchMap { activityList ->
                     liveData {
                         val enriched = activityList.mapNotNull { act ->
-                            val animal = animalRepository.getAnimalById(act.animalId)
+                            val animal = animalRepository.getAnimalById(act.animalId) // ← Aqui o act.animalId precisa ser Int
                             val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
                             if (animal != null && shelter != null)
                                 ActivityWithAnimalAndShelter(act, animal, shelter)
@@ -91,7 +91,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
      * Load animal and shelter data for the visit scheduling screen.
      * Used when user wants to schedule a visit to see an animal.
      */
-    fun loadAnimalAndShelter(animalId: String) {
+    fun loadAnimalAndShelter(animalId: Int) { // ← Mudou de String para Int
         viewModelScope.launch {
             try {
                 val animalData = animalRepository.getAnimalById(animalId)

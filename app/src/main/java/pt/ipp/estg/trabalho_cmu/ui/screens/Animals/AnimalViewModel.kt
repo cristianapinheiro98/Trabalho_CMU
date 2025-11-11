@@ -1,7 +1,10 @@
-package pt.ipp.estg.trabalho_cmu.ui.viewmodel
+package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,25 +42,25 @@ open class AnimalViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     /**
-     * 🔹 Carrega animais do Room e tenta atualizar com a API
+     * Carrega animais do Room e tenta atualizar com a API
      */
     fun loadAnimals(sortBy: String? = null, order: String? = null) = viewModelScope.launch {
         _isLoading.value = true
         try {
-            // 1️⃣ Lê dados locais do Room
+            // Lê dados locais do Room
             val localAnimals = withContext(Dispatchers.IO) {
                 animalDao.getAllAnimals().value ?: emptyList()
             }
             _animals.value = localAnimals
 
-            // 2️⃣ Busca os dados da API
-            val remoteAnimals = repository.refreshAnimals(sortBy, order)
+            // Busca os dados da API
+            /*val remoteAnimals = repository.refreshAnimals(sortBy, order)
 
             if (remoteAnimals.isNotEmpty()) {
                 _animals.value = remoteAnimals // atualiza UI com os novos
             } else if (localAnimals.isEmpty()) {
                 _error.value = "Não foi possível carregar os dados nem localmente nem da API."
-            }
+            }*/
 
         } catch (e: IOException) {
             _error.value = "Erro de rede: ${e.message}"
@@ -70,7 +73,33 @@ open class AnimalViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    /** ❤️ Alternar favoritos */
+    /**
+     * 🔹 Carrega um animal específico pelo ID
+     */
+    fun loadAnimalById(animalId: Int) = viewModelScope.launch {
+        try {
+            _isLoading.value = true
+
+            val animal = withContext(Dispatchers.IO) {
+                repository.getAnimalById(animalId)
+            }
+
+            if (animal != null) {
+                _selectedAnimal.value = animal
+                _error.value = null
+            } else {
+                _error.value = "Animal não encontrado"
+                _selectedAnimal.value = null
+            }
+        } catch (e: Exception) {
+            _error.value = "Erro ao carregar animal: ${e.message}"
+            _selectedAnimal.value = null
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    /** Alternar favoritos */
     open fun toggleFavorite(animal: Animal) {
         val current = _favorites.value ?: emptyList()
         _favorites.value = if (current.any { it.id == animal.id }) {
@@ -80,11 +109,12 @@ open class AnimalViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    /** 🔍 Selecionar animal */
+    /** Selecionar animal */
     fun selecionarAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
     }
 
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
+    fun clearSelectedAnimal() { _selectedAnimal.value = null }
 }

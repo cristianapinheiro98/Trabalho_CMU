@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,10 +17,13 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.AnimalDetailScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.AnimalListScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 /**
  * Navigation graph for user screens.
@@ -55,8 +59,8 @@ fun NavGraphUser(navController: NavHostController) {
                 navArgument("animalId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
-            val userId = "current_user_id" // TODO: Get from logged user
+            val animalId = 1
+            val userId = 1// TODO: Get from logged user
 
             // ViewModel is obtained automatically inside OwnershipFormScreen
             OwnershipFormScreen(
@@ -70,13 +74,25 @@ fun NavGraphUser(navController: NavHostController) {
             )
         }
 
-        composable("OwnershipConfirmation") {
+
+        composable(
+            route = "ownership_confirmation/{animalId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userViewModel: UserViewModel = viewModel()
+            val animalViewModel: AnimalViewModel = viewModel()
+            val shelterViewModel: ShelterViewModel = viewModel()
+
             OwnershipConfirmationScreen(
+                userViewModel = userViewModel,
+                animalViewModel = animalViewModel,
+                shelterViewModel = shelterViewModel,
+                animalId = backStackEntry.arguments?.getInt("animalId") ?: 0,
                 onBackToHome = {
-                    navController.navigate("UserHome") {
-                        popUpTo("UserHome") {
-                            inclusive = false
-                        }
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
                     }
                 }
             )
@@ -88,8 +104,8 @@ fun NavGraphUser(navController: NavHostController) {
                 navArgument("animalId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
-            val userId = "current_user_id" // TODO: Get from logged user
+            val animalId = 1
+            val userId = 1 // TODO: Get from logged user
 
             // ViewModel is obtained automatically inside ActivitySchedulingScreen
             ActivitySchedulingScreen(
