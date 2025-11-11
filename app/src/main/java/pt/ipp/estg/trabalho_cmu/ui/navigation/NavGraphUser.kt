@@ -23,8 +23,6 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
@@ -147,9 +145,10 @@ fun NavGraphUser(navController: NavHostController) {
         }
 
         composable("Guest") {
+            val animalViewModel: AnimalViewModel = viewModel()
             GuestScreen(
+                viewModel = animalViewModel,
                 onLoginClick = {
-                    // Se fizer login, redireciona para o catálogo
                     navController.navigate("Catalogue") {
                         popUpTo("Guest") { inclusive = true }
                     }
@@ -182,7 +181,9 @@ fun NavGraphUser(navController: NavHostController) {
         }
 
         composable("Favourites") {
+            val animalViewModel: AnimalViewModel = viewModel()
             FavoritesScreen(
+                viewModel = animalViewModel,
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
                 }

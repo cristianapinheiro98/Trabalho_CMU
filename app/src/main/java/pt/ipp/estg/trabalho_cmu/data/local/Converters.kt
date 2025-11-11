@@ -28,4 +28,20 @@ class Converters {
     fun toOwnershipStatus(status: String): OwnershipStatus {
         return OwnershipStatus.valueOf(status)
     }
+
+    @TypeConverter
+    fun toIntList(value: String?): List<Int>? {
+        // Check if the value is null or empty, return an empty list if so.
+        if (value.isNullOrEmpty()) {
+            return emptyList()
+        }
+        // Split the string by a comma and convert each part to an Integer.
+        return value.split(",").map { it.trim().toInt() }
+    }
+
+    @TypeConverter
+    fun fromIntList(list: List<Integer>?): String? {
+        // Join the list of integers into a single comma-separated string.
+        return list?.joinToString(",")
+    }
 }

@@ -23,7 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)

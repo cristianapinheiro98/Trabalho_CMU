@@ -73,15 +73,6 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
-    // ============================================
-    // 🆕 CARREGAMENTO DE RAÇAS DA API
-    // ============================================
-
-    /**
-     * Carregar raças baseado na espécie selecionada
-     * Chamado automaticamente quando a espécie muda
-     */
     private fun loadBreedsBySpecies(species: String) {
         if (species.isBlank()) {
             _availableBreeds.value = emptyList()
@@ -139,18 +130,12 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
             }
         )
     }
-
-    // ============================================
-    // FORM HANDLERS
-    // ============================================
-
     fun onNameChange(value: String) = updateForm { copy(name = value) }
 
     fun onBreedChange(value: String) = updateForm { copy(breed = value) }
 
     fun onSpeciesChange(value: String) {
         updateForm { copy(species = value) }
-        // 🆕 Carregar raças automaticamente quando espécie muda
         loadBreedsBySpecies(value)
     }
 
@@ -166,10 +151,6 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
     private inline fun updateForm(block: AnimalForm.() -> AnimalForm) {
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
-
-    // ============================================
-    // GUARDAR ANIMAL
-    // ============================================
 
     fun guardarAnimal() {
         val form = _animalForm.value ?: AnimalForm()
@@ -195,7 +176,7 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
                     species = form.species.trim(),
                     size = form.size.ifBlank { "Médio" }.trim(),
                     birthDate = form.birthDate.trim(),
-                    imageUrl = form.imageUrl,
+                    imageUrl = listOf(form.imageUrl),
                     shelterId = 1
                 )
                 repository.addAnimal(novoAnimal)

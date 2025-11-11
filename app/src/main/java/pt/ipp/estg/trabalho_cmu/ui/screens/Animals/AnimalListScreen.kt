@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
