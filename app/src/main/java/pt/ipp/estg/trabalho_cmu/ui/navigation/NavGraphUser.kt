@@ -23,7 +23,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 
