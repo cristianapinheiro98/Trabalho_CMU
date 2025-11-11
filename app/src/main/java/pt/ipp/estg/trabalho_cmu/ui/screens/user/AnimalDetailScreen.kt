@@ -51,10 +51,16 @@ fun AnimalDetailScreen(
         return
     }
 
-    val imageGallery = remember {
-        listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3)
+    val imageGallery: List<Int> = remember(animal) {
+        val imgs = animal!!.imageUrl
+        if (imgs.isNotEmpty() && imgs.first() is Int) {
+            @Suppress("UNCHECKED_CAST")
+            (imgs as List<Int>)
+        } else {
+            listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3)
+        }
     }
-    var mainImage by remember { mutableStateOf(imageGallery.first()) }
+    var mainImage by remember(imageGallery) { mutableStateOf(imageGallery.first()) }
 
     Column(
         modifier = Modifier
@@ -187,7 +193,6 @@ fun InfoLine(label: String, value: String) {
         Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
     }
 }
-
 private class Mock : AnimalViewModel(repository = null) {
     override val selectedAnimal: LiveData<Animal?> = MutableLiveData(
         Animal(
@@ -197,12 +202,12 @@ private class Mock : AnimalViewModel(repository = null) {
             species = "Gato",
             size = "Pequeno",
             birthDate = "2019-01-01",
-            imageUrl = listOf(R.drawable.gato1),
+            imageUrl = listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3),
             shelterId = 1
         )
     )
 
-    override fun selectedAnimal(id: Int) {}
+    override fun selectAnimal(id: Int) { /* no-op for preview */ }
 }
 
 @SuppressLint("ViewModelConstructorInComposable")
