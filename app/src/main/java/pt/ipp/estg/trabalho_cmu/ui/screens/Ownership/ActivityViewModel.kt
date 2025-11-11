@@ -44,7 +44,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     // User ID for filtering activities
-    private val _userId = MutableLiveData<String>()
+    private val _userId = MutableLiveData<Int>()
 
     /**
      * LiveData that combines Activity data with Animal and Shelter information.
@@ -113,7 +113,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
      * Set the user ID to filter activities.
      * This triggers the activitiesWithDetails LiveData to update.
      */
-    fun loadActivitiesForUser(userId: String) {
+    fun loadActivitiesForUser(userId: Int) {
         _userId.value = userId
     }
 

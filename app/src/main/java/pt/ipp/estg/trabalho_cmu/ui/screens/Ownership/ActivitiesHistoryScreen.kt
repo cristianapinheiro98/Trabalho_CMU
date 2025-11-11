@@ -32,7 +32,7 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
  */
 @Composable
 fun ActivitiesHistoryScreen(
-    userId: String,
+    userId: Int,
     modifier: Modifier = Modifier
 ) {
     // Get ViewModel instance (without Hilt)
