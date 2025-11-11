@@ -1,12 +1,19 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,145 +25,193 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalDetailScreen(
-    animalName: String = "Molly",
+    viewModel: AnimalViewModel,
+    animalId: Int,
     onAdoptClick: () -> Unit = {}
+) {
+    val animal by viewModel.selectedAnimal.observeAsState()
+
+    LaunchedEffect(animalId) {
+        viewModel.selectAnimal(animalId)
+    }
+
+    if (animal == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    val imageGallery = remember {
+        listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3)
+    }
+    var mainImage by remember { mutableStateOf(imageGallery.first()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF9F9F9))
+            .verticalScroll(rememberScrollState())
+    ) {
+        // 📸 Galeria de imagens
+        ImageGallery(
+            mainImage = mainImage,
+            thumbnails = imageGallery,
+            onThumbnailClick = { newImage -> mainImage = newImage }
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = animal!!.name,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF3F51B5)
+            )
+
+            Text(
+                text = "${animal!!.species} • ${animal!!.size}",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Divider(thickness = 1.dp, color = Color.LightGray)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            InfoLine("Raça", animal!!.breed ?: "Desconhecida")
+            InfoLine("Porte", animal!!.size ?: "Desconhecido")
+            InfoLine("Nascimento", animal!!.birthDate ?: "N/A")
+            InfoLine("Abrigo", "Abrigo Porto Animal")
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(thickness = 1.dp, color = Color.LightGray)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Olá! Sou ${animal!!.name} 🐾",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF303F9F)
+            )
+
+            Text(
+                text = "Sou muito meiga e adoro atenção humana. Gosto de sestas longas e mantas fofas. Não gosto de aspiradores barulhentos e prefiro ambientes calmos.",
+                fontSize = 15.sp,
+                textAlign = TextAlign.Start,
+                color = Color.DarkGray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onAdoptClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+            ) {
+                Text("Adotar ${animal!!.name}", fontSize = 18.sp)
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+private fun ImageGallery(
+    @DrawableRes mainImage: Int,
+    thumbnails: List<Int>,
+    onThumbnailClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+            .background(Color.Black)
     ) {
-        // 🐾 Nome do animal
-        Text(
-            text = animalName,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
-
-        // 🐱 Primeira imagem + frase
-        Row(verticalAlignment = Alignment.Top) {
-            Image(
-                painter = painterResource(id = R.drawable.gato5),
-                contentDescription = "$animalName imagem 1",
-                modifier = Modifier
-                    .size(120.dp)
-                    .padding(end = 8.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
-            )
-            Column {
-                Text("Meow!", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text("Só te respondo depois de abrires uma lata de atum!", fontSize = 14.sp)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 🐾 Segunda imagem + frase
-        Row(verticalAlignment = Alignment.Top) {
-            Text(
-                text = "Olha que vais ter que ter tempo para brincar comigo!",
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                fontSize = 14.sp
-            )
-            Image(
-                painter = painterResource(id = R.drawable.gato4),
-                contentDescription = "$animalName imagem 2",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Divider(thickness = 1.dp, color = Color.LightGray)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // 🧾 Secção informativa (segunda parte do mockup)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.gato5),
-                contentDescription = "$animalName retrato",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .padding(end = 12.dp),
-                contentScale = ContentScale.Crop
-            )
-
-            Text(
-                text = "Olha bem para o que está aqui escrito! Eu ajudo-te a ler!",
-                fontWeight = FontWeight.Medium,
-                fontSize = 15.sp,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔹 Detalhes do animal
-        Column(modifier = Modifier.fillMaxWidth()) {
-            DetailLine("Nome:", "Molly")
-            DetailLine("Idade:", "13 anos")
-            DetailLine("Peso:", "Não se pergunta a uma senhora meow!")
-            DetailLine("Cor do pelo:", "Tricolor (branco, preto e laranja)")
-            DetailLine(
-                "Personalidade:",
-                "Calma e observadora, prefere um bom spot ao sol a grandes aventuras."
-            )
-            DetailLine("Gosta de:", "Sestas longas, mantas fofas e atenção.")
-            DetailLine("Não gosta de:", "Aspiradores barulhentos.")
-            DetailLine("Curiosidade:", "Adora brincar com fitas e perseguir sombras.")
-            DetailLine("Estado de saúde:", "Em excelente forma para uma senhora da sua idade!")
-            DetailLine("Sociabilidade:", "Dá-se bem com humanos, mas não muito com outros gatos.")
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // 🩵 Botão principal
-        Button(
-            onClick = onAdoptClick,
+        Image(
+            painter = painterResource(id = mainImage),
+            contentDescription = "Imagem Principal",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
-        ) {
-            Text("Queres fazer uma special adoption?", fontSize = 16.sp)
-        }
+                .height(280.dp),
+            contentScale = ContentScale.Crop
+        )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            thumbnails.forEach { thumbnail ->
+                Image(
+                    painter = painterResource(id = thumbnail),
+                    contentDescription = "Miniatura",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(horizontal = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onThumbnailClick(thumbnail) },
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun DetailLine(label: String, value: String) {
-    Row(modifier = Modifier.padding(vertical = 2.dp)) {
-        Text(label, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(value, fontSize = 14.sp)
+fun InfoLine(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, fontWeight = FontWeight.Medium, fontSize = 15.sp)
+        Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
     }
 }
 
+private class Mock : AnimalViewModel(repository = null) {
+    override val selectedAnimal: LiveData<Animal?> = MutableLiveData(
+        Animal(
+            id = 1,
+            name = "Leia",
+            breed = "Europeu Comum",
+            species = "Gato",
+            size = "Pequeno",
+            birthDate = "2019-01-01",
+            imageUrl = listOf(R.drawable.gato1),
+            shelterId = 1
+        )
+    )
+
+    override fun selectedAnimal(id: Int) {}
+}
+
+@SuppressLint("ViewModelConstructorInComposable")
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AnimalDetailScreenPreview() {
+private fun AnimalDetailScreenPreview() {
+    val mockViewModel = Mock()
     MaterialTheme {
-        AnimalDetailScreen()
+        AnimalDetailScreen(viewModel = mockViewModel, animalId = 1)
     }
 }

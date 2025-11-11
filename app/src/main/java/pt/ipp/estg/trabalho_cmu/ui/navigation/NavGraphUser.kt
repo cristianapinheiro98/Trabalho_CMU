@@ -154,7 +154,8 @@ fun NavGraphUser(navController: NavHostController) {
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
             AnimalDetailScreen(
-                animalName = "Animal #$animalId",
+                viewModel = viewModel(), // Obtém a instância do AnimalViewModel
+                animalId = animalId,      // Passa o ID do animal
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 }

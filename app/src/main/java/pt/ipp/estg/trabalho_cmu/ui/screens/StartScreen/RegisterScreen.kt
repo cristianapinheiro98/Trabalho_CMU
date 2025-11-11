@@ -114,7 +114,6 @@ fun RegisterScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // Botão Criar Conta
         Button(
             onClick = { viewModel.register() },
             enabled = !isLoading,
@@ -140,7 +139,6 @@ fun RegisterScreen(
         }
     }
 
-    // 🔹 Mensagem de erro
     error?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
@@ -152,7 +150,6 @@ fun RegisterScreen(
         )
     }
 
-    // 🔹 Mensagem de sucesso
     message?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearMessage() },

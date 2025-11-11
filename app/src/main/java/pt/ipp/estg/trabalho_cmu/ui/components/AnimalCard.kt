@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.ui.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import pt.ipp.estg.trabalho_cmu.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,6 +35,7 @@ fun AnimalCard(
     onToggleFavorite: (() -> Unit)? = null
 ) {
     val idade = calcularIdade(animal.birthDate)
+    val mainImage = animal.imageUrl.firstOrNull()
 
     Card(
         modifier = Modifier
@@ -46,28 +48,36 @@ fun AnimalCard(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box {
-                // 🔹 Imagem local ou remota
-                if (animal.imageUrl is Int) {
-                    Image(
-                        painter = painterResource(id = animal.imageUrl as Int),
-                        contentDescription = animal.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    AsyncImage(
-                        model = animal.imageUrl,
-                        contentDescription = animal.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                when(mainImage) {
+                    is Int -> {
+                        Image(
+                            painter = painterResource(id = mainImage),
+                            contentDescription = animal.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    is String->{
+                        AsyncImage(
+                            model = mainImage,
+                            contentDescription = animal.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    else->{
+                        Image( painter = painterResource(id = R.drawable.gato1),
+                            contentDescription = animal.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp),
+                            contentScale = ContentScale.Crop)
+                    }
                 }
-
-                // ❤️ Coração clicável
                 if (onToggleFavorite != null) {
                     IconButton(
                         onClick = onToggleFavorite, // ← esta função é chamada ao clicar

@@ -16,7 +16,7 @@ open class AnimalViewModel(
     open val favorites: LiveData<List<Animal>> = _favorites
 
     private val _selectedAnimal = MutableLiveData<Animal?>()
-    val selectedAnimal: LiveData<Animal?> = _selectedAnimal
+    open val selectedAnimal: LiveData<Animal?> = _selectedAnimal
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -52,7 +52,7 @@ open class AnimalViewModel(
         }
     }
 
-    fun selectAnimal(id: Int) {
+    open fun selectAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
     }
 
@@ -69,4 +69,5 @@ open class AnimalViewModel(
 
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
+    open fun selectedAnimal(id: Int) {}
 }

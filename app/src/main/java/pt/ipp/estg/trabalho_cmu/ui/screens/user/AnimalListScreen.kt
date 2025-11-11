@@ -75,7 +75,10 @@ fun AnimalListScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(animals.filter { it.name.contains(search, ignoreCase = true) }) { animal ->
+            val filteredAnimals = animals.filter {
+                it.name.contains(search, ignoreCase = true)
+            }
+            items(filteredAnimals) { animal->
                 AnimalCard(
                     animal = animal,
                     isFavorite = favorites.contains(animal.id),
@@ -96,9 +99,9 @@ class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
     override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", R.drawable.gato1, 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", R.drawable.gato2, 1),
-            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", R.drawable.gato3, 1)
+            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
+            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
+            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", listOf(R.drawable.gato3), 1)
         )
     )
 
