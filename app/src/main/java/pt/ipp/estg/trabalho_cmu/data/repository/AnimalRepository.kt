@@ -9,7 +9,6 @@ import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
 import java.io.IOException
 
 class AnimalRepository(private val animalDao: AnimalDao) {
-
     fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
     suspend fun getAnimalById(animalId: String) = animalDao.getAnimalById(animalId)
 

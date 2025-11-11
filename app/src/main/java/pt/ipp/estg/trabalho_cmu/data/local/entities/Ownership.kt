@@ -39,9 +39,9 @@ data class Ownership(
     val id: Int = 0,
 
     // Foreign Keys
-    val userId: String,
-    val animalId: String,
-    val shelterId: String,
+    val userId: Int,
+    val animalId: Int,
+    val shelterId: Int,
 
     // Payment and identification info
     val ownerName: String,

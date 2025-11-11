@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.user
+package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,6 @@ fun AnimalListScreen(
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
-
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },

@@ -5,5 +5,5 @@ data class PedidoAdocao(
     val nome: String = "",
     val email: String = "",
     val animal: String = "",
-    val status: String = "PENDING" // ou usa OwnershipStatus se quiseres
+    val status: String = "PENDING"
 )

@@ -9,7 +9,7 @@ import java.util.*
 class ActivityRepository(private val activityDao: ActivityDao) {
 
 
-    fun getUpcomingActivitiesByUser(userId: String): LiveData<List<Activity>> {
+    fun getUpcomingActivitiesByUser(userId: Int): LiveData<List<Activity>> {
         val currentDate = getCurrentDateString()
         return activityDao.getUpcomingActivitiesByUser(userId, currentDate)
     }
@@ -30,7 +30,7 @@ class ActivityRepository(private val activityDao: ActivityDao) {
         activityDao.deleteActivity(activity)
     }
 
-    suspend fun deleteAllActivitiesByUser(userId: String) {
+    suspend fun deleteAllActivitiesByUser(userId: Int) {
         activityDao.deleteAllActivitiesByUser(userId)
     }
 

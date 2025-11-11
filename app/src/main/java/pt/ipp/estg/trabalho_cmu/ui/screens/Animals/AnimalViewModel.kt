@@ -1,6 +1,12 @@
-package pt.ipp.estg.trabalho_cmu.ui.viewmodel
+package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import androidx.lifecycle.*
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
@@ -69,5 +75,7 @@ open class AnimalViewModel(
 
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
-    open fun selectedAnimal(id: Int) {}
+
+    fun clearSelectedAnimal() { _selectedAnimal.value = null }
 }
+

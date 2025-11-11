@@ -29,11 +29,10 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
 
 /**
  * Screen showing the user's activity history (scheduled visits).
- * Now works WITHOUT Hilt - ViewModel is obtained using viewModel()
  */
 @Composable
 fun ActivitiesHistoryScreen(
-    userId: String,
+    userId: Int,
     modifier: Modifier = Modifier
 ) {
     // Get ViewModel instance (without Hilt)
@@ -184,8 +183,8 @@ private fun ActivitiesHistoryContentPreview() {
             ActivityWithAnimalAndShelter(
                 activity = Activity(
                     id = 1,
-                    userId = "user1",
-                    animalId = "animal1",
+                    userId = 1,
+                    animalId = 1,
                     pickupDate = "10/11/2025",
                     pickupTime = "09:00",
                     deliveryDate = "12/11/2025",
@@ -211,8 +210,8 @@ private fun ActivitiesHistoryContentPreview() {
             ActivityWithAnimalAndShelter(
                 activity = Activity(
                     id = 2,
-                    userId = "user1",
-                    animalId = "animal2",
+                    userId = 1,
+                    animalId = 2,
                     pickupDate = "15/11/2025",
                     pickupTime = "10:00",
                     deliveryDate = "17/11/2025",
