@@ -11,7 +11,7 @@ interface AnimalDao {
     fun getAllAnimals(): LiveData<List<Animal>>
 
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
-    suspend fun getAnimalById(animalId: String): Animal?
+    suspend fun getAnimalById(animalId: Int): Animal?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnimal(animal: Animal)

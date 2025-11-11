@@ -20,8 +20,8 @@ data class Activity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val userId: String,
-    val animalId: String,
+    val userId: Int,
+    val animalId: Int,
 
     val pickupDate: String,
     val pickupTime: String,

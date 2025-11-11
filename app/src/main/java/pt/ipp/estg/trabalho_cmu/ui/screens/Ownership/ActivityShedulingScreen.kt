@@ -33,12 +33,11 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
  */
 @Composable
 fun ActivitySchedulingScreen(
-    userId: String,
-    animalId: String,
+    userId: Int,
+    animalId: Int,
     onScheduleSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Get ViewModel instance (without Hilt)
     val viewModel: ActivityViewModel = viewModel()
 
     val scrollState = rememberScrollState()

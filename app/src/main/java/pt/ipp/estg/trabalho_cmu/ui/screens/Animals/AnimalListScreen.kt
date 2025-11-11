@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.user
+package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,7 +12,6 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,7 @@ fun AnimalListScreen(
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
-        // 🔍 Barra de pesquisa
+        // Barra de pesquisa
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },

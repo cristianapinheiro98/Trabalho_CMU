@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.user
+package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

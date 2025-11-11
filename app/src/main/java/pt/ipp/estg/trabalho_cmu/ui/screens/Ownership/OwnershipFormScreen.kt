@@ -27,8 +27,8 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
  */
 @Composable
 fun OwnershipFormScreen(
-    userId: String,
-    animalId: String,
+    userId: Int,
+    animalId: Int,
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -53,7 +53,7 @@ fun OwnershipFormScreen(
             },
             userId = userId,
             animalId = animalId,
-            shelterId = animalData.shelterId.toString(),
+            shelterId = animalData.shelterId,
             onSubmitSuccess = onSubmitSuccess,
             modifier = modifier
         )
@@ -75,9 +75,9 @@ private fun OwnershipFormContent(
     isLoading: Boolean,
     error: String?,
     onSubmit: (Ownership) -> Unit,
-    userId: String,
-    animalId: String,
-    shelterId: String,
+    userId: Int,
+    animalId: Int,
+    shelterId: Int,
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -342,9 +342,9 @@ fun OwnershipFormScreenPreview() {
             isLoading = false,
             error = null,
             onSubmit = { },
-            userId = "preview_user_123",
-            animalId = "animal_456",
-            shelterId = "shelter_789",
+            userId = 1,
+            animalId = 1,
+            shelterId = 1,
             onSubmitSuccess = { }
         )
     }
