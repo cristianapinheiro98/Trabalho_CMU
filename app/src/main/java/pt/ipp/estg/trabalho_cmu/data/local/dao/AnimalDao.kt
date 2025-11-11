@@ -18,4 +18,10 @@ interface AnimalDao {
 
     @Delete
     suspend fun deleteAnimal(animal: Animal)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(animals: List<Animal>)
+
+    @Query("DELETE FROM animals")
+    suspend fun clearAll()
+
 }
