@@ -7,13 +7,14 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 @Dao
 interface UserDao {
 
-    // Obter todos os utilizadores (ex: debug)
     @Query("SELECT * FROM users ORDER BY id ASC")
     fun getAllUsers(): LiveData<List<User>>
 
-    // Procurar utilizador por email
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): User?
+
+    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
+    suspend fun getUserById(userId: Int): User?
 
     // Inserir (usado no registo)
     @Insert(onConflict = OnConflictStrategy.REPLACE)

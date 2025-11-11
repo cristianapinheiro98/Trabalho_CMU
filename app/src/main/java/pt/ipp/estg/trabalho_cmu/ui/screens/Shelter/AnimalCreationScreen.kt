@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.admin
+package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun AnimalCreationScreen(
     onNavigateBack: () -> Unit,
-    viewModel: AdminViewModel = viewModel()
+    viewModel: ShelterMngViewModel = viewModel()
 ) {
     val form by viewModel.animalForm.observeAsState()
     val availableBreeds by viewModel.availableBreeds.observeAsState(emptyList())
@@ -34,7 +34,7 @@ fun AnimalCreationScreen(
         onSizeChange = viewModel::onSizeChange,
         onBirthDateChange = viewModel::onBirthDateChange,
         onImageUrlChange = viewModel::onImageUrlChange,
-        onSave = viewModel::guardarAnimal,
+        onSave = viewModel:: saveAnimal,
         onNavigateBack = onNavigateBack,
         onClearMessage = viewModel::clearMessage,
         onClearError = viewModel::clearError

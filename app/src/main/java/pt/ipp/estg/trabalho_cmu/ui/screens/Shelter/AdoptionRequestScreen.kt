@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.admin
+package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +22,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
 @Composable
 fun AdoptionRequestScreen(
     onNavigateBack: () -> Unit = {},
-    viewModel: AdminViewModel = viewModel()
+    viewModel: ShelterMngViewModel = viewModel()
 ) {
     val pedidos by viewModel.pedidos.observeAsState(emptyList())
     val message by viewModel.message.observeAsState()
@@ -44,8 +44,8 @@ fun AdoptionRequestScreen(
             pedidos.forEach { pedido ->
                 PedidoCard(
                     pedido = pedido,
-                    onAprovar = { viewModel.aprovarPedido(pedido) },
-                    onRejeitar = { viewModel.rejeitarPedido(pedido) }
+                    onAprovar = { viewModel.approveRequest(pedido) },
+                    onRejeitar = { viewModel.rejectRequest(pedido) }
                 )
             }
         }

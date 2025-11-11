@@ -12,7 +12,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
  */
 open class OwnershipRepository(private val ownershipDao: OwnershipDao) {
 
-    open fun getOwnershipsByUser(userId: String): LiveData<List<Ownership>> =
+    open fun getOwnershipsByUser(userId: Int): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByUser(userId)
 
     open suspend fun addOwnership(ownership: Ownership) {

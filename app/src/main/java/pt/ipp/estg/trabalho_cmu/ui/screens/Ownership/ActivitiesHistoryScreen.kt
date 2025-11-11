@@ -11,6 +11,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDateTimeCard
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
+import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 
 /**
  * Screen showing the user's activity history (scheduled visits).
@@ -97,6 +99,7 @@ private fun ActivitiesHistoryContent(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -142,7 +145,7 @@ private fun ActivitiesHistoryContent(
 
                     MapLocationButton(
                         onClick = {
-                            // TODO: Open Google Maps with address
+                            openGoogleMaps(context, shelter.address)
                         }
                     )
 
@@ -198,7 +201,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
-                    imageUrl = R.drawable.cat_image
+                    imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(
                     id = 0,
@@ -225,7 +228,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "20/03/2021",
                     size = "large",
                     species = "dog",
-                    imageUrl = R.drawable.cat_image
+                    imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(
                     id = 0,

@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.admin
+package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import android.app.Application
 import androidx.lifecycle.*

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
 
 @Composable
@@ -36,7 +36,7 @@ fun OwnershipConfirmationScreen(
 ) {
 
     LaunchedEffect(animalId) {
-        animalViewModel.loadAnimalById(animalId)
+        animalViewModel.selectAnimal(animalId)
     }
 
     // Observa os dados

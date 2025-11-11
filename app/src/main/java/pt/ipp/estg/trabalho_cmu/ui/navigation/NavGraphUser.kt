@@ -20,11 +20,12 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankin
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.GuestScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
+
 
 /**
  * Navigation graph for user screens.
@@ -144,20 +145,25 @@ fun NavGraphUser(navController: NavHostController) {
         }
 
         composable("Guest") {
+            val animalViewModel: AnimalViewModel = viewModel()
             GuestScreen(
+                viewModel = animalViewModel,
                 onLoginClick = {
-                    // Se fizer login, redireciona para o catálogo
                     navController.navigate("Catalogue") {
                         popUpTo("Guest") { inclusive = true }
                     }
                 }
             )
         }
+
         composable("Catalogue") {
+            val animalViewModel: AnimalViewModel = viewModel()
+
             AnimalListScreen(
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
-                }
+                },
+                viewModel = animalViewModel
             )
         }
         composable(
@@ -166,7 +172,8 @@ fun NavGraphUser(navController: NavHostController) {
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
             AnimalDetailScreen(
-                animalName = "Animal #$animalId",
+                viewModel = viewModel(), // Obtém a instância do AnimalViewModel
+                animalId = animalId,      // Passa o ID do animal
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 }
@@ -174,7 +181,9 @@ fun NavGraphUser(navController: NavHostController) {
         }
 
         composable("Favourites") {
+            val animalViewModel: AnimalViewModel = viewModel()
             FavoritesScreen(
+                viewModel = animalViewModel,
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
                 }

@@ -27,7 +27,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // User ID for filtering ownerships
-    private val _userId = MutableLiveData<String>()
+    private val _userId = MutableLiveData<Int>()
 
     /**
      * LiveData that automatically updates when ownerships change in database.
@@ -54,7 +54,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
      * Set the user ID to filter ownerships.
      * This triggers the ownerships LiveData to update.
      */
-    fun loadOwnershipsForUser(userId: String) {
+    fun loadOwnershipsForUser(userId: Int) {
         _userId.value = userId
     }
 

@@ -1,8 +1,10 @@
-package pt.ipp.estg.trabalho_cmu.data.api
+package pt.ipp.estg.trabalho_cmu.data.remote.api.objects
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pt.ipp.estg.trabalho_cmu.data.remote.api.services.CatApiService
+import pt.ipp.estg.trabalho_cmu.data.remote.api.services.DogApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
