@@ -1,20 +1,17 @@
 package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import retrofit2.HttpException
 import java.io.IOException
 
-open class AnimalViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val animalDao = AppDatabase.getDatabase(application).animalDao()
-    private val repository = AnimalRepository(animalDao)
+open class AnimalViewModel(
+    private val repository: AnimalRepository
+) : ViewModel() {
 
     private val _animals = MutableLiveData<List<Animal>>(emptyList())
     val animals: LiveData<List<Animal>> = _animals
@@ -38,39 +35,42 @@ open class AnimalViewModel(application: Application) : AndroidViewModel(applicat
         loadAnimals()
     }
 
-    /**
-     * 🔹 Carrega animais do Room e tenta atualizar com a API
-     */
-    fun loadAnimals(sortBy: String? = null, order: String? = null) = viewModelScope.launch {
+    fun loadAnimals() = viewModelScope.launch {
         _isLoading.value = true
         try {
-            // 1️⃣ Lê dados locais do Room
-            val localAnimals = withContext(Dispatchers.IO) {
-                animalDao.getAllAnimals().value ?: emptyList()
-            }
-            _animals.value = localAnimals
-
-            // 2️⃣ Busca os dados da API
-            val remoteAnimals = repository.refreshAnimals(sortBy, order)
-
-            if (remoteAnimals.isNotEmpty()) {
-                _animals.value = remoteAnimals // atualiza UI com os novos
-            } else if (localAnimals.isEmpty()) {
-                _error.value = "Não foi possível carregar os dados nem localmente nem da API."
-            }
-
-        } catch (e: IOException) {
-            _error.value = "Erro de rede: ${e.message}"
-        } catch (e: HttpException) {
-            _error.value = "Erro do servidor: ${e.code()}"
-        } catch (e: Exception) {
-            _error.value = "Erro inesperado: ${e.message}"
+            _animals.value = repository.fetchAnimals()
         } finally {
             _isLoading.value = false
         }
     }
 
-    /** ❤️ Alternar favoritos */
+    fun applyFilters(
+        species: String? = null,
+        breed: String? = null,
+        size: String? = null,
+        color: String? = null,
+        gender: String? = null
+    ) = viewModelScope.launch {
+        _isLoading.value = true
+        try {
+            _animals.value = repository.filterAnimals(species, breed, size, color, gender)
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    fun applySort(
+        sortBy: String,
+        order: String
+    ) = viewModelScope.launch {
+        _isLoading.value = true
+        try {
+            _animals.value = repository.sortAnimals(sortBy, order)
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
     open fun toggleFavorite(animal: Animal) {
         val current = _favorites.value ?: emptyList()
         _favorites.value = if (current.any { it.id == animal.id }) {
@@ -80,7 +80,6 @@ open class AnimalViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    /** 🔍 Selecionar animal */
     fun selecionarAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
     }

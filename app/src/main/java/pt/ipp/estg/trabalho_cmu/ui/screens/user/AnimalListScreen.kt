@@ -20,21 +20,22 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
+import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AnimalViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalListScreen(
+    viewModel: AnimalViewModel,
     onAnimalClick: (Int) -> Unit = {}
 ) {
     var favorites by remember { mutableStateOf(listOf<Int>()) } // IDs favoritos
     var search by remember { mutableStateOf("") }
 
-    val animals = listOf(
-        Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
-        Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
-        Animal(3, "Tito", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato3, 1)
-    )
+    // ✅ Observa os animais do ViewModel (StateFlow)
+    val animals by viewModel.animals.collectAsState()
 
     Column(
         modifier = Modifier
@@ -90,11 +91,23 @@ fun AnimalListScreen(
     }
 }
 
+// 🧩 Mock do ViewModel (só para Preview)
+class MockAnimalViewModel : AnimalViewModel() {
+    val animals: StateFlow<List<Animal>> = MutableStateFlow(
+        listOf(
+            Animal(1, "Leia", "Unknown", "Cat", "Small", "2019-01-01", R.drawable.gato1, 1),
+            Animal(2, "Noa", "Unknown", "Cat", "Small", "2022-01-01", R.drawable.gato2, 1),
+            Animal(3, "Tito", "Unknown", "Cat", "Medium", "2011-01-01", R.drawable.gato3, 1)
+        )
+    )
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AnimalListScreenPreview() {
+    val mockViewModel = MockAnimalViewModel()
     MaterialTheme {
-        AnimalListScreen()
+        AnimalListScreen(viewModel = mockViewModel)
     }
 }
