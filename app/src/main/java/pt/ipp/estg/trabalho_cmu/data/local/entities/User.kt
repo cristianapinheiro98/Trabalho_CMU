@@ -12,11 +12,6 @@ data class User(
     val email: String,
     val phone: String,
     val password: String,
-
-    /**
-     * Tipo de conta:
-     * - "utilizador"
-     * - "abrigo"
-     */
-    val userType: UserType
+    val userType: UserType,
+    val shelterId: Int?=null
 )

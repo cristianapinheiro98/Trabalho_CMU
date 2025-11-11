@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import androidx.lifecycle.LiveData
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
 
 /**
  * Repository for managing Shelter data.
@@ -17,6 +18,7 @@ class ShelterRepository(private val shelterDao: ShelterDao) {
     suspend fun getShelterById(id: Int): Shelter? = shelterDao.getShelterById(id)
 
     suspend fun insertShelter(shelter: Shelter) = shelterDao.insertShelter(shelter)
+
 
     suspend fun updateShelter(shelter: Shelter) = shelterDao.updateShelter(shelter)
 

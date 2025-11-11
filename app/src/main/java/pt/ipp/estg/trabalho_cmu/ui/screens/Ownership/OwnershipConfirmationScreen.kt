@@ -36,7 +36,7 @@ fun OwnershipConfirmationScreen(
 ) {
 
     LaunchedEffect(animalId) {
-        animalViewModel.loadAnimalById(animalId)
+        animalViewModel.selectAnimal(animalId)
     }
 
     // Observa os dados

@@ -201,7 +201,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
-                    imageUrl = R.drawable.cat_image
+                    imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(
                     id = 0,
@@ -228,7 +228,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "20/03/2021",
                     size = "large",
                     species = "dog",
-                    imageUrl = R.drawable.cat_image
+                    imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(
                     id = 0,

@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.startScreen
+package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -29,6 +29,10 @@ fun RegisterScreen(
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
     val tipoConta by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
+
+    var shelterName by remember { mutableStateOf("") }
+    var shelterAddress by remember { mutableStateOf("") }
+    var shelterContact by remember { mutableStateOf("") }
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
@@ -100,7 +104,7 @@ fun RegisterScreen(
                     .fillMaxWidth()
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                UserType.values().forEach { tipo ->
+                UserType.entries.forEach { tipo ->
                     DropdownMenuItem(
                         text = { Text(tipo.label) },
                         onClick = {
@@ -111,12 +115,53 @@ fun RegisterScreen(
                 }
             }
         }
+        Spacer(Modifier.height(16.dp))
+
+        if (tipoConta == UserType.ABRIGO) {
+            Divider(Modifier.padding(vertical = 8.dp))
+            Text(
+                "Informações do Abrigo",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = shelterName,
+                onValueChange = { shelterName = it },
+                label = { Text("Nome do Abrigo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = shelterAddress,
+                onValueChange = { shelterAddress = it },
+                label = { Text("Morada do Abrigo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = shelterContact,
+                onValueChange = { shelterContact = it },
+                label = { Text("Contacto do Abrigo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(16.dp))
+        }
+
 
         Spacer(Modifier.height(24.dp))
 
-        // Botão Criar Conta
         Button(
-            onClick = { viewModel.register() },
+            onClick = {
+                if (tipoConta == UserType.ABRIGO) {
+                    println("Abrigo: $shelterName - $shelterAddress - $shelterContact")
+                }
+
+                viewModel.register()
+            },
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -140,7 +185,6 @@ fun RegisterScreen(
         }
     }
 
-    // 🔹 Mensagem de erro
     error?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
@@ -152,7 +196,6 @@ fun RegisterScreen(
         )
     }
 
-    // 🔹 Mensagem de sucesso
     message?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearMessage() },
@@ -167,6 +210,7 @@ fun RegisterScreen(
         )
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {

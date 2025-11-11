@@ -9,32 +9,81 @@ import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
 import java.io.IOException
 
 class AnimalRepository(private val animalDao: AnimalDao) {
-    fun getAllAnimals() : LiveData<List<Animal>> = animalDao.getAllAnimals()
+    fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
     suspend fun getAnimalById(animalId: Int) = animalDao.getAnimalById(animalId)
+
     suspend fun insertAnimal(animal: Animal) = animalDao.insertAnimal(animal)
 
-    /*suspend fun refreshAnimals(
-        sortBy: String? = null,
-        order: String? = null
-    ): List<Animal> = withContext(Dispatchers.IO) {
+    suspend fun fetchAnimals(): List<Animal> = withContext(Dispatchers.IO) {
         try {
-            // Vai buscar dados remotos
-            val remoteAnimals = RetrofitInstance.api.getAnimais(sortBy, order)
-
-            // 🔹 2. Atualiza a base de dados local de forma eficiente
-            animalDao.clearAll() // opcional, se quiseres substituir tudo
+            val remoteAnimals = RetrofitInstance.api.getAnimais()
+            animalDao.clearAll()
             animalDao.insertAll(remoteAnimals)
-
-            // 🔹 3. Retorna lista atualizada
             remoteAnimals
         } catch (e: IOException) {
             e.printStackTrace()
-            // 🔹 4. Em caso de erro de rede, retorna dados locais
-            animalDao.getAllAnimals()
-        } as List<Animal>
-    }*/
+            animalDao.getAllAnimalsNow()
+        }
+    }
+    suspend fun filterBySpecies(species: String): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(species = species)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
 
-
+    suspend fun filterBySize(size: String): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(size = size)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
+    suspend fun filterByGender(gender: String): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(gender = gender)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
+    suspend fun sortByName(order: String = "asc"): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(sortBy = "name", order = order)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
+    suspend fun sortByAge(order: String = "asc"): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(sortBy = "age", order = order)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
+    suspend fun sortByDate(order: String = "desc"): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            val remote = RetrofitInstance.api.getAnimais(sortBy = "createdAt", order = order)
+            animalDao.clearAll()
+            animalDao.insertAll(remote)
+            remote
+        } catch (e: IOException) {
+            animalDao.getAllAnimalsNow()
+        }
+    }
 }
-
-
