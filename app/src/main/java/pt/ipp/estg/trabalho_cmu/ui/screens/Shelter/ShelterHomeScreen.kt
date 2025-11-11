@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.admin
+package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun AdminHomeScreen(
+fun ShelterHomeScreen(
     onRegisterClick: () -> Unit = {},
     onRequestsClick: () -> Unit = {}
 ) {
@@ -53,5 +53,5 @@ fun AdminHomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAdminHomeScreen() {
-    AdminHomeScreen()
+    ShelterHomeScreen()
 }

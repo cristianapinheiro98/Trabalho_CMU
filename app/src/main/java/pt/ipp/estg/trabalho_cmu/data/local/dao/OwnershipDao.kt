@@ -13,7 +13,11 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 interface OwnershipDao {
 
     @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId ORDER BY createdAt DESC")
-    fun getOwnershipsByUser(userId: String): LiveData<List<Ownership>>
+    fun getOwnershipsByUser(userId: Int): LiveData<List<Ownership>>
+
+    @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId ORDER BY createdAt DESC")
+    fun getOwnershipsByShelter(shelterId: Int): LiveData<List<Ownership>>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOwnership(ownership: Ownership)

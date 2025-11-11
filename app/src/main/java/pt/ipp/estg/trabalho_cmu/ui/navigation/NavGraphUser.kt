@@ -20,9 +20,9 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankin
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.admin.ShelterViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.user.GuestScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.GuestScreen
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 

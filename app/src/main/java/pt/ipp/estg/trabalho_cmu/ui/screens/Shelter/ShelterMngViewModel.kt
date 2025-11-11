@@ -1,23 +1,34 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.admin
+package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
-import pt.ipp.estg.trabalho_cmu.data.repository.AdminRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.ShelterOwnershipRequestRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.BreedRepository
 
-class AdminViewModel(application: Application) : AndroidViewModel(application) {
+/**
+ * ViewModel responsible for managing shelter-related operations:
+ * - Managing adoption (ownership) requests
+ * - Creating new animals
+ * - Handling breeds and form validation
+ */
+class ShelterMngViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = AdminRepository(AppDatabase.getDatabase(application))
-    private val breedRepository = BreedRepository() // 🆕 Repository para raças
+    private val ownershipRepository = ShelterOwnershipRequestRepository(
+        AppDatabase.getDatabase(application).ownershipDao()
+    )
+
+    private val animalRepository = AnimalRepository(
+        AppDatabase.getDatabase(application).animalDao()
+    )
+
+    private val breedRepository = BreedRepository()
 
     private val _pedidos = MutableLiveData<List<PedidoAdocao>>(emptyList())
     val pedidos: LiveData<List<PedidoAdocao>> = _pedidos
@@ -25,7 +36,6 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
     private val _animalForm = MutableLiveData(AnimalForm())
     val animalForm: LiveData<AnimalForm> = _animalForm
 
-    // 🆕 Estado das raças
     private val _availableBreeds = MutableLiveData<List<Breed>>(emptyList())
     val availableBreeds: LiveData<List<Breed>> = _availableBreeds
 
@@ -42,37 +52,64 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
     val message: LiveData<String?> = _message
 
     init {
-        carregarPedidos()
+        loadOwnershipRequests()
     }
 
-    fun carregarPedidos() {
+    /**
+     * Loads all ownership/adoption requests pending review.
+     */
+    fun loadOwnershipRequests() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                _pedidos.value = repository.getAllPedidos()
+                // Replace this with your actual DAO logic returning LiveData<List<Ownership>>
+                // For now, simulating requests
+                _pedidos.value = listOf(
+                    PedidoAdocao("1", "José Lemos", "joselemos@example.com", "Bolinhas"),
+                    PedidoAdocao("2", "Maria Silva", "maria@example.com", "Luna")
+                )
                 _error.value = null
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar pedidos: ${e.message}"
+                _error.value = "Error loading requests: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun aprovarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido aprovado com sucesso!")
-    fun rejeitarPedido(pedido: PedidoAdocao) = atualizarPedido(pedido, "Pedido rejeitado.")
-
-    private fun atualizarPedido(pedido: PedidoAdocao, msg: String) {
+    /**
+     * Approves an ownership/adoption request.
+     */
+    fun approveRequest(pedido: PedidoAdocao) {
         viewModelScope.launch {
             try {
-                repository.deletePedidoById(pedido.id) // placeholder
+                ownershipRepository.approveOwnershipRequest(pedido.id.toInt())
                 _pedidos.value = _pedidos.value?.filterNot { it.id == pedido.id }
-                _message.value = msg
+                _message.value = "Request approved successfully!"
             } catch (e: Exception) {
-                _error.value = "Erro ao atualizar pedido: ${e.message}"
+                _error.value = "Error approving request: ${e.message}"
             }
         }
     }
+
+    /**
+     * Rejects an ownership/adoption request.
+     */
+    fun rejectRequest(pedido: PedidoAdocao) {
+        viewModelScope.launch {
+            try {
+                ownershipRepository.rejectOwnershipRequest(pedido.id.toInt())
+                _pedidos.value = _pedidos.value?.filterNot { it.id == pedido.id }
+                _message.value = "Request rejected."
+            } catch (e: Exception) {
+                _error.value = "Error rejecting request: ${e.message}"
+            }
+        }
+    }
+
+    /**
+     * Loads breeds for a given species (dog/cat).
+     */
     private fun loadBreedsBySpecies(species: String) {
         if (species.isBlank()) {
             _availableBreeds.value = emptyList()
@@ -80,7 +117,6 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         _isLoadingBreeds.value = true
-
         breedRepository.getBreedsBySpecies(
             species = species,
             onSuccess = { breeds ->
@@ -95,12 +131,8 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    /**
-     * Carregar raças de cães manualmente
-     */
     fun loadDogBreeds() {
         _isLoadingBreeds.value = true
-
         breedRepository.getDogBreeds(
             onSuccess = { breeds ->
                 _availableBreeds.value = breeds
@@ -113,12 +145,8 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    /**
-     * Carregar raças de gatos manualmente
-     */
     fun loadCatBreeds() {
         _isLoadingBreeds.value = true
-
         breedRepository.getCatBreeds(
             onSuccess = { breeds ->
                 _availableBreeds.value = breeds
@@ -130,19 +158,15 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
             }
         )
     }
+
     fun onNameChange(value: String) = updateForm { copy(name = value) }
-
     fun onBreedChange(value: String) = updateForm { copy(breed = value) }
-
     fun onSpeciesChange(value: String) {
         updateForm { copy(species = value) }
         loadBreedsBySpecies(value)
     }
-
     fun onSizeChange(value: String) = updateForm { copy(size = value) }
-
     fun onBirthDateChange(value: String) = updateForm { copy(birthDate = value) }
-
     fun onImageUrlChange(value: String) {
         val parsed = value.toIntOrNull() ?: 0
         updateForm { copy(imageUrl = parsed) }
@@ -152,17 +176,19 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
-    fun guardarAnimal() {
+    /**
+     * Saves a new animal record to the local database.
+     */
+    fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
 
-        // Validação
         if (form.name.isBlank() || form.breed.isBlank()) {
-            _error.value = "Preenche pelo menos o Nome e a Raça."
+            _error.value = "Please fill in at least Name and Breed."
             return
         }
 
         if (form.species.isBlank()) {
-            _error.value = "Seleciona a Espécie."
+            _error.value = "Select a species."
             return
         }
 
@@ -170,36 +196,31 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 _isLoading.value = true
 
-                val novoAnimal = Animal(
+                val newAnimal = Animal(
                     name = form.name.trim(),
                     breed = form.breed.trim(),
                     species = form.species.trim(),
-                    size = form.size.ifBlank { "Médio" }.trim(),
+                    size = form.size.ifBlank { "Medium" }.trim(),
                     birthDate = form.birthDate.trim(),
                     imageUrl = listOf(form.imageUrl),
                     shelterId = 1
                 )
-                repository.addAnimal(novoAnimal)
 
-                // Limpar form após sucesso
+                animalRepository.insertAnimal(newAnimal)
+
                 _animalForm.value = AnimalForm()
                 _availableBreeds.value = emptyList()
 
-                _message.value = "Animal guardado com sucesso!"
+                _message.value = "Animal saved successfully!"
                 _error.value = null
             } catch (e: Exception) {
-                _error.value = "Erro ao guardar animal: ${e.message}"
+                _error.value = "Error saving animal: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun clearMessage() {
-        _message.value = null
-    }
-
-    fun clearError() {
-        _error.value = null
-    }
+    fun clearMessage() { _message.value = null }
+    fun clearError() { _error.value = null }
 }

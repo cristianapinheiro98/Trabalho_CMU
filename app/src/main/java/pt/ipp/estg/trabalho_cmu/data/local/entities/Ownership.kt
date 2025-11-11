@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 
@@ -12,7 +13,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
  */
 @Entity(
     tableName = "OwnershipRequests"
-/*,
+,
     foreignKeys = [
         ForeignKey(
             entity = User::class,
@@ -32,7 +33,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
             childColumns = ["shelterId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]*/
+    ]
 )
 data class Ownership(
     @PrimaryKey(autoGenerate = true)

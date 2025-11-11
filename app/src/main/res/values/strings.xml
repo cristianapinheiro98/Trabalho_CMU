@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tailwagger</string>
     <string name="language_pt">Portuguese</string>
@@ -7,13 +8,14 @@
     <string name="terms_title">Important Information and Contractual Terms:</string>
     <string name="terms_content">
         After applying for a Special Adoption, your application will be reviewed.\n\n
-        • The user will be the legal holder of the animal, which implies valid consent. Legally, you will be the owner of the animal under special adoption.\n\n
-        • All expenses related to the animal will be your responsibility. These include food, health, and veterinary care.\n\n
-        • The animal will remain in the shelter, but you may visit or spend time with it whenever you wish, through prior scheduling with the shelter.\n\n
-        • Monthly payments will be made to cover the animal’s daily needs (an amount agreed upon between the shelter and the user).\n\n
-        • Any illness or health condition the animal may develop will be your responsibility, including all veterinary expenses.\n\n
-        • To proceed with the request, it is mandatory to read and accept the contractual terms. The special adoption will only be finalized when the contract is signed by the guardian and validated by the shelter.
+        - The user will be the legal holder of the animal, which implies valid consent. Legally, you will be the owner of the animal under special adoption.\n\n
+        - All expenses related to the animal will be your responsibility. These include food, health, and veterinary care.\n\n
+        - The animal will remain in the shelter, but you may visit or spend time with it whenever you wish, through prior scheduling with the shelter.\n\n
+        - Monthly payments will be made to cover the animal\'s daily needs (an amount agreed upon between the shelter and the user).\n\n
+        - Any illness or health condition the animal may develop will be your responsibility, including all veterinary expenses.\n\n
+        - To proceed with the request, it is mandatory to read and accept the contractual terms. The special adoption will only be finalized when the contract is signed by the guardian and validated by the shelter.
     </string>
+
     <string name="terms_accept_checkbox">I accept the contractual terms</string>
     <string name="terms_continue_button">Continue</string>
     <string name="terms_warning_message">You can only continue after accepting the terms and conditions</string>
@@ -40,7 +42,7 @@
     <string name="visit_end_label">End:</string>
     <string name="visit_pickup_time">Pickup time:</string>
     <string name="visit_delivery_time">Return time:</string>
-    <string name="visit_schedule_button">Let's schedule!</string>
+    <string name="visit_schedule_button">Let\'s schedule!</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Active Appointments</string>
@@ -62,7 +64,7 @@
     <!-- Overall Ranking -->
     <string name="ranking_overall_1_name">Salazar, by Manuel</string>
     <string name="ranking_overall_1_distance">25</string>
-    <string name="ranking_overall_2_name">Silvestre, by António</string>
+    <string name="ranking_overall_2_name">Silvestre, by Antonio</string>
     <string name="ranking_overall_2_distance">23</string>
     <string name="ranking_overall_3_name">Mini, by Carla</string>
     <string name="ranking_overall_3_distance">22</string>
