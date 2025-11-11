@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,9 +20,17 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 //import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.tasks.await
+import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
+import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
 //@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        val lang = LanguagePreferences.getLanguage(newBase)
+        val context = LocaleHelper.setLocale(newBase, lang)
+        super.attachBaseContext(context)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

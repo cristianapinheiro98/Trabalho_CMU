@@ -1,7 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
 import android.util.Log
-import pt.ipp.estg.trabalho_cmu.data.api.RetrofitClient
+import pt.ipp.estg.trabalho_cmu.data.remote.api.objects.RetrofitClient
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.models.CatBreedResponse
 import pt.ipp.estg.trabalho_cmu.data.models.DogBreedsResponse

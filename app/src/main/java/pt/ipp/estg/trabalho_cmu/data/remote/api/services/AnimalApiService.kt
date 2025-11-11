@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.data.remote.api
+package pt.ipp.estg.trabalho_cmu.data.remote.api.services
 
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import retrofit2.http.GET

@@ -1,65 +1,75 @@
 <resources>
     <string name="app_name">Tailwagger</string>
+    <string name="language_pt">Portuguese</string>
+    <string name="language_en">English</string>
 
     <!-- Terms and Conditions Screen -->
-    <string name="terms_title">Informações Importantes e Termos Contratuais:</string>
-    <string name="terms_content">Após candidatar-se para Adotar de forma Especial, a sua candidatura vai ser analisada.\n\n• O/a utilizador/a será o titular do animal afetivo, o que implica uma vontade válida. Legalmente será o dono do animal do qual fará a adoção especial.\n\n• Todas as despesas do animal serão mantidas por si. Estas despesas são relacionadas com alimentação, saúde, e acompanhamento veterinário\n\n• O animal mantém-se no abrigo, mas poderá vê-lo e ficar com ele sempre que assim o entender, através de agendamentos prévios com o abrigo.\n\n• Serão feito débitos mensais para cobrir todas necessidades quotidianas do animal (um valor que é acordado entre o CAA e o utilizador).\n\n• Qualquer doença que o animal possa vir a ter é da sua responsabilidade o seu tratamento, bem como, outras despesas veterinárias.\n\n• Para continuar com o pedido, é obrigatório a leitura dos termos contratuais e a adoção especial só será efetivada quando o contrato for assinado pelo tutor e validada pelo abrigo.</string>
-    <string name="terms_accept_checkbox">Aceito os termos contratuais</string>
-    <string name="terms_continue_button">Continuar</string>
-    <string name="terms_warning_message">Só pode continuar depois de aceitar os termos e condições</string>
+    <string name="terms_title">Important Information and Contractual Terms:</string>
+    <string name="terms_content">
+        After applying for a Special Adoption, your application will be reviewed.\n\n
+        • The user will be the legal holder of the animal, which implies valid consent. Legally, you will be the owner of the animal under special adoption.\n\n
+        • All expenses related to the animal will be your responsibility. These include food, health, and veterinary care.\n\n
+        • The animal will remain in the shelter, but you may visit or spend time with it whenever you wish, through prior scheduling with the shelter.\n\n
+        • Monthly payments will be made to cover the animal’s daily needs (an amount agreed upon between the shelter and the user).\n\n
+        • Any illness or health condition the animal may develop will be your responsibility, including all veterinary expenses.\n\n
+        • To proceed with the request, it is mandatory to read and accept the contractual terms. The special adoption will only be finalized when the contract is signed by the guardian and validated by the shelter.
+    </string>
+    <string name="terms_accept_checkbox">I accept the contractual terms</string>
+    <string name="terms_continue_button">Continue</string>
+    <string name="terms_warning_message">You can only continue after accepting the terms and conditions</string>
 
     <!-- Ownership Form Screen -->
-    <string name="ownership_title">Formulário de Ownership</string>
-    <string name="ownership_subtitle">Preencha as suas informações pessoais</string>
-    <string name="ownership_account_number">Número de conta:</string>
-    <string name="ownership_owner_name">Nome do titular:</string>
+    <string name="ownership_title">Ownership Form</string>
+    <string name="ownership_subtitle">Please fill in your personal information</string>
+    <string name="ownership_account_number">Account number:</string>
+    <string name="ownership_owner_name">Account holder name:</string>
     <string name="ownership_cvv">CVV:</string>
-    <string name="ownership_card_passport">Cartão cidadão/ Passport:</string>
+    <string name="ownership_card_passport">Citizen Card / Passport:</string>
     <string name="ownership_password">Password</string>
-    <string name="ownership_submit_button">Adotar Especial</string>
+    <string name="ownership_submit_button">Special Adoption</string>
 
     <!-- Ownership Confirmation Screen -->
-    <string name="confirmation_title">Parabéns, %1$s!</string>
-    <string name="confirmation_message">O abrigo %1$s receberá a sua candidatura para adotar %2$s.</string>
-    <string name="confirmation_notification">Será notificado quando houver uma resposta.</string>
-    <string name="confirmation_back_button">Ir para o menu principal</string>
+    <string name="confirmation_title">Congratulations, %1$s!</string>
+    <string name="confirmation_message">The shelter %1$s will receive your application to adopt %2$s.</string>
+    <string name="confirmation_notification">You will be notified once a response is available.</string>
+    <string name="confirmation_back_button">Go to main menu</string>
 
     <!-- Activity Scheduling Screen -->
-    <string name="visit_title">Olá, vens-me ver?</string>
-    <string name="visit_start_label">Início:</string>
-    <string name="visit_end_label">Fim:</string>
-    <string name="visit_pickup_time">Hora de levantamento:</string>
-    <string name="visit_delivery_time">Hora de Entrega:</string>
-    <string name="visit_schedule_button">Vamos agendar!</string>
+    <string name="visit_title">Hey, are you coming to see me?</string>
+    <string name="visit_start_label">Start:</string>
+    <string name="visit_end_label">End:</string>
+    <string name="visit_pickup_time">Pickup time:</string>
+    <string name="visit_delivery_time">Return time:</string>
+    <string name="visit_schedule_button">Let's schedule!</string>
 
     <!-- Activities History Screen -->
-    <string name="appointment_title">Agendamentos Ativos</string>
-    <string name="shelter">Abrigo</string>
-    <string name="contact">Contato</string>
-    <string name="address">Morada</string>
-    <string name="pickup_date">Data de Levantamento</string>
-    <string name="pickup_time">Hora de Levantamento</string>
-    <string name="delivery_date">Data de Entrega</string>
-    <string name="delivery_time">Hora de Entrega</string>
-    <string name="view_location">Ver localização no Google Maps</string>
-    <string name="no_activities_scheduled">Sem atividades agendadas</string>
+    <string name="appointment_title">Active Appointments</string>
+    <string name="shelter">Shelter</string>
+    <string name="contact">Contact</string>
+    <string name="address">Address</string>
+    <string name="pickup_date">Pickup Date</string>
+    <string name="pickup_time">Pickup Time</string>
+    <string name="delivery_date">Return Date</string>
+    <string name="delivery_time">Return Time</string>
+    <string name="view_location">View location on Google Maps</string>
+    <string name="no_activities_scheduled">No activities scheduled</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>
-    <string name="forever">De Sempre</string>
-    <string name="this_month">Este Mês</string>
+    <string name="forever">All Time</string>
+    <string name="this_month">This Month</string>
 
     <!-- Overall Ranking -->
-    <string name="ranking_overall_1_name">Salazar, do Manuel</string>
+    <string name="ranking_overall_1_name">Salazar, by Manuel</string>
     <string name="ranking_overall_1_distance">25</string>
-    <string name="ranking_overall_2_name">Silvestre, do António</string>
+    <string name="ranking_overall_2_name">Silvestre, by António</string>
     <string name="ranking_overall_2_distance">23</string>
-    <string name="ranking_overall_3_name">Mini, da Carla</string>
+    <string name="ranking_overall_3_name">Mini, by Carla</string>
     <string name="ranking_overall_3_distance">22</string>
 
-    <!-- SocialTails Comunity -->
+    <!-- SocialTails Community -->
     <string name="socialtails_comunity">SocialTails Community</string>
-    <string name="activity_1">Hoje o Miguel passeou a Maria durante 5km</string>
-    <string name="activity_2">Mais 3km para a Meggy</string>
-    <string name="view_ranking">Ver Ranking</string>
+    <string name="activity_1">Today Miguel walked Maria for 5km</string>
+    <string name="activity_2">Another 3km for Meggy</string>
+    <string name="view_ranking">View Ranking</string>
 </resources>
