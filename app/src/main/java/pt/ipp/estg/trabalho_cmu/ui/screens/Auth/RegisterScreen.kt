@@ -23,16 +23,16 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel
 ) {
-    val name by viewModel.nome.observeAsState("")
-    val adress by viewModel.morada.observeAsState("")
-    val phone by viewModel.telefone.observeAsState("")
+    val name by viewModel.name.observeAsState("")
+    val adress by viewModel.address.observeAsState("")
+    val phone by viewModel.contact.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
-    val userType by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
+    val userType by viewModel.userType.observeAsState(UserType.UTILIZADOR)
 
-    var shelterName by remember { mutableStateOf("") }
-    var shelterAddress by remember { mutableStateOf("") }
-    var shelterContact by remember { mutableStateOf("") }
+    val shelterName by viewModel.shelterName.observeAsState("")
+    val shelterAddress by viewModel.shelterAddress.observeAsState("")
+    val shelterContact by viewModel.shelterContact.observeAsState("")
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
@@ -53,7 +53,7 @@ fun RegisterScreen(
         // Campos de entrada
         OutlinedTextField(
             value = name,
-            onValueChange = { viewModel.nome.value = it },
+            onValueChange = { viewModel.name.value = it },
             label = { Text("Nome completo") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -61,7 +61,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = adress,
-            onValueChange = { viewModel.morada.value = it },
+            onValueChange = { viewModel.address.value = it },
             label = { Text("Morada") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -69,7 +69,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = phone,
-            onValueChange = { viewModel.telefone.value = it },
+            onValueChange = { viewModel.contact.value = it },
             label = { Text("Telefone") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -107,7 +107,7 @@ fun RegisterScreen(
                     DropdownMenuItem(
                         text = { Text(tipo.label) },
                         onClick = {
-                            viewModel.tipoConta.value = tipo
+                            viewModel.userType.value = tipo
                             expanded = false
                         }
                     )
@@ -127,7 +127,7 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = shelterName,
-                onValueChange = { shelterName = it },
+                onValueChange = { viewModel.shelterName.value = it },
                 label = { Text("Nome do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -135,7 +135,7 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = shelterAddress,
-                onValueChange = { shelterAddress = it },
+                onValueChange = { viewModel.shelterAddress.value = it },
                 label = { Text("Morada do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -143,7 +143,7 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = shelterContact,
-                onValueChange = { shelterContact = it },
+                onValueChange = { viewModel.shelterContact.value = it },
                 label = { Text("Contacto do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -155,10 +155,6 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                if (userType == UserType.ABRIGO) {
-                    println("Abrigo: $shelterName - $shelterAddress - $shelterContact")
-                }
-
                 viewModel.register()
             },
             enabled = !isLoading,
@@ -217,11 +213,11 @@ fun MockAuthViewModel(): AuthViewModel {
     // devolve apenas uma instância estática simples
     val context = LocalContext.current.applicationContext as Application
     return AuthViewModel(context).apply {
-        nome.value = "Maria Silva"
-        morada.value = "Rua das Flores 123"
-        telefone.value = "912345678"
+        name.value = "Maria Silva"
+        address.value = "Rua das Flores 123"
+        contact.value = "912345678"
         email.value = "maria@example.com"
-        tipoConta.value = UserType.ABRIGO
+        userType.value = UserType.ABRIGO
     }
 }
 

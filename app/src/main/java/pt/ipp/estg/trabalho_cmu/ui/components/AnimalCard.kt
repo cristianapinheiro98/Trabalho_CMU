@@ -35,7 +35,7 @@ fun AnimalCard(
     onToggleFavorite: (() -> Unit)? = null
 ) {
     val age = calculateAge(animal.birthDate)
-    val mainImage = animal.imageUrl.firstOrNull()
+    val mainImage = animal.imageUrl
 
     Card(
         modifier = Modifier
@@ -80,7 +80,7 @@ fun AnimalCard(
                 }
                 if (onToggleFavorite != null) {
                     IconButton(
-                        onClick = onToggleFavorite, // ← esta função é chamada ao clicar
+                        onClick = onToggleFavorite,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(4.dp)

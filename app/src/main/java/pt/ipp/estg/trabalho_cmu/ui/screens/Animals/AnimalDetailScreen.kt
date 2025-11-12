@@ -38,11 +38,11 @@ fun AnimalDetailScreen(
     animalId: Int,
     onAdoptClick: () -> Unit = {}
 ) {
-    val animal by viewModel.selectedAnimal.observeAsState()
-
     LaunchedEffect(animalId) {
         viewModel.selectAnimal(animalId)
     }
+
+    val animal by viewModel.selectedAnimal.observeAsState()
 
     if (animal == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -50,17 +50,17 @@ fun AnimalDetailScreen(
         }
         return
     }
-
     val imageGallery: List<Int> = remember(animal) {
         val imgs = animal!!.imageUrl
-        if (imgs.isNotEmpty() && imgs.first() is Int) {
-            @Suppress("UNCHECKED_CAST")
-            (imgs as List<Int>)
-        } else {
-            listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3)
-        }
+            .filter { it != 0 } // remove IDs inválidos
+        if (imgs.isNotEmpty()) imgs
+        else listOf(R.drawable.dog_image) // placeholder local
     }
-    var mainImage by remember(imageGallery) { mutableStateOf(imageGallery.first()) }
+
+    var mainImage by remember(imageGallery) {
+        mutableStateOf(imageGallery.first())
+    }
+
 
     Column(
         modifier = Modifier
@@ -149,8 +149,9 @@ private fun ImageGallery(
             .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
             .background(Color.Black)
     ) {
+        val safeMainImage = if (mainImage != 0) mainImage else R.drawable.dog_image
         Image(
-            painter = painterResource(id = mainImage),
+            painter = painterResource(id = safeMainImage),
             contentDescription = "Imagem Principal",
             modifier = Modifier
                 .fillMaxWidth()

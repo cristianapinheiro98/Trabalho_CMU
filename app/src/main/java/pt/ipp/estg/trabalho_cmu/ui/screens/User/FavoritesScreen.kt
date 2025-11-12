@@ -57,7 +57,7 @@ fun FavoritesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Ainda não adicionaste nenhum animal aos favoritos 🐾",
+                    text = "Ainda não adicionaste nenhum animal aos favoritos.",
                     color = Color.Gray,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,

@@ -33,7 +33,7 @@ fun getUserDrawerOptions() = listOf(
     DrawerOption("Menu Principal", Icons.Outlined.Home, "UserHome"),
     DrawerOption("Perfil", Icons.Outlined.Person, "UserProfile"),
     DrawerOption("Catálogo de Animais", Icons.Outlined.Pets, "AnimalsCatalogue"),
-    DrawerOption("Animais Favoritos", Icons.Outlined.FavoriteBorder, "Favourites"),
+    DrawerOption("Animais Favoritos", Icons.Outlined.FavoriteBorder, "Favorites"),
     DrawerOption("Comunidade SocialTails", Icons.Outlined.Groups, "Community"),
     DrawerOption("Lista de Veterinários", Icons.Outlined.Vaccines, "Veterinarians")
 )

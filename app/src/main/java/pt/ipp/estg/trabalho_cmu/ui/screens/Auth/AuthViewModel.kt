@@ -1,19 +1,28 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    // ✅ Repositório inicializado automaticamente com o contexto da app
     private val userRepository: UserRepository by lazy {
         val db = AppDatabase.getDatabase(application)
         UserRepository(db.userDao())
+    }
+
+    private val shelterRepository: ShelterRepository by lazy {
+        val db = AppDatabase.getDatabase(application)
+        ShelterRepository(db.shelterDao())
     }
 
     private val _isLoading = MutableLiveData(false)
@@ -31,16 +40,19 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _isRegistered = MutableLiveData(false)
     val isRegistered: LiveData<Boolean> = _isRegistered
 
-    // Usuário logado
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> = _currentUser
 
-    val nome = MutableLiveData("")
-    val morada = MutableLiveData("")
-    val telefone = MutableLiveData("")
+    val name = MutableLiveData("")
+    val address = MutableLiveData("")
+    val contact = MutableLiveData("")
     val email = MutableLiveData("")
     val password = MutableLiveData("")
-    val tipoConta = MutableLiveData(UserType.UTILIZADOR)
+    val userType = MutableLiveData(UserType.UTILIZADOR)
+
+    val shelterName = MutableLiveData("")
+    val shelterAddress = MutableLiveData("")
+    val shelterContact = MutableLiveData("")
 
     fun login() = viewModelScope.launch {
         val emailValue = email.value?.trim().orEmpty()
@@ -74,18 +86,29 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun register() = viewModelScope.launch {
-        val nameValue = nome.value?.trim().orEmpty()
-        val adressValue = morada.value?.trim().orEmpty()
-        val phoneValue = telefone.value?.trim().orEmpty()
+        val nameValue = name.value?.trim().orEmpty()
+        val addressValue = address.value?.trim().orEmpty()
+        val phoneValue = contact.value?.trim().orEmpty()
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
-        val userTypeValue = tipoConta.value ?: UserType.UTILIZADOR
+        val userTypeValue = userType.value ?: UserType.UTILIZADOR
 
-        if (nameValue.isBlank() || adressValue.isBlank() || phoneValue.isBlank() ||
+        if (nameValue.isBlank() || addressValue.isBlank() || phoneValue.isBlank() ||
             emailValue.isBlank() || passwordValue.isBlank()
         ) {
             _error.value = "Preenche todos os campos obrigatórios."
             return@launch
+        }
+
+        if (userTypeValue == UserType.ABRIGO) {
+            val shelterNameValue = shelterName.value?.trim().orEmpty()
+            val shelterAddressValue = shelterAddress.value?.trim().orEmpty()
+            val shelterContactValue = shelterContact.value?.trim().orEmpty()
+
+            if (shelterNameValue.isBlank() || shelterAddressValue.isBlank() || shelterContactValue.isBlank()) {
+                _error.value = "Preenche todos os campos do abrigo."
+                return@launch
+            }
         }
 
         if (!emailValue.contains("@") || !emailValue.contains(".")) {
@@ -109,18 +132,47 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
             val newUser = User(
                 name = nameValue,
-                adress = adressValue,
+                adress = addressValue,
                 email = emailValue,
                 phone = phoneValue,
                 password = passwordValue,
                 userType = userTypeValue
             )
 
-            userRepository.registerUser(newUser)
+            // ✅ Inserir o user e obter o ID gerado
+            val userId = userRepository.registerUser(newUser).toInt()
+            println("✅ User criado com ID: $userId")
+
+            // ✅ Se for ABRIGO, criar o Shelter e atualizar o User
+            if (userTypeValue == UserType.ABRIGO) {
+                // Criar o Shelter com o mesmo ID do User
+                val newShelter = Shelter(
+                    id = userId,
+                    name = shelterName.value?.trim().orEmpty(),
+                    address = shelterAddress.value?.trim().orEmpty(),
+                    contact = shelterContact.value?.trim().orEmpty()
+                )
+
+                shelterRepository.insertShelter(newShelter)
+                println("✅ Shelter criado com ID: $userId")
+
+                // Buscar o user recém-criado e atualizar com shelterId
+                val createdUser = userRepository.getUserById(userId)
+                if (createdUser != null) {
+                    val updatedUser = createdUser.copy(shelterId = userId)
+                    userRepository.updateUser(updatedUser)
+                    println("✅ User atualizado com shelterId: $userId")
+                } else {
+                    println("❌ Erro: User não encontrado após criação")
+                }
+            }
+
             _isRegistered.value = true
             _message.value = "Conta criada com sucesso!"
             _error.value = null
         } catch (e: Exception) {
+            println("❌ Erro no registo: ${e.message}")
+            e.printStackTrace()
             _error.value = "Erro ao criar conta: ${e.message}"
         } finally {
             _isLoading.value = false
@@ -134,12 +186,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearFields() {
-        nome.value = ""
-        morada.value = ""
-        telefone.value = ""
+        name.value = ""
+        address.value = ""
+        contact.value = ""
         email.value = ""
         password.value = ""
-        tipoConta.value = UserType.UTILIZADOR
+        userType.value = UserType.UTILIZADOR
+        shelterName.value = ""
+        shelterAddress.value = ""
+        shelterContact.value = ""
     }
 
     fun clearMessage() { _message.value = null }

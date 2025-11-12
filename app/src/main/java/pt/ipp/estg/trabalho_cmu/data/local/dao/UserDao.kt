@@ -18,7 +18,7 @@ interface UserDao {
 
     // Inserir (usado no registo)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User)
+    suspend fun insertUser(user: User) : Long
 
     // Atualizar perfil
     @Update
