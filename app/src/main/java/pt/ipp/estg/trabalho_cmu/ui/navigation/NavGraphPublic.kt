@@ -1,6 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
-import pt.ipp.estg.trabalho_cmu.ui.screens.startScreen.HomeScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel

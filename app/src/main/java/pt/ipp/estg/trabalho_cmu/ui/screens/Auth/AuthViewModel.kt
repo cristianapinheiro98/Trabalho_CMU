@@ -1,9 +1,12 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
