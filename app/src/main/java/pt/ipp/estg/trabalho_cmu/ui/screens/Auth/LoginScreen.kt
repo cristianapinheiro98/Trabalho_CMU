@@ -28,7 +28,7 @@ fun LoginScreen(
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val tipo = viewModel.currentUser.value
+            val type = viewModel.currentUser.value
             val isAdmin = currentUser?.userType?.name?.equals("ABRIGO", ignoreCase = true) == true
             onLoginSuccess(isAdmin)
             viewModel.clearMessage()
