@@ -47,6 +47,13 @@ open class AnimalViewModel(
     fun filterBySpecies(species: String) = applyFilter { repository?.filterBySpecies(species) ?: emptyList() }
     fun filterBySize(size: String) = applyFilter { repository?.filterBySize(size) ?: emptyList() }
     fun filterByGender(gender: String) = applyFilter { repository?.filterByGender(gender) ?: emptyList() }
+    fun sortByName() = viewModelScope.launch {
+        _animals.value = repository?.sortByName("asc")
+    }
+    fun sortByAge() = viewModelScope.launch {
+        _animals.value = repository?.sortByAge("desc")
+    }
+
 
 
     open fun toggleFavorite(animal: Animal) {

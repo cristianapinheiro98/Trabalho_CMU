@@ -38,7 +38,7 @@ fun FavoritesScreen(
             .fillMaxSize()
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        // 🔹 Título
+
         Text(
             text = "Favoritos",
             style = MaterialTheme.typography.titleLarge.copy(

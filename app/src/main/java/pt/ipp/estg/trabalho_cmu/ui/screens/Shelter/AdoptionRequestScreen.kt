@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
+import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +24,7 @@ fun AdoptionRequestScreen(
     onNavigateBack: () -> Unit = {},
     viewModel: ShelterMngViewModel = viewModel()
 ) {
-    val pedidos by viewModel.pedidos.observeAsState(emptyList())
+    val request by viewModel.requests.observeAsState(emptyList())
     val message by viewModel.message.observeAsState()
     val error by viewModel.error.observeAsState()
     Column(
@@ -33,7 +33,7 @@ fun AdoptionRequestScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (pedidos.isEmpty()) {
+        if (request.isEmpty()) {
             Text(
                 text = "Sem pedidos pendentes",
                 color = Color.Gray,
@@ -41,11 +41,11 @@ fun AdoptionRequestScreen(
                 modifier = Modifier.padding(top = 40.dp)
             )
         } else {
-            pedidos.forEach { pedido ->
+            request.forEach { pedido ->
                 PedidoCard(
-                    pedido = pedido,
-                    onAprovar = { viewModel.approveRequest(pedido) },
-                    onRejeitar = { viewModel.rejectRequest(pedido) }
+                    request = pedido,
+                    onApprove = { viewModel.approveRequest(pedido) },
+                    onReject = { viewModel.rejectRequest(pedido) }
                 )
             }
         }
@@ -78,9 +78,9 @@ fun AdoptionRequestScreen(
 
 @Composable
 fun PedidoCard(
-    pedido: PedidoAdocao,
-    onAprovar: () -> Unit,
-    onRejeitar: () -> Unit
+    request: AdoptionRequest,
+    onApprove: () -> Unit,
+    onReject: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -97,14 +97,14 @@ fun PedidoCard(
         )
 
         Row {
-            IconButton(onClick = onAprovar) {
+            IconButton(onClick = onApprove) {
                 Icon(
                     imageVector = Icons.Outlined.Check,
                     contentDescription = "Aprovar Pedido",
                     tint = Color(0xFF388E3C)
                 )
             }
-            IconButton(onClick = onRejeitar) {
+            IconButton(onClick = onReject) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Rejeitar Pedido",
@@ -125,11 +125,11 @@ fun PedidoCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(pedido.nome, fontWeight = FontWeight.Bold)
-            Text(pedido.email)
+            Text(request.nome, fontWeight = FontWeight.Bold)
+            Text(request.email)
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Animal: ${pedido.animal}")
-            Text("ID: ${pedido.id}")
+            Text("Animal: ${request.animal}")
+            Text("ID: ${request.id}")
         }
     }
 }
@@ -137,15 +137,15 @@ fun PedidoCard(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AdoptionRequestPreview() {
-    val pedidos = listOf(
-        PedidoAdocao("001", "João Sousa", "joao@example.com", "Luna"),
-        PedidoAdocao("002", "Ana Costa", "ana@example.com", "Max")
+    val requests = listOf(
+        AdoptionRequest("001", "João Sousa", "joao@example.com", "Luna"),
+        AdoptionRequest("002", "Ana Costa", "ana@example.com", "Max")
     )
 
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
-            pedidos.forEach {
-                PedidoCard(pedido = it, onAprovar = {}, onRejeitar = {})
+            requests.forEach {
+                PedidoCard(request = it, onApprove = {}, onReject = {})
             }
         }
     }

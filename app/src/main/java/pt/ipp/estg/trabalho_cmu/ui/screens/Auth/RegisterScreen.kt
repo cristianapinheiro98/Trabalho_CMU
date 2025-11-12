@@ -12,9 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,13 +21,12 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel
 ) {
-    // Observa o estado do ViewModel
-    val nome by viewModel.nome.observeAsState("")
-    val morada by viewModel.morada.observeAsState("")
-    val telefone by viewModel.telefone.observeAsState("")
+    val name by viewModel.nome.observeAsState("")
+    val adress by viewModel.morada.observeAsState("")
+    val phone by viewModel.telefone.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
-    val tipoConta by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
+    val userType by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
 
     var shelterName by remember { mutableStateOf("") }
     var shelterAddress by remember { mutableStateOf("") }
@@ -53,7 +50,7 @@ fun RegisterScreen(
 
         // Campos de entrada
         OutlinedTextField(
-            value = nome,
+            value = name,
             onValueChange = { viewModel.nome.value = it },
             label = { Text("Nome completo") },
             modifier = Modifier.fillMaxWidth()
@@ -61,7 +58,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = morada,
+            value = adress,
             onValueChange = { viewModel.morada.value = it },
             label = { Text("Morada") },
             modifier = Modifier.fillMaxWidth()
@@ -69,7 +66,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = telefone,
+            value = phone,
             onValueChange = { viewModel.telefone.value = it },
             label = { Text("Telefone") },
             modifier = Modifier.fillMaxWidth()
@@ -93,10 +90,9 @@ fun RegisterScreen(
         )
         Spacer(Modifier.height(8.dp))
 
-        // 🔹 Tipo de conta (dropdown)
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
-                value = tipoConta.label,
+                value = userType.label,
                 onValueChange = {},
                 label = { Text("Tipo de conta") },
                 readOnly = true,
@@ -118,7 +114,7 @@ fun RegisterScreen(
         }
         Spacer(Modifier.height(16.dp))
 
-        if (tipoConta == UserType.ABRIGO) {
+        if (userType == UserType.ABRIGO) {
             Divider(Modifier.padding(vertical = 8.dp))
             Text(
                 "Informações do Abrigo",
@@ -157,7 +153,7 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                if (tipoConta == UserType.ABRIGO) {
+                if (userType == UserType.ABRIGO) {
                     println("Abrigo: $shelterName - $shelterAddress - $shelterContact")
                 }
 

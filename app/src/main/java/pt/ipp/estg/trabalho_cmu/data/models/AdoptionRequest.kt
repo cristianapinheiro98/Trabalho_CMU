@@ -1,6 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.data.models
 
-data class PedidoAdocao(
+data class AdoptionRequest(
     val id: String = "",
     val nome: String = "",
     val email: String = "",

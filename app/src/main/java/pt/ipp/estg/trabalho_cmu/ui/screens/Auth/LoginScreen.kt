@@ -28,8 +28,8 @@ fun LoginScreen(
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val tipo = viewModel.tipoConta.value
-            val isAdmin = tipo?.name?.equals("ABRIGO", ignoreCase = true) == true
+            val type = viewModel.tipoConta.value
+            val isAdmin = type?.name?.equals("ABRIGO", ignoreCase = true) == true
             onLoginSuccess(isAdmin)
             viewModel.clearMessage()
         }
@@ -88,7 +88,6 @@ fun LoginScreen(
             Text("Voltar")
         }
 
-        // 🔹 Mensagem de erro
         error?.let {
             AlertDialog(
                 onDismissRequest = { viewModel.clearError() },
@@ -100,7 +99,6 @@ fun LoginScreen(
             )
         }
 
-        // 🔹 Mensagem de sucesso
         message?.let {
             AlertDialog(
                 onDismissRequest = { viewModel.clearMessage() },
@@ -117,7 +115,6 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     MaterialTheme {
-        // Usa placeholders de navegação
         LoginScreen(
             onLoginSuccess = {},
             onNavigateBack = {}

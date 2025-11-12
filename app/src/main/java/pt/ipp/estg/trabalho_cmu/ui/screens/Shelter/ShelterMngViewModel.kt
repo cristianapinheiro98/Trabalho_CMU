@@ -5,9 +5,9 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
-import pt.ipp.estg.trabalho_cmu.data.models.PedidoAdocao
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterOwnershipRequestRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.BreedRepository
@@ -30,8 +30,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private val breedRepository = BreedRepository()
 
-    private val _pedidos = MutableLiveData<List<PedidoAdocao>>(emptyList())
-    val pedidos: LiveData<List<PedidoAdocao>> = _pedidos
+    private val _requests = MutableLiveData<List<AdoptionRequest>>(emptyList())
+    val requests: LiveData<List<AdoptionRequest>> = _requests
 
     private val _animalForm = MutableLiveData(AnimalForm())
     val animalForm: LiveData<AnimalForm> = _animalForm
@@ -64,9 +64,9 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
                 // Replace this with your actual DAO logic returning LiveData<List<Ownership>>
                 // For now, simulating requests
-                _pedidos.value = listOf(
-                    PedidoAdocao("1", "José Lemos", "joselemos@example.com", "Bolinhas"),
-                    PedidoAdocao("2", "Maria Silva", "maria@example.com", "Luna")
+                _requests.value = listOf(
+                    AdoptionRequest("1", "José Lemos", "joselemos@example.com", "Bolinhas"),
+                    AdoptionRequest("2", "Maria Silva", "maria@example.com", "Luna")
                 )
                 _error.value = null
             } catch (e: Exception) {
@@ -80,11 +80,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     /**
      * Approves an ownership/adoption request.
      */
-    fun approveRequest(pedido: PedidoAdocao) {
+    fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
             try {
-                ownershipRepository.approveOwnershipRequest(pedido.id.toInt())
-                _pedidos.value = _pedidos.value?.filterNot { it.id == pedido.id }
+                ownershipRepository.approveOwnershipRequest(request.id.toInt())
+                _requests.value = _requests.value?.filterNot { it.id == request.id }
                 _message.value = "Request approved successfully!"
             } catch (e: Exception) {
                 _error.value = "Error approving request: ${e.message}"
@@ -95,11 +95,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     /**
      * Rejects an ownership/adoption request.
      */
-    fun rejectRequest(pedido: PedidoAdocao) {
+    fun rejectRequest(request: AdoptionRequest) {
         viewModelScope.launch {
             try {
-                ownershipRepository.rejectOwnershipRequest(pedido.id.toInt())
-                _pedidos.value = _pedidos.value?.filterNot { it.id == pedido.id }
+                ownershipRepository.rejectOwnershipRequest(request.id.toInt())
+                _requests.value = _requests.value?.filterNot { it.id == request.id }
                 _message.value = "Request rejected."
             } catch (e: Exception) {
                 _error.value = "Error rejecting request: ${e.message}"

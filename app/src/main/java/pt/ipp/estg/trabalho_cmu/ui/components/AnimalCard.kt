@@ -34,7 +34,7 @@ fun AnimalCard(
     onClick: (() -> Unit)? = null,
     onToggleFavorite: (() -> Unit)? = null
 ) {
-    val idade = calcularIdade(animal.birthDate)
+    val age = calculateAge(animal.birthDate)
     val mainImage = animal.imageUrl.firstOrNull()
 
     Card(
@@ -105,7 +105,7 @@ fun AnimalCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${idade ?: "?"} anos",
+                    text = "${age ?: "?"} anos",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -115,14 +115,15 @@ fun AnimalCard(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun calcularIdade(birthDate: String?): Int? {
+fun calculateAge(birthDate: String?): Int? {
     if (birthDate.isNullOrBlank()) return null
     return try {
-        val anoNascimento =
+        val birthDate =
             LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).year
-        val anoAtual = LocalDate.now().year
-        anoAtual - anoNascimento
+        val currentYear = LocalDate.now().year
+        currentYear - birthDate
     } catch (e: DateTimeParseException) {
         null
     }
 }
+

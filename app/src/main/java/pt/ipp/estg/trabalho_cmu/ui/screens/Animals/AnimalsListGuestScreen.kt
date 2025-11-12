@@ -31,7 +31,6 @@ fun GuestScreen(
 ) {
     var search by remember { mutableStateOf("") }
 
-
     val animals by viewModel.animals.observeAsState(emptyList())
 
     Column(
@@ -48,7 +47,7 @@ fun GuestScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Bem-vindo 🐾",
+                text = "Bem-vindo",
                 style = MaterialTheme.typography.titleLarge
             )
             TextButton(onClick = onLoginClick) {
