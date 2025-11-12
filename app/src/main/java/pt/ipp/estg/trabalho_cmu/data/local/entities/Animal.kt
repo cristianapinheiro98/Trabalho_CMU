@@ -24,6 +24,6 @@ data class Animal(
     val species: String,
     val size: String,
     val birthDate: String,
-    val imageUrl: List<Int>, // poderá ser URL do Firebase!!!
+    val imageUrl: List<Int>,
     val shelterId: Int
 )

@@ -1,49 +1,35 @@
 package pt.ipp.estg.trabalho_cmu.di
 
 import android.content.Context
-import com.google.android.datatransport.runtime.dagger.Module
-import com.google.android.datatransport.runtime.dagger.Provides
-//import dagger.hilt.InstallIn
-//import dagger.hilt.android.qualifiers.ApplicationContext
-//import dagger.hilt.components.SingletonComponent
+import androidx.room.Room
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
-import javax.inject.Singleton
 
-@Module
-//@InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    /*@Provides
-    @Singleton
-    fun provideDatabase(
-        //@ApplicationContext context: Context
-    ): AppDatabase {
-        //return AppDatabase.getDatabase(context)
-    }*/
+    @Volatile private var databaseInstance: AppDatabase? = null
 
-    //Adicionar os daos aqui
-    @Provides
-    fun provideOwnershipDao(database: AppDatabase): OwnershipDao {
-        return database.ownershipDao()
+    fun provideDatabase(context: Context): AppDatabase {
+        return databaseInstance ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "tailwagger_db"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+            databaseInstance = instance
+            instance
+        }
     }
 
-    @Provides
-    fun provideActivityDao(database: AppDatabase): ActivityDao {
-        return database.activityDao()
-    }
-
-    @Provides
-    fun provideAnimalDao(database: AppDatabase): AnimalDao {
-        return database.animalDao()
-    }
-
-    fun provideUserDao(database: AppDatabase): UserDao {
-        return database.userDao()
-    }
-
-
+    fun provideAnimalDao(context: Context) = provideDatabase(context).animalDao()
+    fun provideOwnershipDao(context: Context) = provideDatabase(context).ownershipDao()
+    fun provideActivityDao(context: Context) = provideDatabase(context).activityDao()
+    fun provideUserDao(context: Context) = provideDatabase(context).userDao()
 }
+
+

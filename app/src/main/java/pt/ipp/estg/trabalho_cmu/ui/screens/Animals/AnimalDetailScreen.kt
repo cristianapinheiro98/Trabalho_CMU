@@ -68,7 +68,6 @@ fun AnimalDetailScreen(
             .background(Color(0xFFF9F9F9))
             .verticalScroll(rememberScrollState())
     ) {
-        // 📸 Galeria de imagens
         ImageGallery(
             mainImage = mainImage,
             thumbnails = imageGallery,

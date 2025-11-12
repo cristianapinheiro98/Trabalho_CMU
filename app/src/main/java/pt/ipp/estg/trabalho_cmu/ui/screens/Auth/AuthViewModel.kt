@@ -1,12 +1,9 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
@@ -77,14 +74,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun register() = viewModelScope.launch {
-        val nomeValue = nome.value?.trim().orEmpty()
-        val moradaValue = morada.value?.trim().orEmpty()
-        val telefoneValue = telefone.value?.trim().orEmpty()
+        val nameValue = nome.value?.trim().orEmpty()
+        val adressValue = morada.value?.trim().orEmpty()
+        val phoneValue = telefone.value?.trim().orEmpty()
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
-        val tipoContaValue = tipoConta.value ?: UserType.UTILIZADOR
+        val userTypeValue = tipoConta.value ?: UserType.UTILIZADOR
 
-        if (nomeValue.isBlank() || moradaValue.isBlank() || telefoneValue.isBlank() ||
+        if (nameValue.isBlank() || adressValue.isBlank() || phoneValue.isBlank() ||
             emailValue.isBlank() || passwordValue.isBlank()
         ) {
             _error.value = "Preenche todos os campos obrigatórios."
@@ -111,12 +108,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             val newUser = User(
-                name = nomeValue,
-                adress = moradaValue,
+                name = nameValue,
+                adress = adressValue,
                 email = emailValue,
-                phone = telefoneValue,
+                phone = phoneValue,
                 password = passwordValue,
-                userType = tipoContaValue
+                userType = userTypeValue
             )
 
             userRepository.registerUser(newUser)
