@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -12,7 +11,13 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
 
-open class AuthViewModel(private val userRepository: UserRepository? = null) : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
+
+    // ✅ Repositório inicializado automaticamente com o contexto da app
+    private val userRepository: UserRepository by lazy {
+        val db = AppDatabase.getDatabase(application)
+        UserRepository(db.userDao())
+    }
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -24,12 +29,12 @@ open class AuthViewModel(private val userRepository: UserRepository? = null) : V
     val message: LiveData<String?> = _message
 
     private val _isAuthenticated = MutableLiveData(false)
-    open val isAuthenticated: LiveData<Boolean> = _isAuthenticated
+    val isAuthenticated: LiveData<Boolean> = _isAuthenticated
 
     private val _isRegistered = MutableLiveData(false)
     val isRegistered: LiveData<Boolean> = _isRegistered
 
-    // 🆕 CURRENT USER - Usuário logado
+    // Usuário logado
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> = _currentUser
 
@@ -51,16 +56,17 @@ open class AuthViewModel(private val userRepository: UserRepository? = null) : V
 
         try {
             _isLoading.value = true
-            val user = userRepository?.getUserByEmail(emailValue)
+            val user = userRepository.getUserByEmail(emailValue)
+
             if (user != null && user.password == passwordValue) {
-                _currentUser.value = user // 🆕 Guarda o usuário logado
+                _currentUser.value = user
                 _isAuthenticated.value = true
                 _message.value = "Login efetuado com sucesso!"
                 _error.value = null
             } else {
                 _error.value = "Credenciais inválidas."
                 _isAuthenticated.value = false
-                _currentUser.value = null // 🆕 Limpa usuário
+                _currentUser.value = null
             }
         } catch (e: Exception) {
             _error.value = "Erro ao fazer login: ${e.message}"
@@ -98,7 +104,7 @@ open class AuthViewModel(private val userRepository: UserRepository? = null) : V
         try {
             _isLoading.value = true
 
-            val existingUser = userRepository?.getUserByEmail(emailValue)
+            val existingUser = userRepository.getUserByEmail(emailValue)
             if (existingUser != null) {
                 _error.value = "Já existe uma conta com este email."
                 return@launch
@@ -113,7 +119,7 @@ open class AuthViewModel(private val userRepository: UserRepository? = null) : V
                 userType = tipoContaValue
             )
 
-            userRepository?.registerUser(newUser)
+            userRepository.registerUser(newUser)
             _isRegistered.value = true
             _message.value = "Conta criada com sucesso!"
             _error.value = null

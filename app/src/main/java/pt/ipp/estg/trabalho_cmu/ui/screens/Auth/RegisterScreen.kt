@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -213,18 +215,20 @@ fun RegisterScreen(
 }
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun MockAuthViewModel(): AuthViewModel {
-    return object : AuthViewModel() { // ou adapta ao teu construtor real
-        init {
-            nome.value = "Maria Silva"
-            morada.value = "Rua das Flores 123"
-            telefone.value = "912345678"
-            email.value = "maria@example.com"
-            tipoConta.value = UserType.ABRIGO
-        }
+    // devolve apenas uma instância estática simples
+    val context = LocalContext.current.applicationContext as Application
+    return AuthViewModel(context).apply {
+        nome.value = "Maria Silva"
+        morada.value = "Rua das Flores 123"
+        telefone.value = "912345678"
+        email.value = "maria@example.com"
+        tipoConta.value = UserType.ABRIGO
     }
 }
+
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)

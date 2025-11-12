@@ -22,14 +22,14 @@ fun LoginScreen(
     val error by viewModel.error.observeAsState()
     val message by viewModel.message.observeAsState()
     val isAuthenticated by viewModel.isAuthenticated.observeAsState(false)
-
+    val currentUser by viewModel.currentUser.observeAsState()
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val tipo = viewModel.tipoConta.value
-            val isAdmin = tipo?.name?.equals("ABRIGO", ignoreCase = true) == true
+            val tipo = viewModel.currentUser.value
+            val isAdmin = currentUser?.userType?.name?.equals("ABRIGO", ignoreCase = true) == true
             onLoginSuccess(isAdmin)
             viewModel.clearMessage()
         }

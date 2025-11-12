@@ -19,7 +19,7 @@ fun PetAdoptionApp() {
     var isAdmin by remember { mutableStateOf(false) }
 
     MaterialTheme {
-        // Passa o estado e callbacks para o AppScaffold
+        // Sends the status and the callbacks to the AppScaffold
         AppScaffold(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,
@@ -35,30 +35,3 @@ fun PetAdoptionApp() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun PreviewUserApp() {
-    MaterialTheme {
-        AppScaffold(
-            isLoggedIn = true,
-            isAdmin = false,
-            onLoginSuccess = {},
-            onLogout = {}
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun PreviewAdminApp() {
-    MaterialTheme {
-        AppScaffold(
-            isLoggedIn = true,
-            isAdmin = true,
-            onLoginSuccess = {},
-            onLogout = {}
-        )
-    }
-}
