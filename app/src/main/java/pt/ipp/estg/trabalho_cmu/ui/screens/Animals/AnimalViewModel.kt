@@ -48,10 +48,10 @@ open class AnimalViewModel(
     fun filterBySize(size: String) = applyFilter { repository?.filterBySize(size) ?: emptyList() }
     fun filterByGender(gender: String) = applyFilter { repository?.filterByGender(gender) ?: emptyList() }
     fun sortByName() = viewModelScope.launch {
-        _animals.value = repository?.sortByName("asc")
+        _animals.value = repository?.sortByName("asc")  ?: _animals.value
     }
     fun sortByAge() = viewModelScope.launch {
-        _animals.value = repository?.sortByAge("desc")
+        _animals.value = repository?.sortByAge("desc") ?: _animals.value
     }
 
 

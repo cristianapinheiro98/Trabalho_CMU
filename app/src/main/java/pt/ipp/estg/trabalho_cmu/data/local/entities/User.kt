@@ -6,7 +6,8 @@ import pt.ipp.estg.trabalho_cmu.data.models.UserType
 
 @Entity(tableName = "users")
 data class User(
-    @PrimaryKey val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val name: String,
     val adress: String,
     val email: String,

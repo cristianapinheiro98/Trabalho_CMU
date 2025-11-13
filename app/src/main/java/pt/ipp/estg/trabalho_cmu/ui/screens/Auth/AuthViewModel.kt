@@ -18,6 +18,11 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
         UserRepository(db.userDao())
     }
 
+    private val shelterRepository: ShelterRepository by lazy {
+        val db = AppDatabase.getDatabase(application)
+        ShelterRepository(db.shelterDao())
+    }
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -38,10 +43,15 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
 
     val name = MutableLiveData("")
     val address = MutableLiveData("")
-    val phone = MutableLiveData("")
+
+    val contact = MutableLiveData("")
     val email = MutableLiveData("")
     val password = MutableLiveData("")
     val userType = MutableLiveData(UserType.UTILIZADOR)
+
+    val shelterName = MutableLiveData("")
+    val shelterAddress = MutableLiveData("")
+    val shelterContact = MutableLiveData("")
 
     fun hashPassword(password: String): String {
         val bytes = MessageDigest.getInstance("SHA-256")
@@ -82,13 +92,13 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun register() = viewModelScope.launch {
         val nameValue = name.value?.trim().orEmpty()
-        val adressValue = address.value?.trim().orEmpty()
-        val phoneValue = phone.value?.trim().orEmpty()
+        val addressValue = address.value?.trim().orEmpty()
+        val phoneValue = contact.value?.trim().orEmpty()
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
         val userTypeValue = userType.value ?: UserType.UTILIZADOR
 
-        if (nameValue.isBlank() || adressValue.isBlank() || phoneValue.isBlank() ||
+        if (nameValue.isBlank() || addressValue.isBlank() || phoneValue.isBlank() ||
             emailValue.isBlank() || passwordValue.isBlank()
         ) {
             _error.value = "Preenche todos os campos obrigatórios."
@@ -98,7 +108,16 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
         val phoneRegex = Regex("^[29][0-9]{8}$")
         if (!phoneRegex.matches(phoneValue)) {
             _error.value = "Telefone inválido. Deve começar por 2 ou 9 e ter 9 dígitos."
-            return@launch
+
+        if (userTypeValue == UserType.ABRIGO) {
+            val shelterNameValue = shelterName.value?.trim().orEmpty()
+            val shelterAddressValue = shelterAddress.value?.trim().orEmpty()
+            val shelterContactValue = shelterContact.value?.trim().orEmpty()
+
+            if (shelterNameValue.isBlank() || shelterAddressValue.isBlank() || shelterContactValue.isBlank()) {
+                _error.value = "Preenche todos os campos do abrigo."
+                return@launch
+            }
         }
 
         val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
@@ -127,18 +146,47 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
 
             val newUser = User(
                 name = nameValue,
-                adress = adressValue,
+                adress = addressValue,
                 email = emailValue,
                 phone = phoneValue,
                 password = encryptedPassword,
                 userType = userTypeValue
             )
 
-            userRepository.registerUser(newUser)
+            // ✅ Inserir o user e obter o ID gerado
+            val userId = userRepository.registerUser(newUser).toInt()
+            println("✅ User criado com ID: $userId")
+
+            // ✅ Se for ABRIGO, criar o Shelter e atualizar o User
+            if (userTypeValue == UserType.ABRIGO) {
+                // Criar o Shelter com o mesmo ID do User
+                val newShelter = Shelter(
+                    id = userId,
+                    name = shelterName.value?.trim().orEmpty(),
+                    address = shelterAddress.value?.trim().orEmpty(),
+                    contact = shelterContact.value?.trim().orEmpty()
+                )
+
+                shelterRepository.insertShelter(newShelter)
+                println("✅ Shelter criado com ID: $userId")
+
+                // Buscar o user recém-criado e atualizar com shelterId
+                val createdUser = userRepository.getUserById(userId)
+                if (createdUser != null) {
+                    val updatedUser = createdUser.copy(shelterId = userId)
+                    userRepository.updateUser(updatedUser)
+                    println("✅ User atualizado com shelterId: $userId")
+                } else {
+                    println("❌ Erro: User não encontrado após criação")
+                }
+            }
+
             _isRegistered.value = true
             _message.value = "Conta criada com sucesso!"
             _error.value = null
         } catch (e: Exception) {
+            println("❌ Erro no registo: ${e.message}")
+            e.printStackTrace()
             _error.value = "Erro ao criar conta: ${e.message}"
         } finally {
             _isLoading.value = false
@@ -154,10 +202,14 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     fun clearFields() {
         name.value = ""
         address.value = ""
-        phone.value = ""
+contact.value = ""
         email.value = ""
         password.value = ""
         userType.value = UserType.UTILIZADOR
+        shelterName.value = ""
+        shelterAddress.value = ""
+        shelterContact.value = ""
+
     }
 
     fun clearMessage() { _message.value = null }

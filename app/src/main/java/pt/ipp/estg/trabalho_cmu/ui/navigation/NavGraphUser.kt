@@ -4,12 +4,16 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
@@ -22,7 +26,6 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.GuestScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
@@ -35,6 +38,15 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 @Composable
 fun NavGraphUser(navController: NavHostController) {
     val authViewModel: AuthViewModel = viewModel()
+    val context = LocalContext.current
+    val repository = remember {
+        val db = AppDatabase.getDatabase(context)
+        AnimalRepository(db.animalDao())
+    }
+    val animalViewModel: AnimalViewModel = viewModel(
+        factory = AnimalViewModelFactory(repository)
+    )
+
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
@@ -144,21 +156,9 @@ fun NavGraphUser(navController: NavHostController) {
             SocialTailsRankingScreen()
         }
 
-        composable("Guest") {
-            val animalViewModel: AnimalViewModel = viewModel()
-            GuestScreen(
-                viewModel = animalViewModel,
-                onLoginClick = {
-                    navController.navigate("Catalogue") {
-                        popUpTo("Guest") { inclusive = true }
-                    }
-                }
-            )
-        }
 
-        composable("Catalogue") {
-            val animalViewModel: AnimalViewModel = viewModel()
 
+        composable("AnimalsCatalogue") {
             AnimalListScreen(
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
@@ -181,6 +181,7 @@ fun NavGraphUser(navController: NavHostController) {
                 animalId = animalId,
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
+
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 },
@@ -188,9 +189,9 @@ fun NavGraphUser(navController: NavHostController) {
             )
         }
 
-
         composable("Favourites") {
             val animalViewModel: AnimalViewModel = viewModel()
+        composable("Favorites") {
             FavoritesScreen(
                 viewModel = animalViewModel,
                 onAnimalClick = { animalId ->

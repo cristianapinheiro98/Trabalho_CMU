@@ -26,4 +26,5 @@ open class OwnershipRepository(private val ownershipDao: OwnershipDao) {
     open suspend fun deleteOwnership(ownership: Ownership) {
         ownershipDao.deleteOwnership(ownership)
     }
+
 }

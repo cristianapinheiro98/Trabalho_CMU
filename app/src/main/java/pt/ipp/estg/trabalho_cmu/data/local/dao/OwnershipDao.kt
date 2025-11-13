@@ -27,4 +27,5 @@ interface OwnershipDao {
 
     @Delete
     suspend fun deleteOwnership(ownership: Ownership)
+
 }

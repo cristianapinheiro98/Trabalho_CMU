@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,10 +24,6 @@ import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +32,7 @@ fun AnimalListScreen(
     viewModel: AnimalViewModel,
     onAnimalClick: (Int) -> Unit = {}
 ) {
-    var favorites by remember { mutableStateOf(listOf<Int>()) }
+    val favorites by viewModel.favorites.observeAsState(emptyList())
     var search by remember { mutableStateOf("") }
 
     val animals by viewModel.animals.observeAsState(emptyList())
@@ -52,10 +49,10 @@ fun AnimalListScreen(
             placeholder = { Text("Pesquisar") },
             trailingIcon = {
                 Row {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { /* abrir filtros */ }) {
                         Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
                     }
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { /* abrir ordenação */ }) {
                         Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
                     }
                 }
@@ -67,6 +64,40 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
+        // --- Empty state global (sem animais) ---
+        if (animals.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Ainda não há animais disponíveis 🐾",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                )
+            }
+            return@Column
+        }
+
+        val filteredAnimals = animals.filter { it.name.contains(search, ignoreCase = true) }
+
+        // --- Empty state de pesquisa (nenhum corresponde) ---
+        if (filteredAnimals.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Nenhum animal corresponde à pesquisa.",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                )
+            }
+            return@Column
+        }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -74,26 +105,20 @@ fun AnimalListScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val filteredAnimals = animals.filter {
-                it.name.contains(search, ignoreCase = true)
-            }
-            items(filteredAnimals) { animal->
+            items(filteredAnimals) { animal ->
                 AnimalCard(
                     animal = animal,
-                    isFavorite = favorites.contains(animal.id),
+                    isFavorite = favorites.any { it.id == animal.id },
                     onClick = { onAnimalClick(animal.id) },
                     onToggleFavorite = {
-                        favorites = if (favorites.contains(animal.id)) {
-                            favorites - animal.id
-                        } else {
-                            favorites + animal.id
-                        }
+                        viewModel.toggleFavorite(animal)
                     }
                 )
             }
         }
     }
 }
+
 class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
     override val animals: LiveData<List<Animal>> = MutableLiveData(

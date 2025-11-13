@@ -16,21 +16,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuestScreen(
+fun AnimalsListGuestScreen(
     viewModel: AnimalViewModel,
-    onLoginClick: () -> Unit = {}
+    onNavigateBack: () -> Unit,
 ) {
     var search by remember { mutableStateOf("") }
-
     val animals by viewModel.animals.observeAsState(emptyList())
 
     Column(
@@ -50,8 +49,8 @@ fun GuestScreen(
                 text = "Bem-vindo",
                 style = MaterialTheme.typography.titleLarge
             )
-            TextButton(onClick = onLoginClick) {
-                Text("Iniciar Sessão", color = MaterialTheme.colorScheme.primary)
+            TextButton(onClick = onNavigateBack) {
+                Text("Regressar ao Menu Principal", color = MaterialTheme.colorScheme.primary)
             }
         }
 
@@ -72,7 +71,7 @@ fun GuestScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Ainda não há animais disponíveis 🐾",
+                    text = "Ainda não há animais disponíveis.",
                     style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.outline)
                 )
             }
@@ -87,16 +86,16 @@ fun GuestScreen(
                 items(animals.filter { it.name.contains(search, ignoreCase = true) }) { animal ->
                     AnimalCard(
                         animal = animal,
-                        onClick = {
-                            onLoginClick()
-                        }
+                        onClick = { onNavigateBack() }
                     )
                 }
             }
         }
     }
 }
-class Mock1 : AnimalViewModel(repository = null) {
+
+
+class MockAnimalGuestViewModel : AnimalViewModel(repository = null) {
     override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
             Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), "um gato muito bem educado",1),
@@ -111,9 +110,11 @@ class Mock1 : AnimalViewModel(repository = null) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GuestScreenPreview() {
-    val mockViewModel = Mock1()
+    val mockViewModel = MockAnimalGuestViewModel()
     MaterialTheme {
-        GuestScreen(viewModel = mockViewModel)
+        AnimalsListGuestScreen(
+            viewModel = mockViewModel,
+            onNavigateBack = {}
+        )
     }
 }
-

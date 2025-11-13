@@ -37,6 +37,7 @@ fun AnimalDetailScreen(
     onAdoptClick: () -> Unit,
     onNavigateBack: () -> Unit = {}
 ) {
+
     val animal by animalViewModel.selectedAnimal.observeAsState()
     val shelter by shelterViewModel.selectedShelter.observeAsState()
     val isLoadingShelter by shelterViewModel.isLoading.observeAsState(false)
@@ -51,6 +52,8 @@ fun AnimalDetailScreen(
             shelterViewModel.loadShelterById(it.shelterId)
         }
     }
+
+    val animal by viewModel.selectedAnimal.observeAsState()
 
     if (animal == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -95,6 +98,17 @@ fun AnimalDetailScreenContent(
         val age = calculateAge(animal.birthDate)
         age?.let { "$it anos" } ?: "N/A"
     }
+    val imageGallery: List<Int> = remember(animal) {
+        val imgs = animal!!.imageUrl
+            .filter { it != 0 } // remove IDs inválidos
+        if (imgs.isNotEmpty()) imgs
+        else listOf(R.drawable.dog_image) // placeholder local
+    }
+
+    var mainImage by remember(imageGallery) {
+        mutableStateOf(imageGallery.first())
+    }
+
 
     Column(
         modifier = Modifier
@@ -106,6 +120,86 @@ fun AnimalDetailScreenContent(
         Image(
             painter = painterResource(mainImage),
             contentDescription = null,
+
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = animal!!.name,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF3F51B5)
+            )
+
+            Text(
+                text = "${animal!!.species} • ${animal!!.size}",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Divider(thickness = 1.dp, color = Color.LightGray)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            InfoLine("Raça", animal!!.breed ?: "Desconhecida")
+            InfoLine("Porte", animal!!.size ?: "Desconhecido")
+            InfoLine("Nascimento", animal!!.birthDate ?: "N/A")
+            InfoLine("Abrigo", "Abrigo Porto Animal")
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(thickness = 1.dp, color = Color.LightGray)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Olá! Sou ${animal!!.name} 🐾",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF303F9F)
+            )
+
+            Text(
+                text = "Sou muito meiga e adoro atenção humana. Gosto de sestas longas e mantas fofas. Não gosto de aspiradores barulhentos e prefiro ambientes calmos.",
+                fontSize = 15.sp,
+                textAlign = TextAlign.Start,
+                color = Color.DarkGray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onAdoptClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+            ) {
+                Text("Adotar ${animal!!.name}", fontSize = 18.sp)
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+private fun ImageGallery(
+    @DrawableRes mainImage: Int,
+    thumbnails: List<Int>,
+    onThumbnailClick: (Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+            .background(Color.Black)
+    ) {
+        val safeMainImage = if (mainImage != 0) mainImage else R.drawable.dog_image
+        Image(
+            painter = painterResource(id = safeMainImage),
+            contentDescription = "Imagem Principal",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(280.dp),

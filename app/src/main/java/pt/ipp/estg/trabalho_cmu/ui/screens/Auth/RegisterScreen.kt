@@ -22,10 +22,15 @@ fun RegisterScreen(
 ) {
     val name by viewModel.name.observeAsState("")
     val adress by viewModel.address.observeAsState("")
-    val phone by viewModel.phone.observeAsState("")
+    val phone by viewModel.contact.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
     val userType by viewModel.userType.observeAsState(UserType.UTILIZADOR)
+
+    val shelterName by viewModel.shelterName.observeAsState("")
+    val shelterAddress by viewModel.shelterAddress.observeAsState("")
+    val shelterContact by viewModel.shelterContact.observeAsState("")
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
     val message by viewModel.message.observeAsState()
@@ -101,7 +106,7 @@ private fun RegisterScreenContent(
         // Campos de entrada
         OutlinedTextField(
             value = name,
-            onValueChange = onNameChange,
+            onValueChange = { viewModel.name.value = it },
             label = { Text("Nome completo") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -109,7 +114,7 @@ private fun RegisterScreenContent(
 
         OutlinedTextField(
             value = adress,
-            onValueChange = onAdressChange,
+            onValueChange = { viewModel.address.value = it },
             label = { Text("Morada") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -117,7 +122,7 @@ private fun RegisterScreenContent(
 
         OutlinedTextField(
             value = phone,
-            onValueChange = onPhoneChange,
+            onValueChange = { viewModel.contact.value = it },
             label = { Text("Telefone") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -161,7 +166,7 @@ private fun RegisterScreenContent(
                     DropdownMenuItem(
                         text = { Text(tipo.label) },
                         onClick = {
-                            onUserTypeChange(tipo)
+                            viewModel.userType.value = tipo
                             expanded = false
                         }
                     )
@@ -181,7 +186,7 @@ private fun RegisterScreenContent(
 
             OutlinedTextField(
                 value = shelterName,
-                onValueChange = { shelterName = it },
+                onValueChange = { viewModel.shelterName.value = it },
                 label = { Text("Nome do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -189,7 +194,7 @@ private fun RegisterScreenContent(
 
             OutlinedTextField(
                 value = shelterAddress,
-                onValueChange = { shelterAddress = it },
+                onValueChange = { viewModel.shelterAddress.value = it },
                 label = { Text("Morada do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -197,7 +202,7 @@ private fun RegisterScreenContent(
 
             OutlinedTextField(
                 value = shelterContact,
-                onValueChange = { shelterContact = it },
+                onValueChange = { viewModel.shelterContact.value = it },
                 label = { Text("Contacto do Abrigo") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -209,6 +214,8 @@ private fun RegisterScreenContent(
         Button(
             onClick = {
                 onRegisterClick(shelterName, shelterAddress, shelterContact) },
+                viewModel.register()
+            },
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -260,6 +267,24 @@ private fun RegisterScreenContent(
     }
 }
 
+
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Composable
+fun MockAuthViewModel(): AuthViewModel {
+    // devolve apenas uma instância estática simples
+    val context = LocalContext.current.applicationContext as Application
+    return AuthViewModel(context).apply {
+        name.value = "Maria Silva"
+        address.value = "Rua das Flores 123"
+        contact.value = "912345678"
+        email.value = "maria@example.com"
+        userType.value = UserType.ABRIGO
+    }
+}
+
+
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun RegisterScreenContentPreview() {
