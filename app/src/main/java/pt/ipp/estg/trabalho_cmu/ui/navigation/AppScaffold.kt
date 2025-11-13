@@ -25,7 +25,6 @@ fun AppScaffold(
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onLogout: () -> Unit
 ) {
-    // ✅ Cria o AuthViewModel UMA VEZ aqui
     val authViewModel: AuthViewModel = viewModel()
 
     val navController = rememberNavController()
@@ -34,11 +33,9 @@ fun AppScaffold(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    /**
-     * 🔹 Ação de logout global: limpa sessão e volta à home pública
-     */
+
     val onLogoutAndNavigate: () -> Unit = {
-        authViewModel.logout()  // ✅ Chama o logout do ViewModel
+        authViewModel.logout()
         onLogout()
         navController.navigate("home") {
             popUpTo("home") { inclusive = true }
@@ -85,20 +82,20 @@ fun AppScaffold(
                     !isLoggedIn -> {
                         NavGraphPublic(
                             navController = navController,
-                            authViewModel = authViewModel,  // ✅ Passa o ViewModel
+                            authViewModel = authViewModel,
                             onLoginSuccess = onLoginSuccess
                         )
                     }
                     isAdmin -> {
                         NavGraphAdmin(
                             navController = navController,
-                            authViewModel = authViewModel  // ✅ Passa o ViewModel
+                            authViewModel = authViewModel
                         )
                     }
                     else -> {
                         NavGraphUser(
                             navController = navController,
-                            //authViewModel = authViewModel  // ✅ Passa o ViewModel (se precisar)
+                            //authViewModel = authViewModel
                         )
                     }
                 }

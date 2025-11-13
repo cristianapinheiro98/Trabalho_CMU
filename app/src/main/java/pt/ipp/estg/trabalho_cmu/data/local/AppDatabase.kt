@@ -25,7 +25,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
         Shelter::class,
         User::class
     ],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -48,9 +48,9 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pet_adoption_database"  // Nome da tua base de dados
+                    "pet_adoption_database"  // database name
                 )
-                    .fallbackToDestructiveMigration(false)  // Durante desenvolvimento
+                    .fallbackToDestructiveMigration(true)  // in dev
                     .build()
                 INSTANCE = instance
                 instance

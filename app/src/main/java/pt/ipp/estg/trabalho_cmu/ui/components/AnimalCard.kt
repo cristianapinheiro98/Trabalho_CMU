@@ -2,8 +2,6 @@ package pt.ipp.estg.trabalho_cmu.ui.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import pt.ipp.estg.trabalho_cmu.R
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +33,10 @@ fun AnimalCard(
     onToggleFavorite: (() -> Unit)? = null
 ) {
     val age = calculateAge(animal.birthDate)
-    val mainImage = animal.imageUrl
+
+    // pega a primeira imagem ou placeholder
+    val mainImageUrl: String =
+        animal.imageUrls.firstOrNull() ?: "placeholder"
 
     Card(
         modifier = Modifier
@@ -47,37 +48,17 @@ fun AnimalCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
             Box {
-                when(mainImage) {
-                    is Int -> {
-                        Image(
-                            painter = painterResource(id = mainImage),
-                            contentDescription = animal.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(140.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    is String->{
-                        AsyncImage(
-                            model = mainImage,
-                            contentDescription = animal.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(140.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    else->{
-                        Image( painter = painterResource(id = R.drawable.gato1),
-                            contentDescription = animal.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(140.dp),
-                            contentScale = ContentScale.Crop)
-                    }
-                }
+                AsyncImage(
+                    model = if (mainImageUrl == "placeholder") R.drawable.dog_image else mainImageUrl,
+                    contentDescription = animal.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp),
+                    contentScale = ContentScale.Crop
+                )
+
                 if (onToggleFavorite != null) {
                     IconButton(
                         onClick = onToggleFavorite,
@@ -118,12 +99,11 @@ fun AnimalCard(
 fun calculateAge(birthDate: String?): Int? {
     if (birthDate.isNullOrBlank()) return null
     return try {
-        val birthDate =
+        val birthYear =
             LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).year
         val currentYear = LocalDate.now().year
-        currentYear - birthDate
+        currentYear - birthYear
     } catch (e: DateTimeParseException) {
         null
     }
 }
-

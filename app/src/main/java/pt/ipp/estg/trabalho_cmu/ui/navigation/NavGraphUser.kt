@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,7 +29,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
-
+import pt.ipp.estg.trabalho_cmu.R
 
 /**
  * Navigation graph for user screens.
@@ -49,10 +50,10 @@ fun NavGraphUser(navController: NavHostController) {
 
 
     NavHost(navController = navController, startDestination = "UserHome") {
-        composable("UserHome") { Text("Menu Principal") }
-        composable("UserProfile") { Text("Página de Perfil") }
-        composable("Community") { Text("Comunidade SocialTails") }
-        composable("Veterinarians") { Text("Lista de Veterinários") }
+        composable("UserHome") { Text(stringResource(id = R.string.main_menu)) }
+        composable("UserProfile") { Text (stringResource(id = R.string.profile)) }
+        composable("Community") { Text(stringResource(id = R.string.community)) }
+        composable("Veterinarians") { Text(stringResource(id = R.string.veterinaries_list)) }
 
         composable(
             route = "TermsAndConditions/{animalId}",
@@ -172,8 +173,8 @@ fun NavGraphUser(navController: NavHostController) {
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
             AnimalDetailScreen(
-                viewModel = animalViewModel, // Obtém a instância do AnimalViewModel
-                animalId = animalId,      // Passa o ID do animal
+                viewModel = animalViewModel,
+                animalId = animalId,
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 }

@@ -7,7 +7,6 @@
     <string name="terms_title">Informações Importantes e Termos Contratuais:</string>
     <string name="terms_content">Após candidatar-se para Adotar de forma Especial, a sua candidatura vai ser analisada.\n\n• O/a utilizador/a será o titular do animal afetivo, o que implica uma vontade válida. Legalmente será o dono do animal do qual fará a adoção especial.\n\n• Todas as despesas do animal serão mantidas por si. Estas despesas são relacionadas com alimentação, saúde, e acompanhamento veterinário\n\n• O animal mantém-se no abrigo, mas poderá vê-lo e ficar com ele sempre que assim o entender, através de agendamentos prévios com o abrigo.\n\n• Serão feito débitos mensais para cobrir todas necessidades quotidianas do animal (um valor que é acordado entre o CAA e o utilizador).\n\n• Qualquer doença que o animal possa vir a ter é da sua responsabilidade o seu tratamento, bem como, outras despesas veterinárias.\n\n• Para continuar com o pedido, é obrigatório a leitura dos termos contratuais e a adoção especial só será efetivada quando o contrato for assinado pelo tutor e validada pelo abrigo.</string>
     <string name="terms_accept_checkbox">Aceito os termos contratuais</string>
-    <string name="terms_continue_button">Continuar</string>
     <string name="terms_warning_message">Só pode continuar depois de aceitar os termos e condições</string>
 
     <!-- Ownership Form Screen -->
@@ -18,7 +17,6 @@
     <string name="ownership_cvv">CVV:</string>
     <string name="ownership_card_passport">Cartão cidadão/ Passport:</string>
     <string name="ownership_password">Password</string>
-    <string name="ownership_submit_button">Adotar Especial</string>
 
     <!-- Ownership Confirmation Screen -->
     <string name="confirmation_title">Parabéns, %1$s!</string>
@@ -63,5 +61,41 @@
     <string name="socialtails_comunity">SocialTails Community</string>
     <string name="activity_1">Hoje o Miguel passeou a Maria durante 5km</string>
     <string name="activity_2">Mais 3km para a Meggy</string>
+
+    <!-- Labels -->
+    <string name="animal_breed_label">Raça:</string>
+    <string name="animal_name_label">Nome:</string>
+    <string name="animal_size_label">Porte:</string>
+    <string name="animal_birthdate_label">Data Nascimento:</string>
+    <string name="animal_description_label">Descrição:</string>"
+    <string name="shelter_name_label">Abrigo:</string>
+
+    <!-- Navigation -->
+    <string name="open_menu">Abrir Menu</string>
+    <string name="close_menu">Fechar Menu</string>
+    <string name="veterinaries_list">Lista de Veterinários</string>
+    <string name="notifications">Notificações</string>
+    <string name="logout">Logout</string>
+    <string name="main_menu">Menu Principal</string>
+    <string name="profile">Perfil</string>
+    <string name="catalogue">Catálogo de Animais</string>
+    <string name="favorites">Animais Favoritos</string>
+    <string name="community">Comunidade SocialTails</string>
+
+    <!-- Buttons -->
+    <string name="cancel_button">Cancelar</string>
+    <string name="confirm_button">Confirmar</string>
+    <string name="continue_button">Continuar</string>
+    <string name="submit_button">Enviar"</string>
+    <string name="back_button">Voltar</string>
+    <string name="next_button">Próximo</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Criar conta</string>
+    <string name="save_button">Guardar</string>
+    <string name="ownership_submit_button">Adotar Especial</string>
     <string name="view_ranking">Ver Ranking</string>
+
+    <!-- Images Description -->
+    <string name="map_description">Mapa</string>
+
 </resources>

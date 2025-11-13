@@ -134,7 +134,7 @@ fun TermsAndConditionsScreen(
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.terms_continue_button),
+                        text = stringResource(R.string.continue_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )

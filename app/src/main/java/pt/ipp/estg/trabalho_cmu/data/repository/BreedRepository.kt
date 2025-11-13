@@ -1,63 +1,54 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
-import android.util.Log
-import pt.ipp.estg.trabalho_cmu.data.remote.api.objects.RetrofitClient
+
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
-import pt.ipp.estg.trabalho_cmu.data.models.CatBreedResponse
-import pt.ipp.estg.trabalho_cmu.data.models.DogBreedsResponse
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedResponse
+import pt.ipp.estg.trabalho_cmu.data.remote.RetrofitInstance
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class BreedRepository {
 
-    private val dogApi = RetrofitClient.dogApiService
-    private val catApi = RetrofitClient.catApiService
+    private val dogApi = RetrofitInstance.dogApi
+    private val catApi = RetrofitInstance.catApi
 
-    /**
-     * Obter raças de CÃES
-     * Retorna uma lista de Breed com id, nome e descrição
-     */
+    private val translationRepo = TranslationRepository()
+
+
     fun getDogBreeds(
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
     ) {
-        dogApi.getAllBreeds().enqueue(object : Callback<DogBreedsResponse> {
+        dogApi.getAllBreeds().enqueue(object : Callback<List<DogBreedResponse>> {
             override fun onResponse(
-                call: Call<DogBreedsResponse>,
-                response: Response<DogBreedsResponse>
+                call: Call<List<DogBreedResponse>>,
+                response: Response<List<DogBreedResponse>>
             ) {
                 if (response.isSuccessful) {
-                    val breedsMap = response.body()?.breeds ?: emptyMap()
-
-                    // Converter para lista de Breed
-                    val breeds = breedsMap.keys.mapIndexed { index, breedName ->
+                    val breeds = response.body()?.map { dog ->
                         Breed(
-                            id = "dog_$index",
-                            name = breedName.replaceFirstChar { it.uppercase() },
-                            description = "Raça de cão"
+                            id = dog.id.toString(),
+                            name = dog.name,
+                            description = dog.bredFor ?: dog.temperament ?: dog.origin ?: "Raça de cão"
                         )
-                    }.sortedBy { it.name }
+                    } ?: emptyList()
 
-                    onSuccess(breeds)
-                    Log.d("BreedRepository", "Dog breeds loaded: ${breeds.size}")
+                    translateBreeds(breeds, onSuccess, onError)
+
                 } else {
-                    onError("Erro ao carregar raças de cães: ${response.code()}")
-                    Log.e("BreedRepository", "Error: ${response.code()}")
+                    onError("Erro a carregar raças: ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<DogBreedsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<List<DogBreedResponse>>, t: Throwable) {
                 onError("Erro de conexão: ${t.message}")
-                Log.e("BreedRepository", "Failure: ${t.message}", t)
             }
         })
     }
 
-    /**
-     * Obter raças de GATOS
-     * Retorna uma lista de Breed com id, nome e descrição
-     */
+
     fun getCatBreeds(
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
@@ -68,31 +59,27 @@ class BreedRepository {
                 response: Response<List<CatBreedResponse>>
             ) {
                 if (response.isSuccessful) {
-                    val catBreeds = response.body() ?: emptyList()
-
-                    // Converter para lista de Breed simplificada
-                    val breeds = catBreeds.map { catBreed ->
+                    val breeds = response.body()?.map { cat ->
                         Breed(
-                            id = catBreed.id,
-                            name = catBreed.name,
-                            description = catBreed.description ?: "Raça de gato"
+                            id = cat.id,
+                            name = cat.name,
+                            description = cat.description ?: "Raça de gato"
                         )
-                    }.sortedBy { it.name }
+                    } ?: emptyList()
 
-                    onSuccess(breeds)
-                    Log.d("BreedRepository", "Cat breeds loaded: ${breeds.size}")
+                    translateBreeds(breeds, onSuccess, onError)
+
                 } else {
-                    onError("Erro ao carregar raças de gatos: ${response.code()}")
-                    Log.e("BreedRepository", "Error: ${response.code()}")
+                    onError("Erro ao carregar raças: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<List<CatBreedResponse>>, t: Throwable) {
                 onError("Erro de conexão: ${t.message}")
-                Log.e("BreedRepository", "Failure: ${t.message}", t)
             }
         })
     }
+
 
     /**
      * Obter raças baseado na espécie
@@ -108,4 +95,43 @@ class BreedRepository {
             else -> onError("Espécie não suportada: $species")
         }
     }
+
+    private fun translateBreeds(
+        breeds: List<Breed>,
+        onSuccess: (List<Breed>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        if (breeds.isEmpty()) {
+            onSuccess(emptyList())
+            return
+        }
+
+        val translatedBreeds = mutableListOf<Breed>()
+        var pending = breeds.size
+
+        breeds.forEach { breed ->
+            translationRepo.translateToPortuguese(
+                text = breed.description ?: "",
+                onSuccess = { translated ->
+                    translatedBreeds.add(
+                        breed.copy(description = translated)
+                    )
+
+                    pending--
+                    if (pending == 0) {
+                        onSuccess(translatedBreeds.sortedBy { it.name })
+                    }
+                },
+                onError = { _ ->
+                    // fallback to keep original description
+                    translatedBreeds.add(breed)
+                    pending--
+                    if (pending == 0) {
+                        onSuccess(translatedBreeds.sortedBy { it.name })
+                    }
+                }
+            )
+        }
+    }
+
 }

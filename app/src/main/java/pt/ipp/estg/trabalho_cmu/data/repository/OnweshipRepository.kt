@@ -15,6 +15,10 @@ open class OwnershipRepository(private val ownershipDao: OwnershipDao) {
     open fun getOwnershipsByUser(userId: Int): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByUser(userId)
 
+    suspend fun getOwnershipById(ownershipId: Int): Ownership? {
+        return ownershipDao.getOwnershipById(ownershipId)
+    }
+
     open suspend fun addOwnership(ownership: Ownership) {
         ownershipDao.insertOwnership(ownership)
     }

@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 
@@ -65,6 +64,9 @@ fun AnimalsListGuestScreen(
                 .padding(vertical = 12.dp)
         )
 
+        val filteredAnimals =
+            animals.filter { it.name.contains(search, ignoreCase = true) }
+
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -72,7 +74,9 @@ fun AnimalsListGuestScreen(
             ) {
                 Text(
                     text = "Ainda não há animais disponíveis.",
-                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.outline)
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.outline
+                    )
                 )
             }
         } else {
@@ -83,7 +87,7 @@ fun AnimalsListGuestScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(animals.filter { it.name.contains(search, ignoreCase = true) }) { animal ->
+                items(filteredAnimals) { animal ->
                     AnimalCard(
                         animal = animal,
                         onClick = { onNavigateBack() }
@@ -98,9 +102,36 @@ fun AnimalsListGuestScreen(
 class MockAnimalGuestViewModel : AnimalViewModel(repository = null) {
     override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
-            Animal(3, "Tito", "Desconhecida", "Cão", "Médio", "2018-01-01", listOf(R.drawable.dog_image), 1)
+            Animal(
+                id = 1,
+                name = "Leia",
+                breed = "Siamês",
+                species = "Gato",
+                size = "Pequeno",
+                birthDate = "2019-01-01",
+                imageUrls = listOf("https://placekitten.com/400/300"),
+                shelterId = 1
+            ),
+            Animal(
+                id = 2,
+                name = "Noa",
+                breed = "Persa",
+                species = "Gato",
+                size = "Pequeno",
+                birthDate = "2022-01-01",
+                imageUrls = listOf("https://placekitten.com/430/320"),
+                shelterId = 1
+            ),
+            Animal(
+                id = 3,
+                name = "Tito",
+                breed = "Labrador",
+                species = "Cão",
+                size = "Médio",
+                birthDate = "2018-01-01",
+                imageUrls = listOf("https://placedog.net/500/400"),
+                shelterId = 1
+            )
         )
     )
 }

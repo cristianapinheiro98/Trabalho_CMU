@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,17 +26,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.ipp.estg.trabalho_cmu.R
 
-data class DrawerOption(val label: String, val icon: ImageVector, val route: String)
+data class DrawerOption(@StringRes val label: Int, val icon: ImageVector, val route: String)
 
 fun getUserDrawerOptions() = listOf(
-    DrawerOption("Menu Principal", Icons.Outlined.Home, "UserHome"),
-    DrawerOption("Perfil", Icons.Outlined.Person, "UserProfile"),
-    DrawerOption("Catálogo de Animais", Icons.Outlined.Pets, "AnimalsCatalogue"),
-    DrawerOption("Animais Favoritos", Icons.Outlined.FavoriteBorder, "Favorites"),
-    DrawerOption("Comunidade SocialTails", Icons.Outlined.Groups, "Community"),
-    DrawerOption("Lista de Veterinários", Icons.Outlined.Vaccines, "Veterinarians")
+    DrawerOption( R.string.main_menu,Icons.Outlined.Home, "UserHome"),
+    DrawerOption(R.string.profile, Icons.Outlined.Person, "UserProfile"),
+    DrawerOption(R.string.catalogue, Icons.Outlined.Pets, "AnimalsCatalogue"),
+    DrawerOption(R.string.favorites, Icons.Outlined.FavoriteBorder, "Favorites"),
+    DrawerOption(R.string.community, Icons.Outlined.Groups, "Community"),
+    DrawerOption(R.string.veterinaries_list, Icons.Outlined.Vaccines, "Veterinarians")
 )
 
 @Composable
@@ -56,7 +59,7 @@ fun DrawerUser(
             IconButton(onClick = onCloseDrawer) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Fechar menu"
+                    contentDescription = stringResource(R.string.close_menu)
                 )
             }
         }
@@ -64,10 +67,13 @@ fun DrawerUser(
         HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
         items.forEach { item ->
             NavigationDrawerItem(
-                label = { Text(item.label) },
+                label = {  Text(stringResource(id = item.label)) },
                 selected = item == selected,
                 onClick = { onSelect(item) },
-                icon = { Icon(item.icon, contentDescription = item.label) },
+                icon = { Icon(
+                    imageVector = item.icon,
+                    contentDescription = stringResource(id = item.label)
+                )},
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             )
         }

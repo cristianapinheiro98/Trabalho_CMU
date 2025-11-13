@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 
@@ -42,6 +41,8 @@ fun AnimalListScreen(
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
+
+        // --- Pesquisa ---
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -49,10 +50,10 @@ fun AnimalListScreen(
             placeholder = { Text("Pesquisar") },
             trailingIcon = {
                 Row {
-                    IconButton(onClick = { /* abrir filtros */ }) {
+                    IconButton(onClick = { /* TODO filtros */ }) {
                         Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
                     }
-                    IconButton(onClick = { /* abrir ordenação */ }) {
+                    IconButton(onClick = { /* TODO ordenação */ }) {
                         Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
                     }
                 }
@@ -64,7 +65,7 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
-        // --- Empty state global (sem animais) ---
+        // --- Empty state global ---
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -80,9 +81,10 @@ fun AnimalListScreen(
             return@Column
         }
 
-        val filteredAnimals = animals.filter { it.name.contains(search, ignoreCase = true) }
+        val filteredAnimals =
+            animals.filter { it.name.contains(search, ignoreCase = true) }
 
-        // --- Empty state de pesquisa (nenhum corresponde) ---
+        // --- Empty state da pesquisa ---
         if (filteredAnimals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -98,6 +100,7 @@ fun AnimalListScreen(
             return@Column
         }
 
+        // --- Grelha ---
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -123,14 +126,45 @@ class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
     override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
-            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", listOf(R.drawable.gato3), 1)
+            Animal(
+                id = 1,
+                name = "Leia",
+                breed = "Desconhecida",
+                species = "Gato",
+                size = "Pequeno",
+                birthDate = "2019-01-01",
+                imageUrls = listOf(
+                    "https://placekitten.com/400/300"
+                ),
+                shelterId = 1
+            ),
+            Animal(
+                id = 2,
+                name = "Noa",
+                breed = "Desconhecida",
+                species = "Gato",
+                size = "Pequeno",
+                birthDate = "2022-01-01",
+                imageUrls = listOf(
+                    "https://placekitten.com/420/320"
+                ),
+                shelterId = 1
+            ),
+            Animal(
+                id = 3,
+                name = "Tito",
+                breed = "Desconhecida",
+                species = "Gato",
+                size = "Médio",
+                birthDate = "2011-01-01",
+                imageUrls = listOf(
+                    "https://placekitten.com/410/310"
+                ),
+                shelterId = 1
+            )
         )
     )
-
 }
-
 
 @SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.O)

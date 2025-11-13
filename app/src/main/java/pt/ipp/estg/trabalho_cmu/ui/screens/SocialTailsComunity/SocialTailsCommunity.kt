@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.ui.components.CommunityCard
 import pt.ipp.estg.trabalho_cmu.ui.theme.YellowTrophy
 
 @Composable
@@ -60,7 +61,6 @@ fun SocialTailsCommunityScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Atividade 1
             CommunityCard(
                 activityText = stringResource(id = R.string.activity_1),
                 trophyColor = YellowTrophy,
@@ -69,7 +69,6 @@ fun SocialTailsCommunityScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Atividade 2
             CommunityCard(
                 activityText = stringResource(id = R.string.activity_2),
                 trophyColor = YellowTrophy,
@@ -99,62 +98,7 @@ fun SocialTailsCommunityScreen(
     }
 }
 
-// Função para criar o Card de atividade
-@Composable
-fun CommunityCard(
-    activityText: String,
-    trophyColor: Color,
-    mapImage: Int
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Imagem do mapa
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray)
-            ) {
-                Image(
-                    painter = painterResource(id = mapImage),
-                    contentDescription = "Imagem do Mapa",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Texto da atividade
-            Text(
-                text = activityText,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF2C2C2C)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Ícone do troféu (emoji)
-            Text(
-                text = "🏆",
-                fontSize = 24.sp,
-                color = trophyColor
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

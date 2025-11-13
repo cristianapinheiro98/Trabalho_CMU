@@ -37,7 +37,6 @@ fun AppTopBar(
 ) {
 
 
-    // 🔹 Mostrar menu apenas para utilizadores normais
     val showMenuIcon = isLoggedIn && !isAdmin
 
     TopAppBar(
@@ -64,7 +63,7 @@ fun AppTopBar(
                     IconButton(onClick = onMenuClick) {
                         Icon(
                             imageVector = Icons.Default.Menu,
-                            contentDescription = "Abrir menu",
+                            contentDescription = stringResource(R.string.open_menu),
                             tint = Color(0xFF37474F)
                         )
                     }
@@ -73,33 +72,30 @@ fun AppTopBar(
         },
         actions = {
             if (isLoggedIn) {
-                // 💉 Ícone de veterinários — só aparece para admin
                 if (isAdmin) {
                     IconButton(onClick = onVeterinariansClick) {
                         Icon(
                             imageVector = Icons.Outlined.Vaccines,
-                            contentDescription = "Lista de Veterinários",
+                            contentDescription = stringResource(R.string.veterinaries_list),
                             tint = Color(0xFF37474F)
                         )
                     }
                 }
 
-                // 🔔 Notificações — só aparecem para user normal
                 if (!isAdmin) {
                     IconButton(onClick = onNotificationsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
-                            contentDescription = "Notificações",
+                            contentDescription = stringResource(R.string.notifications),
                             tint = Color(0xFF37474F)
                         )
                     }
                 }
 
-                // 🚪 Logout — aparece para ambos
                 IconButton(onClick = onLogoutClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
-                        contentDescription = "Logout",
+                        contentDescription =stringResource(R.string.logout),
                         tint = Color(0xFF37474F)
                     )
                 }

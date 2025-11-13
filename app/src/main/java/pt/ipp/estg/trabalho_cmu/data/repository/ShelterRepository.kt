@@ -3,7 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import androidx.lifecycle.LiveData
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
-import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
+
 
 /**
  * Repository for managing Shelter data.
