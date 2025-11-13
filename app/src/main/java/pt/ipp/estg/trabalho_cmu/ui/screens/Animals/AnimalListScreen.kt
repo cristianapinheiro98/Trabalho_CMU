@@ -164,7 +164,9 @@ class MockAnimalViewModel : AnimalViewModel(repository = null) {
             )
         )
     )
+
 }
+
 
 @SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.O)

@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -29,21 +30,41 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import androidx.lifecycle.viewModelScope
+import com.google.common.math.LinearTransformation.vertical
+import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
+import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalDetailScreen(
-    viewModel: AnimalViewModel,
+    shelterViewModel: ShelterViewModel,
+    animalViewModel: AnimalViewModel,
     animalId: Int,
-    onAdoptClick: () -> Unit = {}
+    onAdoptClick: () -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
+
+    val animal by animalViewModel.selectedAnimal.observeAsState()
+    val shelter by shelterViewModel.selectedShelter.observeAsState()
+    val isLoadingShelter by shelterViewModel.isLoading.observeAsState(false)
+    val errorShelter by shelterViewModel.error.observeAsState()
+
     LaunchedEffect(animalId) {
-        viewModel.selectAnimal(animalId)
+        animalViewModel.selectAnimal(animalId)
     }
 
-    val animal by viewModel.selectedAnimal.observeAsState()
+    LaunchedEffect(animal) {
+        animal?.let {
+            shelterViewModel.loadShelterById(it.shelterId)
+        }
+    }
+
 
     if (animal == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -59,6 +80,12 @@ fun AnimalDetailScreen(
 
     var mainImage by remember(imageGallery) {
         mutableStateOf(imageGallery.first())
+    }
+
+
+    val ageText = remember(animal!!.birthDate) {
+        val age = calculateAge(animal!!.birthDate)
+        age?.let { "$it anos" } ?: "N/A"
     }
 
     Column(
@@ -188,7 +215,7 @@ private fun ImageGallery(
 }
 
 @Composable
-fun InfoLine(label: Int, value: String) {
+fun InfoLine(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,6 +226,30 @@ fun InfoLine(label: Int, value: String) {
         Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
     }
 }
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontWeight = FontWeight.Medium,
+            fontSize = 15.sp,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = value,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 15.sp,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End
+        )
+    }
+}
+
 
 private class Mock : AnimalViewModel(repository = null) {
     override val selectedAnimal: LiveData<Animal?> = MutableLiveData(
@@ -220,17 +271,41 @@ private class Mock : AnimalViewModel(repository = null) {
 
     override fun selectAnimal(id: Int) { /* no-op */ }
 }
+private class MockShelterViewModel : ShelterViewModel(repository = null) {
+    override val selectedShelter: LiveData<Shelter?> = MutableLiveData(
+        Shelter(
+            id = 1,
+            name = "Abrigo Porto",
+            address = "Rua dos Animais, 123",
+            contact = "912345678"
+        )
+    )
+
+    override fun loadShelterById(shelterId: Int) = viewModelScope.launch {
+        // no-op for preview
+    }
+}
+
 
 @SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun AnimalDetailPreview() {
-    val vm = Mock()
+private fun AnimalDetailScreenPreview() {
+    // ViewModel fake para o animal (já tinhas)
+    val mockAnimalVM = Mock()
+
+    // ShelterViewModel real só para o preview
+    val mockShelterVM = MockShelterViewModel()
+
     MaterialTheme {
         AnimalDetailScreen(
-            viewModel = vm,
-            animalId = 1
+            shelterViewModel = mockShelterVM,
+            animalViewModel = mockAnimalVM,
+            animalId = 1,
+            onAdoptClick = {},
+            onNavigateBack = {}
         )
     }
 }
+

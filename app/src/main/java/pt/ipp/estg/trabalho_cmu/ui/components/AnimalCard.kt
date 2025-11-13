@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,7 @@ import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -98,12 +100,17 @@ fun AnimalCard(
 @RequiresApi(Build.VERSION_CODES.O)
 fun calculateAge(birthDate: String?): Int? {
     if (birthDate.isNullOrBlank()) return null
+
     return try {
-        val birthYear =
-            LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).year
-        val currentYear = LocalDate.now().year
-        currentYear - birthYear
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateOfBirth = LocalDate.parse(birthDate, formatter)
+        val today = LocalDate.now()
+
+        Period.between(dateOfBirth, today).years
     } catch (e: DateTimeParseException) {
         null
     }
 }
+
+
+

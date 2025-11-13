@@ -163,14 +163,23 @@ fun NavGraphUser(navController: NavHostController) {
                 viewModel = animalViewModel
             )
         }
+
         composable(
             route = "AnimalDetail/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.IntType })
         ) { backStackEntry ->
+
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+
+            val animalViewModel: AnimalViewModel = viewModel()
+            val shelterViewModel: ShelterViewModel = viewModel()
+
             AnimalDetailScreen(
                 viewModel = animalViewModel,
                 animalId = animalId,
+                animalViewModel = animalViewModel,
+                shelterViewModel = shelterViewModel,
+
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 }

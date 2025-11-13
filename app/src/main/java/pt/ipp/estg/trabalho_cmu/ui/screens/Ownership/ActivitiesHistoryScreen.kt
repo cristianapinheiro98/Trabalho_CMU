@@ -36,6 +36,9 @@ fun ActivitiesHistoryScreen(
 ) {
     val viewModel: ActivityViewModel = viewModel()
 
+    val scrollState = rememberScrollState()
+
+    // Load user activities
     LaunchedEffect(userId) {
         viewModel.loadActivitiesForUser(userId)
     }

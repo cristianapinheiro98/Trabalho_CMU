@@ -3,12 +3,15 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -21,8 +24,12 @@ import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.remote.api.services.uploadImageToFirebase
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
+import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCreationScreen(
     onNavigateBack: () -> Unit,
@@ -50,7 +57,7 @@ fun AnimalCreationScreen(
         }
     }
 
-    val form by viewModel.animalForm.observeAsState()
+    val form by viewModel.animalForm.observeAsState(AnimalForm())
     val availableBreeds by viewModel.availableBreeds.observeAsState(emptyList())
     val isLoadingBreeds by viewModel.isLoadingBreeds.observeAsState(false)
     val selectedImages by viewModel.selectedImages.observeAsState(emptyList())
@@ -74,7 +81,7 @@ fun AnimalCreationScreen(
     }
 
     AnimalCreationScreenContent(
-        form = form ?: pt.ipp.estg.trabalho_cmu.data.models.AnimalForm(),
+        form = form,
         availableBreeds = availableBreeds,
         selectedImages = selectedImages,
         isLoadingBreeds = isLoadingBreeds,
@@ -85,6 +92,9 @@ fun AnimalCreationScreen(
         onBreedChange = viewModel::onBreedChange,
         onSizeChange = viewModel::onSizeChange,
         onBirthDateChange = viewModel::onBirthDateChange,
+        onDescriptionChange = viewModel::onDescriptionChange,
+        onImageUrlChange = viewModel::onImageUrlChange,
+        onSave = viewModel::saveAnimal,
         onSelectImages = { imagePicker.launch("image/*") },
         onSave = viewModel::saveAnimal,
         onNavigateBack = onNavigateBack,
@@ -99,6 +109,8 @@ fun AnimalCreationScreenContent(
     form: pt.ipp.estg.trabalho_cmu.data.models.AnimalForm,
     availableBreeds: List<Breed>,
     selectedImages: List<String>,
+    form: AnimalForm,
+    availableBreeds: List<Breed>,
     isLoadingBreeds: Boolean,
     message: String?,
     error: String?,
@@ -108,6 +120,8 @@ fun AnimalCreationScreenContent(
     onSizeChange: (String) -> Unit,
     onBirthDateChange: (String) -> Unit,
     onSelectImages: () -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onImageUrlChange: (String) -> Unit,
     onSave: () -> Unit,
     onNavigateBack: () -> Unit,
     onClearMessage: () -> Unit,
@@ -217,7 +231,6 @@ fun AnimalCreationScreenContent(
                         .fillMaxWidth()
                         .menuAnchor()
                 )
-
                 ExposedDropdownMenu(
                     expanded = expandedBreed,
                     onDismissRequest = { expandedBreed = false }
@@ -305,6 +318,24 @@ fun AnimalCreationScreenContent(
                 }
             }
 
+            OutlinedTextField(
+                value = form.description,
+                onValueChange = onDescriptionChange,
+                label = { Text("Descrição") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(Modifier.height(16.dp))
+
+            // URL da Imagem
+            OutlinedTextField(
+                value = form.imageUrl.toString(),
+                onValueChange = onImageUrlChange,
+                label = { Text("Imagem (ID)") },
+                placeholder = { Text("Ex: 1, 2, 3...") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
             Spacer(Modifier.height(24.dp))
 
             // Botão Guardar
