@@ -41,7 +41,7 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     val isRegistered: LiveData<Boolean> = _isRegistered
 
     private val _currentUser = MutableLiveData<User?>()
-    val currentUser: LiveData<User?> = _currentUser
+    open val currentUser: LiveData<User?> = _currentUser
 
     val name = MutableLiveData("")
     val address = MutableLiveData("")
@@ -55,7 +55,7 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
     val shelterAddress = MutableLiveData("")
     val shelterContact = MutableLiveData("")
 
-    fun login() = viewModelScope.launch {
+    open fun login() = viewModelScope.launch {
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
 
