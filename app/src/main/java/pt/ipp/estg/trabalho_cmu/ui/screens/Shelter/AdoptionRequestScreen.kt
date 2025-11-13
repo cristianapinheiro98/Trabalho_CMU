@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.*
@@ -17,42 +18,83 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdoptionRequestScreen(
     onNavigateBack: () -> Unit = {},
+    authViewModel: AuthViewModel = viewModel(),
     viewModel: ShelterMngViewModel = viewModel()
 ) {
-    val request by viewModel.requests.observeAsState(emptyList())
-    val message by viewModel.message.observeAsState()
-    val error by viewModel.error.observeAsState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (request.isEmpty()) {
-            Text(
-                text = "Sem pedidos pendentes",
-                color = Color.Gray,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 40.dp)
-            )
-        } else {
-            request.forEach { pedido ->
-                PedidoCard(
-                    request = pedido,
-                    onApprove = { viewModel.approveRequest(pedido) },
-                    onReject = { viewModel.rejectRequest(pedido) }
-                )
+    val currentShelter by authViewModel.currentShelter.observeAsState()
+    val accountType by authViewModel.accountType.observeAsState()
+
+    LaunchedEffect(accountType) {
+        when (accountType) {
+            pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType.SHELTER -> {
+                currentShelter?.let { shelter ->
+                    println("[AdoptionRequest] Shelter: ${shelter.name}, ID: ${shelter.id}")
+                    viewModel.setShelterId(shelter.id)
+                }
+            }
+            else -> {
+                println(" Apenas Shelters podem ver pedidos de adoção")
             }
         }
     }
 
+    val request by viewModel.requests.observeAsState(emptyList())
+    val message by viewModel.message.observeAsState()
+    val error by viewModel.error.observeAsState()
 
-// 🔹 Diálogo de sucesso/erro
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Pedidos de Adoção") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (request.isEmpty()) {
+                Text(
+                    text = "Sem pedidos pendentes",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 40.dp)
+                )
+            } else {
+                request.forEach { pedido ->
+                    PedidoCard(
+                        request = pedido,
+                        onApprove = { viewModel.approveRequest(pedido) },
+                        onReject = { viewModel.rejectRequest(pedido) }
+                    )
+                }
+            }
+        }
+    }
+
+    // 🔹 Diálogo de sucesso/erro
     message?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearMessage() },
@@ -133,6 +175,8 @@ fun PedidoCard(
         }
     }
 }
+
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

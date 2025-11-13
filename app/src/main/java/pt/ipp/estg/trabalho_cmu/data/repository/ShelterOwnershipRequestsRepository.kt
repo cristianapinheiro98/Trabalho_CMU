@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
  * Repository responsible for managing ownership (adoption) requests
@@ -21,7 +21,7 @@ class ShelterOwnershipRequestRepository(
      * Retrieves all ownership requests.
      * You can modify the DAO to return only pending ones if desired.
      */
-    fun getAllOwnershipRequests(shelterId : Int): LiveData<List<Ownership>> =
+    fun getAllOwnershipRequestsByShelter(shelterId : Int): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByShelter(shelterId)
 
     /**

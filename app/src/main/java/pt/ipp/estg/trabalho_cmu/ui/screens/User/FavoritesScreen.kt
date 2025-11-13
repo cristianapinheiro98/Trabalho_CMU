@@ -18,11 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +32,21 @@ fun FavoritesScreen(
 ) {
     val favorites by viewModel.favorites.observeAsState(emptyList())
 
+    FavoritesScreenContent(
+        favorites = favorites,
+        onAnimalClick = onAnimalClick,
+        onToggleFavorite = { viewModel.toggleFavorite(it) }
+    )
+}
+
+
+
+@Composable
+private fun FavoritesScreenContent(
+    favorites: List<Animal>,
+    onAnimalClick: (Int) -> Unit,
+    onToggleFavorite: (Animal) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +71,7 @@ fun FavoritesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Ainda não adicionaste nenhum animal aos favoritos 🐾",
+                    text = "Ainda não adicionaste nenhum animal aos favoritos.",
                     color = Color.Gray,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
@@ -76,10 +90,9 @@ fun FavoritesScreen(
                     AnimalCard(
                         animal = animal,
                         isFavorite = true,
+                        isLoggedIn = true,
                         onClick = { onAnimalClick(animal.id) },
-                        onToggleFavorite = {
-                            viewModel.toggleFavorite(animal)
-                        }
+                        onToggleFavorite = { onToggleFavorite(animal) }
                     )
                 }
             }
@@ -87,17 +100,43 @@ fun FavoritesScreen(
     }
 }
 
-private class Mock : AnimalViewModel(repository = null) {
-    override val favorites: LiveData<List<Animal>> = MutableLiveData(emptyList())
-}
 
-@SuppressLint("ViewModelConstructorInComposable")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FavoritesScreenPreview() {
-    val mockViewModel = Mock()
+
+    val mockFavorites = listOf(
+        Animal(
+            id = 1,
+            name = "Boby",
+            breed = "Labrador",
+            species = "Cão",
+            size = "Médio",
+            birthDate = "2020-01-01",
+            imageUrls = listOf(""),
+            shelterId = 1,
+            description = "Muito amigável!"
+        ),
+        Animal(
+            id = 2,
+            name = "Mia",
+            breed = "Siamês",
+            species = "Gato",
+            size = "Pequeno",
+            birthDate = "2021-03-10",
+            imageUrls = listOf(""),
+            shelterId = 1,
+            description = "Adora mimos!"
+        )
+    )
+
     MaterialTheme {
-        FavoritesScreen(viewModel = mockViewModel)
+        FavoritesScreenContent(
+            favorites = mockFavorites,
+            onAnimalClick = {},
+            onToggleFavorite = {}
+        )
     }
 }

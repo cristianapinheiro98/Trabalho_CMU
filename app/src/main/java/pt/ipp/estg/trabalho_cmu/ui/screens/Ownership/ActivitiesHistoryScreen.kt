@@ -29,15 +29,11 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
 import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 
-/**
- * Screen showing the user's activity history (scheduled visits).
- */
 @Composable
 fun ActivitiesHistoryScreen(
     userId: Int,
     modifier: Modifier = Modifier
 ) {
-    // Get ViewModel instance (without Hilt)
     val viewModel: ActivityViewModel = viewModel()
 
     val scrollState = rememberScrollState()
@@ -117,9 +113,12 @@ private fun ActivitiesHistoryContent(
         )
 
         activitiesWithRelations.forEach { item ->
+
             val activity = item.activity
             val animal = item.animal
             val shelter = item.shelter
+
+            val imageUrl = animal.imageUrls.firstOrNull()
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -133,12 +132,13 @@ private fun ActivitiesHistoryContent(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     ActivityAnimalInfoCard(
                         animalName = animal.name,
                         shelterName = shelter.name,
                         shelterContact = shelter.contact,
                         shelterAddress = shelter.address,
-                        imageRes = R.drawable.cat_image
+                        imageUrl = imageUrl
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -160,7 +160,6 @@ private fun ActivitiesHistoryContent(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Cancel button
                     Button(
                         onClick = { onDeleteActivity(activity) },
                         colors = ButtonDefaults.buttonColors(
@@ -172,16 +171,17 @@ private fun ActivitiesHistoryContent(
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-// Preview with mock data
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ActivitiesHistoryContentPreview() {
     MaterialTheme {
+
         val mockActivities = listOf(
             ActivityWithAnimalAndShelter(
                 activity = Activity(
@@ -201,40 +201,16 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
-                    imageUrl = listOf(R.drawable.cat_image)
+                    imageUrls = listOf(""),
+                    description = "Muito dócil"
                 ),
                 shelter = Shelter(
                     id = 0,
                     name = "Abrigo de Felgueiras",
-                    address = "Rua da Saúde, 1234 Santa Marta de Farto",
-                    contact = "253 000 000"
-                )
-            ),
-            ActivityWithAnimalAndShelter(
-                activity = Activity(
-                    id = 2,
-                    userId = 1,
-                    animalId = 2,
-                    pickupDate = "15/11/2025",
-                    pickupTime = "10:00",
-                    deliveryDate = "17/11/2025",
-                    deliveryTime = "17:00"
-                ),
-                animal = Animal(
-                    id = 0,
-                    shelterId = 0,
-                    name = "Max",
-                    breed = "Labrador",
-                    birthDate = "20/03/2021",
-                    size = "large",
-                    species = "dog",
-                    imageUrl = listOf(R.drawable.cat_image)
-                ),
-                shelter = Shelter(
-                    id = 0,
-                    name = "Abrigo de Felgueiras",
-                    address = "Rua da Saúde, 1234 Santa Marta de Farto",
-                    contact = "253 000 000"
+                    address = "Rua da Saúde, 1234, Santa Marta de Farto",
+                    contact = "253 000 000",
+                    email= "",
+                    password = ""
                 )
             )
         )

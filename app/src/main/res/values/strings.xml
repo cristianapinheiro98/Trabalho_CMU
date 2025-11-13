@@ -17,7 +17,6 @@
     </string>
 
     <string name="terms_accept_checkbox">I accept the contractual terms</string>
-    <string name="terms_continue_button">Continue</string>
     <string name="terms_warning_message">You can only continue after accepting the terms and conditions</string>
 
     <!-- Ownership Form Screen -->
@@ -27,11 +26,9 @@
     <string name="ownership_owner_name">Account holder name:</string>
     <string name="ownership_cvv">CVV:</string>
     <string name="ownership_card_passport">Citizen Card / Passport:</string>
-    <string name="ownership_password">Password</string>
-    <string name="ownership_submit_button">Special Adoption</string>
 
     <!-- Ownership Confirmation Screen -->
-    <string name="confirmation_title">Congratulations, %1$s!</string>
+    <string name="confirmation_title">Thank You, %1$s!</string>
     <string name="confirmation_message">The shelter %1$s will receive your application to adopt %2$s.</string>
     <string name="confirmation_notification">You will be notified once a response is available.</string>
     <string name="confirmation_back_button">Go to main menu</string>
@@ -73,5 +70,44 @@
     <string name="socialtails_comunity">SocialTails Community</string>
     <string name="activity_1">Today Miguel walked Maria for 5km</string>
     <string name="activity_2">Another 3km for Meggy</string>
+
+
+    <!-- Labels -->
+    <string name="animal_breed_label">Breed:</string>
+    <string name="animal_name_label">Name:</string>
+    <string name="animal_size_label">Size:</string>
+    <string name="animal_birthdate_label">BirthDate:</string>
+    <string name="animal_description_label">Description:</string>"
+    <string name="shelter_name_label">Shelter:</string>
+    <string name="animal_age_label">Age:</string>
+
+    <!-- Navigation -->
+    <string name="open_menu">Open Menu:</string>
+    <string name="close_menu">Close Menu</string>
+    <string name="veterinaries_list">Veterinarians List</string>
+    <string name="notifications">Notifications</string>
+    <string name="logout">Logout</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="profile">Profile</string>
+    <string name="catalogue">Animals Catalogue</string>
+    <string name="favorites">Favourite Animals</string>
+    <string name="community">SocialTails Community</string>
+
+    <!-- Buttons -->
+    <string name="cancel_button">Cancel</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="continue_button">Continue</string>
+    <string name="submit_button">Send"</string>
+    <string name="back_button">Back</string>
+    <string name="next_button">Next</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Register New Account</string>
+    <string name="save_button">Save</string>
     <string name="view_ranking">View Ranking</string>
+    <string name="ownership_button">Adopte</string>
+
+
+    <!-- Images Description -->
+    <string name="map_description">Map</string>
+
 </resources>

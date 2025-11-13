@@ -5,12 +5,11 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
-class ShelterViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val shelterRepository = ShelterRepository(AppDatabase.getDatabase(application).shelterDao())
-
+open class ShelterViewModel(  private val repository: ShelterRepository? = null
+) : ViewModel() {
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -21,17 +20,17 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
     val message: LiveData<String?> = _message
 
     private val _selectedShelter = MutableLiveData<Shelter?>()
-    val selectedShelter: LiveData<Shelter?> = _selectedShelter
+    open val selectedShelter: LiveData<Shelter?> = _selectedShelter
 
     private val _shelters = MutableLiveData<List<Shelter>>(emptyList())
     val shelters: LiveData<List<Shelter>> = _shelters
 
 
-    fun loadShelterById(shelterId: Int) = viewModelScope.launch {
+    open fun loadShelterById(shelterId: Int) = viewModelScope.launch {
         try {
             _isLoading.value = true
 
-            val shelter = shelterRepository.getShelterById(shelterId)
+            val shelter = repository?.getShelterById(shelterId)
 
             if (shelter != null) {
                 _selectedShelter.value = shelter
@@ -53,8 +52,8 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         try {
             _isLoading.value = true
 
-            val allShelters = shelterRepository.getAllSheltersList()
-            _shelters.value = allShelters
+            val allShelters = repository?.getAllSheltersList()
+            _shelters.value = allShelters!!
             _error.value = null
 
         } catch (e: Exception) {
@@ -69,11 +68,10 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         try {
             _isLoading.value = true
 
-            shelterRepository.insertShelter(shelter)
+            repository?.insertShelter(shelter)
             _message.value = "Abrigo adicionado com sucesso!"
             _error.value = null
 
-            // Recarrega a lista
             loadAllShelters()
 
         } catch (e: Exception) {
@@ -88,11 +86,10 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         try {
             _isLoading.value = true
 
-            shelterRepository.updateShelter(shelter)
+            repository?.updateShelter(shelter)
             _message.value = "Abrigo atualizado com sucesso!"
             _error.value = null
 
-            // Atualiza o shelter selecionado se for o mesmo
             if (_selectedShelter.value?.id == shelter.id) {
                 _selectedShelter.value = shelter
             }
@@ -108,7 +105,7 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         try {
             _isLoading.value = true
 
-            shelterRepository.deleteShelter(shelter)
+            repository?.deleteShelter(shelter)
             _message.value = "Abrigo removido com sucesso!"
             _error.value = null
 
@@ -116,8 +113,6 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
             if (_selectedShelter.value?.id == shelter.id) {
                 _selectedShelter.value = null
             }
-
-            // Recarrega a lista
             loadAllShelters()
 
         } catch (e: Exception) {
@@ -132,8 +127,8 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         try {
             _isLoading.value = true
 
-            val results = shelterRepository.searchSheltersByName(name)
-            _shelters.value = results
+            val results = repository?.searchSheltersByName(name)
+            _shelters.value = results!!
             _error.value = null
 
         } catch (e: Exception) {

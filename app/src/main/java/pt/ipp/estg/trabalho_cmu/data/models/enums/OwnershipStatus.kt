@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.data.models
+package pt.ipp.estg.trabalho_cmu.data.models.enums
 
 /**
  * Represents the current status of an ownership request.
@@ -6,7 +6,6 @@ package pt.ipp.estg.trabalho_cmu.data.models
  */
 enum class OwnershipStatus {
     PENDING,// Waiting to be analysed
-    ANALYSING, //  Waiting for admin approval
     APPROVED,  // Accepted by shelter/admin
     REJECTED   // Denied by shelter/admin
 }

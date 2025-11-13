@@ -4,7 +4,7 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import androidx.lifecycle.LiveData
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
  * Repository that handles data operations for Ownerships.
@@ -14,6 +14,10 @@ open class OwnershipRepository(private val ownershipDao: OwnershipDao) {
 
     open fun getOwnershipsByUser(userId: Int): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByUser(userId)
+
+    suspend fun getOwnershipById(ownershipId: Int): Ownership? {
+        return ownershipDao.getOwnershipById(ownershipId)
+    }
 
     open suspend fun addOwnership(ownership: Ownership) {
         ownershipDao.insertOwnership(ownership)
@@ -26,4 +30,5 @@ open class OwnershipRepository(private val ownershipDao: OwnershipDao) {
     open suspend fun deleteOwnership(ownership: Ownership) {
         ownershipDao.deleteOwnership(ownership)
     }
+
 }

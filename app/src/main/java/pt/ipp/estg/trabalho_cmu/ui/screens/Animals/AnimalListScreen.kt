@@ -14,37 +14,53 @@ import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AnimalListScreen(
+    viewModel: AnimalViewModel,
+    onAnimalClick: (Int) -> Unit = {},
+    isLoggedIn: Boolean,
+) {
+    val animals by viewModel.animals.observeAsState(emptyList())
+    val favorites by viewModel.favorites.observeAsState(emptyList())
+
+    AnimalListContent(
+        animals = animals,
+        favorites = if (isLoggedIn) favorites else emptyList(),
+        isLoggedIn = isLoggedIn,
+        onAnimalClick = onAnimalClick,
+        onToggleFavorite = { viewModel.toggleFavorite(it) }
+    )
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimalListScreen(
-    viewModel: AnimalViewModel,
-    onAnimalClick: (Int) -> Unit = {}
+fun AnimalListContent(
+    animals: List<Animal>,
+    favorites: List<Animal>,
+    isLoggedIn: Boolean,
+    onAnimalClick: (Int) -> Unit,
+    onToggleFavorite: (Animal) -> Unit
 ) {
-    var favorites by remember { mutableStateOf(listOf<Int>()) }
     var search by remember { mutableStateOf("") }
-
-    val animals by viewModel.animals.observeAsState(emptyList())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
+
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -52,10 +68,10 @@ fun AnimalListScreen(
             placeholder = { Text("Pesquisar") },
             trailingIcon = {
                 Row {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { /* TODO filtros */ }) {
                         Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
                     }
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { /* TODO ordenação */ }) {
                         Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
                     }
                 }
@@ -67,6 +83,37 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
+        if (animals.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Ainda não há animais disponíveis 🐾",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                )
+            }
+            return
+        }
+
+        val filteredAnimals = animals.filter {
+            it.name.contains(search, ignoreCase = true)
+        }
+
+        if (filteredAnimals.isEmpty()) {
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                Text(
+                    "Nenhum animal corresponde à pesquisa.",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                )
+            }
+            return
+        }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -74,46 +121,74 @@ fun AnimalListScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val filteredAnimals = animals.filter {
-                it.name.contains(search, ignoreCase = true)
-            }
-            items(filteredAnimals) { animal->
+            items(filteredAnimals) { animal ->
                 AnimalCard(
                     animal = animal,
-                    isFavorite = favorites.contains(animal.id),
+                    isFavorite = favorites.any { it.id == animal.id },
+                    isLoggedIn = isLoggedIn,
                     onClick = { onAnimalClick(animal.id) },
-                    onToggleFavorite = {
-                        favorites = if (favorites.contains(animal.id)) {
-                            favorites - animal.id
-                        } else {
-                            favorites + animal.id
-                        }
-                    }
+                    onToggleFavorite = { onToggleFavorite(animal) }
                 )
             }
         }
     }
 }
-class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
-    override val animals: LiveData<List<Animal>> = MutableLiveData(
-        listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
-            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", listOf(R.drawable.gato3), 1)
-        )
+
+private val previewAnimals = listOf(
+    Animal(
+        id = 1,
+        name = "Leia",
+        breed = "Desconhecida",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = "2019-01-01",
+        imageUrls = listOf(""),
+        shelterId = 1,
+        description = "Muito meiga!"
+    ),
+    Animal(
+        id = 2,
+        name = "Noa",
+        breed = "Desconhecida",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = "2022-01-01",
+        imageUrls = listOf(""),
+        shelterId = 1,
+        description = "Adora colo!"
     )
+)
 
-}
 
-
-@SuppressLint("ViewModelConstructorInComposable")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AnimalListScreenPreview() {
-    val mockViewModel = MockAnimalViewModel()
+fun AnimalListScreenPreviewLoggedIn() {
     MaterialTheme {
-        AnimalListScreen(viewModel = mockViewModel)
+        AnimalListContent(
+            animals = previewAnimals,
+            favorites = listOf(previewAnimals.first()),
+            isLoggedIn = true,
+            onAnimalClick = {},
+            onToggleFavorite = {}
+        )
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreviewGuest() {
+    MaterialTheme {
+        AnimalListContent(
+            animals = previewAnimals,
+            favorites = emptyList(),
+            isLoggedIn = false,
+            onAnimalClick = {},
+            onToggleFavorite = {}
+        )
     }
 }

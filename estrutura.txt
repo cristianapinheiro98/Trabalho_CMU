@@ -1,0 +1,2235 @@
+Folder PATH listing for volume Windows-SSD
+Volume serial number is DC14-5566
+C:.
+|   .gitignore
+|   build.gradle.kts
+|   estrutura.txt
+|   gradle.properties
+|   gradlew
+|   gradlew.bat
+|   local.properties
+|   README.md
+|   settings.gradle.kts
+|   
++---.gradle
+|   |   config.properties
+|   |   file-system.probe
+|   |   
+|   +---8.13
+|   |   |   gc.properties
+|   |   |   
+|   |   +---checksums
+|   |   |       checksums.lock
+|   |   |       md5-checksums.bin
+|   |   |       sha1-checksums.bin
+|   |   |       
+|   |   +---executionHistory
+|   |   |       executionHistory.bin
+|   |   |       executionHistory.lock
+|   |   |       
+|   |   +---expanded
+|   |   +---fileChanges
+|   |   |       last-build.bin
+|   |   |       
+|   |   +---fileHashes
+|   |   |       fileHashes.bin
+|   |   |       fileHashes.lock
+|   |   |       resourceHashesCache.bin
+|   |   |       
+|   |   \---vcsMetadata
+|   +---buildOutputCleanup
+|   |       buildOutputCleanup.lock
+|   |       cache.properties
+|   |       outputFiles.bin
+|   |       
+|   \---vcs-1
+|           gc.properties
+|           
++---.idea
+|   |   .gitignore
+|   |   AndroidProjectSystem.xml
+|   |   appInsightsSettings.xml
+|   |   compiler.xml
+|   |   deploymentTargetSelector.xml
+|   |   deviceManager.xml
+|   |   gradle.xml
+|   |   migrations.xml
+|   |   misc.xml
+|   |   runConfigurations.xml
+|   |   studiobot.xml
+|   |   vcs.xml
+|   |   workspace.xml
+|   |   
+|   +---caches
+|   |       deviceStreaming.xml
+|   |       
+|   \---inspectionProfiles
+|           Project_Default.xml
+|           
++---.kotlin
+|   +---errors
+|   |       errors-1760902452061.log
+|   |       
+|   \---sessions
+|           kotlin-compiler-1705711111560848457.salive
+|           
++---app
+|   |   .gitignore
+|   |   build.gradle.kts
+|   |   google-services.json
+|   |   proguard-rules.pro
+|   |   
+|   +---build
+|   |   +---generated
+|   |   |   +---ap_generated_sources
+|   |   |   |   \---debug
+|   |   |   |       \---out
+|   |   |   +---res
+|   |   |   |   +---pngs
+|   |   |   |   |   \---debug
+|   |   |   |   +---processDebugGoogleServices
+|   |   |   |   |   \---values
+|   |   |   |   |           values.xml
+|   |   |   |   |           
+|   |   |   |   \---resValues
+|   |   |   |       \---debug
+|   |   |   +---source
+|   |   |   |   +---kapt
+|   |   |   |   |   \---debug
+|   |   |   |   |       \---pt
+|   |   |   |   |           \---ipp
+|   |   |   |   |               \---estg
+|   |   |   |   |                   \---trabalho_cmu
+|   |   |   |   |                       \---data
+|   |   |   |   |                           \---local
+|   |   |   |   |                               |   AppDatabase_Impl.java
+|   |   |   |   |                               |   
+|   |   |   |   |                               \---dao
+|   |   |   |   |                                       ActivityDao_Impl.java
+|   |   |   |   |                                       AnimalDao_Impl.java
+|   |   |   |   |                                       OwnershipDao_Impl.java
+|   |   |   |   |                                       ShelterDao_Impl.java
+|   |   |   |   |                                       UserDao_Impl.java
+|   |   |   |   |                                       
+|   |   |   |   \---kaptKotlin
+|   |   |   |       \---debug
+|   |   |   \---updated_navigation_xml
+|   |   |       \---debug
+|   |   +---gmpAppId
+|   |   |       debug.txt
+|   |   |       
+|   |   +---intermediates
+|   |   |   +---aar_metadata_check
+|   |   |   |   \---debug
+|   |   |   |       \---checkDebugAarMetadata
+|   |   |   +---annotation_processor_list
+|   |   |   |   \---debug
+|   |   |   |       \---javaPreCompileDebug
+|   |   |   |               annotationProcessors.json
+|   |   |   |               
+|   |   |   +---apk
+|   |   |   |   \---debug
+|   |   |   |           app-debug.apk
+|   |   |   |           output-metadata.json
+|   |   |   |           
+|   |   |   +---apk_ide_redirect_file
+|   |   |   |   \---debug
+|   |   |   |       \---createDebugApkListingFileRedirect
+|   |   |   |               redirect.txt
+|   |   |   |               
+|   |   |   +---app_metadata
+|   |   |   |   \---debug
+|   |   |   |       \---writeDebugAppMetadata
+|   |   |   |               app-metadata.properties
+|   |   |   |               
+|   |   |   +---assets
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugAssets
+|   |   |   +---compatible_screen_manifest
+|   |   |   |   \---debug
+|   |   |   |       \---createDebugCompatibleScreenManifests
+|   |   |   |               output-metadata.json
+|   |   |   |               
+|   |   |   +---compiled_navigation_res
+|   |   |   |   \---debug
+|   |   |   |       \---compileDebugNavigationResources
+|   |   |   +---compile_and_runtime_not_namespaced_r_class_jar
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugResources
+|   |   |   |               R.jar
+|   |   |   |               
+|   |   |   +---compressed_assets
+|   |   |   |   \---debug
+|   |   |   |       \---compressDebugAssets
+|   |   |   |           \---out
+|   |   |   +---data_binding_layout_info_type_merge
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugResources
+|   |   |   |           \---out
+|   |   |   +---data_binding_layout_info_type_package
+|   |   |   |   \---debug
+|   |   |   |       \---packageDebugResources
+|   |   |   |           \---out
+|   |   |   +---desugar_graph
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   |               +---currentProject
+|   |   |   |               |   +---dirs_bucket_0
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_1
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_2
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_3
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_4
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_5
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_6
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---dirs_bucket_7
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_0
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_1
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_2
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_3
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_4
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_5
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   +---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_6
+|   |   |   |               |   |       graph.bin
+|   |   |   |               |   |       
+|   |   |   |               |   \---jar_eab1deadb6d5d33c88ad7523499f37b63d2321ad89971582e15f9dfce5e0de07_bucket_7
+|   |   |   |               |           graph.bin
+|   |   |   |               |           
+|   |   |   |               +---externalLibs
+|   |   |   |               +---mixedScopes
+|   |   |   |               \---otherProjects
+|   |   |   +---dex
+|   |   |   |   \---debug
+|   |   |   |       +---mergeExtDexDebug
+|   |   |   |       |       classes.dex
+|   |   |   |       |       classes2.dex
+|   |   |   |       |       classes3.dex
+|   |   |   |       |       classes4.dex
+|   |   |   |       |       classes5.dex
+|   |   |   |       |       
+|   |   |   |       +---mergeLibDexDebug
+|   |   |   |       |   +---0
+|   |   |   |       |   +---1
+|   |   |   |       |   +---10
+|   |   |   |       |   +---11
+|   |   |   |       |   +---12
+|   |   |   |       |   +---13
+|   |   |   |       |   +---14
+|   |   |   |       |   +---15
+|   |   |   |       |   +---2
+|   |   |   |       |   +---3
+|   |   |   |       |   +---4
+|   |   |   |       |   +---5
+|   |   |   |       |   +---6
+|   |   |   |       |   +---7
+|   |   |   |       |   +---8
+|   |   |   |       |   \---9
+|   |   |   |       \---mergeProjectDexDebug
+|   |   |   |           +---0
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---1
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---10
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---11
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---12
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---13
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---14
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---15
+|   |   |   |           +---2
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---3
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---4
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---5
+|   |   |   |           +---6
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---7
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           +---8
+|   |   |   |           |       classes.dex
+|   |   |   |           |       
+|   |   |   |           \---9
+|   |   |   |                   classes.dex
+|   |   |   |                   
+|   |   |   +---dex_archive_input_jar_hashes
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |               out
+|   |   |   |               
+|   |   |   +---dex_number_of_buckets_file
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |               out
+|   |   |   |               
+|   |   |   +---duplicate_classes_check
+|   |   |   |   \---debug
+|   |   |   |       \---checkDebugDuplicateClasses
+|   |   |   +---external_file_lib_dex_archives
+|   |   |   |   \---debug
+|   |   |   |       \---desugarDebugFileDependencies
+|   |   |   +---external_libs_dex_archive
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   +---external_libs_dex_archive_with_artifact_transforms
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   +---incremental
+|   |   |   |   +---debug
+|   |   |   |   |   +---mergeDebugResources
+|   |   |   |   |   |   |   compile-file-map.properties
+|   |   |   |   |   |   |   merger.xml
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +---merged.dir
+|   |   |   |   |   |   |   +---values
+|   |   |   |   |   |   |   |       values.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-af
+|   |   |   |   |   |   |   |       values-af.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-am
+|   |   |   |   |   |   |   |       values-am.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ar
+|   |   |   |   |   |   |   |       values-ar.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-as
+|   |   |   |   |   |   |   |       values-as.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-az
+|   |   |   |   |   |   |   |       values-az.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-b+sr+Latn
+|   |   |   |   |   |   |   |       values-b+sr+Latn.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-be
+|   |   |   |   |   |   |   |       values-be.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-bg
+|   |   |   |   |   |   |   |       values-bg.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-bn
+|   |   |   |   |   |   |   |       values-bn.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-bs
+|   |   |   |   |   |   |   |       values-bs.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ca
+|   |   |   |   |   |   |   |       values-ca.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-cs
+|   |   |   |   |   |   |   |       values-cs.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-da
+|   |   |   |   |   |   |   |       values-da.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-de
+|   |   |   |   |   |   |   |       values-de.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-el
+|   |   |   |   |   |   |   |       values-el.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-en-rAU
+|   |   |   |   |   |   |   |       values-en-rAU.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-en-rCA
+|   |   |   |   |   |   |   |       values-en-rCA.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-en-rGB
+|   |   |   |   |   |   |   |       values-en-rGB.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-en-rIN
+|   |   |   |   |   |   |   |       values-en-rIN.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-en-rXC
+|   |   |   |   |   |   |   |       values-en-rXC.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-es
+|   |   |   |   |   |   |   |       values-es.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-es-rUS
+|   |   |   |   |   |   |   |       values-es-rUS.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-et
+|   |   |   |   |   |   |   |       values-et.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-eu
+|   |   |   |   |   |   |   |       values-eu.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-fa
+|   |   |   |   |   |   |   |       values-fa.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-fi
+|   |   |   |   |   |   |   |       values-fi.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-fr
+|   |   |   |   |   |   |   |       values-fr.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-fr-rCA
+|   |   |   |   |   |   |   |       values-fr-rCA.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-gl
+|   |   |   |   |   |   |   |       values-gl.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-gu
+|   |   |   |   |   |   |   |       values-gu.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-hi
+|   |   |   |   |   |   |   |       values-hi.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-hr
+|   |   |   |   |   |   |   |       values-hr.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-hu
+|   |   |   |   |   |   |   |       values-hu.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-hy
+|   |   |   |   |   |   |   |       values-hy.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-in
+|   |   |   |   |   |   |   |       values-in.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-is
+|   |   |   |   |   |   |   |       values-is.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-it
+|   |   |   |   |   |   |   |       values-it.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-iw
+|   |   |   |   |   |   |   |       values-iw.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ja
+|   |   |   |   |   |   |   |       values-ja.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ka
+|   |   |   |   |   |   |   |       values-ka.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-kk
+|   |   |   |   |   |   |   |       values-kk.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-km
+|   |   |   |   |   |   |   |       values-km.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-kn
+|   |   |   |   |   |   |   |       values-kn.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ko
+|   |   |   |   |   |   |   |       values-ko.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ky
+|   |   |   |   |   |   |   |       values-ky.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-lo
+|   |   |   |   |   |   |   |       values-lo.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-lt
+|   |   |   |   |   |   |   |       values-lt.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-lv
+|   |   |   |   |   |   |   |       values-lv.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-mk
+|   |   |   |   |   |   |   |       values-mk.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ml
+|   |   |   |   |   |   |   |       values-ml.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-mn
+|   |   |   |   |   |   |   |       values-mn.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-mr
+|   |   |   |   |   |   |   |       values-mr.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ms
+|   |   |   |   |   |   |   |       values-ms.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-my
+|   |   |   |   |   |   |   |       values-my.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-nb
+|   |   |   |   |   |   |   |       values-nb.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ne
+|   |   |   |   |   |   |   |       values-ne.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-nl
+|   |   |   |   |   |   |   |       values-nl.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-or
+|   |   |   |   |   |   |   |       values-or.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-pa
+|   |   |   |   |   |   |   |       values-pa.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-pl
+|   |   |   |   |   |   |   |       values-pl.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-pt
+|   |   |   |   |   |   |   |       values-pt.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-pt-rBR
+|   |   |   |   |   |   |   |       values-pt-rBR.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-pt-rPT
+|   |   |   |   |   |   |   |       values-pt-rPT.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ro
+|   |   |   |   |   |   |   |       values-ro.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ru
+|   |   |   |   |   |   |   |       values-ru.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-si
+|   |   |   |   |   |   |   |       values-si.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sk
+|   |   |   |   |   |   |   |       values-sk.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sl
+|   |   |   |   |   |   |   |       values-sl.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sq
+|   |   |   |   |   |   |   |       values-sq.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sr
+|   |   |   |   |   |   |   |       values-sr.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sv
+|   |   |   |   |   |   |   |       values-sv.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-sw
+|   |   |   |   |   |   |   |       values-sw.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ta
+|   |   |   |   |   |   |   |       values-ta.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-te
+|   |   |   |   |   |   |   |       values-te.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-th
+|   |   |   |   |   |   |   |       values-th.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-tl
+|   |   |   |   |   |   |   |       values-tl.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-tr
+|   |   |   |   |   |   |   |       values-tr.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-uk
+|   |   |   |   |   |   |   |       values-uk.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-ur
+|   |   |   |   |   |   |   |       values-ur.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-uz
+|   |   |   |   |   |   |   |       values-uz.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-v21
+|   |   |   |   |   |   |   |       values-v21.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-v30
+|   |   |   |   |   |   |   |       values-v30.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-vi
+|   |   |   |   |   |   |   |       values-vi.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-watch-v20
+|   |   |   |   |   |   |   |       values-watch-v20.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-zh-rCN
+|   |   |   |   |   |   |   |       values-zh-rCN.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-zh-rHK
+|   |   |   |   |   |   |   |       values-zh-rHK.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   +---values-zh-rTW
+|   |   |   |   |   |   |   |       values-zh-rTW.xml
+|   |   |   |   |   |   |   |       
+|   |   |   |   |   |   |   \---values-zu
+|   |   |   |   |   |   |           values-zu.xml
+|   |   |   |   |   |   |           
+|   |   |   |   |   |   \---stripped.dir
+|   |   |   |   |   \---packageDebugResources
+|   |   |   |   |       |   compile-file-map.properties
+|   |   |   |   |       |   merger.xml
+|   |   |   |   |       |   
+|   |   |   |   |       +---merged.dir
+|   |   |   |   |       |   +---values
+|   |   |   |   |       |   |       values.xml
+|   |   |   |   |       |   |       
+|   |   |   |   |       |   \---values-pt
+|   |   |   |   |       |           values-pt.xml
+|   |   |   |   |       |           
+|   |   |   |   |       \---stripped.dir
+|   |   |   |   +---debug-mergeJavaRes
+|   |   |   |   |   |   merge-state
+|   |   |   |   |   |   
+|   |   |   |   |   \---zip-cache
+|   |   |   |   |           +GgS0JfXxRfi4r9MvpHRMA==
+|   |   |   |   |           +WuO5NwCxPQNCMYYhji2qA==
+|   |   |   |   |           10w1BZorEKb30UKi_3W4_Q==
+|   |   |   |   |           16S3IMfyXIe1nfSAM79dQg==
+|   |   |   |   |           1BiWQHcmXypt4TLwIJ7KfQ==
+|   |   |   |   |           1gtqvdcl3Yy9XikfqGWLzw==
+|   |   |   |   |           1y7WkgVguaQ3dYeg2YvcKw==
+|   |   |   |   |           28xjuGkL0iu8VXdyva0yog==
+|   |   |   |   |           2bynwolXpXpHLyY+lUp_OA==
+|   |   |   |   |           2hS84uD3HABgKpkOEOMycQ==
+|   |   |   |   |           2XfZ7oer18mb+KkKg7Os4A==
+|   |   |   |   |           2Xjj00lasj5KybhM42LobQ==
+|   |   |   |   |           2YUHv8fFpM4rynjMic219Q==
+|   |   |   |   |           3EayfypnvUqeFefSGTiBdQ==
+|   |   |   |   |           3hkExh8QMWTtj16lYJXrnQ==
+|   |   |   |   |           3xLElOKOPVZrnsg3yQDlCA==
+|   |   |   |   |           4XZwsUo1U4E02w_dicPylw==
+|   |   |   |   |           57Cmqz_iPb7vg16E8r9tpQ==
+|   |   |   |   |           58MeEoI3jGS3dj_qSKlcwQ==
+|   |   |   |   |           5X_L5LCIP2uA+8q0VJZOLA==
+|   |   |   |   |           6iSyKiJIEf2VBUSU5pA9Bw==
+|   |   |   |   |           6oy7nUGpmII9TnNNolCDng==
+|   |   |   |   |           75iPxKfTCxwodp6yKNSTDg==
+|   |   |   |   |           76qUxIgHy62RN+FRRmk+9g==
+|   |   |   |   |           7b2wkBzXA76m2i2lAC+PcQ==
+|   |   |   |   |           7d5WB6gViUD3GVylKqLG9Q==
+|   |   |   |   |           7MjZ5NbHckcvg2CXymYu3Q==
+|   |   |   |   |           7wHnC+d0DT15uSL237GBdA==
+|   |   |   |   |           86zowtR+QZB4We13mZoeTw==
+|   |   |   |   |           8D94Y84xEu3XdCbK6soeiA==
+|   |   |   |   |           8nMhw5yDdWay2rLBScldRQ==
+|   |   |   |   |           8Srd3zTCG6hoLtly9vRx9A==
+|   |   |   |   |           9JrbIYqUSfsfQqZkGniT5w==
+|   |   |   |   |           9Mz5c3JqxucONojGYIk4JA==
+|   |   |   |   |           aAnxfUEeabBdshqASKQFjg==
+|   |   |   |   |           aaYIaPmM4d2eUxLVHUKqDA==
+|   |   |   |   |           AgzzlxL9CmTMZPlDXcCznA==
+|   |   |   |   |           ahM3k37fgEl6+v89hch_jw==
+|   |   |   |   |           aIu2PRt0m48E+ndmBXiagQ==
+|   |   |   |   |           Al+wyOfbrFUnwLLc82kvtA==
+|   |   |   |   |           ALwCAhnnHp6H6U_aps1iPA==
+|   |   |   |   |           aO6EEWJW2aJT+oXhJMBIaA==
+|   |   |   |   |           aodEEWrM9PyxpKbj79WeHA==
+|   |   |   |   |           apkTeRfud12t0rYccWqFQA==
+|   |   |   |   |           b1rXj8LqtpJReDZlYB1Ccw==
+|   |   |   |   |           BAAsTsfEk3XDZGP6KOVDWw==
+|   |   |   |   |           BbBYdQYaJHTq65Q4iYpsKg==
+|   |   |   |   |           bCwlTS+OcEmp0wkzI3qrkQ==
+|   |   |   |   |           beiWiMYpB1tE+DNg9qePug==
+|   |   |   |   |           BoGt3QpUKjsQsEMAC8dXrQ==
+|   |   |   |   |           C08gzJheKztDGrJ8vv4aAA==
+|   |   |   |   |           cd9yYvCW9t9r+Wh8kp0zgg==
+|   |   |   |   |           CGsx1fvAJKmYCd_8_avgLw==
+|   |   |   |   |           ck2LFZWWHI+7kmHRHTBbFw==
+|   |   |   |   |           cKC04aiDXEAO6s7xcGNE_Q==
+|   |   |   |   |           com_Jl0CugPsuoErq+bqSA==
+|   |   |   |   |           CWk1mcPDUBAs80jLgwJFOg==
+|   |   |   |   |           d+W7y8QuvEyt8f0xMOjigA==
+|   |   |   |   |           D5VtCkImVk5iOJiz6tSIAA==
+|   |   |   |   |           D99hfctMUwXvFXone0n94A==
+|   |   |   |   |           dFIUA_067byvzZjhkFoSdw==
+|   |   |   |   |           DrAfMrpk7Qh8RToWV5CbDw==
+|   |   |   |   |           DyiRMMcLCBeozWyo2ax6zg==
+|   |   |   |   |           ebs0gmfrG8k+5oYjorWdmQ==
+|   |   |   |   |           ekkxh0rHmn4G0D9f0qKkbQ==
+|   |   |   |   |           eofO327lu2z54VIbSiyj0g==
+|   |   |   |   |           ffryIsxsc0vqQhme4+3dDw==
+|   |   |   |   |           fGvafrtgjrEuK0hfHx4Izw==
+|   |   |   |   |           FJ1fqvJ_v2aE3Bl3ycQsVQ==
+|   |   |   |   |           fp7Ly30SPWPe_gMJaipUUg==
+|   |   |   |   |           FqxDyNeCDPhjexLKlCdUCg==
+|   |   |   |   |           G0WbHF8pyqLkP6uP1UMaRA==
+|   |   |   |   |           GcBFoqsTK+mHcDHDNdPaLg==
+|   |   |   |   |           GEWsbILUpATpPK0htiLseg==
+|   |   |   |   |           GXaqYHycRYUm+0Q5YvwS4w==
+|   |   |   |   |           h+A+lkphdbstoyXONTbx1Q==
+|   |   |   |   |           hh3z7bjPVpE+beRaNIv+Yw==
+|   |   |   |   |           HpRis7_Yafw+Ypz+wIfdCg==
+|   |   |   |   |           i9O_RgLssfMvlVk2MNgrdA==
+|   |   |   |   |           IDfVm145XEYJJTUZOJ4Khw==
+|   |   |   |   |           IE3TgcXbJvQT+EJnCUQtrw==
+|   |   |   |   |           iSABM+0UdRSGtcZTDwbg3Q==
+|   |   |   |   |           iuqs7JNAxmzhIfWu4g9c5Q==
+|   |   |   |   |           IW+5WIBGCzEKXUoOTjBkUA==
+|   |   |   |   |           j2pX7qIsCIQ5XUx+d9jBfQ==
+|   |   |   |   |           JI8U4ieqG7jsnuFhQzze_A==
+|   |   |   |   |           jM_Do5VLyWLmjet0l7LKQA==
+|   |   |   |   |           JsnZsV6U34RSUVBRxFJljw==
+|   |   |   |   |           kHHVggpRXGjRbbKfCARfwQ==
+|   |   |   |   |           KIUsxoXu6ngBC3mSO6JABg==
+|   |   |   |   |           kjqSiy2wBx4d0r1fc1fUrQ==
+|   |   |   |   |           kTupA_MJid8sPQGe11SsMg==
+|   |   |   |   |           LgbKiBGCNMI6p2O9H5eX2g==
+|   |   |   |   |           lGqsur_ONZgDoy_DFIUcCw==
+|   |   |   |   |           lizTdUIsQAFYfTBwh+8PzQ==
+|   |   |   |   |           LlMujwaY7Ued3JAesqRIPQ==
+|   |   |   |   |           LrdLLUaupQ_V3FNNVvYSiA==
+|   |   |   |   |           LWLU_yzK_GvBalWwsgeEoA==
+|   |   |   |   |           m2uLMv2+Yaa4Of8RI8PzNw==
+|   |   |   |   |           mb0_jhPL57ijtv9X8J0EKA==
+|   |   |   |   |           mDFkkS1HDoLahYML8ELjyQ==
+|   |   |   |   |           mnobZd3umGrIbV1NZRHDlg==
+|   |   |   |   |           mRLCDNIt0_O+kRNih86YmA==
+|   |   |   |   |           N6pbdNX11W2wtgyfN1xADg==
+|   |   |   |   |           nd16h9DD9EUlKHx26RnnFQ==
+|   |   |   |   |           nLKDhTbzPPBn_owcv8WWPw==
+|   |   |   |   |           nP3WNadjogzXCi07NtDryg==
+|   |   |   |   |           NqLZZs+n_uvXeeXm+v8Xdg==
+|   |   |   |   |           nsy2YK+Z+mK39lKqqlczEw==
+|   |   |   |   |           OBFX0TzbOEsYQKVSiKG2jQ==
+|   |   |   |   |           OgU7Dq0uy9nlhC6cb2ECCg==
+|   |   |   |   |           Ol6cZbwL0F+HMBy3dvUuiw==
+|   |   |   |   |           OLt+D+TOR_HnngF5nPtrzw==
+|   |   |   |   |           onRjBGvam59XlWxMQ_UPgg==
+|   |   |   |   |           OoEVJ0jwakWvAkVQWwB+bA==
+|   |   |   |   |           P1ywlPokPogdj7EZ53uhfA==
+|   |   |   |   |           PhWwEj3B3bntbzMG4TqEWA==
+|   |   |   |   |           pimHwK1DOQ+juBMwC2IL+Q==
+|   |   |   |   |           pImxwVnAgm5_8oGrZ9JPvg==
+|   |   |   |   |           pLOu8nchmUzyZa9My21Mpg==
+|   |   |   |   |           PV++JaltDwSNzxdyAZbcyQ==
+|   |   |   |   |           pyCsoqHwg5PAIblr4T3CnQ==
+|   |   |   |   |           pZeYM1KyvcqBv0Nu9bVk8A==
+|   |   |   |   |           Q4futGY1Yqulj_xjRezK9w==
+|   |   |   |   |           Q7+4KwkO3r2hMP2xQfGuRA==
+|   |   |   |   |           qCu7XGsp1ZDF7+qiRBX+kw==
+|   |   |   |   |           QWL8eT5FvKBbzfDspUGk_Q==
+|   |   |   |   |           r2UJ3IV7I0_f2_v3cIU8_w==
+|   |   |   |   |           rHx8YEcF880enchZpbRRkQ==
+|   |   |   |   |           RITV_AsDKgG4ADv2IXwQMA==
+|   |   |   |   |           RJtJLVUBWa1hAtWe07n7zw==
+|   |   |   |   |           rOyIQqgc_BkEOz8iTnKt9A==
+|   |   |   |   |           rQj5EnYVtfq4z82RZVc36A==
+|   |   |   |   |           SAnktLqhtgZ62OakD4RG9g==
+|   |   |   |   |           SHRSGjKpvwcJbQ965aiNww==
+|   |   |   |   |           stPbwtwdrXZgNixafeOPsw==
+|   |   |   |   |           suSHwKz2zog8zIFluk3v3w==
+|   |   |   |   |           T3chPX2XAmyWsoPJbM+XzA==
+|   |   |   |   |           TatPIs3hr5UI+velScCsIw==
+|   |   |   |   |           tCFzCyJzOEa5V7m+yxcM6w==
+|   |   |   |   |           tEljGhNaD+3aSx+TmyN2hQ==
+|   |   |   |   |           TmY0pNwbG9ezlLoaXxO7Mg==
+|   |   |   |   |           TMyB9XTt7pbTHFIsGkUMTQ==
+|   |   |   |   |           Tpe5z2QLTq5N0FBurooKRw==
+|   |   |   |   |           Ttq_kgMVgrhz9kEvumgs0w==
+|   |   |   |   |           tzjh8d_jVHrBBZPo_MPMOg==
+|   |   |   |   |           T_1FY7d9FUOb_JlRy95lXw==
+|   |   |   |   |           u3QMsVUmYYU9x4SWVgCEQA==
+|   |   |   |   |           u8IidEywLq5NNDPvOCqJDQ==
+|   |   |   |   |           UaBc1M5w5HvdjSf2SLZuZg==
+|   |   |   |   |           UCt3RHanacO_AqqmIW4vMA==
+|   |   |   |   |           umYsi2uqn65m38jsxqFaiQ==
+|   |   |   |   |           URI7WCDDRru_KdMYXyG98A==
+|   |   |   |   |           UrlTB6wAlL5iS2oCixo3dg==
+|   |   |   |   |           UyIUjWuG5PWA1+Ag9I254w==
+|   |   |   |   |           uyyotO3SqHxI_d5VPCyDlQ==
+|   |   |   |   |           v5p9hlyDZwOeYDHfpAwMFQ==
+|   |   |   |   |           VdrTCoDZF4G4_iLwfUYNzg==
+|   |   |   |   |           vdvnwkcD_RHc5iLfkonoeA==
+|   |   |   |   |           vfMRskQdwUjBfHh2D8Q_wA==
+|   |   |   |   |           Vhvm3XYvIWQGhZiBJOj07w==
+|   |   |   |   |           VvoPOkP8JCA9_LZ6YEMylg==
+|   |   |   |   |           w7HHCA7xcqvvRFeX68au1A==
+|   |   |   |   |           wFuF1EZcSPkwF_vzH5PqOQ==
+|   |   |   |   |           wJOEKnKgXlwfGGn+v2qPYA==
+|   |   |   |   |           WLD9NXVZPTwhJn3GTcjK1A==
+|   |   |   |   |           wLUaHmURBSGGMgggAD4jjQ==
+|   |   |   |   |           wLWuscVoF1GCvQKDKvElVw==
+|   |   |   |   |           wPsf_gGB6qZ3L6Fijk_jTg==
+|   |   |   |   |           WsUcJCufY462zv9Dc7tWfg==
+|   |   |   |   |           wtS++sJv2cwp7ZAlmF2nYQ==
+|   |   |   |   |           WtZ49cKuYZQz476yz0b4Rw==
+|   |   |   |   |           WzAG+aysWt+cJfEx+AdXfA==
+|   |   |   |   |           xKiKd0KJPqp4mGDTFzXR+Q==
+|   |   |   |   |           XOqO6oJ05aTq3AvFuR7vcw==
+|   |   |   |   |           xRaiqq9Dv24ITY4mmneRNA==
+|   |   |   |   |           XrMco6YaI4h4ajE_6mGJhA==
+|   |   |   |   |           XTa8KAe5tm1WvTCY7viR8g==
+|   |   |   |   |           xV50ZakB_Lwz8dEnyRkRDg==
+|   |   |   |   |           YEohJnnZxbZU8abjQG2UoA==
+|   |   |   |   |           yQeUxR5_BnwC3+WjyuHXmA==
+|   |   |   |   |           YRNe6oTerVDlLAJj+Jx8mw==
+|   |   |   |   |           yZQVEJz7B5hkeX1EKZ+jAw==
+|   |   |   |   |           z8SC_XaTekUZTTU3NJzW3w==
+|   |   |   |   |           ZAwC327nT7gCeUHKPsN5NQ==
+|   |   |   |   |           zhdwfS+6IJu5_tX0cRhUBA==
+|   |   |   |   |           zmTR_oKlFAOQv2nj2dK8MQ==
+|   |   |   |   |           zvcsnZBa8HAMnosDWaqBWA==
+|   |   |   |   |           _AaJzgPmvsj2PGGoqGJuEw==
+|   |   |   |   |           _xlsbmAWAuysofq67ld09Q==
+|   |   |   |   |           
+|   |   |   |   +---mergeDebugAssets
+|   |   |   |   |       merger.xml
+|   |   |   |   |       
+|   |   |   |   +---mergeDebugJniLibFolders
+|   |   |   |   |       merger.xml
+|   |   |   |   |       
+|   |   |   |   +---mergeDebugShaders
+|   |   |   |   |       merger.xml
+|   |   |   |   |       
+|   |   |   |   \---packageDebug
+|   |   |   |       \---tmp
+|   |   |   |           \---debug
+|   |   |   |               |   dex-renamer-state.txt
+|   |   |   |               |   
+|   |   |   |               \---zip-cache
+|   |   |   |                       androidResources
+|   |   |   |                       javaResources0
+|   |   |   |                       
+|   |   |   +---javac
+|   |   |   |   \---debug
+|   |   |   |       \---compileDebugJavaWithJavac
+|   |   |   |           \---classes
+|   |   |   |               \---pt
+|   |   |   |                   \---ipp
+|   |   |   |                       \---estg
+|   |   |   |                           \---trabalho_cmu
+|   |   |   |                               \---data
+|   |   |   |                                   \---local
+|   |   |   |                                       |   AppDatabase_Impl$1.class
+|   |   |   |                                       |   AppDatabase_Impl.class
+|   |   |   |                                       |   
+|   |   |   |                                       \---dao
+|   |   |   |                                               ActivityDao_Impl$1.class
+|   |   |   |                                               ActivityDao_Impl$2.class
+|   |   |   |                                               ActivityDao_Impl$3.class
+|   |   |   |                                               ActivityDao_Impl.class
+|   |   |   |                                               AnimalDao_Impl$1.class
+|   |   |   |                                               AnimalDao_Impl$2.class
+|   |   |   |                                               AnimalDao_Impl.class
+|   |   |   |                                               OwnershipDao_Impl$1.class
+|   |   |   |                                               OwnershipDao_Impl$2.class
+|   |   |   |                                               OwnershipDao_Impl.class
+|   |   |   |                                               ShelterDao_Impl$1.class
+|   |   |   |                                               ShelterDao_Impl$2.class
+|   |   |   |                                               ShelterDao_Impl$3.class
+|   |   |   |                                               ShelterDao_Impl.class
+|   |   |   |                                               UserDao_Impl$1.class
+|   |   |   |                                               UserDao_Impl$2.class
+|   |   |   |                                               UserDao_Impl$3.class
+|   |   |   |                                               UserDao_Impl$4.class
+|   |   |   |                                               UserDao_Impl.class
+|   |   |   |                                               
+|   |   |   +---java_res
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugJavaRes
+|   |   |   |           \---out
+|   |   |   |               +---META-INF
+|   |   |   |               |       app_debug.kotlin_module
+|   |   |   |               |       
+|   |   |   |               \---pt
+|   |   |   |                   \---ipp
+|   |   |   |                       \---estg
+|   |   |   |                           \---trabalho_cmu
+|   |   |   |                               +---data
+|   |   |   |                               |   +---local
+|   |   |   |                               |   |   +---dao
+|   |   |   |                               |   |   \---entities
+|   |   |   |                               |   +---models
+|   |   |   |                               |   +---remote
+|   |   |   |                               |   |   \---api
+|   |   |   |                               |   |       +---objects
+|   |   |   |                               |   |       \---services
+|   |   |   |                               |   \---repository
+|   |   |   |                               +---di
+|   |   |   |                               +---preferences
+|   |   |   |                               +---services
+|   |   |   |                               +---ui
+|   |   |   |                               |   +---components
+|   |   |   |                               |   +---navigation
+|   |   |   |                               |   +---screens
+|   |   |   |                               |   |   +---Animals
+|   |   |   |                               |   |   +---Auth
+|   |   |   |                               |   |   +---Ownership
+|   |   |   |                               |   |   +---Shelter
+|   |   |   |                               |   |   +---SocialTailsComunity
+|   |   |   |                               |   |   +---startScreen
+|   |   |   |                               |   |   \---User
+|   |   |   |                               |   +---theme
+|   |   |   |                               |   \---viewmodel
+|   |   |   |                               \---utils
+|   |   |   +---linked_resources_binary_format
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugResources
+|   |   |   |               linked-resources-binary-format-debug.ap_
+|   |   |   |               output-metadata.json
+|   |   |   |               
+|   |   |   +---local_only_symbol_list
+|   |   |   |   \---debug
+|   |   |   |       \---parseDebugLocalResources
+|   |   |   |               R-def.txt
+|   |   |   |               
+|   |   |   +---manifest_merge_blame_file
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugMainManifest
+|   |   |   |               manifest-merger-blame-debug-report.txt
+|   |   |   |               
+|   |   |   +---merged_java_res
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugJavaResource
+|   |   |   |               base.jar
+|   |   |   |               
+|   |   |   +---merged_jni_libs
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugJniLibFolders
+|   |   |   |           \---out
+|   |   |   +---merged_manifest
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugMainManifest
+|   |   |   |               AndroidManifest.xml
+|   |   |   |               
+|   |   |   +---merged_manifests
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugManifest
+|   |   |   |               AndroidManifest.xml
+|   |   |   |               output-metadata.json
+|   |   |   |               
+|   |   |   +---merged_native_libs
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugNativeLibs
+|   |   |   |           \---out
+|   |   |   |               \---lib
+|   |   |   |                   +---arm64-v8a
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   +---armeabi-v7a
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   +---x86
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   \---x86_64
+|   |   |   |                           libandroidx.graphics.path.so
+|   |   |   |                           libdatastore_shared_counter.so
+|   |   |   |                           
+|   |   |   +---merged_res
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugResources
+|   |   |   |               drawable_cat_image.jpg.flat
+|   |   |   |               drawable_cat_login.jpg.flat
+|   |   |   |               drawable_dog_image.png.flat
+|   |   |   |               drawable_gato1.jpeg.flat
+|   |   |   |               drawable_gato2.jpeg.flat
+|   |   |   |               drawable_gato3.jpeg.flat
+|   |   |   |               drawable_gato4.jpeg.flat
+|   |   |   |               drawable_gato5.jpeg.flat
+|   |   |   |               drawable_gato6.jpeg.flat
+|   |   |   |               drawable_ic_calendar.xml.flat
+|   |   |   |               drawable_ic_collar.png.flat
+|   |   |   |               drawable_ic_launcher_background.xml.flat
+|   |   |   |               drawable_ic_launcher_foreground.xml.flat
+|   |   |   |               drawable_ic_photo.xml.flat
+|   |   |   |               drawable_map_image1.png.flat
+|   |   |   |               drawable_map_image2.png.flat
+|   |   |   |               mipmap-anydpi-v26_ic_launcher.xml.flat
+|   |   |   |               mipmap-anydpi-v26_ic_launcher_round.xml.flat
+|   |   |   |               mipmap-hdpi_ic_launcher.webp.flat
+|   |   |   |               mipmap-hdpi_ic_launcher_round.webp.flat
+|   |   |   |               mipmap-mdpi_ic_launcher.webp.flat
+|   |   |   |               mipmap-mdpi_ic_launcher_round.webp.flat
+|   |   |   |               mipmap-xhdpi_ic_launcher.webp.flat
+|   |   |   |               mipmap-xhdpi_ic_launcher_round.webp.flat
+|   |   |   |               mipmap-xxhdpi_ic_launcher.webp.flat
+|   |   |   |               mipmap-xxhdpi_ic_launcher_round.webp.flat
+|   |   |   |               mipmap-xxxhdpi_ic_launcher.webp.flat
+|   |   |   |               mipmap-xxxhdpi_ic_launcher_round.webp.flat
+|   |   |   |               values-af_values-af.arsc.flat
+|   |   |   |               values-am_values-am.arsc.flat
+|   |   |   |               values-ar_values-ar.arsc.flat
+|   |   |   |               values-as_values-as.arsc.flat
+|   |   |   |               values-az_values-az.arsc.flat
+|   |   |   |               values-b+sr+Latn_values-b+sr+Latn.arsc.flat
+|   |   |   |               values-be_values-be.arsc.flat
+|   |   |   |               values-bg_values-bg.arsc.flat
+|   |   |   |               values-bn_values-bn.arsc.flat
+|   |   |   |               values-bs_values-bs.arsc.flat
+|   |   |   |               values-ca_values-ca.arsc.flat
+|   |   |   |               values-cs_values-cs.arsc.flat
+|   |   |   |               values-da_values-da.arsc.flat
+|   |   |   |               values-de_values-de.arsc.flat
+|   |   |   |               values-el_values-el.arsc.flat
+|   |   |   |               values-en-rAU_values-en-rAU.arsc.flat
+|   |   |   |               values-en-rCA_values-en-rCA.arsc.flat
+|   |   |   |               values-en-rGB_values-en-rGB.arsc.flat
+|   |   |   |               values-en-rIN_values-en-rIN.arsc.flat
+|   |   |   |               values-en-rXC_values-en-rXC.arsc.flat
+|   |   |   |               values-es-rUS_values-es-rUS.arsc.flat
+|   |   |   |               values-es_values-es.arsc.flat
+|   |   |   |               values-et_values-et.arsc.flat
+|   |   |   |               values-eu_values-eu.arsc.flat
+|   |   |   |               values-fa_values-fa.arsc.flat
+|   |   |   |               values-fi_values-fi.arsc.flat
+|   |   |   |               values-fr-rCA_values-fr-rCA.arsc.flat
+|   |   |   |               values-fr_values-fr.arsc.flat
+|   |   |   |               values-gl_values-gl.arsc.flat
+|   |   |   |               values-gu_values-gu.arsc.flat
+|   |   |   |               values-hi_values-hi.arsc.flat
+|   |   |   |               values-hr_values-hr.arsc.flat
+|   |   |   |               values-hu_values-hu.arsc.flat
+|   |   |   |               values-hy_values-hy.arsc.flat
+|   |   |   |               values-in_values-in.arsc.flat
+|   |   |   |               values-is_values-is.arsc.flat
+|   |   |   |               values-it_values-it.arsc.flat
+|   |   |   |               values-iw_values-iw.arsc.flat
+|   |   |   |               values-ja_values-ja.arsc.flat
+|   |   |   |               values-ka_values-ka.arsc.flat
+|   |   |   |               values-kk_values-kk.arsc.flat
+|   |   |   |               values-km_values-km.arsc.flat
+|   |   |   |               values-kn_values-kn.arsc.flat
+|   |   |   |               values-ko_values-ko.arsc.flat
+|   |   |   |               values-ky_values-ky.arsc.flat
+|   |   |   |               values-lo_values-lo.arsc.flat
+|   |   |   |               values-lt_values-lt.arsc.flat
+|   |   |   |               values-lv_values-lv.arsc.flat
+|   |   |   |               values-mk_values-mk.arsc.flat
+|   |   |   |               values-ml_values-ml.arsc.flat
+|   |   |   |               values-mn_values-mn.arsc.flat
+|   |   |   |               values-mr_values-mr.arsc.flat
+|   |   |   |               values-ms_values-ms.arsc.flat
+|   |   |   |               values-my_values-my.arsc.flat
+|   |   |   |               values-nb_values-nb.arsc.flat
+|   |   |   |               values-ne_values-ne.arsc.flat
+|   |   |   |               values-nl_values-nl.arsc.flat
+|   |   |   |               values-or_values-or.arsc.flat
+|   |   |   |               values-pa_values-pa.arsc.flat
+|   |   |   |               values-pl_values-pl.arsc.flat
+|   |   |   |               values-pt-rBR_values-pt-rBR.arsc.flat
+|   |   |   |               values-pt-rPT_values-pt-rPT.arsc.flat
+|   |   |   |               values-pt_values-pt.arsc.flat
+|   |   |   |               values-ro_values-ro.arsc.flat
+|   |   |   |               values-ru_values-ru.arsc.flat
+|   |   |   |               values-si_values-si.arsc.flat
+|   |   |   |               values-sk_values-sk.arsc.flat
+|   |   |   |               values-sl_values-sl.arsc.flat
+|   |   |   |               values-sq_values-sq.arsc.flat
+|   |   |   |               values-sr_values-sr.arsc.flat
+|   |   |   |               values-sv_values-sv.arsc.flat
+|   |   |   |               values-sw_values-sw.arsc.flat
+|   |   |   |               values-ta_values-ta.arsc.flat
+|   |   |   |               values-te_values-te.arsc.flat
+|   |   |   |               values-th_values-th.arsc.flat
+|   |   |   |               values-tl_values-tl.arsc.flat
+|   |   |   |               values-tr_values-tr.arsc.flat
+|   |   |   |               values-uk_values-uk.arsc.flat
+|   |   |   |               values-ur_values-ur.arsc.flat
+|   |   |   |               values-uz_values-uz.arsc.flat
+|   |   |   |               values-v21_values-v21.arsc.flat
+|   |   |   |               values-v30_values-v30.arsc.flat
+|   |   |   |               values-vi_values-vi.arsc.flat
+|   |   |   |               values-watch-v20_values-watch-v20.arsc.flat
+|   |   |   |               values-zh-rCN_values-zh-rCN.arsc.flat
+|   |   |   |               values-zh-rHK_values-zh-rHK.arsc.flat
+|   |   |   |               values-zh-rTW_values-zh-rTW.arsc.flat
+|   |   |   |               values-zu_values-zu.arsc.flat
+|   |   |   |               values_values.arsc.flat
+|   |   |   |               xml_backup_rules.xml.flat
+|   |   |   |               xml_data_extraction_rules.xml.flat
+|   |   |   |               
+|   |   |   +---merged_res_blame_folder
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugResources
+|   |   |   |           \---out
+|   |   |   |               +---multi-v2
+|   |   |   |               |       mergeDebugResources.json
+|   |   |   |               |       values-af.json
+|   |   |   |               |       values-am.json
+|   |   |   |               |       values-ar.json
+|   |   |   |               |       values-as.json
+|   |   |   |               |       values-az.json
+|   |   |   |               |       values-b+sr+Latn.json
+|   |   |   |               |       values-be.json
+|   |   |   |               |       values-bg.json
+|   |   |   |               |       values-bn.json
+|   |   |   |               |       values-bs.json
+|   |   |   |               |       values-ca.json
+|   |   |   |               |       values-cs.json
+|   |   |   |               |       values-da.json
+|   |   |   |               |       values-de.json
+|   |   |   |               |       values-el.json
+|   |   |   |               |       values-en-rAU.json
+|   |   |   |               |       values-en-rCA.json
+|   |   |   |               |       values-en-rGB.json
+|   |   |   |               |       values-en-rIN.json
+|   |   |   |               |       values-en-rXC.json
+|   |   |   |               |       values-es-rUS.json
+|   |   |   |               |       values-es.json
+|   |   |   |               |       values-et.json
+|   |   |   |               |       values-eu.json
+|   |   |   |               |       values-fa.json
+|   |   |   |               |       values-fi.json
+|   |   |   |               |       values-fr-rCA.json
+|   |   |   |               |       values-fr.json
+|   |   |   |               |       values-gl.json
+|   |   |   |               |       values-gu.json
+|   |   |   |               |       values-hi.json
+|   |   |   |               |       values-hr.json
+|   |   |   |               |       values-hu.json
+|   |   |   |               |       values-hy.json
+|   |   |   |               |       values-in.json
+|   |   |   |               |       values-is.json
+|   |   |   |               |       values-it.json
+|   |   |   |               |       values-iw.json
+|   |   |   |               |       values-ja.json
+|   |   |   |               |       values-ka.json
+|   |   |   |               |       values-kk.json
+|   |   |   |               |       values-km.json
+|   |   |   |               |       values-kn.json
+|   |   |   |               |       values-ko.json
+|   |   |   |               |       values-ky.json
+|   |   |   |               |       values-lo.json
+|   |   |   |               |       values-lt.json
+|   |   |   |               |       values-lv.json
+|   |   |   |               |       values-mk.json
+|   |   |   |               |       values-ml.json
+|   |   |   |               |       values-mn.json
+|   |   |   |               |       values-mr.json
+|   |   |   |               |       values-ms.json
+|   |   |   |               |       values-my.json
+|   |   |   |               |       values-nb.json
+|   |   |   |               |       values-ne.json
+|   |   |   |               |       values-nl.json
+|   |   |   |               |       values-or.json
+|   |   |   |               |       values-pa.json
+|   |   |   |               |       values-pl.json
+|   |   |   |               |       values-pt-rBR.json
+|   |   |   |               |       values-pt-rPT.json
+|   |   |   |               |       values-pt.json
+|   |   |   |               |       values-ro.json
+|   |   |   |               |       values-ru.json
+|   |   |   |               |       values-si.json
+|   |   |   |               |       values-sk.json
+|   |   |   |               |       values-sl.json
+|   |   |   |               |       values-sq.json
+|   |   |   |               |       values-sr.json
+|   |   |   |               |       values-sv.json
+|   |   |   |               |       values-sw.json
+|   |   |   |               |       values-ta.json
+|   |   |   |               |       values-te.json
+|   |   |   |               |       values-th.json
+|   |   |   |               |       values-tl.json
+|   |   |   |               |       values-tr.json
+|   |   |   |               |       values-uk.json
+|   |   |   |               |       values-ur.json
+|   |   |   |               |       values-uz.json
+|   |   |   |               |       values-v21.json
+|   |   |   |               |       values-v30.json
+|   |   |   |               |       values-vi.json
+|   |   |   |               |       values-watch-v20.json
+|   |   |   |               |       values-zh-rCN.json
+|   |   |   |               |       values-zh-rHK.json
+|   |   |   |               |       values-zh-rTW.json
+|   |   |   |               |       values-zu.json
+|   |   |   |               |       values.json
+|   |   |   |               |       
+|   |   |   |               \---single
+|   |   |   |                       mergeDebugResources.json
+|   |   |   |                       
+|   |   |   +---merged_shaders
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugShaders
+|   |   |   |           \---out
+|   |   |   +---merged_test_only_native_libs
+|   |   |   |   \---debug
+|   |   |   |       \---mergeDebugNativeLibs
+|   |   |   |           \---out
+|   |   |   +---mixed_scope_dex_archive
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   +---navigation_json
+|   |   |   |   \---debug
+|   |   |   |       \---extractDeepLinksDebug
+|   |   |   |               navigation.json
+|   |   |   |               
+|   |   |   +---nested_resources_validation_report
+|   |   |   |   \---debug
+|   |   |   |       \---generateDebugResources
+|   |   |   |               nestedResourcesValidationReport.txt
+|   |   |   |               
+|   |   |   +---packaged_manifests
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugManifestForPackage
+|   |   |   |               AndroidManifest.xml
+|   |   |   |               output-metadata.json
+|   |   |   |               
+|   |   |   +---packaged_res
+|   |   |   |   \---debug
+|   |   |   |       \---packageDebugResources
+|   |   |   |           +---drawable
+|   |   |   |           |       cat_image.jpg
+|   |   |   |           |       cat_login.jpg
+|   |   |   |           |       dog_image.png
+|   |   |   |           |       gato1.jpeg
+|   |   |   |           |       gato2.jpeg
+|   |   |   |           |       gato3.jpeg
+|   |   |   |           |       gato4.jpeg
+|   |   |   |           |       gato5.jpeg
+|   |   |   |           |       gato6.jpeg
+|   |   |   |           |       ic_calendar.xml
+|   |   |   |           |       ic_collar.png
+|   |   |   |           |       ic_launcher_background.xml
+|   |   |   |           |       ic_launcher_foreground.xml
+|   |   |   |           |       ic_photo.xml
+|   |   |   |           |       map_image1.png
+|   |   |   |           |       map_image2.png
+|   |   |   |           |       
+|   |   |   |           +---mipmap-anydpi-v26
+|   |   |   |           |       ic_launcher.xml
+|   |   |   |           |       ic_launcher_round.xml
+|   |   |   |           |       
+|   |   |   |           +---mipmap-hdpi-v4
+|   |   |   |           |       ic_launcher.webp
+|   |   |   |           |       ic_launcher_round.webp
+|   |   |   |           |       
+|   |   |   |           +---mipmap-mdpi-v4
+|   |   |   |           |       ic_launcher.webp
+|   |   |   |           |       ic_launcher_round.webp
+|   |   |   |           |       
+|   |   |   |           +---mipmap-xhdpi-v4
+|   |   |   |           |       ic_launcher.webp
+|   |   |   |           |       ic_launcher_round.webp
+|   |   |   |           |       
+|   |   |   |           +---mipmap-xxhdpi-v4
+|   |   |   |           |       ic_launcher.webp
+|   |   |   |           |       ic_launcher_round.webp
+|   |   |   |           |       
+|   |   |   |           +---mipmap-xxxhdpi-v4
+|   |   |   |           |       ic_launcher.webp
+|   |   |   |           |       ic_launcher_round.webp
+|   |   |   |           |       
+|   |   |   |           +---values
+|   |   |   |           |       values.xml
+|   |   |   |           |       
+|   |   |   |           +---values-pt
+|   |   |   |           |       values-pt.xml
+|   |   |   |           |       
+|   |   |   |           \---xml
+|   |   |   |                   backup_rules.xml
+|   |   |   |                   data_extraction_rules.xml
+|   |   |   |                   
+|   |   |   +---project_dex_archive
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_0.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_1.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_2.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_3.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_4.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_5.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_6.jar
+|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_7.jar
+|   |   |   |               |   
+|   |   |   |               \---pt
+|   |   |   |                   \---ipp
+|   |   |   |                       \---estg
+|   |   |   |                           \---trabalho_cmu
+|   |   |   |                               |   ComposableSingletons$MainActivityKt.dex
+|   |   |   |                               |   ComposableSingletons$PetAdoptionAppKt.dex
+|   |   |   |                               |   MainActivity.dex
+|   |   |   |                               |   MainActivityKt$FirebaseTestScreen$1$1.dex
+|   |   |   |                               |   MainActivityKt.dex
+|   |   |   |                               |   PetAdoptionAppKt.dex
+|   |   |   |                               |   PetAdoptionApplication.dex
+|   |   |   |                               |   
+|   |   |   |                               +---data
+|   |   |   |                               |   +---local
+|   |   |   |                               |   |   |   AppDatabase$Companion.dex
+|   |   |   |                               |   |   |   AppDatabase.dex
+|   |   |   |                               |   |   |   AppDatabase_Impl$1.dex
+|   |   |   |                               |   |   |   AppDatabase_Impl.dex
+|   |   |   |                               |   |   |   Converters.dex
+|   |   |   |                               |   |   |   
+|   |   |   |                               |   |   +---dao
+|   |   |   |                               |   |   |       ActivityDao.dex
+|   |   |   |                               |   |   |       ActivityDao_Impl$1.dex
+|   |   |   |                               |   |   |       ActivityDao_Impl$2.dex
+|   |   |   |                               |   |   |       ActivityDao_Impl$3.dex
+|   |   |   |                               |   |   |       ActivityDao_Impl.dex
+|   |   |   |                               |   |   |       AnimalDao.dex
+|   |   |   |                               |   |   |       AnimalDao_Impl$1.dex
+|   |   |   |                               |   |   |       AnimalDao_Impl$2.dex
+|   |   |   |                               |   |   |       AnimalDao_Impl.dex
+|   |   |   |                               |   |   |       OwnershipDao.dex
+|   |   |   |                               |   |   |       OwnershipDao_Impl$1.dex
+|   |   |   |                               |   |   |       OwnershipDao_Impl$2.dex
+|   |   |   |                               |   |   |       OwnershipDao_Impl.dex
+|   |   |   |                               |   |   |       ShelterDao.dex
+|   |   |   |                               |   |   |       ShelterDao_Impl$1.dex
+|   |   |   |                               |   |   |       ShelterDao_Impl$2.dex
+|   |   |   |                               |   |   |       ShelterDao_Impl$3.dex
+|   |   |   |                               |   |   |       ShelterDao_Impl.dex
+|   |   |   |                               |   |   |       UserDao.dex
+|   |   |   |                               |   |   |       UserDao_Impl$1.dex
+|   |   |   |                               |   |   |       UserDao_Impl$2.dex
+|   |   |   |                               |   |   |       UserDao_Impl$3.dex
+|   |   |   |                               |   |   |       UserDao_Impl$4.dex
+|   |   |   |                               |   |   |       UserDao_Impl.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   \---entities
+|   |   |   |                               |   |           Activity.dex
+|   |   |   |                               |   |           Animal.dex
+|   |   |   |                               |   |           Ownership.dex
+|   |   |   |                               |   |           Shelter.dex
+|   |   |   |                               |   |           User.dex
+|   |   |   |                               |   |           
+|   |   |   |                               |   +---models
+|   |   |   |                               |   |       AdoptionRequest.dex
+|   |   |   |                               |   |       AnimalForm.dex
+|   |   |   |                               |   |       Breed.dex
+|   |   |   |                               |   |       CatBreedResponse.dex
+|   |   |   |                               |   |       DogBreedsResponse.dex
+|   |   |   |                               |   |       OwnershipStatus.dex
+|   |   |   |                               |   |       UserType.dex
+|   |   |   |                               |   |       
+|   |   |   |                               |   +---remote
+|   |   |   |                               |   |   \---api
+|   |   |   |                               |   |       +---objects
+|   |   |   |                               |   |       |       RetrofitClient.dex
+|   |   |   |                               |   |       |       
+|   |   |   |                               |   |       \---services
+|   |   |   |                               |   |               AnimalApiService$DefaultImpls.dex
+|   |   |   |                               |   |               AnimalApiService.dex
+|   |   |   |                               |   |               CatApiService.dex
+|   |   |   |                               |   |               DogApiService.dex
+|   |   |   |                               |   |               
+|   |   |   |                               |   \---repository
+|   |   |   |                               |           ActivityRepository.dex
+|   |   |   |                               |           AnimalRepository$fetchAnimals$2.dex
+|   |   |   |                               |           AnimalRepository$filterByGender$2.dex
+|   |   |   |                               |           AnimalRepository$filterBySize$2.dex
+|   |   |   |                               |           AnimalRepository$filterBySpecies$2.dex
+|   |   |   |                               |           AnimalRepository$sortByAge$2.dex
+|   |   |   |                               |           AnimalRepository$sortByDate$2.dex
+|   |   |   |                               |           AnimalRepository$sortByName$2.dex
+|   |   |   |                               |           AnimalRepository.dex
+|   |   |   |                               |           BreedRepository$getCatBreeds$1$onResponse$$inlined$sortedBy$1.dex
+|   |   |   |                               |           BreedRepository$getCatBreeds$1.dex
+|   |   |   |                               |           BreedRepository$getDogBreeds$1$onResponse$$inlined$sortedBy$1.dex
+|   |   |   |                               |           BreedRepository$getDogBreeds$1.dex
+|   |   |   |                               |           BreedRepository.dex
+|   |   |   |                               |           OwnershipRepository.dex
+|   |   |   |                               |           ShelterOwnershipRequestRepository$approveOwnershipRequest$2.dex
+|   |   |   |                               |           ShelterOwnershipRequestRepository$deleteOwnershipRequest$2.dex
+|   |   |   |                               |           ShelterOwnershipRequestRepository$rejectOwnershipRequest$2.dex
+|   |   |   |                               |           ShelterOwnershipRequestRepository.dex
+|   |   |   |                               |           ShelterRepository.dex
+|   |   |   |                               |           UserRepository.dex
+|   |   |   |                               |           
+|   |   |   |                               +---di
+|   |   |   |                               |       DatabaseModule.dex
+|   |   |   |                               |       RepositoryModule.dex
+|   |   |   |                               |       RetrofitInstance.dex
+|   |   |   |                               |       
+|   |   |   |                               +---preferences
+|   |   |   |                               |       LanguagePreferences.dex
+|   |   |   |                               |       
+|   |   |   |                               +---services
+|   |   |   |                               |       NotificationService.dex
+|   |   |   |                               |       WalkTrackingService.dex
+|   |   |   |                               |       
+|   |   |   |                               +---ui
+|   |   |   |                               |   +---components
+|   |   |   |                               |   |       ActivityAnimalInfoCardKt.dex
+|   |   |   |                               |   |       ActivityDatesChosenKt.dex
+|   |   |   |                               |   |       ActivityDateTimeCardKt.dex
+|   |   |   |                               |   |       AnimalCardKt.dex
+|   |   |   |                               |   |       CalendarViewKt.dex
+|   |   |   |                               |   |       ComposableSingletons$MapLocationButtonKt.dex
+|   |   |   |                               |   |       ComposableSingletons$TimeInputFieldsKt.dex
+|   |   |   |                               |   |       MapLocationButtonKt.dex
+|   |   |   |                               |   |       TimeInputFieldsKt.dex
+|   |   |   |                               |   |       
+|   |   |   |                               |   +---navigation
+|   |   |   |                               |   |       AppTopBarKt.dex
+|   |   |   |                               |   |       ComposableSingletons$AppTopBarKt.dex
+|   |   |   |                               |   |       ComposableSingletons$DrawerUserKt.dex
+|   |   |   |                               |   |       ComposableSingletons$NavGraphUserKt.dex
+|   |   |   |                               |   |       DrawerOption.dex
+|   |   |   |                               |   |       DrawerUserKt.dex
+|   |   |   |                               |   |       NavGraphAdminKt.dex
+|   |   |   |                               |   |       NavGraphPublicKt.dex
+|   |   |   |                               |   |       NavGraphUserKt.dex
+|   |   |   |                               |   |       
+|   |   |   |                               |   +---screens
+|   |   |   |                               |   |   |   AppScaffoldKt$AppScaffold$1$1$1$1.dex
+|   |   |   |                               |   |   |   AppScaffoldKt$AppScaffold$1$2$1$1.dex
+|   |   |   |                               |   |   |   AppScaffoldKt$AppScaffold$2$1$1$1$1.dex
+|   |   |   |                               |   |   |   AppScaffoldKt.dex
+|   |   |   |                               |   |   |   
+|   |   |   |                               |   |   +---Animals
+|   |   |   |                               |   |   |       AnimalDetailScreenKt$AnimalDetailScreen$2$1.dex
+|   |   |   |                               |   |   |       AnimalDetailScreenKt.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$1$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$2$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$5.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$2$4$1$2$1$1.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$5.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt.dex
+|   |   |   |                               |   |   |       AnimalViewModel$applyFilter$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$filterByGender$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$filterBySize$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$filterBySpecies$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$loadAnimals$1$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$loadAnimals$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$loadDataSafely$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$sortByAge$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel$sortByName$1.dex
+|   |   |   |                               |   |   |       AnimalViewModel.dex
+|   |   |   |                               |   |   |       ComposableSingletons$AnimalListScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$AnimalsListGuestScreenKt.dex
+|   |   |   |                               |   |   |       Mock.dex
+|   |   |   |                               |   |   |       Mock1.dex
+|   |   |   |                               |   |   |       MockAnimalViewModel.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   +---Auth
+|   |   |   |                               |   |   |       AuthViewModel$login$1.dex
+|   |   |   |                               |   |   |       AuthViewModel$register$1.dex
+|   |   |   |                               |   |   |       AuthViewModel.dex
+|   |   |   |                               |   |   |       ComposableSingletons$LoginScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$RegisterScreenKt.dex
+|   |   |   |                               |   |   |       LoginScreenKt$LoginScreen$1$1.dex
+|   |   |   |                               |   |   |       LoginScreenKt.dex
+|   |   |   |                               |   |   |       RegisterScreenKt$MockAuthViewModel$1.dex
+|   |   |   |                               |   |   |       RegisterScreenKt.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   +---Ownership
+|   |   |   |                               |   |   |       ActivitiesHistoryScreenKt$ActivitiesHistoryScreen$1$1.dex
+|   |   |   |                               |   |   |       ActivitiesHistoryScreenKt.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$1$1.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$2$1$1.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$2$1.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$3$1.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$5$1$4$1$1.dex
+|   |   |   |                               |   |   |       ActivityShedulingScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$ActivitiesHistoryScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$OwnershipConfirmationScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$OwnershipFormScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$TermsAndConditionsScreenKt.dex
+|   |   |   |                               |   |   |       OwnershipConfirmationScreenKt$OwnershipConfirmationScreen$1$1.dex
+|   |   |   |                               |   |   |       OwnershipConfirmationScreenKt$OwnershipConfirmationScreen$2$1.dex
+|   |   |   |                               |   |   |       OwnershipConfirmationScreenKt.dex
+|   |   |   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$1$1.dex
+|   |   |   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$3$1$1$2$1$1.dex
+|   |   |   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$3$1$1$2$1$2.dex
+|   |   |   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormScreen$1$1.dex
+|   |   |   |                               |   |   |       OwnershipFormScreenKt.dex
+|   |   |   |                               |   |   |       TermsAndConditionsScreenKt$TermsAndConditionsScreen$2$1$1$2$1$1.dex
+|   |   |   |                               |   |   |       TermsAndConditionsScreenKt.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   +---Shelter
+|   |   |   |                               |   |   |       AdoptionRequestScreenKt.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$2$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$3$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$4$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$5$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$6$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$7$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$8$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$9$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$AdoptionRequestScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$AnimalCreationScreenKt.dex
+|   |   |   |                               |   |   |       ComposableSingletons$ShelterHomeScreenKt.dex
+|   |   |   |                               |   |   |       ShelterHomeScreenKt.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$approveRequest$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$loadOwnershipRequests$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$rejectRequest$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$saveAnimal$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel.dex
+|   |   |   |                               |   |   |       ShelterViewModel$addShelter$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel$deleteShelter$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel$loadAllShelters$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel$loadShelterById$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel$searchSheltersByName$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel$updateShelter$1.dex
+|   |   |   |                               |   |   |       ShelterViewModel.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   +---SocialTailsComunity
+|   |   |   |                               |   |   |       ComposableSingletons$SocialTailsCommunityKt.dex
+|   |   |   |                               |   |   |       RankingData.dex
+|   |   |   |                               |   |   |       SocialTailsCommunityKt.dex
+|   |   |   |                               |   |   |       SocialTailsRankingScreenKt.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   +---startScreen
+|   |   |   |                               |   |   |       ComposableSingletons$HomeScreenKt.dex
+|   |   |   |                               |   |   |       HomeScreenKt.dex
+|   |   |   |                               |   |   |       
+|   |   |   |                               |   |   \---User
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$1$1.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$2$1.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$5.dex
+|   |   |   |                               |   |           FavoritesScreenKt.dex
+|   |   |   |                               |   |           Mock.dex
+|   |   |   |                               |   |           
+|   |   |   |                               |   +---theme
+|   |   |   |                               |   |       ColorKt.dex
+|   |   |   |                               |   |       ThemeKt.dex
+|   |   |   |                               |   |       TypeKt.dex
+|   |   |   |                               |   |       
+|   |   |   |                               |   \---viewmodel
+|   |   |   |                               |           ActivityViewModel$activitiesWithDetails$1$1$1.dex
+|   |   |   |                               |           ActivityViewModel$deleteActivity$1.dex
+|   |   |   |                               |           ActivityViewModel$loadAnimalAndShelter$1.dex
+|   |   |   |                               |           ActivityViewModel$scheduleActivity$1.dex
+|   |   |   |                               |           ActivityViewModel.dex
+|   |   |   |                               |           ActivityWithAnimalAndShelter.dex
+|   |   |   |                               |           OwnershipViewModel$deleteOwnership$1.dex
+|   |   |   |                               |           OwnershipViewModel$loadAnimalDetails$1.dex
+|   |   |   |                               |           OwnershipViewModel$submitOwnership$1.dex
+|   |   |   |                               |           OwnershipViewModel$updateOwnershipStatus$1.dex
+|   |   |   |                               |           OwnershipViewModel.dex
+|   |   |   |                               |           UserViewModel$loadUserByEmail$1.dex
+|   |   |   |                               |           UserViewModel$updateUser$1.dex
+|   |   |   |                               |           UserViewModel.dex
+|   |   |   |                               |           
+|   |   |   |                               \---utils
+|   |   |   |                                       LocaleHelper.dex
+|   |   |   |                                       MapUtilsKt.dex
+|   |   |   |                                       
+|   |   |   +---runtime_symbol_list
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugResources
+|   |   |   |               R.txt
+|   |   |   |               
+|   |   |   +---signing_config_versions
+|   |   |   |   \---debug
+|   |   |   |       \---writeDebugSigningConfigVersions
+|   |   |   |               signing-config-versions.json
+|   |   |   |               
+|   |   |   +---source_set_path_map
+|   |   |   |   \---debug
+|   |   |   |       \---mapDebugSourceSetPaths
+|   |   |   |               file-map.txt
+|   |   |   |               
+|   |   |   +---stable_resource_ids_file
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugResources
+|   |   |   |               stableIds.txt
+|   |   |   |               
+|   |   |   +---stripped_native_libs
+|   |   |   |   \---debug
+|   |   |   |       \---stripDebugDebugSymbols
+|   |   |   |           \---out
+|   |   |   |               \---lib
+|   |   |   |                   +---arm64-v8a
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   +---armeabi-v7a
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   +---x86
+|   |   |   |                   |       libandroidx.graphics.path.so
+|   |   |   |                   |       libdatastore_shared_counter.so
+|   |   |   |                   |       
+|   |   |   |                   \---x86_64
+|   |   |   |                           libandroidx.graphics.path.so
+|   |   |   |                           libdatastore_shared_counter.so
+|   |   |   |                           
+|   |   |   +---sub_project_dex_archive
+|   |   |   |   \---debug
+|   |   |   |       \---dexBuilderDebug
+|   |   |   |           \---out
+|   |   |   +---symbol_list_with_package_name
+|   |   |   |   \---debug
+|   |   |   |       \---processDebugResources
+|   |   |   |               package-aware-r.txt
+|   |   |   |               
+|   |   |   \---validate_signing_config
+|   |   |       \---debug
+|   |   |           \---validateSigningDebug
+|   |   +---kotlin
+|   |   |   +---compileDebugKotlin
+|   |   |   |   +---cacheable
+|   |   |   |   |   |   last-build.bin
+|   |   |   |   |   |   
+|   |   |   |   |   \---caches-jvm
+|   |   |   |   |       +---inputs
+|   |   |   |   |       |       source-to-output.tab
+|   |   |   |   |       |       source-to-output.tab.keystream
+|   |   |   |   |       |       source-to-output.tab.keystream.len
+|   |   |   |   |       |       source-to-output.tab.len
+|   |   |   |   |       |       source-to-output.tab.values
+|   |   |   |   |       |       source-to-output.tab.values.at
+|   |   |   |   |       |       source-to-output.tab.values.s
+|   |   |   |   |       |       source-to-output.tab_i
+|   |   |   |   |       |       source-to-output.tab_i.len
+|   |   |   |   |       |       
+|   |   |   |   |       +---jvm
+|   |   |   |   |       |   \---kotlin
+|   |   |   |   |       |           class-attributes.tab
+|   |   |   |   |       |           class-attributes.tab.keystream
+|   |   |   |   |       |           class-attributes.tab.keystream.len
+|   |   |   |   |       |           class-attributes.tab.len
+|   |   |   |   |       |           class-attributes.tab.values.at
+|   |   |   |   |       |           class-attributes.tab_i
+|   |   |   |   |       |           class-attributes.tab_i.len
+|   |   |   |   |       |           class-fq-name-to-source.tab
+|   |   |   |   |       |           class-fq-name-to-source.tab.keystream
+|   |   |   |   |       |           class-fq-name-to-source.tab.keystream.len
+|   |   |   |   |       |           class-fq-name-to-source.tab.len
+|   |   |   |   |       |           class-fq-name-to-source.tab.values.at
+|   |   |   |   |       |           class-fq-name-to-source.tab_i
+|   |   |   |   |       |           class-fq-name-to-source.tab_i.len
+|   |   |   |   |       |           internal-name-to-source.tab
+|   |   |   |   |       |           internal-name-to-source.tab.keystream
+|   |   |   |   |       |           internal-name-to-source.tab.keystream.len
+|   |   |   |   |       |           internal-name-to-source.tab.len
+|   |   |   |   |       |           internal-name-to-source.tab.values
+|   |   |   |   |       |           internal-name-to-source.tab.values.at
+|   |   |   |   |       |           internal-name-to-source.tab.values.s
+|   |   |   |   |       |           internal-name-to-source.tab_i
+|   |   |   |   |       |           internal-name-to-source.tab_i.len
+|   |   |   |   |       |           package-parts.tab
+|   |   |   |   |       |           package-parts.tab.keystream
+|   |   |   |   |       |           package-parts.tab.keystream.len
+|   |   |   |   |       |           package-parts.tab.len
+|   |   |   |   |       |           package-parts.tab.values.at
+|   |   |   |   |       |           package-parts.tab_i
+|   |   |   |   |       |           package-parts.tab_i.len
+|   |   |   |   |       |           proto.tab
+|   |   |   |   |       |           proto.tab.keystream
+|   |   |   |   |       |           proto.tab.keystream.len
+|   |   |   |   |       |           proto.tab.len
+|   |   |   |   |       |           proto.tab.values
+|   |   |   |   |       |           proto.tab.values.at
+|   |   |   |   |       |           proto.tab.values.s
+|   |   |   |   |       |           proto.tab_i
+|   |   |   |   |       |           proto.tab_i.len
+|   |   |   |   |       |           source-to-classes.tab
+|   |   |   |   |       |           source-to-classes.tab.keystream
+|   |   |   |   |       |           source-to-classes.tab.keystream.len
+|   |   |   |   |       |           source-to-classes.tab.len
+|   |   |   |   |       |           source-to-classes.tab.values
+|   |   |   |   |       |           source-to-classes.tab.values.at
+|   |   |   |   |       |           source-to-classes.tab.values.s
+|   |   |   |   |       |           source-to-classes.tab_i
+|   |   |   |   |       |           source-to-classes.tab_i.len
+|   |   |   |   |       |           subtypes.tab
+|   |   |   |   |       |           subtypes.tab.keystream
+|   |   |   |   |       |           subtypes.tab.keystream.len
+|   |   |   |   |       |           subtypes.tab.len
+|   |   |   |   |       |           subtypes.tab.values.at
+|   |   |   |   |       |           subtypes.tab_i
+|   |   |   |   |       |           subtypes.tab_i.len
+|   |   |   |   |       |           supertypes.tab
+|   |   |   |   |       |           supertypes.tab.keystream
+|   |   |   |   |       |           supertypes.tab.keystream.len
+|   |   |   |   |       |           supertypes.tab.len
+|   |   |   |   |       |           supertypes.tab.values.at
+|   |   |   |   |       |           supertypes.tab_i
+|   |   |   |   |       |           supertypes.tab_i.len
+|   |   |   |   |       |           
+|   |   |   |   |       \---lookups
+|   |   |   |   |               counters.tab
+|   |   |   |   |               file-to-id.tab
+|   |   |   |   |               file-to-id.tab.keystream
+|   |   |   |   |               file-to-id.tab.keystream.len
+|   |   |   |   |               file-to-id.tab.len
+|   |   |   |   |               file-to-id.tab.values.at
+|   |   |   |   |               file-to-id.tab_i
+|   |   |   |   |               file-to-id.tab_i.len
+|   |   |   |   |               id-to-file.tab
+|   |   |   |   |               id-to-file.tab.keystream
+|   |   |   |   |               id-to-file.tab.keystream.len
+|   |   |   |   |               id-to-file.tab.len
+|   |   |   |   |               id-to-file.tab.values.at
+|   |   |   |   |               id-to-file.tab_i
+|   |   |   |   |               id-to-file.tab_i.len
+|   |   |   |   |               lookups.tab
+|   |   |   |   |               lookups.tab.keystream
+|   |   |   |   |               lookups.tab.keystream.len
+|   |   |   |   |               lookups.tab.len
+|   |   |   |   |               lookups.tab.values
+|   |   |   |   |               lookups.tab.values.at
+|   |   |   |   |               lookups.tab.values.s
+|   |   |   |   |               lookups.tab_i
+|   |   |   |   |               lookups.tab_i.len
+|   |   |   |   |               
+|   |   |   |   +---classpath-snapshot
+|   |   |   |   |       shrunk-classpath-snapshot.bin
+|   |   |   |   |       
+|   |   |   |   \---local-state
+|   |   |   \---kaptGenerateStubsDebugKotlin
+|   |   |       +---cacheable
+|   |   |       |   \---caches-jvm
+|   |   |       |       +---inputs
+|   |   |       |       +---jvm
+|   |   |       |       \---lookups
+|   |   |       +---classpath-snapshot
+|   |   |       \---local-state
+|   |   +---outputs
+|   |   |   \---logs
+|   |   |           manifest-merger-debug-report.txt
+|   |   |           
+|   |   \---tmp
+|   |       +---compileDebugJavaWithJavac
+|   |       |       previous-compilation-data.bin
+|   |       |       
+|   |       +---kapt3
+|   |       |   +---classes
+|   |       |   |   \---debug
+|   |       |   +---incApCache
+|   |       |   |   \---debug
+|   |       |   |           ap-classpath-entries.bin
+|   |       |   |           apt-cache.bin
+|   |       |   |           classpath-entries.bin
+|   |       |   |           classpath-structure.bin
+|   |       |   |           java-cache.bin
+|   |       |   |           
+|   |       |   +---incrementalData
+|   |       |   |   \---debug
+|   |       |   \---stubs
+|   |       |       \---debug
+|   |       \---kotlin-classes
+|   |           \---debug
+|   |               +---META-INF
+|   |               |       app_debug.kotlin_module
+|   |               |       
+|   |               \---pt
+|   |                   \---ipp
+|   |                       \---estg
+|   |                           \---trabalho_cmu
+|   |                               |   ComposableSingletons$MainActivityKt.class
+|   |                               |   ComposableSingletons$PetAdoptionAppKt.class
+|   |                               |   MainActivity.class
+|   |                               |   MainActivityKt$FirebaseTestScreen$1$1.class
+|   |                               |   MainActivityKt.class
+|   |                               |   PetAdoptionAppKt.class
+|   |                               |   PetAdoptionApplication.class
+|   |                               |   
+|   |                               +---data
+|   |                               |   +---local
+|   |                               |   |   |   AppDatabase$Companion.class
+|   |                               |   |   |   AppDatabase.class
+|   |                               |   |   |   Converters.class
+|   |                               |   |   |   
+|   |                               |   |   +---dao
+|   |                               |   |   |       ActivityDao.class
+|   |                               |   |   |       AnimalDao.class
+|   |                               |   |   |       OwnershipDao.class
+|   |                               |   |   |       ShelterDao.class
+|   |                               |   |   |       UserDao.class
+|   |                               |   |   |       
+|   |                               |   |   \---entities
+|   |                               |   |           Activity.class
+|   |                               |   |           Animal.class
+|   |                               |   |           Ownership.class
+|   |                               |   |           Shelter.class
+|   |                               |   |           User.class
+|   |                               |   |           
+|   |                               |   +---models
+|   |                               |   |       AdoptionRequest.class
+|   |                               |   |       AnimalForm.class
+|   |                               |   |       Breed.class
+|   |                               |   |       CatBreedResponse.class
+|   |                               |   |       DogBreedsResponse.class
+|   |                               |   |       OwnershipStatus.class
+|   |                               |   |       UserType.class
+|   |                               |   |       
+|   |                               |   +---remote
+|   |                               |   |   \---api
+|   |                               |   |       +---objects
+|   |                               |   |       |       RetrofitClient.class
+|   |                               |   |       |       
+|   |                               |   |       \---services
+|   |                               |   |               AnimalApiService$DefaultImpls.class
+|   |                               |   |               AnimalApiService.class
+|   |                               |   |               CatApiService.class
+|   |                               |   |               DogApiService.class
+|   |                               |   |               
+|   |                               |   \---repository
+|   |                               |           ActivityRepository.class
+|   |                               |           AnimalRepository$fetchAnimals$2.class
+|   |                               |           AnimalRepository$filterByGender$2.class
+|   |                               |           AnimalRepository$filterBySize$2.class
+|   |                               |           AnimalRepository$filterBySpecies$2.class
+|   |                               |           AnimalRepository$sortByAge$2.class
+|   |                               |           AnimalRepository$sortByDate$2.class
+|   |                               |           AnimalRepository$sortByName$2.class
+|   |                               |           AnimalRepository.class
+|   |                               |           BreedRepository$getCatBreeds$1$onResponse$$inlined$sortedBy$1.class
+|   |                               |           BreedRepository$getCatBreeds$1.class
+|   |                               |           BreedRepository$getDogBreeds$1$onResponse$$inlined$sortedBy$1.class
+|   |                               |           BreedRepository$getDogBreeds$1.class
+|   |                               |           BreedRepository.class
+|   |                               |           OwnershipRepository.class
+|   |                               |           ShelterOwnershipRequestRepository$approveOwnershipRequest$2.class
+|   |                               |           ShelterOwnershipRequestRepository$deleteOwnershipRequest$2.class
+|   |                               |           ShelterOwnershipRequestRepository$rejectOwnershipRequest$2.class
+|   |                               |           ShelterOwnershipRequestRepository.class
+|   |                               |           ShelterRepository.class
+|   |                               |           UserRepository.class
+|   |                               |           
+|   |                               +---di
+|   |                               |       DatabaseModule.class
+|   |                               |       RepositoryModule.class
+|   |                               |       RetrofitInstance.class
+|   |                               |       
+|   |                               +---preferences
+|   |                               |       LanguagePreferences.class
+|   |                               |       
+|   |                               +---services
+|   |                               |       NotificationService.class
+|   |                               |       WalkTrackingService.class
+|   |                               |       
+|   |                               +---ui
+|   |                               |   +---components
+|   |                               |   |       ActivityAnimalInfoCardKt.class
+|   |                               |   |       ActivityDatesChosenKt.class
+|   |                               |   |       ActivityDateTimeCardKt.class
+|   |                               |   |       AnimalCardKt.class
+|   |                               |   |       CalendarViewKt.class
+|   |                               |   |       ComposableSingletons$MapLocationButtonKt.class
+|   |                               |   |       ComposableSingletons$TimeInputFieldsKt.class
+|   |                               |   |       MapLocationButtonKt.class
+|   |                               |   |       TimeInputFieldsKt.class
+|   |                               |   |       
+|   |                               |   +---navigation
+|   |                               |   |       AppTopBarKt.class
+|   |                               |   |       ComposableSingletons$AppTopBarKt.class
+|   |                               |   |       ComposableSingletons$DrawerUserKt.class
+|   |                               |   |       ComposableSingletons$NavGraphUserKt.class
+|   |                               |   |       DrawerOption.class
+|   |                               |   |       DrawerUserKt.class
+|   |                               |   |       NavGraphAdminKt.class
+|   |                               |   |       NavGraphPublicKt.class
+|   |                               |   |       NavGraphUserKt.class
+|   |                               |   |       
+|   |                               |   +---screens
+|   |                               |   |   |   AppScaffoldKt$AppScaffold$1$1$1$1.class
+|   |                               |   |   |   AppScaffoldKt$AppScaffold$1$2$1$1.class
+|   |                               |   |   |   AppScaffoldKt$AppScaffold$2$1$1$1$1.class
+|   |                               |   |   |   AppScaffoldKt.class
+|   |                               |   |   |   
+|   |                               |   |   +---Animals
+|   |                               |   |   |       AnimalDetailScreenKt$AnimalDetailScreen$2$1.class
+|   |                               |   |   |       AnimalDetailScreenKt.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$1$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$2$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$2.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$3.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$4.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$5.class
+|   |                               |   |   |       AnimalListScreenKt.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$2$4$1$2$1$1.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$1.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$2.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$3.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$4.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$5.class
+|   |                               |   |   |       AnimalsListGuestScreenKt.class
+|   |                               |   |   |       AnimalViewModel$applyFilter$1.class
+|   |                               |   |   |       AnimalViewModel$filterByGender$1.class
+|   |                               |   |   |       AnimalViewModel$filterBySize$1.class
+|   |                               |   |   |       AnimalViewModel$filterBySpecies$1.class
+|   |                               |   |   |       AnimalViewModel$loadAnimals$1$1.class
+|   |                               |   |   |       AnimalViewModel$loadAnimals$1.class
+|   |                               |   |   |       AnimalViewModel$loadDataSafely$1.class
+|   |                               |   |   |       AnimalViewModel$sortByAge$1.class
+|   |                               |   |   |       AnimalViewModel$sortByName$1.class
+|   |                               |   |   |       AnimalViewModel.class
+|   |                               |   |   |       ComposableSingletons$AnimalListScreenKt.class
+|   |                               |   |   |       ComposableSingletons$AnimalsListGuestScreenKt.class
+|   |                               |   |   |       Mock.class
+|   |                               |   |   |       Mock1.class
+|   |                               |   |   |       MockAnimalViewModel.class
+|   |                               |   |   |       
+|   |                               |   |   +---Auth
+|   |                               |   |   |       AuthViewModel$login$1.class
+|   |                               |   |   |       AuthViewModel$register$1.class
+|   |                               |   |   |       AuthViewModel.class
+|   |                               |   |   |       ComposableSingletons$LoginScreenKt.class
+|   |                               |   |   |       ComposableSingletons$RegisterScreenKt.class
+|   |                               |   |   |       LoginScreenKt$LoginScreen$1$1.class
+|   |                               |   |   |       LoginScreenKt.class
+|   |                               |   |   |       RegisterScreenKt$MockAuthViewModel$1.class
+|   |                               |   |   |       RegisterScreenKt.class
+|   |                               |   |   |       
+|   |                               |   |   +---Ownership
+|   |                               |   |   |       ActivitiesHistoryScreenKt$ActivitiesHistoryScreen$1$1.class
+|   |                               |   |   |       ActivitiesHistoryScreenKt.class
+|   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$1$1.class
+|   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$2$1$1.class
+|   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$2$1.class
+|   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$3$1.class
+|   |                               |   |   |       ActivityShedulingScreenKt$ActivitySchedulingScreen$5$1$4$1$1.class
+|   |                               |   |   |       ActivityShedulingScreenKt.class
+|   |                               |   |   |       ComposableSingletons$ActivitiesHistoryScreenKt.class
+|   |                               |   |   |       ComposableSingletons$OwnershipConfirmationScreenKt.class
+|   |                               |   |   |       ComposableSingletons$OwnershipFormScreenKt.class
+|   |                               |   |   |       ComposableSingletons$TermsAndConditionsScreenKt.class
+|   |                               |   |   |       OwnershipConfirmationScreenKt$OwnershipConfirmationScreen$1$1.class
+|   |                               |   |   |       OwnershipConfirmationScreenKt$OwnershipConfirmationScreen$2$1.class
+|   |                               |   |   |       OwnershipConfirmationScreenKt.class
+|   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$1$1.class
+|   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$3$1$1$2$1$1.class
+|   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormContent$3$1$1$2$1$2.class
+|   |                               |   |   |       OwnershipFormScreenKt$OwnershipFormScreen$1$1.class
+|   |                               |   |   |       OwnershipFormScreenKt.class
+|   |                               |   |   |       TermsAndConditionsScreenKt$TermsAndConditionsScreen$2$1$1$2$1$1.class
+|   |                               |   |   |       TermsAndConditionsScreenKt.class
+|   |                               |   |   |       
+|   |                               |   |   +---Shelter
+|   |                               |   |   |       AdoptionRequestScreenKt.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$2$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$3$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$4$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$5$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$6$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$7$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$8$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$9$1.class
+|   |                               |   |   |       AnimalCreationScreenKt.class
+|   |                               |   |   |       ComposableSingletons$AdoptionRequestScreenKt.class
+|   |                               |   |   |       ComposableSingletons$AnimalCreationScreenKt.class
+|   |                               |   |   |       ComposableSingletons$ShelterHomeScreenKt.class
+|   |                               |   |   |       ShelterHomeScreenKt.class
+|   |                               |   |   |       ShelterMngViewModel$approveRequest$1.class
+|   |                               |   |   |       ShelterMngViewModel$loadOwnershipRequests$1.class
+|   |                               |   |   |       ShelterMngViewModel$rejectRequest$1.class
+|   |                               |   |   |       ShelterMngViewModel$saveAnimal$1.class
+|   |                               |   |   |       ShelterMngViewModel.class
+|   |                               |   |   |       ShelterViewModel$addShelter$1.class
+|   |                               |   |   |       ShelterViewModel$deleteShelter$1.class
+|   |                               |   |   |       ShelterViewModel$loadAllShelters$1.class
+|   |                               |   |   |       ShelterViewModel$loadShelterById$1.class
+|   |                               |   |   |       ShelterViewModel$searchSheltersByName$1.class
+|   |                               |   |   |       ShelterViewModel$updateShelter$1.class
+|   |                               |   |   |       ShelterViewModel.class
+|   |                               |   |   |       
+|   |                               |   |   +---SocialTailsComunity
+|   |                               |   |   |       ComposableSingletons$SocialTailsCommunityKt.class
+|   |                               |   |   |       RankingData.class
+|   |                               |   |   |       SocialTailsCommunityKt.class
+|   |                               |   |   |       SocialTailsRankingScreenKt.class
+|   |                               |   |   |       
+|   |                               |   |   +---startScreen
+|   |                               |   |   |       ComposableSingletons$HomeScreenKt.class
+|   |                               |   |   |       HomeScreenKt.class
+|   |                               |   |   |       
+|   |                               |   |   \---User
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$1$1.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$2$1.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$1.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$2.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$3.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$4.class
+|   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$5.class
+|   |                               |   |           FavoritesScreenKt.class
+|   |                               |   |           Mock.class
+|   |                               |   |           
+|   |                               |   +---theme
+|   |                               |   |       ColorKt.class
+|   |                               |   |       ThemeKt.class
+|   |                               |   |       TypeKt.class
+|   |                               |   |       
+|   |                               |   \---viewmodel
+|   |                               |           ActivityViewModel$activitiesWithDetails$1$1$1.class
+|   |                               |           ActivityViewModel$deleteActivity$1.class
+|   |                               |           ActivityViewModel$loadAnimalAndShelter$1.class
+|   |                               |           ActivityViewModel$scheduleActivity$1.class
+|   |                               |           ActivityViewModel.class
+|   |                               |           ActivityWithAnimalAndShelter.class
+|   |                               |           OwnershipViewModel$deleteOwnership$1.class
+|   |                               |           OwnershipViewModel$loadAnimalDetails$1.class
+|   |                               |           OwnershipViewModel$submitOwnership$1.class
+|   |                               |           OwnershipViewModel$updateOwnershipStatus$1.class
+|   |                               |           OwnershipViewModel.class
+|   |                               |           UserViewModel$loadUserByEmail$1.class
+|   |                               |           UserViewModel$updateUser$1.class
+|   |                               |           UserViewModel.class
+|   |                               |           
+|   |                               \---utils
+|   |                                       LocaleHelper.class
+|   |                                       MapUtilsKt.class
+|   |                                       
+|   \---src
+|       +---androidTest
+|       |   \---java
+|       |       \---pt
+|       |           \---ipp
+|       |               \---estg
+|       |                   \---trabalho_cmu
+|       |                           ExampleInstrumentedTest.kt
+|       |                           
+|       +---main
+|       |   |   AndroidManifest.xml
+|       |   |   
+|       |   +---java
+|       |   |   \---pt
+|       |   |       \---ipp
+|       |   |           \---estg
+|       |   |               \---trabalho_cmu
+|       |   |                   |   MainActivity.kt
+|       |   |                   |   PetAdoptionApp.kt
+|       |   |                   |   PetAdoptionApplication.kt
+|       |   |                   |   
+|       |   |                   +---data
+|       |   |                   |   +---local
+|       |   |                   |   |   |   AppDatabase.kt
+|       |   |                   |   |   |   Converters.kt
+|       |   |                   |   |   |   
+|       |   |                   |   |   +---dao
+|       |   |                   |   |   |       ActivityDao.kt
+|       |   |                   |   |   |       AnimalDao.kt
+|       |   |                   |   |   |       OwnershipDao.kt
+|       |   |                   |   |   |       ShelterDao.kt
+|       |   |                   |   |   |       UserDao.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   \---entities
+|       |   |                   |   |           Activity.kt
+|       |   |                   |   |           Animal.kt
+|       |   |                   |   |           Ownership.kt
+|       |   |                   |   |           Shelter.kt
+|       |   |                   |   |           User.kt
+|       |   |                   |   |           
+|       |   |                   |   +---models
+|       |   |                   |   |       AdoptionRequest.kt
+|       |   |                   |   |       AnimalForm.kt
+|       |   |                   |   |       Breed.kt
+|       |   |                   |   |       OwnershipStatus.kt
+|       |   |                   |   |       UserType.kt
+|       |   |                   |   |       
+|       |   |                   |   +---remote
+|       |   |                   |   |   +---api
+|       |   |                   |   |   |   +---objects
+|       |   |                   |   |   |   |       RetrofitClient.kt
+|       |   |                   |   |   |   |       
+|       |   |                   |   |   |   \---services
+|       |   |                   |   |   |           AnimalApiService.kt
+|       |   |                   |   |   |           BreedApiService.kt
+|       |   |                   |   |   |           
+|       |   |                   |   |   +---dtos
+|       |   |                   |   |   |       VetResponse.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   \---firebase
+|       |   |                   |   \---repository
+|       |   |                   |           ActivityRepository.kt
+|       |   |                   |           AnimalRepository.kt
+|       |   |                   |           BreedRepository.kt
+|       |   |                   |           OnweshipRepository.kt
+|       |   |                   |           ShelterOwnershipRequestsRepository.kt
+|       |   |                   |           ShelterRepository.kt
+|       |   |                   |           UserRepository.kt
+|       |   |                   |           
+|       |   |                   +---di
+|       |   |                   |       DatabaseModule.kt
+|       |   |                   |       RepositoryModule.kt
+|       |   |                   |       RetrofitInstance.kt
+|       |   |                   |       
+|       |   |                   +---preferences
+|       |   |                   |       LanguagePreferences.kt
+|       |   |                   |       
+|       |   |                   +---services
+|       |   |                   |       NotificationService.kt
+|       |   |                   |       WalkTrackingService.kt
+|       |   |                   |       
+|       |   |                   +---ui
+|       |   |                   |   +---components
+|       |   |                   |   |       ActivityAnimalInfoCard.kt
+|       |   |                   |   |       ActivityDatesChosen.kt
+|       |   |                   |   |       ActivityDateTimeCard.kt
+|       |   |                   |   |       AnimalCard.kt
+|       |   |                   |   |       CalendarView.kt
+|       |   |                   |   |       MapLocationButton.kt
+|       |   |                   |   |       TimeInputFields.kt
+|       |   |                   |   |       
+|       |   |                   |   +---navigation
+|       |   |                   |   |       AppScaffold.kt
+|       |   |                   |   |       AppTopBar.kt
+|       |   |                   |   |       DrawerUser.kt
+|       |   |                   |   |       NavGraphAdmin.kt
+|       |   |                   |   |       NavGraphPublic.kt
+|       |   |                   |   |       NavGraphUser.kt
+|       |   |                   |   |       
+|       |   |                   |   +---screens
+|       |   |                   |   |   +---Animals
+|       |   |                   |   |   |       AnimalDetailScreen.kt
+|       |   |                   |   |   |       AnimalListScreen.kt
+|       |   |                   |   |   |       AnimalsListGuestScreen.kt
+|       |   |                   |   |   |       AnimalViewModel.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   +---Auth
+|       |   |                   |   |   |       AuthViewModel.kt
+|       |   |                   |   |   |       HomeScreen.kt
+|       |   |                   |   |   |       LoginScreen.kt
+|       |   |                   |   |   |       RegisterScreen.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   +---Ownership
+|       |   |                   |   |   |       ActivitiesHistoryScreen.kt
+|       |   |                   |   |   |       ActivityShedulingScreen.kt
+|       |   |                   |   |   |       ActivityViewModel.kt
+|       |   |                   |   |   |       OnwershipViewModel.kt
+|       |   |                   |   |   |       OwnershipConfirmationScreen.kt
+|       |   |                   |   |   |       OwnershipFormScreen.kt
+|       |   |                   |   |   |       TermsAndConditionsScreen.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   +---Shelter
+|       |   |                   |   |   |       AdoptionRequestScreen.kt
+|       |   |                   |   |   |       AnimalCreationScreen.kt
+|       |   |                   |   |   |       ShelterHomeScreen.kt
+|       |   |                   |   |   |       ShelterMngViewModel.kt
+|       |   |                   |   |   |       ShelterViewModel.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   +---SocialTailsComunity
+|       |   |                   |   |   |       SocialTailsCommunity.kt
+|       |   |                   |   |   |       SocialTailsRankingScreen.kt
+|       |   |                   |   |   |       
+|       |   |                   |   |   \---User
+|       |   |                   |   |           FavoritesScreen.kt
+|       |   |                   |   |           UserViewModel.kt
+|       |   |                   |   |           
+|       |   |                   |   \---theme
+|       |   |                   |           Color.kt
+|       |   |                   |           Theme.kt
+|       |   |                   |           Type.kt
+|       |   |                   |           
+|       |   |                   \---utils
+|       |   |                           LocaleHelper.kt
+|       |   |                           MapUtils.kt
+|       |   |                           
+|       |   \---res
+|       |       +---drawable
+|       |       |       cat_image.jpg
+|       |       |       cat_login.jpg
+|       |       |       dog_image.png
+|       |       |       gato1.jpeg
+|       |       |       gato2.jpeg
+|       |       |       gato3.jpeg
+|       |       |       gato4.jpeg
+|       |       |       gato5.jpeg
+|       |       |       gato6.jpeg
+|       |       |       ic_calendar.xml
+|       |       |       ic_collar.png
+|       |       |       ic_launcher_background.xml
+|       |       |       ic_launcher_foreground.xml
+|       |       |       ic_photo.xml
+|       |       |       map_image1.png
+|       |       |       map_image2.png
+|       |       |       
+|       |       +---mipmap-anydpi-v26
+|       |       |       ic_launcher.xml
+|       |       |       ic_launcher_round.xml
+|       |       |       
+|       |       +---mipmap-hdpi
+|       |       |       ic_launcher.webp
+|       |       |       ic_launcher_round.webp
+|       |       |       
+|       |       +---mipmap-mdpi
+|       |       |       ic_launcher.webp
+|       |       |       ic_launcher_round.webp
+|       |       |       
+|       |       +---mipmap-xhdpi
+|       |       |       ic_launcher.webp
+|       |       |       ic_launcher_round.webp
+|       |       |       
+|       |       +---mipmap-xxhdpi
+|       |       |       ic_launcher.webp
+|       |       |       ic_launcher_round.webp
+|       |       |       
+|       |       +---mipmap-xxxhdpi
+|       |       |       ic_launcher.webp
+|       |       |       ic_launcher_round.webp
+|       |       |       
+|       |       +---values
+|       |       |       colors.xml
+|       |       |       strings.xml
+|       |       |       themes.xml
+|       |       |       
+|       |       +---values-pt
+|       |       |       strings.xml
+|       |       |       
+|       |       \---xml
+|       |               backup_rules.xml
+|       |               data_extraction_rules.xml
+|       |               
+|       \---test
+|           \---java
+|               \---pt
+|                   \---ipp
+|                       \---estg
+|                           \---trabalho_cmu
+|                                   ExampleUnitTest.kt
+|                                   
++---build
+|   +---dependencyUpdates
+|   |       report.txt
+|   |       
+|   \---reports
+|       \---problems
+|               problems-report.html
+|               
+\---gradle
+    |   libs.versions.toml
+    |   
+    \---wrapper
+            gradle-wrapper.jar
+            gradle-wrapper.properties
+            

@@ -22,19 +22,46 @@ fun LoginScreen(
     val error by viewModel.error.observeAsState()
     val message by viewModel.message.observeAsState()
     val isAuthenticated by viewModel.isAuthenticated.observeAsState(false)
-
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val type = viewModel.tipoConta.value
-            val isAdmin = type?.name?.equals("ABRIGO", ignoreCase = true) == true
+            val isAdmin = viewModel.isAdmin()
             onLoginSuccess(isAdmin)
             viewModel.clearMessage()
         }
     }
 
+    LoginScreenContent(
+        email = email,
+        password = password,
+        isLoading = isLoading,
+        error = error,
+        message = message,
+        onEmailChange = { viewModel.email.value = it },
+        onPasswordChange = { viewModel.password.value = it },
+        onLoginClick = { viewModel.login() },
+        onNavigateBack = onNavigateBack,
+        onClearError = { viewModel.clearError() },
+        onClearMessage = { viewModel.clearMessage() }
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    email: String,
+    password: String,
+    isLoading: Boolean,
+    error: String?,
+    message: String?,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onClearError: () -> Unit,
+    onClearMessage: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 32.dp, vertical = 16.dp)
@@ -42,9 +69,10 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         OutlinedTextField(
             value = email,
-            onValueChange = { viewModel.email.value = it },
+            onValueChange = onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -53,7 +81,7 @@ fun LoginScreen(
 
         OutlinedTextField(
             value = password,
-            onValueChange = { viewModel.password.value = it },
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -62,7 +90,7 @@ fun LoginScreen(
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.login() },
+            onClick = onLoginClick,
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,37 +115,47 @@ fun LoginScreen(
         ) {
             Text("Voltar")
         }
+    }
 
-        error?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clearError() },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
-                },
-                title = { Text("Erro") },
-                text = { Text(it) }
-            )
-        }
+    error?.let {
+        AlertDialog(
+            onDismissRequest = onClearError,
+            confirmButton = {
+                TextButton(onClick = onClearError) { Text("OK") }
+            },
+            title = { Text("Erro") },
+            text = { Text(it) }
+        )
+    }
 
-        message?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clearMessage() },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.clearMessage() }) { Text("OK") }
-                },
-                title = { Text("Sucesso") },
-                text = { Text(it) }
-            )
-        }
+    message?.let {
+        AlertDialog(
+            onDismissRequest = onClearMessage,
+            confirmButton = {
+                TextButton(onClick = onClearMessage) { Text("OK") }
+            },
+            title = { Text("Sucesso") },
+            text = { Text(it) }
+        )
     }
 }
-@Preview(showBackground = true, showSystemUi = true)
+
+@Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+private fun LoginScreenContentPreview() {
     MaterialTheme {
-        LoginScreen(
-            onLoginSuccess = {},
-            onNavigateBack = {}
+        LoginScreenContent(
+            email = "user@example.com",
+            password = "1234",
+            isLoading = false,
+            error = null,
+            message = null,
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = {},
+            onNavigateBack = {},
+            onClearError = {},
+            onClearMessage = {}
         )
     }
 }

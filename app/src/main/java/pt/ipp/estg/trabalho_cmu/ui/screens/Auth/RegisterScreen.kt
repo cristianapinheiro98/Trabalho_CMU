@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.ipp.estg.trabalho_cmu.data.models.UserType
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,20 +20,66 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel
 ) {
-    val name by viewModel.nome.observeAsState("")
-    val adress by viewModel.morada.observeAsState("")
-    val phone by viewModel.telefone.observeAsState("")
+    val name by viewModel.name.observeAsState("")
+    val adress by viewModel.address.observeAsState("")
+    val phone by viewModel.contact.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
-    val userType by viewModel.tipoConta.observeAsState(UserType.UTILIZADOR)
-
-    var shelterName by remember { mutableStateOf("") }
-    var shelterAddress by remember { mutableStateOf("") }
-    var shelterContact by remember { mutableStateOf("") }
+    val accountType by viewModel.accountTypeChoice.observeAsState(AccountType.USER)
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
     val message by viewModel.message.observeAsState()
+
+    RegisterScreenContent(
+        name = name,
+        adress = adress,
+        phone = phone,
+        email = email,
+        password = password,
+        accountType = accountType,
+        isLoading = isLoading,
+        error = error,
+        message = message,
+        onNameChange = { viewModel.name.value = it },
+        onAdressChange = { viewModel.address.value = it },
+        onPhoneChange = { viewModel.contact.value = it },
+        onEmailChange = { viewModel.email.value = it },
+        onPasswordChange = { viewModel.password.value = it },
+        onAccountTypeChange = { viewModel.accountTypeChoice.value = it },
+        onRegisterClick = { viewModel.register() },
+        onNavigateBack = onNavigateBack,
+        onRegisterSuccess = onRegisterSuccess,
+        onClearError = { viewModel.clearError() },
+        onClearMessage = { viewModel.clearMessage() }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterScreenContent(
+    name: String,
+    adress: String,
+    phone: String,
+    email: String,
+    password: String,
+    accountType: AccountType,
+    isLoading: Boolean,
+    error: String?,
+    message: String?,
+    onNameChange: (String) -> Unit,
+    onAdressChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onAccountTypeChange: (AccountType) -> Unit,
+    onRegisterClick: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onRegisterSuccess: () -> Unit,
+    onClearError: () -> Unit,
+    onClearMessage: () -> Unit
+) {
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -48,10 +93,9 @@ fun RegisterScreen(
         Text("Criar Conta", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(24.dp))
 
-        // Campos de entrada
         OutlinedTextField(
             value = name,
-            onValueChange = { viewModel.nome.value = it },
+            onValueChange = onNameChange,
             label = { Text("Nome completo") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -59,7 +103,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = adress,
-            onValueChange = { viewModel.morada.value = it },
+            onValueChange = onAdressChange,
             label = { Text("Morada") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -67,7 +111,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = phone,
-            onValueChange = { viewModel.telefone.value = it },
+            onValueChange = onPhoneChange,
             label = { Text("Telefone") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -75,7 +119,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = email,
-            onValueChange = { viewModel.email.value = it },
+            onValueChange = onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -83,16 +127,20 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = password,
-            onValueChange = { viewModel.password.value = it },
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+        // ACCOUNT TYPE DROPDOWN
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
             OutlinedTextField(
-                value = userType.label,
+                value = if (accountType == AccountType.USER) "Utilizador" else "Abrigo",
                 onValueChange = {},
                 label = { Text("Tipo de conta") },
                 readOnly = true,
@@ -100,65 +148,32 @@ fun RegisterScreen(
                     .menuAnchor()
                     .fillMaxWidth()
             )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                UserType.entries.forEach { tipo ->
-                    DropdownMenuItem(
-                        text = { Text(tipo.label) },
-                        onClick = {
-                            viewModel.tipoConta.value = tipo
-                            expanded = false
-                        }
-                    )
-                }
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Utilizador") },
+                    onClick = {
+                        onAccountTypeChange(AccountType.USER)
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Abrigo") },
+                    onClick = {
+                        onAccountTypeChange(AccountType.SHELTER)
+                        expanded = false
+                    }
+                )
             }
         }
-        Spacer(Modifier.height(16.dp))
-
-        if (userType == UserType.ABRIGO) {
-            Divider(Modifier.padding(vertical = 8.dp))
-            Text(
-                "Informações do Abrigo",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = shelterName,
-                onValueChange = { shelterName = it },
-                label = { Text("Nome do Abrigo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = shelterAddress,
-                onValueChange = { shelterAddress = it },
-                label = { Text("Morada do Abrigo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = shelterContact,
-                onValueChange = { shelterContact = it },
-                label = { Text("Contacto do Abrigo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(16.dp))
-        }
-
 
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = {
-                if (userType == UserType.ABRIGO) {
-                    println("Abrigo: $shelterName - $shelterAddress - $shelterContact")
-                }
-
-                viewModel.register()
-            },
+            onClick = onRegisterClick,
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -174,19 +189,14 @@ fun RegisterScreen(
                 Text("Criar Conta")
             }
         }
-
-        Spacer(Modifier.height(16.dp))
-
-        OutlinedButton(onClick = onNavigateBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Voltar")
-        }
     }
+
 
     error?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.clearError() },
+            onDismissRequest = onClearError,
             confirmButton = {
-                TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+                TextButton(onClick = onClearError) { Text("OK") }
             },
             title = { Text("Erro") },
             text = { Text(it) }
@@ -195,10 +205,10 @@ fun RegisterScreen(
 
     message?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.clearMessage() },
+            onDismissRequest = onClearMessage,
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.clearMessage()
+                    onClearMessage()
                     onRegisterSuccess()
                 }) { Text("OK") }
             },
@@ -209,32 +219,29 @@ fun RegisterScreen(
 }
 
 
+@Preview(showBackground = true)
 @Composable
-fun MockAuthViewModel(): AuthViewModel {
-    return object : AuthViewModel() { // ou adapta ao teu construtor real
-        init {
-            nome.value = "Maria Silva"
-            morada.value = "Rua das Flores 123"
-            telefone.value = "912345678"
-            email.value = "maria@example.com"
-            tipoConta.value = UserType.ABRIGO
-        }
-    }
+fun RegisterPreview() {
+    RegisterScreenContent(
+        name = "Maria",
+        adress = "Rua das Flores",
+        phone = "912345678",
+        email = "maria@example.com",
+        password = "123456",
+        accountType = AccountType.USER,
+        isLoading = false,
+        error = null,
+        message = null,
+        onNameChange = {},
+        onAdressChange = {},
+        onPhoneChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onAccountTypeChange = {},
+        onRegisterClick = {},
+        onNavigateBack = {},
+        onRegisterSuccess = {},
+        onClearError = {},
+        onClearMessage = {}
+    )
 }
-
-@SuppressLint("ViewModelConstructorInComposable")
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun RegisterScreenPreview() {
-    val mockViewModel = MockAuthViewModel()
-
-    MaterialTheme {
-        RegisterScreen(
-            viewModel = mockViewModel,
-            onNavigateBack = {},
-            onRegisterSuccess = {}
-        )
-    }
-}
-
-

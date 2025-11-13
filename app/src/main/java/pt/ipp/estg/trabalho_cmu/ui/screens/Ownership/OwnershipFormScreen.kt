@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
 /**
@@ -172,7 +172,7 @@ private fun OwnershipFormContent(
                                 val filtered = it.filter { ch -> ch.isDigit() }
                                 if (filtered.length <= maxAccountDigits) accountNumber = filtered
                             },
-                            label = "Número de Conta (IBAN)",
+                            label = stringResource(R.string.ownership_account_number),
                             enabled = !isLoading,
                             leadingIcon = {
                                 Text(
@@ -212,7 +212,7 @@ private fun OwnershipFormContent(
                                 val filtered = it.filter { ch -> ch.isDigit() }
                                 if (filtered.length <= maxCardDigits) cardNumber = filtered
                             },
-                            label = "Cartão de Cidadão",
+                            label = stringResource(R.string.ownership_card_passport),
                             enabled = !isLoading,
                             placeholder = "12345678"
                         )
@@ -280,7 +280,7 @@ private fun OwnershipFormContent(
                         )
                     } else {
                         Text(
-                            text = stringResource(R.string.ownership_submit_button),
+                            text = stringResource(R.string.ownership_button),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold
                         )
