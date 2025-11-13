@@ -3,8 +3,8 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import android.util.Log
 import pt.ipp.estg.trabalho_cmu.data.remote.api.objects.RetrofitClient
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
-import pt.ipp.estg.trabalho_cmu.data.models.CatBreedResponse
-import pt.ipp.estg.trabalho_cmu.data.models.DogBreedsResponse
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedsResponse
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedsResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,10 +62,10 @@ class BreedRepository {
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
     ) {
-        catApi.getAllBreeds().enqueue(object : Callback<List<CatBreedResponse>> {
+        catApi.getAllBreeds().enqueue(object : Callback<List<CatBreedsResponse>> {
             override fun onResponse(
-                call: Call<List<CatBreedResponse>>,
-                response: Response<List<CatBreedResponse>>
+                call: Call<List<CatBreedsResponse>>,
+                response: Response<List<CatBreedsResponse>>
             ) {
                 if (response.isSuccessful) {
                     val catBreeds = response.body() ?: emptyList()
@@ -87,7 +87,7 @@ class BreedRepository {
                 }
             }
 
-            override fun onFailure(call: Call<List<CatBreedResponse>>, t: Throwable) {
+            override fun onFailure(call: Call<List<CatBreedsResponse>>, t: Throwable) {
                 onError("Erro de conexão: ${t.message}")
                 Log.e("BreedRepository", "Failure: ${t.message}", t)
             }

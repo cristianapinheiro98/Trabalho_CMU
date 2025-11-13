@@ -27,12 +27,12 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 
 /**
  * Navigation graph for user screens.
- * Now works WITHOUT Hilt - ViewModels are obtained automatically in each screen.
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -46,7 +46,6 @@ fun NavGraphUser(navController: NavHostController) {
     val animalViewModel: AnimalViewModel = viewModel(
         factory = AnimalViewModelFactory(repository)
     )
-
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
@@ -89,7 +88,6 @@ fun NavGraphUser(navController: NavHostController) {
                 }
             )
         }
-
 
         composable(
             route = "ownership_confirmation/{animalId}",
@@ -156,8 +154,6 @@ fun NavGraphUser(navController: NavHostController) {
             SocialTailsRankingScreen()
         }
 
-
-
         composable("AnimalsCatalogue") {
             AnimalListScreen(
                 onAnimalClick = { animalId ->
@@ -186,6 +182,13 @@ fun NavGraphUser(navController: NavHostController) {
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
                 }
+            )
+        }
+
+        composable("UserHome") {
+            MainOptionsScreen(
+                navController = navController,
+                hasAdoptedAnimal = true
             )
         }
     }

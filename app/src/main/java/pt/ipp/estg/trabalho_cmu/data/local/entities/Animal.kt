@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
@@ -14,7 +15,8 @@ import java.util.Date
             childColumns = ["shelterId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["shelterId"])]
 )
 data class Animal(
     @PrimaryKey(autoGenerate = true)

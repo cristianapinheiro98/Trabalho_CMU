@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
-import pt.ipp.estg.trabalho_cmu.data.models.UserType
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,7 +20,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
 
-    // 🔹 Simula o carregamento de um utilizador por email
+    // Simula o carregamento de um utilizador por email
     fun loadUserByEmail(email: String) = viewModelScope.launch {
         try {
             _isLoading.value = true
@@ -34,9 +33,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     email = email,
                     adress = "Rua de Exemplo, 123",
                     phone = "912345678",
-                    password = "1234",
-                    userType= UserType.UTILIZADOR
-
+                    password = ""
                 )
                 _message.value = "Utilizador carregado com sucesso!"
                 _error.value = null
@@ -45,13 +42,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 _user.value = null
             }
         } catch (e: Exception) {
-            _error.value = "Erro a carregar utilizador: ${e.message}"
+            _error.value = "Error loading user: ${e.message}"
         } finally {
             _isLoading.value = false
         }
     }
 
-    // 🔹 Simula uma atualização de perfil
+    // Simula uma atualização de perfil
     fun updateUser(u: User) = viewModelScope.launch {
         try {
             _isLoading.value = true
@@ -60,7 +57,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             _message.value = "Perfil atualizado com sucesso!"
             _error.value = null
         } catch (e: Exception) {
-            _error.value = "Erro a atualizar: ${e.message}"
+            _error.value = "Error updating: ${e.message}"
         } finally {
             _isLoading.value = false
         }

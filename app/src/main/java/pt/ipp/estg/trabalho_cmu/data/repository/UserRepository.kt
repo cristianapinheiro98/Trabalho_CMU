@@ -8,18 +8,13 @@ class UserRepository(private val userDao: UserDao) {
     fun getAllUsers() = userDao.getAllUsers()
 
     suspend fun getUserByEmail(email: String) = userDao.getUserByEmail(email)
+    suspend fun getUserById(userId: Int) = userDao.getUserById(userId)
 
-    suspend fun getUserById ( userId : Int) = userDao.getUserById(userId)
-    suspend fun registerUser(user: User) : Long = userDao.insertUser(user)
+    suspend fun getUserByFirebaseUid(uid: String) = userDao.getUserByFirebaseUid(uid)
+
+    suspend fun insertUser(user: User): Long = userDao.insertUser(user)
 
     suspend fun updateUser(user: User) = userDao.updateUser(user)
 
     suspend fun deleteUser(user: User) = userDao.deleteUser(user)
-
-    suspend fun getShelterIdByUserId(userId: Int): Int? {
-        println("🔍 getShelterIdByUserId - userId recebido: $userId")
-        val user = userDao.getUserById(userId)
-        println("🔍 User encontrado: ${user?.name}, id: ${user?.id}, shelterId: ${user?.shelterId}")
-        return user?.shelterId
-    }
 }

@@ -28,12 +28,20 @@ fun AdoptionRequestScreen(
     authViewModel: AuthViewModel = viewModel(),
     viewModel: ShelterMngViewModel = viewModel()
 ) {
-    val currentUser by authViewModel.currentUser.observeAsState()
+    val currentShelter by authViewModel.currentShelter.observeAsState()
+    val accountType by authViewModel.accountType.observeAsState()
 
-    LaunchedEffect(currentUser) {
-        currentUser?.let { user ->
-            println("[AdoptionRequest] User: ${user.name}, ID: ${user.id}")
-            viewModel.getShelterIdByUserId(user.id)
+    LaunchedEffect(accountType) {
+        when (accountType) {
+            pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType.SHELTER -> {
+                currentShelter?.let { shelter ->
+                    println("[AdoptionRequest] Shelter: ${shelter.name}, ID: ${shelter.id}")
+                    viewModel.setShelterId(shelter.id)
+                }
+            }
+            else -> {
+                println("⚠️ Apenas Shelters podem ver pedidos de adoção")
+            }
         }
     }
 

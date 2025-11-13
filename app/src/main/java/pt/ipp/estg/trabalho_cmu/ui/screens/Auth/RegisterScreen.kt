@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.ipp.estg.trabalho_cmu.data.models.UserType
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +28,7 @@ fun RegisterScreen(
     val phone by viewModel.contact.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
-    val userType by viewModel.userType.observeAsState(UserType.UTILIZADOR)
+    val accountType by viewModel.accountTypeChoice.observeAsState(AccountType.USER)
 
     val shelterName by viewModel.shelterName.observeAsState("")
     val shelterAddress by viewModel.shelterAddress.observeAsState("")
@@ -94,7 +94,7 @@ fun RegisterScreen(
 
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
-                value = userType.label,
+                value = if (accountType == AccountType.USER) "Utilizador" else "Abrigo",
                 onValueChange = {},
                 label = { Text("Tipo de conta") },
                 readOnly = true,
@@ -103,20 +103,25 @@ fun RegisterScreen(
                     .fillMaxWidth()
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                UserType.entries.forEach { tipo ->
-                    DropdownMenuItem(
-                        text = { Text(tipo.label) },
-                        onClick = {
-                            viewModel.userType.value = tipo
-                            expanded = false
-                        }
-                    )
-                }
+                DropdownMenuItem(
+                    text = { Text("Utilizador") },
+                    onClick = {
+                        viewModel.accountTypeChoice.value = AccountType.USER
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Abrigo") },
+                    onClick = {
+                        viewModel.accountTypeChoice.value = AccountType.SHELTER
+                        expanded = false
+                    }
+                )
             }
         }
         Spacer(Modifier.height(16.dp))
 
-        if (userType == UserType.ABRIGO) {
+        if (accountType == AccountType.SHELTER) {
             Divider(Modifier.padding(vertical = 8.dp))
             Text(
                 "Informações do Abrigo",
@@ -210,14 +215,13 @@ fun RegisterScreen(
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun MockAuthViewModel(): AuthViewModel {
-    // devolve apenas uma instância estática simples
     val context = LocalContext.current.applicationContext as Application
     return AuthViewModel(context).apply {
         name.value = "Maria Silva"
         address.value = "Rua das Flores 123"
         contact.value = "912345678"
         email.value = "maria@example.com"
-        userType.value = UserType.ABRIGO
+        accountTypeChoice.value = AccountType.SHELTER
     }
 }
 
@@ -236,5 +240,3 @@ fun RegisterScreenPreview() {
         )
     }
 }
-
-

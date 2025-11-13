@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Shelter(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val firebaseUid: String? = null,
     val name: String,
     val address: String,
     val contact: String

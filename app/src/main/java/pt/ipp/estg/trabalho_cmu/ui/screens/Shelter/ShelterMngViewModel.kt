@@ -49,27 +49,9 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _currentShelterId = MutableLiveData<Int?>(null)
 
 
-    fun getShelterIdByUserId(userId: Int) {
-        viewModelScope.launch {
-            println("🔍 VIEWMODEL - userId recebido: $userId")
-            val shelterId = userRepository.getShelterIdByUserId(userId) ?: userId
-            _currentShelterId.value = shelterId
-            println("🔍 VIEWMODEL - shelterId definido: $shelterId")
-
-            // ✅ ADICIONE ESTA VERIFICAÇÃO
-            // Verifica se o shelter realmente existe
-            try {
-                val shelter = shelterRepository.getShelterById(shelterId)
-                if (shelter != null) {
-                    println("✅ Shelter existe: ${shelter.name}")
-                } else {
-                    println("❌ ERRO: Shelter com ID $shelterId NÃO EXISTE!")
-                    _error.value = "Shelter não encontrado. Por favor, faça logout e login novamente."
-                }
-            } catch (e: Exception) {
-                println("❌ Erro ao verificar shelter: ${e.message}")
-            }
-        }
+    fun setShelterId(id: Int) {
+        _currentShelterId.value = id
+        println("🔍 VIEWMODEL - shelterId definido diretamente: $id")
     }
 
     val requests: LiveData<List<AdoptionRequest>> = _currentShelterId.switchMap { shelterId ->

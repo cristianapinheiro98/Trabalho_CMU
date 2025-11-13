@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.data.models
+package pt.ipp.estg.trabalho_cmu.data.models.enums
 
 /**
  * Represents the current status of an ownership request.
