@@ -10,7 +10,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -28,13 +27,41 @@ fun LoginScreen(
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val type = viewModel.currentUser.value
             val isAdmin = currentUser?.userType?.name?.equals("ABRIGO", ignoreCase = true) == true
             onLoginSuccess(isAdmin)
             viewModel.clearMessage()
         }
     }
 
+    LoginScreenContent(
+        email = email,
+        password = password,
+        isLoading = isLoading,
+        error = error,
+        message = message,
+        onEmailChange = { viewModel.email.value = it },
+        onPasswordChange = { viewModel.password.value = it },
+        onLoginClick = { viewModel.login() },
+        onNavigateBack = onNavigateBack,
+        onClearError = { viewModel.clearError() },
+        onClearMessage = { viewModel.clearMessage() }
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    email: String,
+    password: String,
+    isLoading: Boolean,
+    error: String?,
+    message: String?,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onClearError: () -> Unit,
+    onClearMessage: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 32.dp, vertical = 16.dp)
@@ -44,7 +71,7 @@ fun LoginScreen(
     ) {
         OutlinedTextField(
             value = email,
-            onValueChange = { viewModel.email.value = it },
+            onValueChange = onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -53,7 +80,7 @@ fun LoginScreen(
 
         OutlinedTextField(
             value = password,
-            onValueChange = { viewModel.password.value = it },
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -62,7 +89,7 @@ fun LoginScreen(
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.login() },
+            onClick = onLoginClick,
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,24 +115,22 @@ fun LoginScreen(
             Text("Voltar")
         }
 
-        // 🔹 Mensagem de erro
         error?.let {
             AlertDialog(
-                onDismissRequest = { viewModel.clearError() },
+                onDismissRequest = onClearError,
                 confirmButton = {
-                    TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+                    TextButton(onClick = onClearError) { Text("OK") }
                 },
                 title = { Text("Erro") },
                 text = { Text(it) }
             )
         }
 
-        // 🔹 Mensagem de sucesso
         message?.let {
             AlertDialog(
-                onDismissRequest = { viewModel.clearMessage() },
+                onDismissRequest = onClearMessage,
                 confirmButton = {
-                    TextButton(onClick = { viewModel.clearMessage() }) { Text("OK") }
+                    TextButton(onClick = onClearMessage) { Text("OK") }
                 },
                 title = { Text("Sucesso") },
                 text = { Text(it) }
@@ -113,14 +138,23 @@ fun LoginScreen(
         }
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreenPreview() {
+private fun LoginScreenContentPreview() {
     MaterialTheme {
-        // Usa placeholders de navegação
-        LoginScreen(
-            onLoginSuccess = {},
-            onNavigateBack = {}
+        LoginScreenContent(
+            email = "user@example.com",
+            password = "1234",
+            isLoading = false,
+            error = null,
+            message = null,
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = {},
+            onNavigateBack = {},
+            onClearError = {},
+            onClearMessage = {}
         )
     }
 }

@@ -99,9 +99,9 @@ fun GuestScreen(
 class Mock1 : AnimalViewModel(repository = null) {
     override val animals: LiveData<List<Animal>> = MutableLiveData(
         listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
-            Animal(3, "Tito", "Desconhecida", "Cão", "Médio", "2018-01-01", listOf(R.drawable.dog_image), 1)
+            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), "um gato muito bem educado",1),
+            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), "um gato muito fofo e carinhoso",1),
+            Animal(3, "Tito", "Desconhecida", "Cão", "Médio", "2018-01-01", listOf(R.drawable.dog_image), "um cao muito elegante e carinhoso",1)
         )
     )
 }

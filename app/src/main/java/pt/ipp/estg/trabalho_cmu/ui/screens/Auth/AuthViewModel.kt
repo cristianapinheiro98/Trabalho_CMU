@@ -10,10 +10,9 @@ import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
+import java.security.MessageDigest
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
-
-    // ✅ Repositório inicializado automaticamente com o contexto da app
+open class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val userRepository: UserRepository by lazy {
         val db = AppDatabase.getDatabase(application)
         UserRepository(db.userDao())
@@ -34,17 +33,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _isRegistered = MutableLiveData(false)
     val isRegistered: LiveData<Boolean> = _isRegistered
 
-    // Usuário logado
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> = _currentUser
 
-    val nome = MutableLiveData("")
-    val morada = MutableLiveData("")
-    val telefone = MutableLiveData("")
+    val name = MutableLiveData("")
+    val address = MutableLiveData("")
+    val phone = MutableLiveData("")
     val email = MutableLiveData("")
     val password = MutableLiveData("")
-    val tipoConta = MutableLiveData(UserType.UTILIZADOR)
+    val userType = MutableLiveData(UserType.UTILIZADOR)
 
+    fun hashPassword(password: String): String {
+        val bytes = MessageDigest.getInstance("SHA-256")
+            .digest(password.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
     fun login() = viewModelScope.launch {
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
@@ -57,6 +60,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         try {
             _isLoading.value = true
             val user = userRepository.getUserByEmail(emailValue)
+            val hashedPassword = hashPassword(passwordValue)
 
             if (user != null && user.password == passwordValue) {
                 _currentUser.value = user
@@ -77,12 +81,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun register() = viewModelScope.launch {
-        val nameValue = nome.value?.trim().orEmpty()
-        val adressValue = morada.value?.trim().orEmpty()
-        val phoneValue = telefone.value?.trim().orEmpty()
+        val nameValue = name.value?.trim().orEmpty()
+        val adressValue = address.value?.trim().orEmpty()
+        val phoneValue = phone.value?.trim().orEmpty()
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
-        val userTypeValue = tipoConta.value ?: UserType.UTILIZADOR
+        val userTypeValue = userType.value ?: UserType.UTILIZADOR
 
         if (nameValue.isBlank() || adressValue.isBlank() || phoneValue.isBlank() ||
             emailValue.isBlank() || passwordValue.isBlank()
@@ -91,13 +95,22 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             return@launch
         }
 
-        if (!emailValue.contains("@") || !emailValue.contains(".")) {
-            _error.value = "Email inválido."
+        val phoneRegex = Regex("^[29][0-9]{8}$")
+        if (!phoneRegex.matches(phoneValue)) {
+            _error.value = "Telefone inválido. Deve começar por 2 ou 9 e ter 9 dígitos."
             return@launch
         }
 
-        if (passwordValue.length < 4) {
-            _error.value = "A palavra-passe deve ter pelo menos 4 caracteres."
+        val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
+        if (!emailRegex.matches(emailValue)) {
+            _error.value = "Email Inválido."
+            return@launch
+        }
+
+        val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
+        if (!passwordRegex.matches(passwordValue)) {
+            _error.value =
+                "Password deve ter 8+ caracteres, incluir 1 maiúscula, 1 número e 1 símbolo."
             return@launch
         }
 
@@ -110,12 +123,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 return@launch
             }
 
+            val encryptedPassword = hashPassword(passwordValue)
+
             val newUser = User(
                 name = nameValue,
                 adress = adressValue,
                 email = emailValue,
                 phone = phoneValue,
-                password = passwordValue,
+                password = encryptedPassword,
                 userType = userTypeValue
             )
 
@@ -137,12 +152,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearFields() {
-        nome.value = ""
-        morada.value = ""
-        telefone.value = ""
+        name.value = ""
+        address.value = ""
+        phone.value = ""
         email.value = ""
         password.value = ""
-        tipoConta.value = UserType.UTILIZADOR
+        userType.value = UserType.UTILIZADOR
     }
 
     fun clearMessage() { _message.value = null }

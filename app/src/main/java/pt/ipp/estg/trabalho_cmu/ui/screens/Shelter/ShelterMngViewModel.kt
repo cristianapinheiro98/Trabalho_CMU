@@ -1,6 +1,8 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -11,6 +13,8 @@ import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterOwnershipRequestRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.BreedRepository
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * ViewModel responsible for managing shelter-related operations:
@@ -167,6 +171,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
     fun onSizeChange(value: String) = updateForm { copy(size = value) }
     fun onBirthDateChange(value: String) = updateForm { copy(birthDate = value) }
+    fun onDescriptionChange(value: String) = updateForm { copy(description = value) }
     fun onImageUrlChange(value: String) {
         val parsed = value.toIntOrNull() ?: 0
         updateForm { copy(imageUrl = parsed) }
@@ -176,9 +181,58 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun validateBirthDate(birthDate: String): String? {
+
+        if (birthDate.isBlank()) {
+            return "A data de nascimento é obrigatória."
+        }
+
+        // Formato esperado: DD/MM/YYYY
+        val parts = birthDate.split("/")
+
+        if (parts.size != 3) {
+            return "A data deve estar no formato DD/MM/AAAA."
+        }
+
+        val (dayStr, monthStr, yearStr) = parts
+
+        val day = dayStr.toIntOrNull()
+        val month = monthStr.toIntOrNull()
+        val year = yearStr.toIntOrNull()
+
+        // Validar se são números
+        if (day == null || month == null || year == null) {
+            return "Dia, mês e ano devem ser números."
+        }
+
+        // Validar ranges
+        if (day !in 1..31) return "Dia inválido."
+        if (month !in 1..12) return "Mês inválido."
+        if (year < 1900) return "Ano inválido."
+
+        // Validar se a data existe
+        return try {
+            val date = LocalDate.of(year, month, day)
+
+            // Data do futuro não é permitida
+            if (date.isAfter(LocalDate.now())) {
+                "A data de nascimento não pode ser no futuro."
+            } else {
+                null // Está válida!
+            }
+
+        } catch (e: Exception) {
+            "Data inválida."
+        }
+    }
+
+
+
     /**
      * Saves a new animal record to the local database.
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
 
@@ -189,6 +243,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
         if (form.species.isBlank()) {
             _error.value = "Select a species."
+            return
+        }
+        val dataError=validateBirthDate(form.birthDate)
+        if(dataError!=null){
+            _error.value=dataError
             return
         }
 
@@ -203,6 +262,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     size = form.size.ifBlank { "Medium" }.trim(),
                     birthDate = form.birthDate.trim(),
                     imageUrl = listOf(form.imageUrl),
+                    description = form.description.trim(),
                     shelterId = 1
                 )
 

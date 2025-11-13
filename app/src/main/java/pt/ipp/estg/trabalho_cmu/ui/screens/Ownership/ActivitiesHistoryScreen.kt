@@ -201,6 +201,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
+                    description = "Um gato muito bonito e bem educado",
                     imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(
@@ -228,6 +229,7 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "20/03/2021",
                     size = "large",
                     species = "dog",
+                    description = "Um cão muito bonito e bem educado",
                     imageUrl = listOf(R.drawable.cat_image)
                 ),
                 shelter = Shelter(

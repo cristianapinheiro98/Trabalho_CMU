@@ -1,8 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
-import android.annotation.SuppressLint
 import android.os.Build
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,27 +19,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalDetailScreen(
-    viewModel: AnimalViewModel,
     animalId: Int,
-    onAdoptClick: () -> Unit = {}
+    animalViewModel: AnimalViewModel,
+    shelterViewModel: ShelterViewModel,
+    onAdoptClick: () -> Unit,
+    onNavigateBack: () -> Unit = {}
 ) {
-    val animal by viewModel.selectedAnimal.observeAsState()
+    val animal by animalViewModel.selectedAnimal.observeAsState()
+    val shelter by shelterViewModel.selectedShelter.observeAsState()
+    val isLoadingShelter by shelterViewModel.isLoading.observeAsState(false)
+    val errorShelter by shelterViewModel.error.observeAsState()
 
     LaunchedEffect(animalId) {
-        viewModel.selectAnimal(animalId)
+        animalViewModel.selectAnimal(animalId)
+    }
+
+    LaunchedEffect(animal) {
+        animal?.let {
+            shelterViewModel.loadShelterById(it.shelterId)
+        }
     }
 
     if (animal == null) {
@@ -51,16 +59,42 @@ fun AnimalDetailScreen(
         return
     }
 
-    val imageGallery: List<Int> = remember(animal) {
-        val imgs = animal!!.imageUrl
-        if (imgs.isNotEmpty() && imgs.first() is Int) {
-            @Suppress("UNCHECKED_CAST")
-            (imgs as List<Int>)
-        } else {
+    AnimalDetailScreenContent(
+        animal = animal!!,
+        shelter = shelter,
+        isLoadingShelter = isLoadingShelter,
+        shelterError = errorShelter,
+        onClearError = { shelterViewModel.clearError() },
+        onAdoptClick = onAdoptClick,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AnimalDetailScreenContent(
+    animal: Animal,
+    shelter: Shelter?,
+    isLoadingShelter: Boolean,
+    shelterError: String?,
+    onClearError: () -> Unit,
+    onAdoptClick: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    val imageGallery = remember {
+        if (animal.imageUrl.firstOrNull() is Int)
+            animal.imageUrl as List<Int>
+        else
             listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3)
-        }
     }
-    var mainImage by remember(imageGallery) { mutableStateOf(imageGallery.first()) }
+
+    var mainImage by remember { mutableStateOf(imageGallery.first()) }
+
+
+    val ageText = remember(animal.birthDate) {
+        val age = calculateAge(animal.birthDate)
+        age?.let { "$it anos" } ?: "N/A"
+    }
 
     Column(
         modifier = Modifier
@@ -68,90 +102,10 @@ fun AnimalDetailScreen(
             .background(Color(0xFFF9F9F9))
             .verticalScroll(rememberScrollState())
     ) {
-        ImageGallery(
-            mainImage = mainImage,
-            thumbnails = imageGallery,
-            onThumbnailClick = { newImage -> mainImage = newImage }
-        )
 
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = animal!!.name,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF3F51B5)
-            )
-
-            Text(
-                text = "${animal!!.species} • ${animal!!.size}",
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Divider(thickness = 1.dp, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(16.dp))
-
-            InfoLine("Raça", animal!!.breed ?: "Desconhecida")
-            InfoLine("Porte", animal!!.size ?: "Desconhecido")
-            InfoLine("Nascimento", animal!!.birthDate ?: "N/A")
-            InfoLine("Abrigo", "Abrigo Porto Animal")
-
-            Spacer(modifier = Modifier.height(24.dp))
-            Divider(thickness = 1.dp, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Olá! Sou ${animal!!.name} 🐾",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF303F9F)
-            )
-
-            Text(
-                text = "Sou muito meiga e adoro atenção humana. Gosto de sestas longas e mantas fofas. Não gosto de aspiradores barulhentos e prefiro ambientes calmos.",
-                fontSize = 15.sp,
-                textAlign = TextAlign.Start,
-                color = Color.DarkGray
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onAdoptClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
-            ) {
-                Text("Adotar ${animal!!.name}", fontSize = 18.sp)
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-        }
-    }
-}
-
-@Composable
-private fun ImageGallery(
-    @DrawableRes mainImage: Int,
-    thumbnails: List<Int>,
-    onThumbnailClick: (Int) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
-            .background(Color.Black)
-    ) {
         Image(
-            painter = painterResource(id = mainImage),
-            contentDescription = "Imagem Principal",
+            painter = painterResource(mainImage),
+            contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(280.dp),
@@ -161,61 +115,136 @@ private fun ImageGallery(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            thumbnails.forEach { thumbnail ->
+            imageGallery.forEach { img ->
                 Image(
-                    painter = painterResource(id = thumbnail),
-                    contentDescription = "Miniatura",
+                    painter = painterResource(id = img),
+                    contentDescription = null,
                     modifier = Modifier
-                        .size(60.dp)
-                        .padding(horizontal = 4.dp)
+                        .size(64.dp)
+                        .padding(4.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .clickable { onThumbnailClick(thumbnail) },
-                    contentScale = ContentScale.Crop
+                        .clickable { mainImage = img }
                 )
             }
         }
+
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(animal.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+
+            Text(
+                "${animal.species} • ${animal.size}",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            InfoRow("Raça", animal.breed ?: "Desconhecida")
+            InfoRow("Nascimento", animal.birthDate ?: "N/A")
+            InfoRow("Idade", ageText)
+
+            InfoRow(
+                "Abrigo",
+                when {
+                    isLoadingShelter -> "A carregar..."
+                    shelter != null -> shelter.address
+                    else -> "Desconhecido"
+                }
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = "Descrição",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = animal.description ?: "Sem descrição disponível.",
+                fontSize = 15.sp
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = onAdoptClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Adotar ${animal.name}")
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Voltar")
+            }
+        }
+    }
+
+    shelterError?.let {
+        AlertDialog(
+            onDismissRequest = onClearError,
+            confirmButton = {
+                TextButton(onClick = onClearError) { Text("OK") }
+            },
+            title = { Text("Erro") },
+            text = { Text(it) }
+        )
     }
 }
 
 @Composable
-fun InfoLine(label: String, value: String) {
+fun InfoRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 3.dp),
+            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, fontWeight = FontWeight.Medium, fontSize = 15.sp)
-        Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        Text(label, fontWeight = FontWeight.Medium)
+        Text(value, fontWeight = FontWeight.SemiBold)
     }
 }
-private class Mock : AnimalViewModel(repository = null) {
-    override val selectedAnimal: LiveData<Animal?> = MutableLiveData(
-        Animal(
-            id = 1,
-            name = "Leia",
-            breed = "Europeu Comum",
-            species = "Gato",
-            size = "Pequeno",
-            birthDate = "2019-01-01",
-            imageUrl = listOf(R.drawable.gato1, R.drawable.gato2, R.drawable.gato3),
-            shelterId = 1
-        )
-    )
 
-    override fun selectAnimal(id: Int) { /* no-op for preview */ }
-}
-
-@SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun AnimalDetailScreenPreview() {
-    val mockViewModel = Mock()
+fun AnimalDetailScreenContentPreview() {
     MaterialTheme {
-        AnimalDetailScreen(viewModel = mockViewModel, animalId = 1)
+        AnimalDetailScreenContent(
+            animal = Animal(
+                id = 1,
+                name = "Miau",
+                breed = "Europeu Comum",
+                species = "Gato",
+                size = "Pequeno",
+                birthDate = "2020-01-01",
+                description = "Um gato muito brincalhão e meigo, adora dormir ao sol e caçar brinquedos.",
+                imageUrl = listOf(R.drawable.gato1, R.drawable.gato2),
+                shelterId = 1
+            ),
+            shelter = Shelter(
+                id = 1,
+                name = "Abrigo Porto",
+                contact = "912345679",
+                address = "Rua dos Animais, 123"
+            ),
+            isLoadingShelter = false,
+            shelterError = null,
+            onClearError = {},
+            onAdoptClick = {},
+            onNavigateBack = {}
+        )
     }
 }

@@ -7,7 +7,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
-class ShelterViewModel(application: Application) : AndroidViewModel(application) {
+open class ShelterViewModel(application: Application) : AndroidViewModel(application) {
 
     private val shelterRepository = ShelterRepository(AppDatabase.getDatabase(application).shelterDao())
 
@@ -21,13 +21,13 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
     val message: LiveData<String?> = _message
 
     private val _selectedShelter = MutableLiveData<Shelter?>()
-    val selectedShelter: LiveData<Shelter?> = _selectedShelter
+    open val selectedShelter: LiveData<Shelter?> = _selectedShelter
 
     private val _shelters = MutableLiveData<List<Shelter>>(emptyList())
     val shelters: LiveData<List<Shelter>> = _shelters
 
 
-    fun loadShelterById(shelterId: Int) = viewModelScope.launch {
+    open fun loadShelterById(shelterId: Int) = viewModelScope.launch {
         try {
             _isLoading.value = true
 

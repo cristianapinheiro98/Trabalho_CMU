@@ -10,20 +10,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
+import pt.ipp.estg.trabalho_cmu.data.models.Breed
 
 @Composable
 fun AnimalCreationScreen(
     onNavigateBack: () -> Unit,
     viewModel: ShelterMngViewModel = viewModel()
 ) {
-    val form by viewModel.animalForm.observeAsState()
+    val form by viewModel.animalForm.observeAsState(AnimalForm())
     val availableBreeds by viewModel.availableBreeds.observeAsState(emptyList())
     val isLoadingBreeds by viewModel.isLoadingBreeds.observeAsState(false)
     val message by viewModel.message.observeAsState()
     val error by viewModel.error.observeAsState()
 
     AnimalCreationScreenContent(
-        form = form ?: pt.ipp.estg.trabalho_cmu.data.models.AnimalForm(),
+        form = form,
         availableBreeds = availableBreeds,
         isLoadingBreeds = isLoadingBreeds,
         message = message,
@@ -33,8 +35,9 @@ fun AnimalCreationScreen(
         onBreedChange = viewModel::onBreedChange,
         onSizeChange = viewModel::onSizeChange,
         onBirthDateChange = viewModel::onBirthDateChange,
+        onDescriptionChange = viewModel::onDescriptionChange,
         onImageUrlChange = viewModel::onImageUrlChange,
-        onSave = viewModel:: saveAnimal,
+        onSave = viewModel::saveAnimal,
         onNavigateBack = onNavigateBack,
         onClearMessage = viewModel::clearMessage,
         onClearError = viewModel::clearError
@@ -44,8 +47,8 @@ fun AnimalCreationScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalCreationScreenContent(
-    form: pt.ipp.estg.trabalho_cmu.data.models.AnimalForm,
-    availableBreeds: List<pt.ipp.estg.trabalho_cmu.data.models.Breed>,
+    form: AnimalForm,
+    availableBreeds: List<Breed>,
     isLoadingBreeds: Boolean,
     message: String?,
     error: String?,
@@ -54,13 +57,13 @@ fun AnimalCreationScreenContent(
     onBreedChange: (String) -> Unit,
     onSizeChange: (String) -> Unit,
     onBirthDateChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
     onImageUrlChange: (String) -> Unit,
     onSave: () -> Unit,
     onNavigateBack: () -> Unit,
     onClearMessage: () -> Unit,
     onClearError: () -> Unit
 ) {
-    // Estado para controlar dropdowns
     var expandedBreed by remember { mutableStateOf(false) }
     var expandedSpecies by remember { mutableStateOf(false) }
 
@@ -76,7 +79,6 @@ fun AnimalCreationScreenContent(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // Nome
         OutlinedTextField(
             value = form.name,
             onValueChange = onNameChange,
@@ -86,7 +88,6 @@ fun AnimalCreationScreenContent(
         )
         Spacer(Modifier.height(16.dp))
 
-        // Espécie (Dropdown)
         ExposedDropdownMenuBox(
             expanded = expandedSpecies,
             onExpandedChange = { expandedSpecies = !expandedSpecies }
@@ -127,13 +128,10 @@ fun AnimalCreationScreenContent(
         }
         Spacer(Modifier.height(16.dp))
 
-        // Raça (Dropdown dinâmico)
         ExposedDropdownMenuBox(
             expanded = expandedBreed,
             onExpandedChange = {
-                if (form.species.isNotBlank()) {
-                    expandedBreed = !expandedBreed
-                }
+                if (form.species.isNotBlank()) expandedBreed = !expandedBreed
             }
         ) {
             OutlinedTextField(
@@ -142,14 +140,13 @@ fun AnimalCreationScreenContent(
                 readOnly = true,
                 label = { Text("Raça") },
                 trailingIcon = {
-                    if (isLoadingBreeds) {
+                    if (isLoadingBreeds)
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp
                         )
-                    } else {
+                    else
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBreed)
-                    }
                 },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 enabled = form.species.isNotBlank(),
@@ -165,7 +162,7 @@ fun AnimalCreationScreenContent(
                 if (availableBreeds.isEmpty() && !isLoadingBreeds) {
                     DropdownMenuItem(
                         text = { Text("Nenhuma raça disponível") },
-                        onClick = { },
+                        onClick = {},
                         enabled = false
                     )
                 } else {
@@ -173,13 +170,10 @@ fun AnimalCreationScreenContent(
                         DropdownMenuItem(
                             text = {
                                 Column {
-                                    Text(
-                                        text = breed.name,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    breed.description?.let { desc ->
+                                    Text(breed.name, style = MaterialTheme.typography.bodyLarge)
+                                    breed.description?.let {
                                         Text(
-                                            text = desc,
+                                            it,
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             maxLines = 1
@@ -197,19 +191,17 @@ fun AnimalCreationScreenContent(
             }
         }
         Spacer(Modifier.height(16.dp))
-
-        // Tamanho
+        
         OutlinedTextField(
             value = form.size,
             onValueChange = onSizeChange,
             label = { Text("Tamanho") },
-            placeholder = { Text("Ex: Pequeno, Médio, Grande") },
+            placeholder = { Text("Pequeno, Médio, Grande") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
         Spacer(Modifier.height(16.dp))
 
-        // Data de Nascimento
         OutlinedTextField(
             value = form.birthDate,
             onValueChange = onBirthDateChange,
@@ -220,7 +212,14 @@ fun AnimalCreationScreenContent(
         )
         Spacer(Modifier.height(16.dp))
 
-        // URL da Imagem
+        OutlinedTextField(
+            value = form.description,
+            onValueChange = onDescriptionChange,
+            label = { Text("Descrição") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(Modifier.height(16.dp))
+
         OutlinedTextField(
             value = form.imageUrl.toString(),
             onValueChange = onImageUrlChange,
@@ -231,7 +230,6 @@ fun AnimalCreationScreenContent(
         )
         Spacer(Modifier.height(24.dp))
 
-        // Botão Guardar
         Button(
             onClick = onSave,
             modifier = Modifier
@@ -242,7 +240,6 @@ fun AnimalCreationScreenContent(
         }
     }
 
-    // Diálogo de sucesso
     message?.let {
         AlertDialog(
             onDismissRequest = onClearMessage,
@@ -250,23 +247,18 @@ fun AnimalCreationScreenContent(
                 TextButton(onClick = {
                     onClearMessage()
                     onNavigateBack()
-                }) {
-                    Text("OK")
-                }
+                }) { Text("OK") }
             },
             title = { Text("Sucesso") },
             text = { Text(it) }
         )
     }
 
-    // Diálogo de erro
     error?.let {
         AlertDialog(
             onDismissRequest = onClearError,
             confirmButton = {
-                TextButton(onClick = onClearError) {
-                    Text("OK")
-                }
+                TextButton(onClick = onClearError) { Text("OK") }
             },
             title = { Text("Erro") },
             text = { Text(it) }
@@ -274,24 +266,24 @@ fun AnimalCreationScreenContent(
     }
 }
 
-// Preview sem ViewModel (para evitar crash no preview)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AnimalCreationPreview() {
     MaterialTheme {
         AnimalCreationScreenContent(
-            form = pt.ipp.estg.trabalho_cmu.data.models.AnimalForm(
+            form = AnimalForm(
                 name = "Rex",
                 species = "Cão",
                 breed = "Labrador",
                 size = "Grande",
                 birthDate = "01/01/2020",
+                description = "Um cão muito amigável",
                 imageUrl = 1
             ),
             availableBreeds = listOf(
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("1", "Labrador", "Raça de cão"),
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("2", "Golden Retriever", "Raça de cão"),
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("3", "Beagle", "Raça de cão")
+                Breed("1", "Labrador", "Raça grande e amigável"),
+                Breed("2", "Golden Retriever", "Muito dócil"),
+                Breed("3", "Beagle", "Cheiro apurado")
             ),
             isLoadingBreeds = false,
             message = null,
@@ -301,6 +293,7 @@ fun AnimalCreationPreview() {
             onBreedChange = {},
             onSizeChange = {},
             onBirthDateChange = {},
+            onDescriptionChange = {},
             onImageUrlChange = {},
             onSave = {},
             onNavigateBack = {},

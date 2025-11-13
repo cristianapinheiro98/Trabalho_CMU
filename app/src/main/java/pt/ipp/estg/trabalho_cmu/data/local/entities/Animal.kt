@@ -25,5 +25,6 @@ data class Animal(
     val size: String,
     val birthDate: String,
     val imageUrl: List<Int>,
+    val description:String,
     val shelterId: Int
 )
