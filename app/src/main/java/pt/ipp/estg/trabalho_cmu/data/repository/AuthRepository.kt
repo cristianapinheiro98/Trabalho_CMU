@@ -82,7 +82,8 @@ class AuthRepository(
                 firebaseUid = firebaseUid,
                 name = name,
                 address = address,
-                contact = contact
+                contact = contact,
+                email = email
             )
             shelterDao.insertShelter(shelter)
 
@@ -123,7 +124,8 @@ class AuthRepository(
                     firebaseUid = uid,
                     name = shelterDoc.getString("name") ?: "",
                     address = shelterDoc.getString("address") ?: "",
-                    contact = shelterDoc.getString("contact") ?: ""
+                    contact = shelterDoc.getString("contact") ?: "",
+                    email = shelterDoc.getString("email") ?: ""
                 )
                 // Room cache
                 shelterDao.insertShelter(shelter)

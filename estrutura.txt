@@ -63,16 +63,16 @@ C:.
 |   +---caches
 |   |       deviceStreaming.xml
 |   |       
-|   \---inspectionProfiles
-|           Project_Default.xml
-|           
+|   +---inspectionProfiles
+|   |       Project_Default.xml
+|   |       
+|   \---modules
+|       \---app
 +---.kotlin
 |   +---errors
 |   |       errors-1760902452061.log
 |   |       
 |   \---sessions
-|           kotlin-compiler-1705711111560848457.salive
-|           
 +---app
 |   |   .gitignore
 |   |   build.gradle.kts
@@ -612,196 +612,196 @@ C:.
 |   |   |   |   |   |   merge-state
 |   |   |   |   |   |   
 |   |   |   |   |   \---zip-cache
-|   |   |   |   |           +GgS0JfXxRfi4r9MvpHRMA==
-|   |   |   |   |           +WuO5NwCxPQNCMYYhji2qA==
+|   |   |   |   |           +JTssFHw7OINVvZUftBAbw==
+|   |   |   |   |           +xpAIlLwhU71zxPPYMKvMw==
+|   |   |   |   |           +xQAw3t4thU5qI4hGR17Gw==
+|   |   |   |   |           +YkaXikPWvKNabgLkIWAhA==
+|   |   |   |   |           0E378KUhWLfBNeMyJveisw==
+|   |   |   |   |           0wK3J7n_9Qi7obQldyZfbw==
 |   |   |   |   |           10w1BZorEKb30UKi_3W4_Q==
-|   |   |   |   |           16S3IMfyXIe1nfSAM79dQg==
-|   |   |   |   |           1BiWQHcmXypt4TLwIJ7KfQ==
-|   |   |   |   |           1gtqvdcl3Yy9XikfqGWLzw==
-|   |   |   |   |           1y7WkgVguaQ3dYeg2YvcKw==
+|   |   |   |   |           1A249LxB8gkKZcZrIToe+A==
 |   |   |   |   |           28xjuGkL0iu8VXdyva0yog==
 |   |   |   |   |           2bynwolXpXpHLyY+lUp_OA==
-|   |   |   |   |           2hS84uD3HABgKpkOEOMycQ==
-|   |   |   |   |           2XfZ7oer18mb+KkKg7Os4A==
-|   |   |   |   |           2Xjj00lasj5KybhM42LobQ==
-|   |   |   |   |           2YUHv8fFpM4rynjMic219Q==
+|   |   |   |   |           3AL07asjYTWio1WMUHgh7A==
 |   |   |   |   |           3EayfypnvUqeFefSGTiBdQ==
-|   |   |   |   |           3hkExh8QMWTtj16lYJXrnQ==
-|   |   |   |   |           3xLElOKOPVZrnsg3yQDlCA==
+|   |   |   |   |           3R_4+mY5lhRyC+cbkHYCAA==
+|   |   |   |   |           3yuwbmCzhcKYSwfy6Fg1ZQ==
+|   |   |   |   |           3_lLKEWTeg9JGCtHGCjZcQ==
+|   |   |   |   |           40_sfwsBvIslojSPWAgOeA==
+|   |   |   |   |           4fIQwNX6rvVEJ0IJNC4SuQ==
 |   |   |   |   |           4XZwsUo1U4E02w_dicPylw==
-|   |   |   |   |           57Cmqz_iPb7vg16E8r9tpQ==
 |   |   |   |   |           58MeEoI3jGS3dj_qSKlcwQ==
-|   |   |   |   |           5X_L5LCIP2uA+8q0VJZOLA==
-|   |   |   |   |           6iSyKiJIEf2VBUSU5pA9Bw==
+|   |   |   |   |           5OjPOTZB9x7Scy1NEE5+_A==
+|   |   |   |   |           5Y6fA9ep43wW8E1tJZ4B4w==
+|   |   |   |   |           6ni5a54Yakskav9OyXCFVA==
 |   |   |   |   |           6oy7nUGpmII9TnNNolCDng==
-|   |   |   |   |           75iPxKfTCxwodp6yKNSTDg==
+|   |   |   |   |           6WuGuY0Psjwwv4+M+ANK4g==
+|   |   |   |   |           72Ajgdsd7_cR0eEbPmzovw==
 |   |   |   |   |           76qUxIgHy62RN+FRRmk+9g==
-|   |   |   |   |           7b2wkBzXA76m2i2lAC+PcQ==
-|   |   |   |   |           7d5WB6gViUD3GVylKqLG9Q==
+|   |   |   |   |           7ehpg7EFBakZxStspgvNCA==
+|   |   |   |   |           7kkeYKRjbp5Yohf90tXV+g==
 |   |   |   |   |           7MjZ5NbHckcvg2CXymYu3Q==
-|   |   |   |   |           7wHnC+d0DT15uSL237GBdA==
 |   |   |   |   |           86zowtR+QZB4We13mZoeTw==
 |   |   |   |   |           8D94Y84xEu3XdCbK6soeiA==
-|   |   |   |   |           8nMhw5yDdWay2rLBScldRQ==
-|   |   |   |   |           8Srd3zTCG6hoLtly9vRx9A==
-|   |   |   |   |           9JrbIYqUSfsfQqZkGniT5w==
-|   |   |   |   |           9Mz5c3JqxucONojGYIk4JA==
+|   |   |   |   |           8Nr3BGYMgnNZ8ao3WdFv2w==
+|   |   |   |   |           9FQpaELpRwi9K1Xrxy3sqA==
+|   |   |   |   |           9jVKGMWdQU3kVaS+vmGq_w==
+|   |   |   |   |           9xR8lZxL+Eb9Uo0bxr1pxQ==
+|   |   |   |   |           A1oHN2Y5ExitX6c_EcZa_w==
+|   |   |   |   |           a5j7ZFR2rSqVFWiaxva8jw==
+|   |   |   |   |           a75ImfaHWaZb_GghpQtBcg==
+|   |   |   |   |           A7e4v_RgD+bMlWggtxz5nA==
 |   |   |   |   |           aAnxfUEeabBdshqASKQFjg==
-|   |   |   |   |           aaYIaPmM4d2eUxLVHUKqDA==
-|   |   |   |   |           AgzzlxL9CmTMZPlDXcCznA==
 |   |   |   |   |           ahM3k37fgEl6+v89hch_jw==
-|   |   |   |   |           aIu2PRt0m48E+ndmBXiagQ==
-|   |   |   |   |           Al+wyOfbrFUnwLLc82kvtA==
-|   |   |   |   |           ALwCAhnnHp6H6U_aps1iPA==
-|   |   |   |   |           aO6EEWJW2aJT+oXhJMBIaA==
-|   |   |   |   |           aodEEWrM9PyxpKbj79WeHA==
+|   |   |   |   |           AoeVFpLTQ9MOaYYP7ZMJ8A==
+|   |   |   |   |           AoV64VDoPsiRejct7GyVJg==
 |   |   |   |   |           apkTeRfud12t0rYccWqFQA==
-|   |   |   |   |           b1rXj8LqtpJReDZlYB1Ccw==
-|   |   |   |   |           BAAsTsfEk3XDZGP6KOVDWw==
-|   |   |   |   |           BbBYdQYaJHTq65Q4iYpsKg==
-|   |   |   |   |           bCwlTS+OcEmp0wkzI3qrkQ==
-|   |   |   |   |           beiWiMYpB1tE+DNg9qePug==
-|   |   |   |   |           BoGt3QpUKjsQsEMAC8dXrQ==
+|   |   |   |   |           aUufD8w+41GbddodcyqdgQ==
+|   |   |   |   |           BG0DYiiK9ZCGZMFEGfiE3Q==
 |   |   |   |   |           C08gzJheKztDGrJ8vv4aAA==
+|   |   |   |   |           c3q3i88U8KhhqnIRmRTClg==
+|   |   |   |   |           C7YiRDx+gtaZkDV+H6drIg==
+|   |   |   |   |           CauKw56lc_t42ApcZQni1g==
+|   |   |   |   |           CBIv1oo5ghCLLOv9B7yssw==
+|   |   |   |   |           cbO78p1iV35wNXEfP3M8tw==
 |   |   |   |   |           cd9yYvCW9t9r+Wh8kp0zgg==
 |   |   |   |   |           CGsx1fvAJKmYCd_8_avgLw==
-|   |   |   |   |           ck2LFZWWHI+7kmHRHTBbFw==
-|   |   |   |   |           cKC04aiDXEAO6s7xcGNE_Q==
-|   |   |   |   |           com_Jl0CugPsuoErq+bqSA==
-|   |   |   |   |           CWk1mcPDUBAs80jLgwJFOg==
+|   |   |   |   |           CzBAuZ+PKuGJH4A0WTBExQ==
 |   |   |   |   |           d+W7y8QuvEyt8f0xMOjigA==
-|   |   |   |   |           D5VtCkImVk5iOJiz6tSIAA==
-|   |   |   |   |           D99hfctMUwXvFXone0n94A==
-|   |   |   |   |           dFIUA_067byvzZjhkFoSdw==
-|   |   |   |   |           DrAfMrpk7Qh8RToWV5CbDw==
-|   |   |   |   |           DyiRMMcLCBeozWyo2ax6zg==
-|   |   |   |   |           ebs0gmfrG8k+5oYjorWdmQ==
+|   |   |   |   |           dX7VXxebRyZadurKrg7I1A==
+|   |   |   |   |           EaE51t6v4xKAkMw4lgdJRw==
 |   |   |   |   |           ekkxh0rHmn4G0D9f0qKkbQ==
-|   |   |   |   |           eofO327lu2z54VIbSiyj0g==
-|   |   |   |   |           ffryIsxsc0vqQhme4+3dDw==
-|   |   |   |   |           fGvafrtgjrEuK0hfHx4Izw==
-|   |   |   |   |           FJ1fqvJ_v2aE3Bl3ycQsVQ==
-|   |   |   |   |           fp7Ly30SPWPe_gMJaipUUg==
+|   |   |   |   |           EoZt_mCZVktk_kEJsFs5bg==
+|   |   |   |   |           F9LUmBwWrnQhTTPKMaV8jw==
+|   |   |   |   |           FBBTAnhYolV2WdnJLJ9jow==
+|   |   |   |   |           FepntH1jz8+Od527nCJpiA==
+|   |   |   |   |           fhuE6aaq4jW7APHe8cLvhw==
+|   |   |   |   |           FiDO0G3lxTuLwiy_Rsn3EA==
 |   |   |   |   |           FqxDyNeCDPhjexLKlCdUCg==
-|   |   |   |   |           G0WbHF8pyqLkP6uP1UMaRA==
-|   |   |   |   |           GcBFoqsTK+mHcDHDNdPaLg==
-|   |   |   |   |           GEWsbILUpATpPK0htiLseg==
+|   |   |   |   |           g0z64FY2VR0_fAjZ6fHqAA==
+|   |   |   |   |           GO__HgTtyehihgePOsno1Q==
+|   |   |   |   |           gpG0zHO104rd7p_c2maJ2w==
+|   |   |   |   |           gvX1y5HNr5nQmBjaAsyBcA==
 |   |   |   |   |           GXaqYHycRYUm+0Q5YvwS4w==
 |   |   |   |   |           h+A+lkphdbstoyXONTbx1Q==
-|   |   |   |   |           hh3z7bjPVpE+beRaNIv+Yw==
+|   |   |   |   |           h2DGQMijZBu_GXjlyIQnhg==
+|   |   |   |   |           H3XjvX3e8mhO_jnfulyrrA==
+|   |   |   |   |           hcx7YP9Qx9+0MiVmb1g7Ng==
+|   |   |   |   |           HdIgvZMilfh4et1iyC0e9g==
 |   |   |   |   |           HpRis7_Yafw+Ypz+wIfdCg==
-|   |   |   |   |           i9O_RgLssfMvlVk2MNgrdA==
-|   |   |   |   |           IDfVm145XEYJJTUZOJ4Khw==
-|   |   |   |   |           IE3TgcXbJvQT+EJnCUQtrw==
-|   |   |   |   |           iSABM+0UdRSGtcZTDwbg3Q==
-|   |   |   |   |           iuqs7JNAxmzhIfWu4g9c5Q==
+|   |   |   |   |           htGP_75V_LvEYXNZB9xnPA==
+|   |   |   |   |           HwqCbynUd2M2lrn8BWcm5Q==
+|   |   |   |   |           hZbbrsWz8oNmafzFJxaZvA==
+|   |   |   |   |           IDyvGbEy_A7g59Dc6WTFPA==
+|   |   |   |   |           Im3HwJQSEKnrCO3nzUSjkg==
+|   |   |   |   |           iMqozdlUQaoMZjcYSAQ0AQ==
+|   |   |   |   |           IRa0T7kw_Mf00Q73gwAJ8g==
 |   |   |   |   |           IW+5WIBGCzEKXUoOTjBkUA==
 |   |   |   |   |           j2pX7qIsCIQ5XUx+d9jBfQ==
-|   |   |   |   |           JI8U4ieqG7jsnuFhQzze_A==
-|   |   |   |   |           jM_Do5VLyWLmjet0l7LKQA==
+|   |   |   |   |           jADRQGpupPqcZRYFAztgyA==
+|   |   |   |   |           jBb6HSKcxkfhPSv3K22aag==
+|   |   |   |   |           JJK+GG22S49OfU_kc6A0rQ==
+|   |   |   |   |           jl3cyll1BOpt7uJ1eSrcyA==
 |   |   |   |   |           JsnZsV6U34RSUVBRxFJljw==
+|   |   |   |   |           k1trX8U7Qf8dkCFCAw5inQ==
+|   |   |   |   |           Kdu0PVZipYwGFmkuJB+LEA==
+|   |   |   |   |           KHeFcmusoJOu5j58mUi0Dw==
 |   |   |   |   |           kHHVggpRXGjRbbKfCARfwQ==
-|   |   |   |   |           KIUsxoXu6ngBC3mSO6JABg==
-|   |   |   |   |           kjqSiy2wBx4d0r1fc1fUrQ==
-|   |   |   |   |           kTupA_MJid8sPQGe11SsMg==
-|   |   |   |   |           LgbKiBGCNMI6p2O9H5eX2g==
+|   |   |   |   |           kPVzlfA6B1V6SVKCY+YsXA==
+|   |   |   |   |           kuhL9EqQQALKtWmW596VmA==
+|   |   |   |   |           kY5RLtXFQQHWK+YJl2lwrA==
+|   |   |   |   |           kYWFGZ8SepypX32xLB_xzA==
+|   |   |   |   |           KZmLr+W4hfTvlQPz04mCDA==
+|   |   |   |   |           lDf3znr9+rEuXTOuKX5kCg==
 |   |   |   |   |           lGqsur_ONZgDoy_DFIUcCw==
-|   |   |   |   |           lizTdUIsQAFYfTBwh+8PzQ==
+|   |   |   |   |           Lj4EUsoRBv3b5nvQk4jkyg==
 |   |   |   |   |           LlMujwaY7Ued3JAesqRIPQ==
-|   |   |   |   |           LrdLLUaupQ_V3FNNVvYSiA==
+|   |   |   |   |           lrv2Zn0VWMWplsVBL08ihQ==
+|   |   |   |   |           lsC0KXIa9J8mtrZqjT7tZA==
 |   |   |   |   |           LWLU_yzK_GvBalWwsgeEoA==
-|   |   |   |   |           m2uLMv2+Yaa4Of8RI8PzNw==
-|   |   |   |   |           mb0_jhPL57ijtv9X8J0EKA==
 |   |   |   |   |           mDFkkS1HDoLahYML8ELjyQ==
-|   |   |   |   |           mnobZd3umGrIbV1NZRHDlg==
-|   |   |   |   |           mRLCDNIt0_O+kRNih86YmA==
-|   |   |   |   |           N6pbdNX11W2wtgyfN1xADg==
-|   |   |   |   |           nd16h9DD9EUlKHx26RnnFQ==
-|   |   |   |   |           nLKDhTbzPPBn_owcv8WWPw==
-|   |   |   |   |           nP3WNadjogzXCi07NtDryg==
+|   |   |   |   |           MO1C+Y6+PDYMTnNTAkMR5Q==
+|   |   |   |   |           mprK7BfR1GDf2wJzJW618w==
+|   |   |   |   |           mQgxKZ3vlFW9BV5EYWAozg==
+|   |   |   |   |           MRYUwbxP5fiSx3WLtOdopg==
+|   |   |   |   |           MxYH8JZwCoY6A1OLsdVqgA==
+|   |   |   |   |           nbjYU55b4NAR8Z1uRxCQ9A==
+|   |   |   |   |           nBNAzQjs2lUdrCg+k+AjvQ==
+|   |   |   |   |           nF2QmdxDcHpcZQ2JJdwF6w==
+|   |   |   |   |           nhqbRSjbryYnVmerykteRw==
+|   |   |   |   |           nJmAstvQdG66MHxPRxyPvQ==
+|   |   |   |   |           NjXXOHVJY2yL29ocyaJQYQ==
+|   |   |   |   |           NNWP0S4374dxod2hSfK6sA==
 |   |   |   |   |           NqLZZs+n_uvXeeXm+v8Xdg==
-|   |   |   |   |           nsy2YK+Z+mK39lKqqlczEw==
-|   |   |   |   |           OBFX0TzbOEsYQKVSiKG2jQ==
-|   |   |   |   |           OgU7Dq0uy9nlhC6cb2ECCg==
-|   |   |   |   |           Ol6cZbwL0F+HMBy3dvUuiw==
+|   |   |   |   |           O3C4MtZpP9gKbozsGDd+0w==
+|   |   |   |   |           oCnyU0r3FMa5BEex9wkQmg==
+|   |   |   |   |           OkdTgs78AvzOBP9KkwRENA==
 |   |   |   |   |           OLt+D+TOR_HnngF5nPtrzw==
-|   |   |   |   |           onRjBGvam59XlWxMQ_UPgg==
-|   |   |   |   |           OoEVJ0jwakWvAkVQWwB+bA==
-|   |   |   |   |           P1ywlPokPogdj7EZ53uhfA==
-|   |   |   |   |           PhWwEj3B3bntbzMG4TqEWA==
+|   |   |   |   |           OOVZHHMHdBT_sRl3mirG1Q==
+|   |   |   |   |           o_jx6_FD4VFU7Or+rtdLUA==
+|   |   |   |   |           PfDAaui7u+XNXetkSoq75g==
+|   |   |   |   |           pG0QhrzNt+hsLX4d1iRk6A==
 |   |   |   |   |           pimHwK1DOQ+juBMwC2IL+Q==
-|   |   |   |   |           pImxwVnAgm5_8oGrZ9JPvg==
-|   |   |   |   |           pLOu8nchmUzyZa9My21Mpg==
-|   |   |   |   |           PV++JaltDwSNzxdyAZbcyQ==
+|   |   |   |   |           pMW1kSUFmFtyFG+0qAPKMw==
+|   |   |   |   |           pPwLnF9ec7_bx8010WbkIA==
+|   |   |   |   |           pqVXwyH1lwzHopQle_RASg==
 |   |   |   |   |           pyCsoqHwg5PAIblr4T3CnQ==
-|   |   |   |   |           pZeYM1KyvcqBv0Nu9bVk8A==
-|   |   |   |   |           Q4futGY1Yqulj_xjRezK9w==
-|   |   |   |   |           Q7+4KwkO3r2hMP2xQfGuRA==
+|   |   |   |   |           qCpeHpX+Y0fyo5kfVbzC5w==
 |   |   |   |   |           qCu7XGsp1ZDF7+qiRBX+kw==
+|   |   |   |   |           qe7ng4rGeoWw0PdsTsPErA==
+|   |   |   |   |           qhBskWkwTR6INcrdXSnxeQ==
+|   |   |   |   |           Qw2iBY+Y8s0KHtoluhcKtQ==
+|   |   |   |   |           qwCuS9024WIWiGPOpPEsGw==
 |   |   |   |   |           QWL8eT5FvKBbzfDspUGk_Q==
-|   |   |   |   |           r2UJ3IV7I0_f2_v3cIU8_w==
-|   |   |   |   |           rHx8YEcF880enchZpbRRkQ==
-|   |   |   |   |           RITV_AsDKgG4ADv2IXwQMA==
-|   |   |   |   |           RJtJLVUBWa1hAtWe07n7zw==
-|   |   |   |   |           rOyIQqgc_BkEOz8iTnKt9A==
-|   |   |   |   |           rQj5EnYVtfq4z82RZVc36A==
-|   |   |   |   |           SAnktLqhtgZ62OakD4RG9g==
-|   |   |   |   |           SHRSGjKpvwcJbQ965aiNww==
+|   |   |   |   |           qx1_IDOORlPcMmpbMAeASw==
+|   |   |   |   |           q_QKwTF_WMh1jO2y+tQkKg==
+|   |   |   |   |           RhlAZ5C3yt6I6at2Lbclig==
+|   |   |   |   |           rKA3QHyrPyrMzSB4ihapCw==
+|   |   |   |   |           ROWRnOhF+hrQwiLCWK7iUw==
+|   |   |   |   |           s9SvXb+Ua1Cg3A9Bi6kt3w==
+|   |   |   |   |           seDr7JFhxvk0BUtKec2Slg==
+|   |   |   |   |           sg5Q0TjG0ASWCqVfLx_FAA==
+|   |   |   |   |           slzgMe6rccIrSJt+nqLFKQ==
+|   |   |   |   |           sp6THUDbkjewiDVn6Us45Q==
 |   |   |   |   |           stPbwtwdrXZgNixafeOPsw==
-|   |   |   |   |           suSHwKz2zog8zIFluk3v3w==
-|   |   |   |   |           T3chPX2XAmyWsoPJbM+XzA==
-|   |   |   |   |           TatPIs3hr5UI+velScCsIw==
+|   |   |   |   |           SYvkieXXOOT7KIB9NZx74w==
+|   |   |   |   |           tA_xkJDVlf8v_T9WNv0pew==
+|   |   |   |   |           TcCkpG5W4y4B9gDn1WGFng==
 |   |   |   |   |           tCFzCyJzOEa5V7m+yxcM6w==
-|   |   |   |   |           tEljGhNaD+3aSx+TmyN2hQ==
-|   |   |   |   |           TmY0pNwbG9ezlLoaXxO7Mg==
-|   |   |   |   |           TMyB9XTt7pbTHFIsGkUMTQ==
+|   |   |   |   |           Te80aEDt4TL27ZV8Cp+7tg==
 |   |   |   |   |           Tpe5z2QLTq5N0FBurooKRw==
-|   |   |   |   |           Ttq_kgMVgrhz9kEvumgs0w==
 |   |   |   |   |           tzjh8d_jVHrBBZPo_MPMOg==
-|   |   |   |   |           T_1FY7d9FUOb_JlRy95lXw==
-|   |   |   |   |           u3QMsVUmYYU9x4SWVgCEQA==
-|   |   |   |   |           u8IidEywLq5NNDPvOCqJDQ==
+|   |   |   |   |           u7dSCwYIIpvRC0S7oJA+SQ==
 |   |   |   |   |           UaBc1M5w5HvdjSf2SLZuZg==
-|   |   |   |   |           UCt3RHanacO_AqqmIW4vMA==
-|   |   |   |   |           umYsi2uqn65m38jsxqFaiQ==
-|   |   |   |   |           URI7WCDDRru_KdMYXyG98A==
-|   |   |   |   |           UrlTB6wAlL5iS2oCixo3dg==
-|   |   |   |   |           UyIUjWuG5PWA1+Ag9I254w==
+|   |   |   |   |           uDD9Cy1Ki0d6edB4AEYuoA==
+|   |   |   |   |           UmGn+VDd94dTF2LYwFcPhw==
 |   |   |   |   |           uyyotO3SqHxI_d5VPCyDlQ==
+|   |   |   |   |           v3u4raL9Ku4K+XU_K6Sm_g==
 |   |   |   |   |           v5p9hlyDZwOeYDHfpAwMFQ==
-|   |   |   |   |           VdrTCoDZF4G4_iLwfUYNzg==
-|   |   |   |   |           vdvnwkcD_RHc5iLfkonoeA==
+|   |   |   |   |           vdEaq_0+pobCYAHMRIgUCQ==
 |   |   |   |   |           vfMRskQdwUjBfHh2D8Q_wA==
-|   |   |   |   |           Vhvm3XYvIWQGhZiBJOj07w==
-|   |   |   |   |           VvoPOkP8JCA9_LZ6YEMylg==
-|   |   |   |   |           w7HHCA7xcqvvRFeX68au1A==
-|   |   |   |   |           wFuF1EZcSPkwF_vzH5PqOQ==
-|   |   |   |   |           wJOEKnKgXlwfGGn+v2qPYA==
-|   |   |   |   |           WLD9NXVZPTwhJn3GTcjK1A==
-|   |   |   |   |           wLUaHmURBSGGMgggAD4jjQ==
-|   |   |   |   |           wLWuscVoF1GCvQKDKvElVw==
-|   |   |   |   |           wPsf_gGB6qZ3L6Fijk_jTg==
+|   |   |   |   |           vnZbB0cyQjPhvo3YJbvAbQ==
+|   |   |   |   |           VVnvBGVfVS9cByy08lIALw==
+|   |   |   |   |           VwlOPYP+_fm+V_MqmvF43Q==
+|   |   |   |   |           WCtdkL1620r4tr9l57vX6g==
+|   |   |   |   |           WGBi2uvtVA9jD3wCpN2E+A==
+|   |   |   |   |           WpXdddFt97y+TnU1Nk_V4Q==
 |   |   |   |   |           WsUcJCufY462zv9Dc7tWfg==
-|   |   |   |   |           wtS++sJv2cwp7ZAlmF2nYQ==
-|   |   |   |   |           WtZ49cKuYZQz476yz0b4Rw==
-|   |   |   |   |           WzAG+aysWt+cJfEx+AdXfA==
-|   |   |   |   |           xKiKd0KJPqp4mGDTFzXR+Q==
-|   |   |   |   |           XOqO6oJ05aTq3AvFuR7vcw==
-|   |   |   |   |           xRaiqq9Dv24ITY4mmneRNA==
-|   |   |   |   |           XrMco6YaI4h4ajE_6mGJhA==
-|   |   |   |   |           XTa8KAe5tm1WvTCY7viR8g==
+|   |   |   |   |           x9ztDtNlPvAoE0wxXEX7oA==
+|   |   |   |   |           xqYnVPTsrZx8e8UehpVZ4w==
 |   |   |   |   |           xV50ZakB_Lwz8dEnyRkRDg==
-|   |   |   |   |           YEohJnnZxbZU8abjQG2UoA==
-|   |   |   |   |           yQeUxR5_BnwC3+WjyuHXmA==
+|   |   |   |   |           Xxj4Y8Ax84xkGhkeGcV81g==
+|   |   |   |   |           Yi8wYb4nLCJWg85JAnKnSQ==
+|   |   |   |   |           yK+lJ16To4bEGiO7w8mPvw==
 |   |   |   |   |           YRNe6oTerVDlLAJj+Jx8mw==
+|   |   |   |   |           yVxIt5SKE0iMFK3vvl0V3g==
 |   |   |   |   |           yZQVEJz7B5hkeX1EKZ+jAw==
 |   |   |   |   |           z8SC_XaTekUZTTU3NJzW3w==
-|   |   |   |   |           ZAwC327nT7gCeUHKPsN5NQ==
-|   |   |   |   |           zhdwfS+6IJu5_tX0cRhUBA==
-|   |   |   |   |           zmTR_oKlFAOQv2nj2dK8MQ==
-|   |   |   |   |           zvcsnZBa8HAMnosDWaqBWA==
-|   |   |   |   |           _AaJzgPmvsj2PGGoqGJuEw==
-|   |   |   |   |           _xlsbmAWAuysofq67ld09Q==
+|   |   |   |   |           ZcLSn5gv8PyrUJmPERUNuA==
+|   |   |   |   |           ZkdQxh8TGK_yZfH8Gn7+cA==
+|   |   |   |   |           ZsyIshmRxuNvBGv_BUCnOg==
+|   |   |   |   |           zzQ77cL0bgLK420Qsh87ZA==
+|   |   |   |   |           _VPTtlvhVJxmpYLvNekSXQ==
 |   |   |   |   |           
 |   |   |   |   +---mergeDebugAssets
 |   |   |   |   |       merger.xml
@@ -852,7 +852,6 @@ C:.
 |   |   |   |                                               UserDao_Impl$1.class
 |   |   |   |                                               UserDao_Impl$2.class
 |   |   |   |                                               UserDao_Impl$3.class
-|   |   |   |                                               UserDao_Impl$4.class
 |   |   |   |                                               UserDao_Impl.class
 |   |   |   |                                               
 |   |   |   +---java_res
@@ -871,10 +870,13 @@ C:.
 |   |   |   |                               |   |   +---dao
 |   |   |   |                               |   |   \---entities
 |   |   |   |                               |   +---models
+|   |   |   |                               |   |   \---enums
 |   |   |   |                               |   +---remote
-|   |   |   |                               |   |   \---api
-|   |   |   |                               |   |       +---objects
-|   |   |   |                               |   |       \---services
+|   |   |   |                               |   |   +---api
+|   |   |   |                               |   |   |   +---objects
+|   |   |   |                               |   |   |   \---services
+|   |   |   |                               |   |   \---dtos
+|   |   |   |                               |   |       \---breeds
 |   |   |   |                               |   \---repository
 |   |   |   |                               +---di
 |   |   |   |                               +---preferences
@@ -1259,29 +1261,28 @@ C:.
 |   |   |   |   \---debug
 |   |   |   |       \---dexBuilderDebug
 |   |   |   |           \---out
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_0.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_1.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_2.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_3.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_4.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_5.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_6.jar
-|   |   |   |               |   dde8d8707f6d836a1f2a5b980c0dab7c8fd09bf4faad95ab867f3b60f8a50a08_7.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_0.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_1.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_2.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_3.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_4.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_5.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_6.jar
+|   |   |   |               |   89b3d63e5128e3e815cbe4909244301171e9e26839094b30b82668764375a467_7.jar
 |   |   |   |               |   
 |   |   |   |               \---pt
 |   |   |   |                   \---ipp
 |   |   |   |                       \---estg
 |   |   |   |                           \---trabalho_cmu
 |   |   |   |                               |   ComposableSingletons$MainActivityKt.dex
-|   |   |   |                               |   ComposableSingletons$PetAdoptionAppKt.dex
 |   |   |   |                               |   MainActivity.dex
-|   |   |   |                               |   MainActivityKt$FirebaseTestScreen$1$1.dex
-|   |   |   |                               |   MainActivityKt.dex
 |   |   |   |                               |   PetAdoptionAppKt.dex
 |   |   |   |                               |   PetAdoptionApplication.dex
 |   |   |   |                               |   
 |   |   |   |                               +---data
 |   |   |   |                               |   +---local
+|   |   |   |                               |   |   |   AppDatabase$Companion$MIGRATION_1_2$1.dex
+|   |   |   |                               |   |   |   AppDatabase$Companion$MIGRATION_2_3$1.dex
 |   |   |   |                               |   |   |   AppDatabase$Companion.dex
 |   |   |   |                               |   |   |   AppDatabase.dex
 |   |   |   |                               |   |   |   AppDatabase_Impl$1.dex
@@ -1311,7 +1312,6 @@ C:.
 |   |   |   |                               |   |   |       UserDao_Impl$1.dex
 |   |   |   |                               |   |   |       UserDao_Impl$2.dex
 |   |   |   |                               |   |   |       UserDao_Impl$3.dex
-|   |   |   |                               |   |   |       UserDao_Impl$4.dex
 |   |   |   |                               |   |   |       UserDao_Impl.dex
 |   |   |   |                               |   |   |       
 |   |   |   |                               |   |   \---entities
@@ -1322,24 +1322,30 @@ C:.
 |   |   |   |                               |   |           User.dex
 |   |   |   |                               |   |           
 |   |   |   |                               |   +---models
-|   |   |   |                               |   |       AdoptionRequest.dex
-|   |   |   |                               |   |       AnimalForm.dex
-|   |   |   |                               |   |       Breed.dex
-|   |   |   |                               |   |       CatBreedResponse.dex
-|   |   |   |                               |   |       DogBreedsResponse.dex
-|   |   |   |                               |   |       OwnershipStatus.dex
-|   |   |   |                               |   |       UserType.dex
-|   |   |   |                               |   |       
+|   |   |   |                               |   |   |   AdoptionRequest.dex
+|   |   |   |                               |   |   |   AnimalForm.dex
+|   |   |   |                               |   |   |   Breed.dex
+|   |   |   |                               |   |   |   LoginResult.dex
+|   |   |   |                               |   |   |   
+|   |   |   |                               |   |   \---enums
+|   |   |   |                               |   |           AccountType.dex
+|   |   |   |                               |   |           OwnershipStatus.dex
+|   |   |   |                               |   |           
 |   |   |   |                               |   +---remote
-|   |   |   |                               |   |   \---api
-|   |   |   |                               |   |       +---objects
-|   |   |   |                               |   |       |       RetrofitClient.dex
-|   |   |   |                               |   |       |       
-|   |   |   |                               |   |       \---services
-|   |   |   |                               |   |               AnimalApiService$DefaultImpls.dex
-|   |   |   |                               |   |               AnimalApiService.dex
-|   |   |   |                               |   |               CatApiService.dex
-|   |   |   |                               |   |               DogApiService.dex
+|   |   |   |                               |   |   +---api
+|   |   |   |                               |   |   |   +---objects
+|   |   |   |                               |   |   |   |       RetrofitClient.dex
+|   |   |   |                               |   |   |   |       
+|   |   |   |                               |   |   |   \---services
+|   |   |   |                               |   |   |           AnimalApiService$DefaultImpls.dex
+|   |   |   |                               |   |   |           AnimalApiService.dex
+|   |   |   |                               |   |   |           CatApiService.dex
+|   |   |   |                               |   |   |           DogApiService.dex
+|   |   |   |                               |   |   |           
+|   |   |   |                               |   |   \---dtos
+|   |   |   |                               |   |       \---breeds
+|   |   |   |                               |   |               CatBreedsResponse.dex
+|   |   |   |                               |   |               DogBreedsResponse.dex
 |   |   |   |                               |   |               
 |   |   |   |                               |   \---repository
 |   |   |   |                               |           ActivityRepository.dex
@@ -1351,6 +1357,11 @@ C:.
 |   |   |   |                               |           AnimalRepository$sortByDate$2.dex
 |   |   |   |                               |           AnimalRepository$sortByName$2.dex
 |   |   |   |                               |           AnimalRepository.dex
+|   |   |   |                               |           AuthRepository$checkOfflineSession$1.dex
+|   |   |   |                               |           AuthRepository$login$1.dex
+|   |   |   |                               |           AuthRepository$registerShelter$1.dex
+|   |   |   |                               |           AuthRepository$registerUser$1.dex
+|   |   |   |                               |           AuthRepository.dex
 |   |   |   |                               |           BreedRepository$getCatBreeds$1$onResponse$$inlined$sortedBy$1.dex
 |   |   |   |                               |           BreedRepository$getCatBreeds$1.dex
 |   |   |   |                               |           BreedRepository$getDogBreeds$1$onResponse$$inlined$sortedBy$1.dex
@@ -1382,13 +1393,22 @@ C:.
 |   |   |   |                               |   |       ActivityDatesChosenKt.dex
 |   |   |   |                               |   |       ActivityDateTimeCardKt.dex
 |   |   |   |                               |   |       AnimalCardKt.dex
+|   |   |   |                               |   |       AnimalMock.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$1$1$1$1$1$1$1$1.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |       AnimalSelectionDialogKt.dex
 |   |   |   |                               |   |       CalendarViewKt.dex
+|   |   |   |                               |   |       ComposableSingletons$AnimalSelectionDialogKt.dex
 |   |   |   |                               |   |       ComposableSingletons$MapLocationButtonKt.dex
 |   |   |   |                               |   |       ComposableSingletons$TimeInputFieldsKt.dex
 |   |   |   |                               |   |       MapLocationButtonKt.dex
 |   |   |   |                               |   |       TimeInputFieldsKt.dex
 |   |   |   |                               |   |       
 |   |   |   |                               |   +---navigation
+|   |   |   |                               |   |       AnimalViewModelFactory.dex
 |   |   |   |                               |   |       AppTopBarKt.dex
 |   |   |   |                               |   |       ComposableSingletons$AppTopBarKt.dex
 |   |   |   |                               |   |       ComposableSingletons$DrawerUserKt.dex
@@ -1408,20 +1428,20 @@ C:.
 |   |   |   |                               |   |   +---Animals
 |   |   |   |                               |   |   |       AnimalDetailScreenKt$AnimalDetailScreen$2$1.dex
 |   |   |   |                               |   |   |       AnimalDetailScreenKt.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$1$1.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$2$1.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$1.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$2.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$3.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$4.dex
-|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$5.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$4$1$1$2$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$4$1$1$3$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$5.dex
 |   |   |   |                               |   |   |       AnimalListScreenKt.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$2$4$1$2$1$1.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$1.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$2.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$3.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$4.dex
-|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$5.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$1$4$1$2$1$1.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$1.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$2.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$3.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$4.dex
+|   |   |   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$5.dex
 |   |   |   |                               |   |   |       AnimalsListGuestScreenKt.dex
 |   |   |   |                               |   |   |       AnimalViewModel$applyFilter$1.dex
 |   |   |   |                               |   |   |       AnimalViewModel$filterByGender$1.dex
@@ -1436,18 +1456,23 @@ C:.
 |   |   |   |                               |   |   |       ComposableSingletons$AnimalListScreenKt.dex
 |   |   |   |                               |   |   |       ComposableSingletons$AnimalsListGuestScreenKt.dex
 |   |   |   |                               |   |   |       Mock.dex
-|   |   |   |                               |   |   |       Mock1.dex
+|   |   |   |                               |   |   |       MockAnimalGuestViewModel.dex
 |   |   |   |                               |   |   |       MockAnimalViewModel.dex
 |   |   |   |                               |   |   |       
 |   |   |   |                               |   |   +---Auth
+|   |   |   |                               |   |   |       AuthViewModel$BasicRegistrationFields.dex
+|   |   |   |                               |   |   |       AuthViewModel$checkAndRestoreOfflineSession$1.dex
 |   |   |   |                               |   |   |       AuthViewModel$login$1.dex
+|   |   |   |                               |   |   |       AuthViewModel$performOnlineLogin$1.dex
+|   |   |   |                               |   |   |       AuthViewModel$performRegistration$1.dex
 |   |   |   |                               |   |   |       AuthViewModel$register$1.dex
+|   |   |   |                               |   |   |       AuthViewModel$registerShelterAccount$1.dex
+|   |   |   |                               |   |   |       AuthViewModel$registerUserAccount$1.dex
 |   |   |   |                               |   |   |       AuthViewModel.dex
 |   |   |   |                               |   |   |       ComposableSingletons$LoginScreenKt.dex
 |   |   |   |                               |   |   |       ComposableSingletons$RegisterScreenKt.dex
 |   |   |   |                               |   |   |       LoginScreenKt$LoginScreen$1$1.dex
 |   |   |   |                               |   |   |       LoginScreenKt.dex
-|   |   |   |                               |   |   |       RegisterScreenKt$MockAuthViewModel$1.dex
 |   |   |   |                               |   |   |       RegisterScreenKt.dex
 |   |   |   |                               |   |   |       
 |   |   |   |                               |   |   +---Ownership
@@ -1475,8 +1500,12 @@ C:.
 |   |   |   |                               |   |   |       TermsAndConditionsScreenKt.dex
 |   |   |   |                               |   |   |       
 |   |   |   |                               |   |   +---Shelter
+|   |   |   |                               |   |   |       AdoptionRequestScreenKt$AdoptionRequestScreen$2$1$WhenMappings.dex
+|   |   |   |                               |   |   |       AdoptionRequestScreenKt$AdoptionRequestScreen$2$1.dex
 |   |   |   |                               |   |   |       AdoptionRequestScreenKt.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1$WhenMappings.dex
 |   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1.dex
+|   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$10$1.dex
 |   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$2$1.dex
 |   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$3$1.dex
 |   |   |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$4$1.dex
@@ -1491,8 +1520,10 @@ C:.
 |   |   |   |                               |   |   |       ComposableSingletons$ShelterHomeScreenKt.dex
 |   |   |   |                               |   |   |       ShelterHomeScreenKt.dex
 |   |   |   |                               |   |   |       ShelterMngViewModel$approveRequest$1.dex
-|   |   |   |                               |   |   |       ShelterMngViewModel$loadOwnershipRequests$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$convertToAdoptionRequest$1.dex
 |   |   |   |                               |   |   |       ShelterMngViewModel$rejectRequest$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$requests$1$1$1$1.dex
+|   |   |   |                               |   |   |       ShelterMngViewModel$sam$androidx_lifecycle_Observer$0.dex
 |   |   |   |                               |   |   |       ShelterMngViewModel$saveAnimal$1.dex
 |   |   |   |                               |   |   |       ShelterMngViewModel.dex
 |   |   |   |                               |   |   |       ShelterViewModel$addShelter$1.dex
@@ -1514,6 +1545,7 @@ C:.
 |   |   |   |                               |   |   |       HomeScreenKt.dex
 |   |   |   |                               |   |   |       
 |   |   |   |                               |   |   \---User
+|   |   |   |                               |   |           ComposableSingletons$MainOptionsScreenKt.dex
 |   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$1$1.dex
 |   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$2$1.dex
 |   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$1.dex
@@ -1522,7 +1554,11 @@ C:.
 |   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$4.dex
 |   |   |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$5.dex
 |   |   |   |                               |   |           FavoritesScreenKt.dex
+|   |   |   |                               |   |           MainOptionsScreenKt.dex
+|   |   |   |                               |   |           MainOptionsViewModel.dex
+|   |   |   |                               |   |           Medal.dex
 |   |   |   |                               |   |           Mock.dex
+|   |   |   |                               |   |           WalkInfo.dex
 |   |   |   |                               |   |           
 |   |   |   |                               |   +---theme
 |   |   |   |                               |   |       ColorKt.dex
@@ -1716,20 +1752,127 @@ C:.
 |   |   |   |   \---local-state
 |   |   |   \---kaptGenerateStubsDebugKotlin
 |   |   |       +---cacheable
+|   |   |       |   |   last-build.bin
+|   |   |       |   |   
 |   |   |       |   \---caches-jvm
 |   |   |       |       +---inputs
+|   |   |       |       |       source-to-output.tab
+|   |   |       |       |       source-to-output.tab.keystream
+|   |   |       |       |       source-to-output.tab.keystream.len
+|   |   |       |       |       source-to-output.tab.len
+|   |   |       |       |       source-to-output.tab.values
+|   |   |       |       |       source-to-output.tab.values.at
+|   |   |       |       |       source-to-output.tab.values.s
+|   |   |       |       |       source-to-output.tab_i
+|   |   |       |       |       source-to-output.tab_i.len
+|   |   |       |       |       
 |   |   |       |       +---jvm
+|   |   |       |       |   \---kotlin
+|   |   |       |       |           class-attributes.tab
+|   |   |       |       |           class-attributes.tab.keystream
+|   |   |       |       |           class-attributes.tab.keystream.len
+|   |   |       |       |           class-attributes.tab.len
+|   |   |       |       |           class-attributes.tab.values.at
+|   |   |       |       |           class-attributes.tab_i
+|   |   |       |       |           class-attributes.tab_i.len
+|   |   |       |       |           class-fq-name-to-source.tab
+|   |   |       |       |           class-fq-name-to-source.tab.keystream
+|   |   |       |       |           class-fq-name-to-source.tab.keystream.len
+|   |   |       |       |           class-fq-name-to-source.tab.len
+|   |   |       |       |           class-fq-name-to-source.tab.values.at
+|   |   |       |       |           class-fq-name-to-source.tab_i
+|   |   |       |       |           class-fq-name-to-source.tab_i.len
+|   |   |       |       |           internal-name-to-source.tab
+|   |   |       |       |           internal-name-to-source.tab.keystream
+|   |   |       |       |           internal-name-to-source.tab.keystream.len
+|   |   |       |       |           internal-name-to-source.tab.len
+|   |   |       |       |           internal-name-to-source.tab.values.at
+|   |   |       |       |           internal-name-to-source.tab_i
+|   |   |       |       |           internal-name-to-source.tab_i.len
+|   |   |       |       |           package-parts.tab
+|   |   |       |       |           package-parts.tab.keystream
+|   |   |       |       |           package-parts.tab.keystream.len
+|   |   |       |       |           package-parts.tab.len
+|   |   |       |       |           package-parts.tab.values.at
+|   |   |       |       |           package-parts.tab_i
+|   |   |       |       |           package-parts.tab_i.len
+|   |   |       |       |           proto.tab
+|   |   |       |       |           proto.tab.keystream
+|   |   |       |       |           proto.tab.keystream.len
+|   |   |       |       |           proto.tab.len
+|   |   |       |       |           proto.tab.values
+|   |   |       |       |           proto.tab.values.at
+|   |   |       |       |           proto.tab.values.s
+|   |   |       |       |           proto.tab_i
+|   |   |       |       |           proto.tab_i.len
+|   |   |       |       |           source-to-classes.tab
+|   |   |       |       |           source-to-classes.tab.keystream
+|   |   |       |       |           source-to-classes.tab.keystream.len
+|   |   |       |       |           source-to-classes.tab.len
+|   |   |       |       |           source-to-classes.tab.values.at
+|   |   |       |       |           source-to-classes.tab_i
+|   |   |       |       |           source-to-classes.tab_i.len
+|   |   |       |       |           subtypes.tab
+|   |   |       |       |           subtypes.tab.keystream
+|   |   |       |       |           subtypes.tab.keystream.len
+|   |   |       |       |           subtypes.tab.len
+|   |   |       |       |           subtypes.tab.values.at
+|   |   |       |       |           subtypes.tab_i
+|   |   |       |       |           subtypes.tab_i.len
+|   |   |       |       |           supertypes.tab
+|   |   |       |       |           supertypes.tab.keystream
+|   |   |       |       |           supertypes.tab.keystream.len
+|   |   |       |       |           supertypes.tab.len
+|   |   |       |       |           supertypes.tab.values.at
+|   |   |       |       |           supertypes.tab_i
+|   |   |       |       |           supertypes.tab_i.len
+|   |   |       |       |           
 |   |   |       |       \---lookups
+|   |   |       |               counters.tab
+|   |   |       |               file-to-id.tab
+|   |   |       |               file-to-id.tab.keystream
+|   |   |       |               file-to-id.tab.keystream.len
+|   |   |       |               file-to-id.tab.len
+|   |   |       |               file-to-id.tab.values.at
+|   |   |       |               file-to-id.tab_i
+|   |   |       |               file-to-id.tab_i.len
+|   |   |       |               id-to-file.tab
+|   |   |       |               id-to-file.tab.keystream
+|   |   |       |               id-to-file.tab.keystream.len
+|   |   |       |               id-to-file.tab.len
+|   |   |       |               id-to-file.tab.values.at
+|   |   |       |               id-to-file.tab_i
+|   |   |       |               id-to-file.tab_i.len
+|   |   |       |               lookups.tab
+|   |   |       |               lookups.tab.keystream
+|   |   |       |               lookups.tab.keystream.len
+|   |   |       |               lookups.tab.len
+|   |   |       |               lookups.tab.values
+|   |   |       |               lookups.tab.values.at
+|   |   |       |               lookups.tab.values.s
+|   |   |       |               lookups.tab_i
+|   |   |       |               lookups.tab_i.len
+|   |   |       |               
 |   |   |       +---classpath-snapshot
+|   |   |       |       shrunk-classpath-snapshot.bin
+|   |   |       |       
 |   |   |       \---local-state
 |   |   +---outputs
 |   |   |   \---logs
 |   |   |           manifest-merger-debug-report.txt
 |   |   |           
+|   |   +---snapshot
+|   |   |   \---kotlin
 |   |   \---tmp
 |   |       +---compileDebugJavaWithJavac
-|   |       |       previous-compilation-data.bin
-|   |       |       
+|   |       |   |   previous-compilation-data.bin
+|   |       |   |   
+|   |       |   \---compileTransaction
+|   |       |       +---backup-dir
+|   |       |       \---stash-dir
+|   |       |               AppDatabase_Impl$1.class.uniqueId1
+|   |       |               AppDatabase_Impl.class.uniqueId0
+|   |       |               
 |   |       +---kapt3
 |   |       |   +---classes
 |   |       |   |   \---debug
@@ -1743,8 +1886,428 @@ C:.
 |   |       |   |           
 |   |       |   +---incrementalData
 |   |       |   |   \---debug
+|   |       |   |       +---META-INF
+|   |       |   |       |       app_debug.kotlin_module
+|   |       |   |       |       
+|   |       |   |       \---pt
+|   |       |   |           \---ipp
+|   |       |   |               \---estg
+|   |       |   |                   \---trabalho_cmu
+|   |       |   |                       |   MainActivity.class
+|   |       |   |                       |   PetAdoptionAppKt.class
+|   |       |   |                       |   PetAdoptionApplication.class
+|   |       |   |                       |   
+|   |       |   |                       +---data
+|   |       |   |                       |   +---local
+|   |       |   |                       |   |   |   AppDatabase$Companion.class
+|   |       |   |                       |   |   |   AppDatabase.class
+|   |       |   |                       |   |   |   Converters.class
+|   |       |   |                       |   |   |   
+|   |       |   |                       |   |   +---dao
+|   |       |   |                       |   |   |       ActivityDao.class
+|   |       |   |                       |   |   |       AnimalDao.class
+|   |       |   |                       |   |   |       OwnershipDao.class
+|   |       |   |                       |   |   |       ShelterDao.class
+|   |       |   |                       |   |   |       UserDao.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   \---entities
+|   |       |   |                       |   |           Activity.class
+|   |       |   |                       |   |           Animal.class
+|   |       |   |                       |   |           Ownership.class
+|   |       |   |                       |   |           Shelter.class
+|   |       |   |                       |   |           User.class
+|   |       |   |                       |   |           
+|   |       |   |                       |   +---models
+|   |       |   |                       |   |   |   AdoptionRequest.class
+|   |       |   |                       |   |   |   AnimalForm.class
+|   |       |   |                       |   |   |   Breed.class
+|   |       |   |                       |   |   |   LoginResult.class
+|   |       |   |                       |   |   |   
+|   |       |   |                       |   |   \---enums
+|   |       |   |                       |   |           AccountType.class
+|   |       |   |                       |   |           OwnershipStatus.class
+|   |       |   |                       |   |           
+|   |       |   |                       |   +---remote
+|   |       |   |                       |   |   +---api
+|   |       |   |                       |   |   |   +---objects
+|   |       |   |                       |   |   |   |       RetrofitClient.class
+|   |       |   |                       |   |   |   |       
+|   |       |   |                       |   |   |   \---services
+|   |       |   |                       |   |   |           AnimalApiService$DefaultImpls.class
+|   |       |   |                       |   |   |           AnimalApiService.class
+|   |       |   |                       |   |   |           CatApiService.class
+|   |       |   |                       |   |   |           DogApiService.class
+|   |       |   |                       |   |   |           
+|   |       |   |                       |   |   \---dtos
+|   |       |   |                       |   |       \---breeds
+|   |       |   |                       |   |               CatBreedsResponse.class
+|   |       |   |                       |   |               DogBreedsResponse.class
+|   |       |   |                       |   |               
+|   |       |   |                       |   \---repository
+|   |       |   |                       |           ActivityRepository.class
+|   |       |   |                       |           AnimalRepository.class
+|   |       |   |                       |           AuthRepository.class
+|   |       |   |                       |           BreedRepository.class
+|   |       |   |                       |           OwnershipRepository.class
+|   |       |   |                       |           ShelterOwnershipRequestRepository.class
+|   |       |   |                       |           ShelterRepository.class
+|   |       |   |                       |           UserRepository.class
+|   |       |   |                       |           
+|   |       |   |                       +---di
+|   |       |   |                       |       DatabaseModule.class
+|   |       |   |                       |       RepositoryModule.class
+|   |       |   |                       |       RetrofitInstance.class
+|   |       |   |                       |       
+|   |       |   |                       +---preferences
+|   |       |   |                       |       LanguagePreferences.class
+|   |       |   |                       |       
+|   |       |   |                       +---services
+|   |       |   |                       |       NotificationService.class
+|   |       |   |                       |       WalkTrackingService.class
+|   |       |   |                       |       
+|   |       |   |                       +---ui
+|   |       |   |                       |   +---components
+|   |       |   |                       |   |       ActivityAnimalInfoCardKt.class
+|   |       |   |                       |   |       ActivityDatesChosenKt.class
+|   |       |   |                       |   |       ActivityDateTimeCardKt.class
+|   |       |   |                       |   |       AnimalCardKt.class
+|   |       |   |                       |   |       AnimalMock.class
+|   |       |   |                       |   |       AnimalSelectionDialogKt.class
+|   |       |   |                       |   |       CalendarViewKt.class
+|   |       |   |                       |   |       MapLocationButtonKt.class
+|   |       |   |                       |   |       TimeInputFieldsKt.class
+|   |       |   |                       |   |       
+|   |       |   |                       |   +---navigation
+|   |       |   |                       |   |       AnimalViewModelFactory.class
+|   |       |   |                       |   |       AppTopBarKt.class
+|   |       |   |                       |   |       DrawerOption.class
+|   |       |   |                       |   |       DrawerUserKt.class
+|   |       |   |                       |   |       NavGraphAdminKt.class
+|   |       |   |                       |   |       NavGraphPublicKt.class
+|   |       |   |                       |   |       NavGraphUserKt.class
+|   |       |   |                       |   |       
+|   |       |   |                       |   +---screens
+|   |       |   |                       |   |   |   AppScaffoldKt.class
+|   |       |   |                       |   |   |   
+|   |       |   |                       |   |   +---Animals
+|   |       |   |                       |   |   |       AnimalDetailScreenKt.class
+|   |       |   |                       |   |   |       AnimalListScreenKt.class
+|   |       |   |                       |   |   |       AnimalsListGuestScreenKt.class
+|   |       |   |                       |   |   |       AnimalViewModel.class
+|   |       |   |                       |   |   |       Mock.class
+|   |       |   |                       |   |   |       MockAnimalGuestViewModel.class
+|   |       |   |                       |   |   |       MockAnimalViewModel.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   +---Auth
+|   |       |   |                       |   |   |       AuthViewModel$BasicRegistrationFields.class
+|   |       |   |                       |   |   |       AuthViewModel.class
+|   |       |   |                       |   |   |       LoginScreenKt.class
+|   |       |   |                       |   |   |       RegisterScreenKt.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   +---Ownership
+|   |       |   |                       |   |   |       ActivitiesHistoryScreenKt.class
+|   |       |   |                       |   |   |       ActivityShedulingScreenKt.class
+|   |       |   |                       |   |   |       OwnershipConfirmationScreenKt.class
+|   |       |   |                       |   |   |       OwnershipFormScreenKt.class
+|   |       |   |                       |   |   |       TermsAndConditionsScreenKt.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   +---Shelter
+|   |       |   |                       |   |   |       AdoptionRequestScreenKt.class
+|   |       |   |                       |   |   |       AnimalCreationScreenKt.class
+|   |       |   |                       |   |   |       ShelterHomeScreenKt.class
+|   |       |   |                       |   |   |       ShelterMngViewModel.class
+|   |       |   |                       |   |   |       ShelterViewModel.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   +---SocialTailsComunity
+|   |       |   |                       |   |   |       RankingData.class
+|   |       |   |                       |   |   |       SocialTailsCommunityKt.class
+|   |       |   |                       |   |   |       SocialTailsRankingScreenKt.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   +---startScreen
+|   |       |   |                       |   |   |       HomeScreenKt.class
+|   |       |   |                       |   |   |       
+|   |       |   |                       |   |   \---User
+|   |       |   |                       |   |           FavoritesScreenKt.class
+|   |       |   |                       |   |           MainOptionsScreenKt.class
+|   |       |   |                       |   |           MainOptionsViewModel.class
+|   |       |   |                       |   |           Medal.class
+|   |       |   |                       |   |           Mock.class
+|   |       |   |                       |   |           WalkInfo.class
+|   |       |   |                       |   |           
+|   |       |   |                       |   +---theme
+|   |       |   |                       |   |       ColorKt.class
+|   |       |   |                       |   |       ThemeKt.class
+|   |       |   |                       |   |       TypeKt.class
+|   |       |   |                       |   |       
+|   |       |   |                       |   \---viewmodel
+|   |       |   |                       |           ActivityViewModel.class
+|   |       |   |                       |           ActivityWithAnimalAndShelter.class
+|   |       |   |                       |           OwnershipViewModel.class
+|   |       |   |                       |           UserViewModel.class
+|   |       |   |                       |           
+|   |       |   |                       \---utils
+|   |       |   |                               LocaleHelper.class
+|   |       |   |                               MapUtilsKt.class
+|   |       |   |                               
 |   |       |   \---stubs
 |   |       |       \---debug
+|   |       |           +---error
+|   |       |           |       NonExistentClass.java
+|   |       |           |       
+|   |       |           \---pt
+|   |       |               \---ipp
+|   |       |                   \---estg
+|   |       |                       \---trabalho_cmu
+|   |       |                           |   MainActivity.java
+|   |       |                           |   MainActivity.kapt_metadata
+|   |       |                           |   PetAdoptionAppKt.java
+|   |       |                           |   PetAdoptionAppKt.kapt_metadata
+|   |       |                           |   PetAdoptionApplication.java
+|   |       |                           |   PetAdoptionApplication.kapt_metadata
+|   |       |                           |   
+|   |       |                           +---data
+|   |       |                           |   +---local
+|   |       |                           |   |   |   AppDatabase.java
+|   |       |                           |   |   |   AppDatabase.kapt_metadata
+|   |       |                           |   |   |   Converters.java
+|   |       |                           |   |   |   Converters.kapt_metadata
+|   |       |                           |   |   |   
+|   |       |                           |   |   +---dao
+|   |       |                           |   |   |       ActivityDao.java
+|   |       |                           |   |   |       ActivityDao.kapt_metadata
+|   |       |                           |   |   |       AnimalDao.java
+|   |       |                           |   |   |       AnimalDao.kapt_metadata
+|   |       |                           |   |   |       OwnershipDao.java
+|   |       |                           |   |   |       OwnershipDao.kapt_metadata
+|   |       |                           |   |   |       ShelterDao.java
+|   |       |                           |   |   |       ShelterDao.kapt_metadata
+|   |       |                           |   |   |       UserDao.java
+|   |       |                           |   |   |       UserDao.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   \---entities
+|   |       |                           |   |           Activity.java
+|   |       |                           |   |           Activity.kapt_metadata
+|   |       |                           |   |           Animal.java
+|   |       |                           |   |           Animal.kapt_metadata
+|   |       |                           |   |           Ownership.java
+|   |       |                           |   |           Ownership.kapt_metadata
+|   |       |                           |   |           Shelter.java
+|   |       |                           |   |           Shelter.kapt_metadata
+|   |       |                           |   |           User.java
+|   |       |                           |   |           User.kapt_metadata
+|   |       |                           |   |           
+|   |       |                           |   +---models
+|   |       |                           |   |   |   AdoptionRequest.java
+|   |       |                           |   |   |   AdoptionRequest.kapt_metadata
+|   |       |                           |   |   |   AnimalForm.java
+|   |       |                           |   |   |   AnimalForm.kapt_metadata
+|   |       |                           |   |   |   Breed.java
+|   |       |                           |   |   |   Breed.kapt_metadata
+|   |       |                           |   |   |   LoginResult.java
+|   |       |                           |   |   |   LoginResult.kapt_metadata
+|   |       |                           |   |   |   
+|   |       |                           |   |   \---enums
+|   |       |                           |   |           AccountType.java
+|   |       |                           |   |           AccountType.kapt_metadata
+|   |       |                           |   |           OwnershipStatus.java
+|   |       |                           |   |           OwnershipStatus.kapt_metadata
+|   |       |                           |   |           
+|   |       |                           |   +---remote
+|   |       |                           |   |   +---api
+|   |       |                           |   |   |   +---objects
+|   |       |                           |   |   |   |       RetrofitClient.java
+|   |       |                           |   |   |   |       RetrofitClient.kapt_metadata
+|   |       |                           |   |   |   |       
+|   |       |                           |   |   |   \---services
+|   |       |                           |   |   |           AnimalApiService.java
+|   |       |                           |   |   |           AnimalApiService.kapt_metadata
+|   |       |                           |   |   |           CatApiService.java
+|   |       |                           |   |   |           CatApiService.kapt_metadata
+|   |       |                           |   |   |           DogApiService.java
+|   |       |                           |   |   |           DogApiService.kapt_metadata
+|   |       |                           |   |   |           
+|   |       |                           |   |   \---dtos
+|   |       |                           |   |       \---breeds
+|   |       |                           |   |               CatBreedsResponse.java
+|   |       |                           |   |               CatBreedsResponse.kapt_metadata
+|   |       |                           |   |               DogBreedsResponse.java
+|   |       |                           |   |               DogBreedsResponse.kapt_metadata
+|   |       |                           |   |               
+|   |       |                           |   \---repository
+|   |       |                           |           ActivityRepository.java
+|   |       |                           |           ActivityRepository.kapt_metadata
+|   |       |                           |           AnimalRepository.java
+|   |       |                           |           AnimalRepository.kapt_metadata
+|   |       |                           |           AuthRepository.java
+|   |       |                           |           AuthRepository.kapt_metadata
+|   |       |                           |           BreedRepository.java
+|   |       |                           |           BreedRepository.kapt_metadata
+|   |       |                           |           OwnershipRepository.java
+|   |       |                           |           OwnershipRepository.kapt_metadata
+|   |       |                           |           ShelterOwnershipRequestRepository.java
+|   |       |                           |           ShelterOwnershipRequestRepository.kapt_metadata
+|   |       |                           |           ShelterRepository.java
+|   |       |                           |           ShelterRepository.kapt_metadata
+|   |       |                           |           UserRepository.java
+|   |       |                           |           UserRepository.kapt_metadata
+|   |       |                           |           
+|   |       |                           +---di
+|   |       |                           |       DatabaseModule.java
+|   |       |                           |       DatabaseModule.kapt_metadata
+|   |       |                           |       RepositoryModule.java
+|   |       |                           |       RepositoryModule.kapt_metadata
+|   |       |                           |       RetrofitInstance.java
+|   |       |                           |       RetrofitInstance.kapt_metadata
+|   |       |                           |       
+|   |       |                           +---preferences
+|   |       |                           |       LanguagePreferences.java
+|   |       |                           |       LanguagePreferences.kapt_metadata
+|   |       |                           |       
+|   |       |                           +---services
+|   |       |                           |       NotificationService.java
+|   |       |                           |       NotificationService.kapt_metadata
+|   |       |                           |       WalkTrackingService.java
+|   |       |                           |       WalkTrackingService.kapt_metadata
+|   |       |                           |       
+|   |       |                           +---ui
+|   |       |                           |   +---components
+|   |       |                           |   |       ActivityAnimalInfoCardKt.java
+|   |       |                           |   |       ActivityAnimalInfoCardKt.kapt_metadata
+|   |       |                           |   |       ActivityDatesChosenKt.java
+|   |       |                           |   |       ActivityDatesChosenKt.kapt_metadata
+|   |       |                           |   |       ActivityDateTimeCardKt.java
+|   |       |                           |   |       ActivityDateTimeCardKt.kapt_metadata
+|   |       |                           |   |       AnimalCardKt.java
+|   |       |                           |   |       AnimalCardKt.kapt_metadata
+|   |       |                           |   |       AnimalMock.java
+|   |       |                           |   |       AnimalMock.kapt_metadata
+|   |       |                           |   |       AnimalSelectionDialogKt.java
+|   |       |                           |   |       AnimalSelectionDialogKt.kapt_metadata
+|   |       |                           |   |       CalendarViewKt.java
+|   |       |                           |   |       CalendarViewKt.kapt_metadata
+|   |       |                           |   |       MapLocationButtonKt.java
+|   |       |                           |   |       MapLocationButtonKt.kapt_metadata
+|   |       |                           |   |       TimeInputFieldsKt.java
+|   |       |                           |   |       TimeInputFieldsKt.kapt_metadata
+|   |       |                           |   |       
+|   |       |                           |   +---navigation
+|   |       |                           |   |       AnimalViewModelFactory.java
+|   |       |                           |   |       AnimalViewModelFactory.kapt_metadata
+|   |       |                           |   |       AppTopBarKt.java
+|   |       |                           |   |       AppTopBarKt.kapt_metadata
+|   |       |                           |   |       DrawerOption.java
+|   |       |                           |   |       DrawerOption.kapt_metadata
+|   |       |                           |   |       DrawerUserKt.java
+|   |       |                           |   |       DrawerUserKt.kapt_metadata
+|   |       |                           |   |       NavGraphAdminKt.java
+|   |       |                           |   |       NavGraphAdminKt.kapt_metadata
+|   |       |                           |   |       NavGraphPublicKt.java
+|   |       |                           |   |       NavGraphPublicKt.kapt_metadata
+|   |       |                           |   |       NavGraphUserKt.java
+|   |       |                           |   |       NavGraphUserKt.kapt_metadata
+|   |       |                           |   |       
+|   |       |                           |   +---screens
+|   |       |                           |   |   |   AppScaffoldKt.java
+|   |       |                           |   |   |   AppScaffoldKt.kapt_metadata
+|   |       |                           |   |   |   
+|   |       |                           |   |   +---Animals
+|   |       |                           |   |   |       AnimalDetailScreenKt.java
+|   |       |                           |   |   |       AnimalDetailScreenKt.kapt_metadata
+|   |       |                           |   |   |       AnimalListScreenKt.java
+|   |       |                           |   |   |       AnimalListScreenKt.kapt_metadata
+|   |       |                           |   |   |       AnimalsListGuestScreenKt.java
+|   |       |                           |   |   |       AnimalsListGuestScreenKt.kapt_metadata
+|   |       |                           |   |   |       AnimalViewModel.java
+|   |       |                           |   |   |       AnimalViewModel.kapt_metadata
+|   |       |                           |   |   |       Mock.java
+|   |       |                           |   |   |       Mock.kapt_metadata
+|   |       |                           |   |   |       MockAnimalGuestViewModel.java
+|   |       |                           |   |   |       MockAnimalGuestViewModel.kapt_metadata
+|   |       |                           |   |   |       MockAnimalViewModel.java
+|   |       |                           |   |   |       MockAnimalViewModel.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   +---Auth
+|   |       |                           |   |   |       AuthViewModel.java
+|   |       |                           |   |   |       AuthViewModel.kapt_metadata
+|   |       |                           |   |   |       LoginScreenKt.java
+|   |       |                           |   |   |       LoginScreenKt.kapt_metadata
+|   |       |                           |   |   |       RegisterScreenKt.java
+|   |       |                           |   |   |       RegisterScreenKt.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   +---Ownership
+|   |       |                           |   |   |       ActivitiesHistoryScreenKt.java
+|   |       |                           |   |   |       ActivitiesHistoryScreenKt.kapt_metadata
+|   |       |                           |   |   |       ActivityShedulingScreenKt.java
+|   |       |                           |   |   |       ActivityShedulingScreenKt.kapt_metadata
+|   |       |                           |   |   |       OwnershipConfirmationScreenKt.java
+|   |       |                           |   |   |       OwnershipConfirmationScreenKt.kapt_metadata
+|   |       |                           |   |   |       OwnershipFormScreenKt.java
+|   |       |                           |   |   |       OwnershipFormScreenKt.kapt_metadata
+|   |       |                           |   |   |       TermsAndConditionsScreenKt.java
+|   |       |                           |   |   |       TermsAndConditionsScreenKt.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   +---Shelter
+|   |       |                           |   |   |       AdoptionRequestScreenKt.java
+|   |       |                           |   |   |       AdoptionRequestScreenKt.kapt_metadata
+|   |       |                           |   |   |       AnimalCreationScreenKt.java
+|   |       |                           |   |   |       AnimalCreationScreenKt.kapt_metadata
+|   |       |                           |   |   |       ShelterHomeScreenKt.java
+|   |       |                           |   |   |       ShelterHomeScreenKt.kapt_metadata
+|   |       |                           |   |   |       ShelterMngViewModel.java
+|   |       |                           |   |   |       ShelterMngViewModel.kapt_metadata
+|   |       |                           |   |   |       ShelterViewModel.java
+|   |       |                           |   |   |       ShelterViewModel.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   +---SocialTailsComunity
+|   |       |                           |   |   |       RankingData.java
+|   |       |                           |   |   |       RankingData.kapt_metadata
+|   |       |                           |   |   |       SocialTailsCommunityKt.java
+|   |       |                           |   |   |       SocialTailsCommunityKt.kapt_metadata
+|   |       |                           |   |   |       SocialTailsRankingScreenKt.java
+|   |       |                           |   |   |       SocialTailsRankingScreenKt.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   +---startScreen
+|   |       |                           |   |   |       HomeScreenKt.java
+|   |       |                           |   |   |       HomeScreenKt.kapt_metadata
+|   |       |                           |   |   |       
+|   |       |                           |   |   \---User
+|   |       |                           |   |           FavoritesScreenKt.java
+|   |       |                           |   |           FavoritesScreenKt.kapt_metadata
+|   |       |                           |   |           MainOptionsScreenKt.java
+|   |       |                           |   |           MainOptionsScreenKt.kapt_metadata
+|   |       |                           |   |           MainOptionsViewModel.java
+|   |       |                           |   |           MainOptionsViewModel.kapt_metadata
+|   |       |                           |   |           Medal.java
+|   |       |                           |   |           Medal.kapt_metadata
+|   |       |                           |   |           Mock.java
+|   |       |                           |   |           Mock.kapt_metadata
+|   |       |                           |   |           WalkInfo.java
+|   |       |                           |   |           WalkInfo.kapt_metadata
+|   |       |                           |   |           
+|   |       |                           |   +---theme
+|   |       |                           |   |       ColorKt.java
+|   |       |                           |   |       ColorKt.kapt_metadata
+|   |       |                           |   |       ThemeKt.java
+|   |       |                           |   |       ThemeKt.kapt_metadata
+|   |       |                           |   |       TypeKt.java
+|   |       |                           |   |       TypeKt.kapt_metadata
+|   |       |                           |   |       
+|   |       |                           |   \---viewmodel
+|   |       |                           |           ActivityViewModel.java
+|   |       |                           |           ActivityViewModel.kapt_metadata
+|   |       |                           |           ActivityWithAnimalAndShelter.java
+|   |       |                           |           ActivityWithAnimalAndShelter.kapt_metadata
+|   |       |                           |           OwnershipViewModel.java
+|   |       |                           |           OwnershipViewModel.kapt_metadata
+|   |       |                           |           UserViewModel.java
+|   |       |                           |           UserViewModel.kapt_metadata
+|   |       |                           |           
+|   |       |                           \---utils
+|   |       |                                   LocaleHelper.java
+|   |       |                                   LocaleHelper.kapt_metadata
+|   |       |                                   MapUtilsKt.java
+|   |       |                                   MapUtilsKt.kapt_metadata
+|   |       |                                   
 |   |       \---kotlin-classes
 |   |           \---debug
 |   |               +---META-INF
@@ -1755,15 +2318,14 @@ C:.
 |   |                       \---estg
 |   |                           \---trabalho_cmu
 |   |                               |   ComposableSingletons$MainActivityKt.class
-|   |                               |   ComposableSingletons$PetAdoptionAppKt.class
 |   |                               |   MainActivity.class
-|   |                               |   MainActivityKt$FirebaseTestScreen$1$1.class
-|   |                               |   MainActivityKt.class
 |   |                               |   PetAdoptionAppKt.class
 |   |                               |   PetAdoptionApplication.class
 |   |                               |   
 |   |                               +---data
 |   |                               |   +---local
+|   |                               |   |   |   AppDatabase$Companion$MIGRATION_1_2$1.class
+|   |                               |   |   |   AppDatabase$Companion$MIGRATION_2_3$1.class
 |   |                               |   |   |   AppDatabase$Companion.class
 |   |                               |   |   |   AppDatabase.class
 |   |                               |   |   |   Converters.class
@@ -1783,24 +2345,30 @@ C:.
 |   |                               |   |           User.class
 |   |                               |   |           
 |   |                               |   +---models
-|   |                               |   |       AdoptionRequest.class
-|   |                               |   |       AnimalForm.class
-|   |                               |   |       Breed.class
-|   |                               |   |       CatBreedResponse.class
-|   |                               |   |       DogBreedsResponse.class
-|   |                               |   |       OwnershipStatus.class
-|   |                               |   |       UserType.class
-|   |                               |   |       
+|   |                               |   |   |   AdoptionRequest.class
+|   |                               |   |   |   AnimalForm.class
+|   |                               |   |   |   Breed.class
+|   |                               |   |   |   LoginResult.class
+|   |                               |   |   |   
+|   |                               |   |   \---enums
+|   |                               |   |           AccountType.class
+|   |                               |   |           OwnershipStatus.class
+|   |                               |   |           
 |   |                               |   +---remote
-|   |                               |   |   \---api
-|   |                               |   |       +---objects
-|   |                               |   |       |       RetrofitClient.class
-|   |                               |   |       |       
-|   |                               |   |       \---services
-|   |                               |   |               AnimalApiService$DefaultImpls.class
-|   |                               |   |               AnimalApiService.class
-|   |                               |   |               CatApiService.class
-|   |                               |   |               DogApiService.class
+|   |                               |   |   +---api
+|   |                               |   |   |   +---objects
+|   |                               |   |   |   |       RetrofitClient.class
+|   |                               |   |   |   |       
+|   |                               |   |   |   \---services
+|   |                               |   |   |           AnimalApiService$DefaultImpls.class
+|   |                               |   |   |           AnimalApiService.class
+|   |                               |   |   |           CatApiService.class
+|   |                               |   |   |           DogApiService.class
+|   |                               |   |   |           
+|   |                               |   |   \---dtos
+|   |                               |   |       \---breeds
+|   |                               |   |               CatBreedsResponse.class
+|   |                               |   |               DogBreedsResponse.class
 |   |                               |   |               
 |   |                               |   \---repository
 |   |                               |           ActivityRepository.class
@@ -1812,6 +2380,11 @@ C:.
 |   |                               |           AnimalRepository$sortByDate$2.class
 |   |                               |           AnimalRepository$sortByName$2.class
 |   |                               |           AnimalRepository.class
+|   |                               |           AuthRepository$checkOfflineSession$1.class
+|   |                               |           AuthRepository$login$1.class
+|   |                               |           AuthRepository$registerShelter$1.class
+|   |                               |           AuthRepository$registerUser$1.class
+|   |                               |           AuthRepository.class
 |   |                               |           BreedRepository$getCatBreeds$1$onResponse$$inlined$sortedBy$1.class
 |   |                               |           BreedRepository$getCatBreeds$1.class
 |   |                               |           BreedRepository$getDogBreeds$1$onResponse$$inlined$sortedBy$1.class
@@ -1843,13 +2416,22 @@ C:.
 |   |                               |   |       ActivityDatesChosenKt.class
 |   |                               |   |       ActivityDateTimeCardKt.class
 |   |                               |   |       AnimalCardKt.class
+|   |                               |   |       AnimalMock.class
+|   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$1$1$1$1$1$1$1$1.class
+|   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$1.class
+|   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$2.class
+|   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$3.class
+|   |                               |   |       AnimalSelectionDialogKt$AnimalSelectionDialog$lambda$0$0$0$0$0$$inlined$items$default$4.class
+|   |                               |   |       AnimalSelectionDialogKt.class
 |   |                               |   |       CalendarViewKt.class
+|   |                               |   |       ComposableSingletons$AnimalSelectionDialogKt.class
 |   |                               |   |       ComposableSingletons$MapLocationButtonKt.class
 |   |                               |   |       ComposableSingletons$TimeInputFieldsKt.class
 |   |                               |   |       MapLocationButtonKt.class
 |   |                               |   |       TimeInputFieldsKt.class
 |   |                               |   |       
 |   |                               |   +---navigation
+|   |                               |   |       AnimalViewModelFactory.class
 |   |                               |   |       AppTopBarKt.class
 |   |                               |   |       ComposableSingletons$AppTopBarKt.class
 |   |                               |   |       ComposableSingletons$DrawerUserKt.class
@@ -1869,20 +2451,20 @@ C:.
 |   |                               |   |   +---Animals
 |   |                               |   |   |       AnimalDetailScreenKt$AnimalDetailScreen$2$1.class
 |   |                               |   |   |       AnimalDetailScreenKt.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$1$1.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$2$1$1$2$1.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$1.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$2.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$3.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$4.class
-|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$8$1$0$$inlined$items$default$5.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$4$1$1$2$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$2$4$1$1$3$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$1.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$2.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$3.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$4.class
+|   |                               |   |   |       AnimalListScreenKt$AnimalListScreen$lambda$6$4$0$$inlined$items$default$5.class
 |   |                               |   |   |       AnimalListScreenKt.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$2$4$1$2$1$1.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$1.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$2.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$3.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$4.class
-|   |                               |   |   |       AnimalsListGuestScreenKt$GuestScreen$lambda$5$3$0$$inlined$items$default$5.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$1$4$1$2$1$1.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$1.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$2.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$3.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$4.class
+|   |                               |   |   |       AnimalsListGuestScreenKt$AnimalsListGuestScreen$lambda$4$3$0$$inlined$items$default$5.class
 |   |                               |   |   |       AnimalsListGuestScreenKt.class
 |   |                               |   |   |       AnimalViewModel$applyFilter$1.class
 |   |                               |   |   |       AnimalViewModel$filterByGender$1.class
@@ -1897,18 +2479,23 @@ C:.
 |   |                               |   |   |       ComposableSingletons$AnimalListScreenKt.class
 |   |                               |   |   |       ComposableSingletons$AnimalsListGuestScreenKt.class
 |   |                               |   |   |       Mock.class
-|   |                               |   |   |       Mock1.class
+|   |                               |   |   |       MockAnimalGuestViewModel.class
 |   |                               |   |   |       MockAnimalViewModel.class
 |   |                               |   |   |       
 |   |                               |   |   +---Auth
+|   |                               |   |   |       AuthViewModel$BasicRegistrationFields.class
+|   |                               |   |   |       AuthViewModel$checkAndRestoreOfflineSession$1.class
 |   |                               |   |   |       AuthViewModel$login$1.class
+|   |                               |   |   |       AuthViewModel$performOnlineLogin$1.class
+|   |                               |   |   |       AuthViewModel$performRegistration$1.class
 |   |                               |   |   |       AuthViewModel$register$1.class
+|   |                               |   |   |       AuthViewModel$registerShelterAccount$1.class
+|   |                               |   |   |       AuthViewModel$registerUserAccount$1.class
 |   |                               |   |   |       AuthViewModel.class
 |   |                               |   |   |       ComposableSingletons$LoginScreenKt.class
 |   |                               |   |   |       ComposableSingletons$RegisterScreenKt.class
 |   |                               |   |   |       LoginScreenKt$LoginScreen$1$1.class
 |   |                               |   |   |       LoginScreenKt.class
-|   |                               |   |   |       RegisterScreenKt$MockAuthViewModel$1.class
 |   |                               |   |   |       RegisterScreenKt.class
 |   |                               |   |   |       
 |   |                               |   |   +---Ownership
@@ -1936,8 +2523,12 @@ C:.
 |   |                               |   |   |       TermsAndConditionsScreenKt.class
 |   |                               |   |   |       
 |   |                               |   |   +---Shelter
+|   |                               |   |   |       AdoptionRequestScreenKt$AdoptionRequestScreen$2$1$WhenMappings.class
+|   |                               |   |   |       AdoptionRequestScreenKt$AdoptionRequestScreen$2$1.class
 |   |                               |   |   |       AdoptionRequestScreenKt.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1$WhenMappings.class
 |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$1$1.class
+|   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$10$1.class
 |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$2$1.class
 |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$3$1.class
 |   |                               |   |   |       AnimalCreationScreenKt$AnimalCreationScreen$4$1.class
@@ -1952,8 +2543,10 @@ C:.
 |   |                               |   |   |       ComposableSingletons$ShelterHomeScreenKt.class
 |   |                               |   |   |       ShelterHomeScreenKt.class
 |   |                               |   |   |       ShelterMngViewModel$approveRequest$1.class
-|   |                               |   |   |       ShelterMngViewModel$loadOwnershipRequests$1.class
+|   |                               |   |   |       ShelterMngViewModel$convertToAdoptionRequest$1.class
 |   |                               |   |   |       ShelterMngViewModel$rejectRequest$1.class
+|   |                               |   |   |       ShelterMngViewModel$requests$1$1$1$1.class
+|   |                               |   |   |       ShelterMngViewModel$sam$androidx_lifecycle_Observer$0.class
 |   |                               |   |   |       ShelterMngViewModel$saveAnimal$1.class
 |   |                               |   |   |       ShelterMngViewModel.class
 |   |                               |   |   |       ShelterViewModel$addShelter$1.class
@@ -1975,6 +2568,7 @@ C:.
 |   |                               |   |   |       HomeScreenKt.class
 |   |                               |   |   |       
 |   |                               |   |   \---User
+|   |                               |   |           ComposableSingletons$MainOptionsScreenKt.class
 |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$1$1.class
 |   |                               |   |           FavoritesScreenKt$FavoritesScreen$2$2$1$1$2$1.class
 |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$1.class
@@ -1983,7 +2577,11 @@ C:.
 |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$4.class
 |   |                               |   |           FavoritesScreenKt$FavoritesScreen$lambda$2$1$0$$inlined$items$default$5.class
 |   |                               |   |           FavoritesScreenKt.class
+|   |                               |   |           MainOptionsScreenKt.class
+|   |                               |   |           MainOptionsViewModel.class
+|   |                               |   |           Medal.class
 |   |                               |   |           Mock.class
+|   |                               |   |           WalkInfo.class
 |   |                               |   |           
 |   |                               |   +---theme
 |   |                               |   |       ColorKt.class
@@ -2051,12 +2649,15 @@ C:.
 |       |   |                   |   |           User.kt
 |       |   |                   |   |           
 |       |   |                   |   +---models
-|       |   |                   |   |       AdoptionRequest.kt
-|       |   |                   |   |       AnimalForm.kt
-|       |   |                   |   |       Breed.kt
-|       |   |                   |   |       OwnershipStatus.kt
-|       |   |                   |   |       UserType.kt
-|       |   |                   |   |       
+|       |   |                   |   |   |   AdoptionRequest.kt
+|       |   |                   |   |   |   AnimalForm.kt
+|       |   |                   |   |   |   Breed.kt
+|       |   |                   |   |   |   LoginResult.kt
+|       |   |                   |   |   |   
+|       |   |                   |   |   \---enums
+|       |   |                   |   |           AccountType.kt
+|       |   |                   |   |           OwnershipStatus.kt
+|       |   |                   |   |           
 |       |   |                   |   +---remote
 |       |   |                   |   |   +---api
 |       |   |                   |   |   |   +---objects
@@ -2067,12 +2668,16 @@ C:.
 |       |   |                   |   |   |           BreedApiService.kt
 |       |   |                   |   |   |           
 |       |   |                   |   |   +---dtos
-|       |   |                   |   |   |       VetResponse.kt
-|       |   |                   |   |   |       
+|       |   |                   |   |   |   +---breeds
+|       |   |                   |   |   |   |       CatBreedsResponse.kt
+|       |   |                   |   |   |   |       DogBreedsResponse.kt
+|       |   |                   |   |   |   |       
+|       |   |                   |   |   |   \---veterinary
 |       |   |                   |   |   \---firebase
 |       |   |                   |   \---repository
 |       |   |                   |           ActivityRepository.kt
 |       |   |                   |           AnimalRepository.kt
+|       |   |                   |           AuthRepository.kt
 |       |   |                   |           BreedRepository.kt
 |       |   |                   |           OnweshipRepository.kt
 |       |   |                   |           ShelterOwnershipRequestsRepository.kt
@@ -2097,6 +2702,7 @@ C:.
 |       |   |                   |   |       ActivityDatesChosen.kt
 |       |   |                   |   |       ActivityDateTimeCard.kt
 |       |   |                   |   |       AnimalCard.kt
+|       |   |                   |   |       AnimalSelectionDialog.kt
 |       |   |                   |   |       CalendarView.kt
 |       |   |                   |   |       MapLocationButton.kt
 |       |   |                   |   |       TimeInputFields.kt
@@ -2144,6 +2750,8 @@ C:.
 |       |   |                   |   |   |       
 |       |   |                   |   |   \---User
 |       |   |                   |   |           FavoritesScreen.kt
+|       |   |                   |   |           MainOptionsScreen.kt
+|       |   |                   |   |           MainOptionsViewModel.kt
 |       |   |                   |   |           UserViewModel.kt
 |       |   |                   |   |           
 |       |   |                   |   \---theme

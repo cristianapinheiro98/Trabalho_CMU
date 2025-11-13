@@ -91,23 +91,113 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
      * Load animal and shelter data for the visit scheduling screen.
      * Used when user wants to schedule a visit to see an animal.
      */
-    fun loadAnimalAndShelter(animalId: Int) { // ← Mudou de String para Int
+//    fun loadAnimalAndShelter(animalId: Int) {
+//        viewModelScope.launch {
+//            try {
+//                val animalData = animalRepository.getAnimalById(animalId)
+//                _animal.value = animalData
+//
+//                animalData?.shelterId?.let { shelterId ->
+//                    val shelterData = shelterRepository.getShelterById(shelterId)
+//                    _shelter.value = shelterData
+//                }
+//            } catch (e: Exception) {
+//                _animal.value = null
+//                _shelter.value = null
+//                _error.value = "Erro ao carregar dados: ${e.message}"
+//            }
+//        }
+//    }
+
+    // ====== MOCK ========
+    fun loadAnimalAndShelter(animalId: Int) {
         viewModelScope.launch {
             try {
-                val animalData = animalRepository.getAnimalById(animalId)
-                _animal.value = animalData
+                println("🔍 DEBUG: animalId recebido = $animalId") //debug
 
-                animalData?.shelterId?.let { shelterId ->
-                    val shelterData = shelterRepository.getShelterById(shelterId)
-                    _shelter.value = shelterData
+                val animalData = animalRepository.getAnimalById(animalId)
+
+                // TEMPORÁRIO: Se não encontrar na BD, usa dados mock
+                if (animalData == null) {
+                    val mockAnimal = getMockAnimal(animalId) // debug
+                    println("🔍 DEBUG: usando mock = ${mockAnimal.name}") // debug
+                    _animal.value = getMockAnimal(animalId)
+                    _shelter.value = getMockShelter()
+                } else {
+                    _animal.value = animalData
+                    animalData.shelterId.let { shelterId ->
+                        val shelterData = shelterRepository.getShelterById(shelterId)
+                        _shelter.value = shelterData
+                    }
                 }
             } catch (e: Exception) {
-                _animal.value = null
-                _shelter.value = null
-                _error.value = "Erro ao carregar dados: ${e.message}"
+                val mockAnimal = getMockAnimal(animalId) // debug
+                println("🔍 DEBUG: erro, usando mock = ${mockAnimal.name}") // debug
+
+                _animal.value = getMockAnimal(animalId)
+                _shelter.value = getMockShelter()
             }
         }
     }
+
+    // TEMPORÁRIO: Funções auxiliares para mock
+    private fun getMockAnimal(animalId: Int): Animal {
+        return when (animalId) {
+            1 -> Animal(
+                id = 1,
+                name = "Molly",
+                breed = "Golden Retriever",
+                species = "Dog",
+                size = "Large",
+                birthDate = "2020-01-01",
+                imageUrl = listOf(),
+                shelterId = 1
+            )
+            2 -> Animal(
+                id = 2,
+                name = "Max",
+                breed = "Labrador",
+                species = "Dog",
+                size = "Medium",
+                birthDate = "2021-03-15",
+                imageUrl = listOf(),
+                shelterId = 1
+            )
+            3 -> Animal(
+                id = 3,
+                name = "Luna",
+                breed = "Siamese",
+                species = "Cat",
+                size = "Small",
+                birthDate = "2022-06-10",
+                imageUrl = listOf(),
+                shelterId = 1
+            )
+            else -> Animal(
+                id = animalId,
+                name = "Animal Desconhecido",
+                breed = "Desconhecido",
+                species = "Dog",
+                size = "Medium",
+                birthDate = "2020-01-01",
+                imageUrl = listOf(),
+                shelterId = 1
+            )
+        }
+    }
+
+    // Mock
+    private fun getMockShelter(): Shelter {
+        return Shelter(
+            id = 1,
+            name = "Abrigo de Felgueiras",
+            address = "Rua da Saúde, 1234 Santa Marta",
+            contact = "253 000 000",
+            email = "abrigo@example.com"
+        )
+    }
+
+    // ====== /END MOCK ========
 
     /**
      * Set the user ID to filter activities.

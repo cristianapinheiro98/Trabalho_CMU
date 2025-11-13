@@ -28,6 +28,11 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 
@@ -49,9 +54,15 @@ fun NavGraphUser(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
-        composable("UserProfile") { Text("Página de Perfil") }
         composable("Community") { Text("Comunidade SocialTails") }
-        composable("Veterinarians") { Text("Lista de Veterinários") }
+
+        composable("Preferences") {
+            PreferencesScreen()
+        }
+
+        composable("Veterinarians") {
+            VeterinariansScreen()
+        }
 
         composable(
             route = "TermsAndConditions/{animalId}",
@@ -115,10 +126,10 @@ fun NavGraphUser(navController: NavHostController) {
         composable(
             route = "ActivityScheduling/{animalId}",
             arguments = listOf(
-                navArgument("animalId") { type = NavType.StringType }
+                navArgument("animalId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val animalId = 1
+            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 1 // a mudar
             val userId = authViewModel.getCurrentUserId()
 
             // ViewModel is obtained automatically inside ActivitySchedulingScreen
@@ -190,6 +201,41 @@ fun NavGraphUser(navController: NavHostController) {
                 navController = navController,
                 hasAdoptedAnimal = true
             )
+        }
+
+        composable(
+            route = "Walk/{animalId}/{animalName}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.IntType },
+                navArgument("animalName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
+
+            WalkScreen(
+                animalId = animalId,
+                animalName = animalName,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = "WalkSummary/{animalName}",
+            arguments = listOf(
+                navArgument("animalName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
+
+            WalkSummaryScreen(
+                navController = navController,
+                animalName = animalName
+            )
+        }
+
+        composable("WalkHistory") {
+            WalkHistoryScreen()
         }
     }
 }

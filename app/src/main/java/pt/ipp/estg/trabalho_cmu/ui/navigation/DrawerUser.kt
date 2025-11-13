@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Pets
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
@@ -35,7 +36,8 @@ fun getUserDrawerOptions() = listOf(
     DrawerOption("Catálogo de Animais", Icons.Outlined.Pets, "AnimalsCatalogue"),
     DrawerOption("Animais Favoritos", Icons.Outlined.FavoriteBorder, "Favorites"),
     DrawerOption("Comunidade SocialTails", Icons.Outlined.Groups, "Community"),
-    DrawerOption("Lista de Veterinários", Icons.Outlined.Vaccines, "Veterinarians")
+    DrawerOption("Lista de Veterinários", Icons.Outlined.Vaccines, "Veterinarians"),
+    DrawerOption("Preferências", Icons.Outlined.Settings, "Preferences")
 )
 
 @Composable
