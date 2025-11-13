@@ -1,6 +1,8 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,6 +50,7 @@ fun LoginScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginScreenContent(
     email: String,
@@ -62,83 +65,94 @@ private fun LoginScreenContent(
     onClearError: () -> Unit,
     onClearMessage: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 32.dp, vertical = 16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(
-            onClick = onLoginClick,
-            enabled = !isLoading,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Login") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+                .padding(paddingValues)
+                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(22.dp)
-                )
-            } else {
-                Text("Entrar")
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = onLoginClick,
+                enabled = !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(22.dp)
+                    )
+                } else {
+                    Text("Entrar")
+                }
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        error?.let {
+            AlertDialog(
+                onDismissRequest = onClearError,
+                confirmButton = {
+                    TextButton(onClick = onClearError) { Text("OK") }
+                },
+                title = { Text("Erro") },
+                text = { Text(it) }
+            )
+        }
 
-        OutlinedButton(
-            onClick = onNavigateBack,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Voltar")
+        message?.let {
+            AlertDialog(
+                onDismissRequest = onClearMessage,
+                confirmButton = {
+                    TextButton(onClick = onClearMessage) { Text("OK") }
+                },
+                title = { Text("Sucesso") },
+                text = { Text(it) }
+            )
         }
     }
-
-    error?.let {
-        AlertDialog(
-            onDismissRequest = onClearError,
-            confirmButton = {
-                TextButton(onClick = onClearError) { Text("OK") }
-            },
-            title = { Text("Erro") },
-            text = { Text(it) }
-        )
-    }
-
-    message?.let {
-        AlertDialog(
-            onDismissRequest = onClearMessage,
-            confirmButton = {
-                TextButton(onClick = onClearMessage) { Text("OK") }
-            },
-            title = { Text("Sucesso") },
-            text = { Text(it) }
-        )
-    }
 }
+
 
 @Preview(showBackground = true)
 @Composable

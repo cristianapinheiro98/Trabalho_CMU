@@ -65,7 +65,8 @@ fun NavGraphUser(navController: NavHostController) {
             TermsAndConditionsScreen(
                 onAccept = {
                     navController.navigate("OwnershipForm/$animalId")
-                }
+                },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -116,7 +117,9 @@ fun NavGraphUser(navController: NavHostController) {
             arguments = listOf(navArgument("animalId") { type = NavType.IntType })
         ) { backStackEntry ->
 
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getInt("animalId")
+                ?: return@composable // cancel render if it is invalid
+
             val userId = authViewModel.getCurrentUserId()
 
             ActivitySchedulingScreen(

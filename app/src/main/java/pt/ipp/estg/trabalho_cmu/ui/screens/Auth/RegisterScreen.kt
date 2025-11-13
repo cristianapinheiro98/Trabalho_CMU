@@ -3,6 +3,9 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,7 +25,7 @@ fun RegisterScreen(
 ) {
     val name by viewModel.name.observeAsState("")
     val adress by viewModel.address.observeAsState("")
-    val phone by viewModel.contact.observeAsState("")
+    val phone by viewModel.phone.observeAsState("")
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
     val accountType by viewModel.accountTypeChoice.observeAsState(AccountType.USER)
@@ -43,7 +46,10 @@ fun RegisterScreen(
         message = message,
         onNameChange = { viewModel.name.value = it },
         onAdressChange = { viewModel.address.value = it },
-        onPhoneChange = { viewModel.contact.value = it },
+        onPhoneChange = { newValue ->
+            val filtered = newValue.filter { it.isDigit() }.take(9)
+            viewModel.phone.value = filtered
+        },
         onEmailChange = { viewModel.email.value = it },
         onPasswordChange = { viewModel.password.value = it },
         onAccountTypeChange = { viewModel.accountTypeChoice.value = it },
@@ -83,165 +89,182 @@ fun RegisterScreenContent(
 
     var expanded by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Criar Conta", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = onNameChange,
-            label = { Text("Nome completo") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = adress,
-            onValueChange = onAdressChange,
-            label = { Text("Morada") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = phone,
-            onValueChange = onPhoneChange,
-            label = { Text("Telefone") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        // ACCOUNT TYPE DROPDOWN
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            OutlinedTextField(
-                value = if (accountType == AccountType.USER) "Utilizador" else "Abrigo",
-                onValueChange = {},
-                label = { Text("Tipo de conta") },
-                readOnly = true,
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Criar Conta") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                }
             )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Utilizador") },
-                    onClick = {
-                        onAccountTypeChange(AccountType.USER)
-                        expanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Abrigo") },
-                    onClick = {
-                        onAccountTypeChange(AccountType.SHELTER)
-                        expanded = false
-                    }
-                )
-            }
         }
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(
-            onClick = onRegisterClick,
-            enabled = !isLoading,
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(22.dp)
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = onNameChange,
+                label = { Text("Nome completo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = adress,
+                onValueChange = onAdressChange,
+                label = { Text("Morada") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = phone,
+                onValueChange = onPhoneChange,
+                label = { Text("Telefone") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+
+            // ACCOUNT TYPE DROPDOWN
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = if (accountType == AccountType.USER) "Utilizador" else "Abrigo",
+                    onValueChange = {},
+                    label = { Text("Tipo de conta") },
+                    readOnly = true,
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
                 )
-            } else {
-                Text("Criar Conta")
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Utilizador") },
+                        onClick = {
+                            onAccountTypeChange(AccountType.USER)
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Abrigo") },
+                        onClick = {
+                            onAccountTypeChange(AccountType.SHELTER)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = onRegisterClick,
+                enabled = !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(22.dp)
+                    )
+                } else {
+                    Text("Criar Conta")
+                }
             }
         }
-    }
 
 
-    error?.let {
-        AlertDialog(
-            onDismissRequest = onClearError,
-            confirmButton = {
-                TextButton(onClick = onClearError) { Text("OK") }
-            },
-            title = { Text("Erro") },
-            text = { Text(it) }
-        )
-    }
+        error?.let {
+            AlertDialog(
+                onDismissRequest = onClearError,
+                confirmButton = {
+                    TextButton(onClick = onClearError) { Text("OK") }
+                },
+                title = { Text("Erro") },
+                text = { Text(it) }
+            )
+        }
 
-    message?.let {
-        AlertDialog(
-            onDismissRequest = onClearMessage,
-            confirmButton = {
-                TextButton(onClick = {
-                    onClearMessage()
-                    onRegisterSuccess()
-                }) { Text("OK") }
-            },
-            title = { Text("Sucesso") },
-            text = { Text(it) }
-        )
+        message?.let {
+            AlertDialog(
+                onDismissRequest = onClearMessage,
+                confirmButton = {
+                    TextButton(onClick = {
+                        onClearMessage()
+                        onRegisterSuccess()
+                    }) { Text("OK") }
+                },
+                title = { Text("Sucesso") },
+                text = { Text(it) }
+            )
+        }
     }
 }
 
+    @Preview(showBackground = true)
+    @Composable
+    fun RegisterPreview() {
+        RegisterScreenContent(
+            name = "Maria",
+            adress = "Rua das Flores",
+            phone = "912345678",
+            email = "maria@example.com",
+            password = "123456",
+            accountType = AccountType.USER,
+            isLoading = false,
+            error = null,
+            message = null,
+            onNameChange = {},
+            onAdressChange = {},
+            onPhoneChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onAccountTypeChange = {},
+            onRegisterClick = {},
+            onNavigateBack = {},
+            onRegisterSuccess = {},
+            onClearError = {},
+            onClearMessage = {}
+        )
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun RegisterPreview() {
-    RegisterScreenContent(
-        name = "Maria",
-        adress = "Rua das Flores",
-        phone = "912345678",
-        email = "maria@example.com",
-        password = "123456",
-        accountType = AccountType.USER,
-        isLoading = false,
-        error = null,
-        message = null,
-        onNameChange = {},
-        onAdressChange = {},
-        onPhoneChange = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onAccountTypeChange = {},
-        onRegisterClick = {},
-        onNavigateBack = {},
-        onRegisterSuccess = {},
-        onClearError = {},
-        onClearMessage = {}
-    )
-}

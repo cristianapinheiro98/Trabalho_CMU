@@ -103,7 +103,7 @@ fun ActivitySchedulingScreen(
                     animalName = animal!!.name,
                     shelterName = shelter!!.name,
                     shelterAddress = shelter!!.address,
-                    shelterContact = shelter!!.contact,
+                    shelterContact = shelter!!.phone,
                     imageUrl = animal!!.imageUrls.firstOrNull(),
                     selectedDates = selectedDates,
                     onDatesChanged = { selectedDates = it },

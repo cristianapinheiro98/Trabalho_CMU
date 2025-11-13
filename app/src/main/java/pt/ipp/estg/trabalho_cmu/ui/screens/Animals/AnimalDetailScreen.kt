@@ -283,7 +283,7 @@ private fun PreviewAnimalDetailScreen() {
         id = 1,
         name = "Abrigo Porto",
         address = "Rua dos Animais 123",
-        contact = "912345678",
+        phone = "912345678",
         email = "",
         password = ""
     )

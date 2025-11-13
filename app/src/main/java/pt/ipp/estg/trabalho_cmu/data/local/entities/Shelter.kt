@@ -10,7 +10,7 @@ data class Shelter(
     val firebaseUid: String? = null,
     val name: String,
     val address: String,
-    val contact: String,
+    val phone: String,
     val email: String,
     val password: String
 )

@@ -53,14 +53,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     val name = MutableLiveData("")
     val address = MutableLiveData("")
-    val contact = MutableLiveData("")
+    val phone = MutableLiveData("")
     val email = MutableLiveData("")
     val password = MutableLiveData("")
     val accountTypeChoice = MutableLiveData(AccountType.USER)
 
-    val shelterName = MutableLiveData("")
-    val shelterAddress = MutableLiveData("")
-    val shelterContact = MutableLiveData("")
 
     // ===== LOGIN =====
     fun login() = viewModelScope.launch {
@@ -146,8 +143,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val accountType = accountTypeChoice.value ?: AccountType.USER
 
         if (!validateBasicFields(basicFields)) return@launch
-        if (accountType == AccountType.SHELTER && !validateShelterFields()) return@launch
-        if (!validateEmailAndPassword(basicFields.email, basicFields.password)) return@launch
+        if (!validateCredentials(
+                basicFields.email,
+                basicFields.password,
+                basicFields.contact
+            )
+        ) return@launch
+
+
+
 
         performRegistration(basicFields, accountType)
     }
@@ -163,7 +167,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private fun getBasicRegistrationFields() = BasicRegistrationFields(
         name = name.value?.trim().orEmpty(),
         address = address.value?.trim().orEmpty(),
-        contact = contact.value?.trim().orEmpty(),
+        contact = phone.value?.trim().orEmpty(),
         email = email.value?.trim().orEmpty(),
         password = password.value?.trim().orEmpty()
     )
@@ -177,29 +181,48 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    private fun validateShelterFields(): Boolean {
-        val shelterNameValue = shelterName.value?.trim().orEmpty()
-        val shelterAddressValue = shelterAddress.value?.trim().orEmpty()
-        val shelterContactValue = shelterContact.value?.trim().orEmpty()
 
-        if (shelterNameValue.isBlank() || shelterAddressValue.isBlank() || shelterContactValue.isBlank()) {
-            _error.value = "Preenche todos os campos do abrigo."
-            return false
-        }
-        return true
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    private fun validateEmailAndPassword(email: String, password: String): Boolean {
-        if (!email.contains("@") || !email.contains(".")) {
+    private fun isValidPassword(password: String): Boolean {
+        val passwordRegex =
+            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!?.*()-_])[A-Za-z\\d@#\$%^&+=!?.*()-_]{6,}$")
+
+        return passwordRegex.matches(password)
+    }
+
+
+    private fun isValidPhone(phone: String): Boolean {
+        return phone.length == 9 &&
+                phone.all { it.isDigit() } &&
+                (phone.startsWith("9") || phone.startsWith("2"))
+    }
+
+
+    private fun validateCredentials(email: String, password: String, phone: String): Boolean {
+
+        if (!isValidEmail(email)) {
             _error.value = "Email inválido."
             return false
         }
-        if (password.length < 6) {
-            _error.value = "A palavra-passe deve ter pelo menos 6 caracteres."
+
+        if (!isValidPassword(password)) {
+            _error.value = "A palavra-passe deve ter pelo menos 6 caracteres, uma letra maiúscula, minúscula, um número e um caracter especial."
             return false
         }
+
+        if (!isValidPhone(phone)) {
+            _error.value = "O contacto deve ter 9 dígitos numéricos."
+            return false
+        }
+
         return true
     }
+
+
 
     private suspend fun performRegistration(fields: BasicRegistrationFields, accountType: AccountType) {
         try {
@@ -242,9 +265,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun registerShelterAccount(fields: BasicRegistrationFields) =
         authRepository.registerShelter(
-            name = shelterName.value?.trim().orEmpty(),
-            address = shelterAddress.value?.trim().orEmpty(),
-            contact = shelterContact.value?.trim().orEmpty(),
+            name = fields.name,
+            address = fields.address,
+            contact = fields.contact,
             email = fields.email,
             password = fields.password
         )
@@ -263,13 +286,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun clearFields() {
         name.value = ""
         address.value = ""
-        contact.value = ""
+        phone.value = ""
         email.value = ""
         password.value = ""
         accountTypeChoice.value = AccountType.USER
-        shelterName.value = ""
-        shelterAddress.value = ""
-        shelterContact.value = ""
     }
 
     fun clearMessage() { _message.value = null }
