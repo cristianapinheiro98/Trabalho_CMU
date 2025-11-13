@@ -1,13 +1,10 @@
 package pt.ipp.estg.trabalho_cmu.data.local.entities
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalStatus
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
-import java.util.Date
 
 @Entity(
     tableName = "animals",

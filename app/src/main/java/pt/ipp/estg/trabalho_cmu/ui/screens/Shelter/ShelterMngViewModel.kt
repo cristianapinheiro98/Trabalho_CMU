@@ -24,18 +24,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
 
-    // ---------------------- FORM ----------------------
-    private val _animalForm = MutableLiveData(AnimalForm())
-    val animalForm: LiveData<AnimalForm> = _animalForm
-
-    // ---------------------- BREEDS ----------------------
-    private val _availableBreeds = MutableLiveData<List<Breed>>(emptyList())
-    val availableBreeds: LiveData<List<Breed>> = _availableBreeds
-
-    private val _isLoadingBreeds = MutableLiveData(false)
-    val isLoadingBreeds: LiveData<Boolean> = _isLoadingBreeds
-
-    // ---------------------- UI STATES ----------------------
+    // ---------------------- UI STATE ----------------------
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -45,61 +34,59 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
 
-    // ---------------------- SHELTER ----------------------
-    private val _currentShelterId = MutableLiveData<Int?>(null)
+    // ---------------------- FORM --------------------------
+    private val _animalForm = MutableLiveData(AnimalForm())
+    val animalForm: LiveData<AnimalForm> = _animalForm
 
-    // ---------------------- IMAGENS ----------------------
+    // ---------------------- BREEDS ------------------------
+    private val _availableBreeds = MutableLiveData<List<Breed>>(emptyList())
+    val availableBreeds: LiveData<List<Breed>> = _availableBreeds
+
+    private val _isLoadingBreeds = MutableLiveData(false)
+    val isLoadingBreeds: LiveData<Boolean> = _isLoadingBreeds
+
+    // ---------------------- IMAGES ------------------------
     private val _selectedImages = MutableLiveData<List<String>>(emptyList())
     val selectedImages: LiveData<List<String>> = _selectedImages
 
     fun addImageUrl(url: String) {
-        val current = _selectedImages.value ?: emptyList()
-        _selectedImages.value = current + url
+        _selectedImages.value = _selectedImages.value!! + url
     }
 
     fun clearImages() {
         _selectedImages.value = emptyList()
     }
 
-    // ---------------------- LOAD SHELTER ID ----------------------
-    fun getShelterIdByUserId(userId: Int) {
-        viewModelScope.launch {
-            val shelterId = userRepository.getShelterIdByUserId(userId) ?: userId
-            _currentShelterId.value = shelterId
+    // ---------------------- SHELTER ID ---------------------
+    private val _currentShelterId = MutableLiveData<Int?>(null)
+    val currentShelterId: LiveData<Int?> = _currentShelterId
 
-            try {
-                shelterRepository.getShelterById(shelterId)
-            } catch (e: Exception) {
-                println("Erro ao verificar shelter: ${e.message}")
-            }
-        }
+    /**
+     * Define o shelterId vindo do AuthViewModel.getCurrentUserId()
+     */
     fun setShelterId(id: Int) {
         _currentShelterId.value = id
-        println("🔍 VIEWMODEL - shelterId definido diretamente: $id")
     }
 
-    // ---------------------- LISTAR PEDIDOS ----------------------
+    // ---------------------- PEDIDOS DE ADOÇÃO ---------------
     val requests: LiveData<List<AdoptionRequest>> =
         _currentShelterId.switchMap { shelterId ->
             if (shelterId != null) {
                 MediatorLiveData<List<AdoptionRequest>>().apply {
                     addSource(
-                        shelterOwnershipRequestRepository.getAllOwnershipRequestsByShelter(
-                            shelterId
-                        )
+                        shelterOwnershipRequestRepository
+                            .getAllOwnershipRequestsByShelter(shelterId)
                     ) { ownerships ->
                         viewModelScope.launch {
                             value = ownerships.mapNotNull {
-                                try {
-                                    convertToAdoptionRequest(it)
-                                } catch (e: Exception) {
-                                    null
-                                }
+                                convertToAdoptionRequest(it)
                             }
                         }
                     }
                 }
-            } else MutableLiveData(emptyList())
+            } else {
+                MutableLiveData(emptyList())
+            }
         }
 
     private suspend fun convertToAdoptionRequest(ownership: Ownership): AdoptionRequest {
@@ -114,7 +101,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         )
     }
 
-    // ---------------------- APROVAR PEDIDO ----------------------
+    // ---------------------- APROVAR / REJEITAR --------------
+
     fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
             try {
@@ -158,7 +146,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    // ---------------------- BREEDS ----------------------
+    // ---------------------- BREEDS LOADER -------------------
     private fun loadBreedsBySpecies(species: String) {
         if (species.isBlank()) {
             _availableBreeds.value = emptyList()
@@ -181,13 +169,14 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         )
     }
 
-    // ---------------------- FORM HANDLERS ----------------------
+    // ---------------------- FORM HANDLERS -------------------
     fun onNameChange(value: String) = updateForm { copy(name = value) }
     fun onBreedChange(value: String) = updateForm { copy(breed = value) }
     fun onSpeciesChange(value: String) {
         updateForm { copy(species = value) }
         loadBreedsBySpecies(value)
     }
+
     fun onSizeChange(value: String) = updateForm { copy(size = value) }
     fun onBirthDateChange(value: String) = updateForm { copy(birthDate = value) }
 
@@ -195,14 +184,23 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
-    // ---------------------- CREATE ANIMAL ----------------------
+    // ---------------------- SAVE ANIMAL ---------------------
+
     fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
 
-        if (form.name.isBlank()) { _error.value = "Por favor preenche o nome."; return }
-        if (form.breed.isBlank()) { _error.value = "Seleciona uma raça."; return }
-        if (form.size.isBlank()) { _error.value = "Seleciona um tamanho."; return }
-        if (form.species.isBlank()) { _error.value = "Seleciona uma espécie."; return }
+        if (form.name.isBlank()) {
+            _error.value = "Por favor preenche o nome."; return
+        }
+        if (form.breed.isBlank()) {
+            _error.value = "Seleciona uma raça."; return
+        }
+        if (form.size.isBlank()) {
+            _error.value = "Seleciona um tamanho."; return
+        }
+        if (form.species.isBlank()) {
+            _error.value = "Seleciona uma espécie."; return
+        }
 
         val shelterId = _currentShelterId.value ?: run {
             _error.value = "Shelter ID não disponível"
@@ -210,7 +208,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
 
         val images = selectedImages.value ?: emptyList()
-
         if (images.isEmpty()) {
             _error.value = "Adiciona pelo menos uma imagem."
             return
@@ -247,6 +244,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    // ---------------------- UTIL FUNCS ----------------------
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
 }

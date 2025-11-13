@@ -3,7 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds
 import com.google.gson.annotations.SerializedName
 
 
-data class DogBreedResponse(
+data class DogBreedsResponse(
     val id: Int,
     val name: String,
     val temperament: String?,

@@ -363,10 +363,11 @@ fun AnimalCreationPreview() {
                 imageUrl = 1
             ),
             availableBreeds = listOf(
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("1", "Labrador", "Raça de cão"),
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("2", "Golden Retriever", "Raça de cão"),
-                pt.ipp.estg.trabalho_cmu.data.models.Breed("3", "Beagle", "Raça de cão")
+                Breed("1", "Labrador", "Raça de cão"),
+                Breed("2", "Golden Retriever", "Raça de cão"),
+                Breed("3", "Beagle", "Raça de cão")
             ),
+            selectedImages = emptyList(),
             isLoadingBreeds = false,
             message = null,
             error = null,
@@ -375,7 +376,7 @@ fun AnimalCreationPreview() {
             onBreedChange = {},
             onSizeChange = {},
             onBirthDateChange = {},
-            onImageUrlChange = {},
+            onSelectImages = {},
             onSave = {},
             onNavigateBack = {},
             onClearMessage = {},
@@ -383,3 +384,4 @@ fun AnimalCreationPreview() {
         )
     }
 }
+

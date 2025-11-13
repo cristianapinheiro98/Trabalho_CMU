@@ -205,7 +205,9 @@ private fun ActivitiesHistoryContentPreview() {
                     id = 0,
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
-                    contact = "253 000 000"
+                    contact = "253 000 000",
+                    email= "teste@gmail.com",
+                    password = "null"
                 )
             )
         )

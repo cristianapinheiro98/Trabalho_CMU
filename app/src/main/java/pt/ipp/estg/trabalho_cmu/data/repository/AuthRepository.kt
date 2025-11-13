@@ -82,7 +82,9 @@ class AuthRepository(
                 firebaseUid = firebaseUid,
                 name = name,
                 address = address,
-                contact = contact
+                contact = contact,
+                email = email,
+                password = "" // password is not stored locally
             )
             shelterDao.insertShelter(shelter)
 
@@ -123,7 +125,9 @@ class AuthRepository(
                     firebaseUid = uid,
                     name = shelterDoc.getString("name") ?: "",
                     address = shelterDoc.getString("address") ?: "",
-                    contact = shelterDoc.getString("contact") ?: ""
+                    contact = shelterDoc.getString("contact") ?: "",
+                    email = userDoc.getString("email") ?: "",
+                    password = ""
                 )
                 // Room cache
                 shelterDao.insertShelter(shelter)

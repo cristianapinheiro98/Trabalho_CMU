@@ -2,9 +2,7 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 
 
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
-import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedResponse
 import pt.ipp.estg.trabalho_cmu.data.remote.RetrofitInstance
-import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedResponse
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedsResponse
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedsResponse
 import retrofit2.Call
@@ -23,10 +21,10 @@ class BreedRepository {
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
     ) {
-        dogApi.getAllBreeds().enqueue(object : Callback<List<DogBreedResponse>> {
+        dogApi.getAllBreeds().enqueue(object : Callback<List<DogBreedsResponse>> {
             override fun onResponse(
-                call: Call<List<DogBreedResponse>>,
-                response: Response<List<DogBreedResponse>>
+                call: Call<List<DogBreedsResponse>>,
+                response: Response<List<DogBreedsResponse>>
             ) {
                 if (response.isSuccessful) {
                     val breeds = response.body()?.map { dog ->
@@ -44,7 +42,7 @@ class BreedRepository {
                 }
             }
 
-            override fun onFailure(call: Call<List<DogBreedResponse>>, t: Throwable) {
+            override fun onFailure(call: Call<List<DogBreedsResponse>>, t: Throwable) {
                 onError("Erro de conexão: ${t.message}")
             }
         })
