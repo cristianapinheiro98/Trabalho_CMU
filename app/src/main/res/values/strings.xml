@@ -26,10 +26,9 @@
     <string name="ownership_owner_name">Account holder name:</string>
     <string name="ownership_cvv">CVV:</string>
     <string name="ownership_card_passport">Citizen Card / Passport:</string>
-    <string name="ownership_password">Password</string>
 
     <!-- Ownership Confirmation Screen -->
-    <string name="confirmation_title">Congratulations, %1$s!</string>
+    <string name="confirmation_title">Thank You, %1$s!</string>
     <string name="confirmation_message">The shelter %1$s will receive your application to adopt %2$s.</string>
     <string name="confirmation_notification">You will be notified once a response is available.</string>
     <string name="confirmation_back_button">Go to main menu</string>
@@ -80,6 +79,7 @@
     <string name="animal_birthdate_label">BirthDate:</string>
     <string name="animal_description_label">Description:</string>"
     <string name="shelter_name_label">Shelter:</string>
+    <string name="animal_age_label">Age:</string>
 
     <!-- Navigation -->
     <string name="open_menu">Open Menu:</string>
@@ -104,7 +104,7 @@
     <string name="register_button">Register New Account</string>
     <string name="save_button">Save</string>
     <string name="view_ranking">View Ranking</string>
-    <string name="ownership_submit_button">Special Adoption</string>
+    <string name="ownership_button">Adopte</string>
 
 
     <!-- Images Description -->

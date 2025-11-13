@@ -13,13 +13,12 @@
     <string name="ownership_title">Formulário de Ownership</string>
     <string name="ownership_subtitle">Preencha as suas informações pessoais</string>
     <string name="ownership_account_number">Número de conta:</string>
-    <string name="ownership_owner_name">Nome do titular:</string>
+    <string name="ownership_owner_name">Nome do titular da conta:</string>
     <string name="ownership_cvv">CVV:</string>
-    <string name="ownership_card_passport">Cartão cidadão/ Passport:</string>
-    <string name="ownership_password">Password</string>
+    <string name="ownership_card_passport">Cartão cidadão/ Passaporte:</string>
 
     <!-- Ownership Confirmation Screen -->
-    <string name="confirmation_title">Parabéns, %1$s!</string>
+    <string name="confirmation_title">Obrigado, %1$s!</string>
     <string name="confirmation_message">O abrigo %1$s receberá a sua candidatura para adotar %2$s.</string>
     <string name="confirmation_notification">Será notificado quando houver uma resposta.</string>
     <string name="confirmation_back_button">Ir para o menu principal</string>
@@ -69,6 +68,7 @@
     <string name="animal_birthdate_label">Data Nascimento:</string>
     <string name="animal_description_label">Descrição:</string>"
     <string name="shelter_name_label">Abrigo:</string>
+    <string name="animal_age_label">Idade:</string>
 
     <!-- Navigation -->
     <string name="open_menu">Abrir Menu</string>
@@ -92,7 +92,7 @@
     <string name="login_button">Login</string>
     <string name="register_button">Criar conta</string>
     <string name="save_button">Guardar</string>
-    <string name="ownership_submit_button">Adotar Especial</string>
+    <string name="ownership_button">Adotar</string>
     <string name="view_ranking">Ver Ranking</string>
 
     <!-- Images Description -->

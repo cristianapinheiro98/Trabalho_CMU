@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,19 +27,21 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun AnimalCard(
     animal: Animal,
     isFavorite: Boolean = false,
     onClick: (() -> Unit)? = null,
+    isLoggedIn: Boolean = false,
     onToggleFavorite: (() -> Unit)? = null
 ) {
     val age = calculateAge(animal.birthDate)
 
-    // pega a primeira imagem ou placeholder
     val mainImageUrl: String =
-        animal.imageUrls.firstOrNull() ?: "placeholder"
+        animal.imageUrls.firstOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "placeholder"
 
     Card(
         modifier = Modifier
@@ -53,15 +56,17 @@ fun AnimalCard(
 
             Box {
                 AsyncImage(
-                    model = if (mainImageUrl == "placeholder") R.drawable.dog_image else mainImageUrl,
+                    model = mainImageUrl,
                     contentDescription = animal.name,
+                    placeholder = painterResource(R.drawable.dog_image),
+                    error = painterResource(R.drawable.dog_image),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
                     contentScale = ContentScale.Crop
                 )
 
-                if (onToggleFavorite != null) {
+                if (isLoggedIn && onToggleFavorite != null) {
                     IconButton(
                         onClick = onToggleFavorite,
                         modifier = Modifier

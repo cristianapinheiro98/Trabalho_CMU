@@ -12,13 +12,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.repository.*
-import pt.ipp.estg.trabalho_cmu.data.repository.ShelterOwnershipRequestRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.BreedRepository
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
 class ShelterMngViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,9 +23,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private val ownershipRepository = OwnershipRepository(db.ownershipDao())
     private val animalRepository = AnimalRepository(db.animalDao())
-
     private val shelterRepository = ShelterRepository(db.shelterDao())
-
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
 
@@ -56,7 +48,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _isLoadingBreeds = MutableLiveData(false)
     val isLoadingBreeds: LiveData<Boolean> = _isLoadingBreeds
 
-    // ---------------------- IMAGES ------------------------
+    // ---------------------- IMAGES (FIREBASE URLS) ------------------------
     private val _selectedImages = MutableLiveData<List<String>>(emptyList())
     val selectedImages: LiveData<List<String>> = _selectedImages
 
@@ -72,9 +64,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _currentShelterId = MutableLiveData<Int?>(null)
     val currentShelterId: LiveData<Int?> = _currentShelterId
 
-    /**
-     * Define o shelterId vindo do AuthViewModel.getCurrentUserId()
-     */
     fun setShelterId(id: Int) {
         _currentShelterId.value = id
     }
@@ -89,11 +78,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                             .getAllOwnershipRequestsByShelter(shelterId)
                     ) { ownerships ->
                         viewModelScope.launch {
-                            value = ownerships.mapNotNull {
-                                convertToAdoptionRequest(it)
+                            value = try {
+                                ownerships.mapNotNull { convertToAdoptionRequest(it) }
                             } catch (e: Exception) {
                                 println("❌ Erro ao converter ownership: ${e.message}")
-                                null
+                                emptyList()
                             }
                         }
                     }
@@ -186,6 +175,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     // ---------------------- FORM HANDLERS -------------------
     fun onNameChange(value: String) = updateForm { copy(name = value) }
     fun onBreedChange(value: String) = updateForm { copy(breed = value) }
+
     fun onSpeciesChange(value: String) {
         updateForm { copy(species = value) }
         loadBreedsBySpecies(value)
@@ -194,89 +184,52 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     fun onSizeChange(value: String) = updateForm { copy(size = value) }
     fun onBirthDateChange(value: String) = updateForm { copy(birthDate = value) }
     fun onDescriptionChange(value: String) = updateForm { copy(description = value) }
-    fun onImageUrlChange(value: String) {
-        val parsed = value.toIntOrNull() ?: 0
-        updateForm { copy(imageUrl = parsed) }
-    }
 
     private inline fun updateForm(block: AnimalForm.() -> AnimalForm) {
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
-    // ---------------------- SAVE ANIMAL ---------------------
-
+    // ---------------------- VALIDATE DATE -------------------
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
 
-        if (birthDate.isBlank()) {
-            return "A data de nascimento é obrigatória."
-        }
+        if (birthDate.isBlank()) return "A data de nascimento é obrigatória."
 
         val parts = birthDate.split("/")
+        if (parts.size != 3) return "A data deve estar no formato DD/MM/AAAA."
 
-        if (parts.size != 3) {
-            return "A data deve estar no formato DD/MM/AAAA."
-        }
-
-        val (dayStr, monthStr, yearStr) = parts
-
-        val day = dayStr.toIntOrNull()
-        val month = monthStr.toIntOrNull()
-        val year = yearStr.toIntOrNull()
-
-        if (day == null || month == null || year == null) {
-            return "Dia, mês e ano devem ser números."
-        }
-
+        val day = parts[0].toIntOrNull()
+        val month = parts[1].toIntOrNull()
+        val year = parts[2].toIntOrNull()
 
         if (day !in 1..31) return "Dia inválido."
         if (month !in 1..12) return "Mês inválido."
+        if (day == null || month == null || year == null) return "Dia, mês e ano devem ser números."
 
         return try {
             val date = LocalDate.of(year, month, day)
-
-            // Data do futuro não é permitida
-            if (date.isAfter(LocalDate.now())) {
-                "A data de nascimento não pode ser no futuro."
-            } else {
-                null // Está válida!
-            }
-
+            if (date.isAfter(LocalDate.now())) "A data não pode ser no futuro." else null
         } catch (e: Exception) {
             "Data inválida."
         }
     }
 
+    // ---------------------- SAVE ANIMAL ---------------------
 
-
-    /**
-     * Saves a new animal record to the local database.
-     */
     @RequiresApi(Build.VERSION_CODES.O)
-
     fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
 
-        if (form.name.isBlank()) {
-            _error.value = "Por favor preenche o nome."; return
-        }
-        if (form.breed.isBlank()) {
-            _error.value = "Seleciona uma raça."; return
-        }
-        if (form.size.isBlank()) {
-            _error.value = "Seleciona um tamanho."; return
-        }
-        if (form.species.isBlank()) {
-            _error.value = "Seleciona uma espécie."; return
-        }
+        if (form.name.isBlank()) { _error.value = "Por favor preenche o nome."; return }
+        if (form.breed.isBlank()) { _error.value = "Seleciona uma raça."; return }
+        if (form.size.isBlank()) { _error.value = "Seleciona um tamanho."; return }
+        if (form.species.isBlank()) { _error.value = "Seleciona uma espécie."; return }
+
+        val birthError = validateBirthDate(form.birthDate)
+        if (birthError != null) { _error.value = birthError; return }
 
         val shelterId = _currentShelterId.value ?: run {
             _error.value = "Shelter ID não disponível"
-            return
-        }
-        val dataError=validateBirthDate(form.birthDate)
-        if(dataError!=null){
-            _error.value=dataError
             return
         }
 
@@ -296,10 +249,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     species = form.species.trim(),
                     size = form.size.trim(),
                     birthDate = form.birthDate.trim(),
-                    imageUrls = images,
-                    imageUrl = listOf(form.imageUrl),
                     description = form.description.trim(),
-
+                    imageUrls = images,
                     shelterId = shelterId
                 )
 

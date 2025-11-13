@@ -133,7 +133,6 @@ private fun ActivitiesHistoryContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // 📌 Atualizado para a nova assinatura
                     ActivityAnimalInfoCard(
                         animalName = animal.name,
                         shelterName = shelter.name,
@@ -202,15 +201,16 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
-                    imageUrls = listOf("https://example.com/cat1.png")
+                    imageUrls = listOf(""),
+                    description = "Muito dócil"
                 ),
                 shelter = Shelter(
                     id = 0,
                     name = "Abrigo de Felgueiras",
-                    address = "Rua da Saúde, 1234 Santa Marta de Farto",
+                    address = "Rua da Saúde, 1234, Santa Marta de Farto",
                     contact = "253 000 000",
-                    email= "teste@gmail.com",
-                    password = "null"
+                    email= "",
+                    password = ""
                 )
             )
         )

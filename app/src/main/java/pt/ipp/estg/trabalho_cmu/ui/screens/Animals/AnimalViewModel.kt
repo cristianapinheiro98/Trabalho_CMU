@@ -1,28 +1,30 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
-import androidx.lifecycle.*
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 
-open class AnimalViewModel(
-    private val repository: AnimalRepository? = null
-) : ViewModel() {
+class AnimalViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository: AnimalRepository by lazy {
+        val db = AppDatabase.getDatabase(application)
+        AnimalRepository(db.animalDao())
+    }
 
     private val _animals = MutableLiveData<List<Animal>>(emptyList())
-    open val animals: LiveData<List<Animal>> = _animals
+    val animals: LiveData<List<Animal>> = _animals
 
     private val _favorites = MutableLiveData<List<Animal>>(emptyList())
-    open val favorites: LiveData<List<Animal>> = _favorites
+    val favorites: LiveData<List<Animal>> = _favorites
 
     private val _selectedAnimal = MutableLiveData<Animal?>()
-    open val selectedAnimal: LiveData<Animal?> = _selectedAnimal
+    val selectedAnimal: LiveData<Animal?> = _selectedAnimal
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -34,38 +36,42 @@ open class AnimalViewModel(
     val message: LiveData<String?> = _message
 
     init {
-        repository?.let { loadAnimals() }
+        loadAnimals()
     }
 
     fun loadAnimals() = viewModelScope.launch {
-        loadDataSafely { repository?.fetchAnimals() ?: emptyList() }
-    }
-    private fun applyFilter(filterAction: suspend () -> List<Animal>) = viewModelScope.launch {
-        loadDataSafely(filterAction)
+        loadDataSafely { repository.fetchAnimals() }
     }
 
-    fun filterBySpecies(species: String) = applyFilter { repository?.filterBySpecies(species) ?: emptyList() }
-    fun filterBySize(size: String) = applyFilter { repository?.filterBySize(size) ?: emptyList() }
-    fun filterByGender(gender: String) = applyFilter { repository?.filterByGender(gender) ?: emptyList() }
+    private fun applyFilter(filterAction: suspend () -> List<Animal>) =
+        viewModelScope.launch { loadDataSafely(filterAction) }
+
+    fun filterBySpecies(species: String) =
+        applyFilter { repository.filterBySpecies(species) }
+
+    fun filterBySize(size: String) =
+        applyFilter { repository.filterBySize(size) }
+
+    fun filterByGender(gender: String) =
+        applyFilter { repository.filterByGender(gender) }
+
     fun sortByName() = viewModelScope.launch {
-        _animals.value = repository?.sortByName("asc")  ?: _animals.value
+        _animals.value = repository.sortByName("asc")
     }
+
     fun sortByAge() = viewModelScope.launch {
-        _animals.value = repository?.sortByAge("desc") ?: _animals.value
+        _animals.value = repository.sortByAge("desc")
     }
 
-
-
-    open fun toggleFavorite(animal: Animal) {
+    fun toggleFavorite(animal: Animal) {
         val current = _favorites.value ?: emptyList()
-        _favorites.value = if (current.any { it.id == animal.id }) {
-            current.filterNot { it.id == animal.id }
-        } else {
-            current + animal
-        }
+        _favorites.value =
+            if (current.any { it.id == animal.id })
+                current.filterNot { it.id == animal.id }
+            else current + animal
     }
 
-    open fun selectAnimal(id: Int) {
+    fun selectAnimal(id: Int) {
         _selectedAnimal.value = _animals.value?.find { it.id == id }
     }
 
@@ -82,7 +88,5 @@ open class AnimalViewModel(
 
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }
-
     fun clearSelectedAnimal() { _selectedAnimal.value = null }
 }
-

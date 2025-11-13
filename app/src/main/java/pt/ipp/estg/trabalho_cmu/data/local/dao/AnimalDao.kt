@@ -3,7 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.local.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import pt.ipp.estg.trabalho_cmu.data.models.AnimalStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 
 @Dao
 interface AnimalDao {

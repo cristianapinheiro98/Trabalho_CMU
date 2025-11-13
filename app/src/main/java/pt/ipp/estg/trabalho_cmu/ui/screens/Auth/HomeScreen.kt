@@ -45,7 +45,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 👇 Igual ao botão "Entrar"
         Button(
             onClick = onGuestAnimalsClick,
             modifier = Modifier

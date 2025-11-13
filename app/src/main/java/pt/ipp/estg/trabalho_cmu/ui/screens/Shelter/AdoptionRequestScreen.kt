@@ -40,7 +40,7 @@ fun AdoptionRequestScreen(
                 }
             }
             else -> {
-                println("⚠️ Apenas Shelters podem ver pedidos de adoção")
+                println(" Apenas Shelters podem ver pedidos de adoção")
             }
         }
     }

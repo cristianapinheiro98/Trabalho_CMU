@@ -1,7 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
-import android.annotation.SuppressLint
-import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,11 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.Job
-import pt.ipp.estg.trabalho_cmu.data.local.entities.User
-import pt.ipp.estg.trabalho_cmu.data.models.UserType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
 @Composable
@@ -29,6 +22,20 @@ fun ShelterHomeScreen(
 ) {
     val currentUser by authViewModel.currentUser.observeAsState()
 
+    ShelterHomeScreenContent(
+        userName = currentUser?.name ?: "",
+        onRegisterClick = onRegisterClick,
+        onRequestsClick = onRequestsClick
+    )
+}
+
+@Composable
+fun ShelterHomeScreenContent(
+    userName: String,
+    onRegisterClick: () -> Unit,
+    onRequestsClick: () -> Unit
+) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,8 +43,9 @@ fun ShelterHomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
-            text = "Bem-Vindo",
+            text = "Bem-vindo $userName",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 32.dp)
@@ -63,38 +71,14 @@ fun ShelterHomeScreen(
     }
 }
 
-class FakeAuthViewModel : AuthViewModel(Application()) {
-
-    private val _fakeUser = MutableLiveData(
-        User(
-            id = 1,
-            name = "Abrigo Porto",
-            adress = "Rua dos Animais 123",
-            email = "abrigo@porto.com",
-            phone = "912345678",
-            password = "xxxx",
-            userType = UserType.ABRIGO,
-            shelterId = 1
-        )
-    )
-
-    override val currentUser: LiveData<User?> = _fakeUser
-
-    override fun login(): Job = Job()
-    override fun register(): Job = Job()
-
-}
-@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewShelterHomeScreen() {
     MaterialTheme {
-        ShelterHomeScreen(
-            authViewModel = FakeAuthViewModel(),
+        ShelterHomeScreenContent(
+            userName = "Abrigo Porto",
             onRegisterClick = {},
             onRequestsClick = {}
         )
     }
 }
-
-

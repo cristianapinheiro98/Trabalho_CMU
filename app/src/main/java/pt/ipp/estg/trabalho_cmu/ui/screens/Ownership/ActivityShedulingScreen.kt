@@ -104,7 +104,7 @@ fun ActivitySchedulingScreen(
                     shelterName = shelter!!.name,
                     shelterAddress = shelter!!.address,
                     shelterContact = shelter!!.contact,
-                    imageUrl = animal!!.imageUrls.firstOrNull(), // ⭐ URL verdadeira
+                    imageUrl = animal!!.imageUrls.firstOrNull(),
                     selectedDates = selectedDates,
                     onDatesChanged = { selectedDates = it },
                     pickupTime = pickupTime,
@@ -188,7 +188,7 @@ private fun ActivitySchedulingContent(
                     shelterName = shelterName,
                     shelterContact = shelterContact,
                     shelterAddress = shelterAddress,
-                    imageUrl = imageUrl // ⭐ URL real do Firebase
+                    imageUrl = imageUrl
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -253,7 +253,7 @@ private fun PreviewSchedulingContent() {
         shelterName = "Abrigo Felgueiras",
         shelterAddress = "Rua da Saúde 123",
         shelterContact = "253 000 000",
-        imageUrl = "https://example.com/dog.png",
+        imageUrl = "",
         selectedDates = emptySet(),
         onDatesChanged = {},
         pickupTime = "09:00",

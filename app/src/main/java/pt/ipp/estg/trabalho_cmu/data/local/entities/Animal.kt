@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import pt.ipp.estg.trabalho_cmu.data.models.AnimalStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 
 @Entity(
     tableName = "animals",
@@ -27,6 +27,7 @@ data class Animal(
     val size: String,
     val birthDate: String,
     val imageUrls: List<String>,
+    val description:String,
     val shelterId: Int,
     val status: AnimalStatus = AnimalStatus.AVAILABLE,
     val createdAt: Long = System.currentTimeMillis()

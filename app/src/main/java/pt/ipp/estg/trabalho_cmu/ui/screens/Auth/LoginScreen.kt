@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -21,7 +22,6 @@ fun LoginScreen(
     val error by viewModel.error.observeAsState()
     val message by viewModel.message.observeAsState()
     val isAuthenticated by viewModel.isAuthenticated.observeAsState(false)
-    val currentUser by viewModel.currentUser.observeAsState()
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
 
@@ -69,9 +69,10 @@ private fun LoginScreenContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         OutlinedTextField(
             value = email,
-            onValueChange = { viewModel.email.value = it },
+            onValueChange = onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -80,7 +81,7 @@ private fun LoginScreenContent(
 
         OutlinedTextField(
             value = password,
-            onValueChange = { viewModel.password.value = it },
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -89,7 +90,7 @@ private fun LoginScreenContent(
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.login() },
+            onClick = onLoginClick,
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,34 +115,32 @@ private fun LoginScreenContent(
         ) {
             Text("Voltar")
         }
+    }
 
-        // 🔹 Mensagem de erro
-        error?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clearError() },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
-                },
-                title = { Text("Erro") },
-                text = { Text(it) }
-            )
-        }
+    error?.let {
+        AlertDialog(
+            onDismissRequest = onClearError,
+            confirmButton = {
+                TextButton(onClick = onClearError) { Text("OK") }
+            },
+            title = { Text("Erro") },
+            text = { Text(it) }
+        )
+    }
 
-        // 🔹 Mensagem de sucesso
-        message?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clearMessage() },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.clearMessage() }) { Text("OK") }
-                },
-                title = { Text("Sucesso") },
-                text = { Text(it) }
-            )
-        }
+    message?.let {
+        AlertDialog(
+            onDismissRequest = onClearMessage,
+            confirmButton = {
+                TextButton(onClick = onClearMessage) { Text("OK") }
+            },
+            title = { Text("Sucesso") },
+            text = { Text(it) }
+        )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 private fun LoginScreenContentPreview() {
     MaterialTheme {
