@@ -136,7 +136,7 @@ private fun ActivitiesHistoryContent(
                     ActivityAnimalInfoCard(
                         animalName = animal.name,
                         shelterName = shelter.name,
-                        shelterContact = shelter.contact,
+                        shelterContact = shelter.phone,
                         shelterAddress = shelter.address,
                         imageUrl = imageUrl
                     )
@@ -208,7 +208,7 @@ private fun ActivitiesHistoryContentPreview() {
                     id = 0,
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234, Santa Marta de Farto",
-                    contact = "253 000 000",
+                    phone = "253 000 000",
                     email= "",
                     password = ""
                 )

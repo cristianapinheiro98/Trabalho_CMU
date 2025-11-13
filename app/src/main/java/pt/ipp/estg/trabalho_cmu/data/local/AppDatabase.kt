@@ -26,7 +26,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
         Shelter::class,
         User::class
     ],
-    version = 3, // Increase value when making changes!!!
+    version = 4, // Increase value when making changes!!!
     exportSchema = false
 )
 @TypeConverters(Converters::class)
