@@ -62,7 +62,8 @@ fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreen(
             onLoginClick = {},
-            onRegisterClick = {}
+            onRegisterClick = {},
+            onGuestAnimalsClick = {}
         )
     }
 }

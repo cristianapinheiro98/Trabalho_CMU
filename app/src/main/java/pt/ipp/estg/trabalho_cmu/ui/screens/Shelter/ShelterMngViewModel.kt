@@ -49,30 +49,26 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
-
-    // ✅ Expõe uma função para definir o shelterId quando necessário
     private val _currentShelterId = MutableLiveData<Int?>(null)
 
 
     fun getShelterIdByUserId(userId: Int) {
         viewModelScope.launch {
-            println("🔍 VIEWMODEL - userId recebido: $userId")
+            println("VIEWMODEL - userId recebido: $userId")
             val shelterId = userRepository.getShelterIdByUserId(userId) ?: userId
             _currentShelterId.value = shelterId
-            println("🔍 VIEWMODEL - shelterId definido: $shelterId")
+            println("VIEWMODEL - shelterId definido: $shelterId")
 
-            // ✅ ADICIONE ESTA VERIFICAÇÃO
-            // Verifica se o shelter realmente existe
             try {
                 val shelter = shelterRepository.getShelterById(shelterId)
                 if (shelter != null) {
-                    println("✅ Shelter existe: ${shelter.name}")
+                    println("Shelter existe: ${shelter.name}")
                 } else {
-                    println("❌ ERRO: Shelter com ID $shelterId NÃO EXISTE!")
+                    println("ERRO: Shelter com ID $shelterId NÃO EXISTE!")
                     _error.value = "Shelter não encontrado. Por favor, faça logout e login novamente."
                 }
             } catch (e: Exception) {
-                println("❌ Erro ao verificar shelter: ${e.message}")
+                println("Erro ao verificar shelter: ${e.message}")
             }
         }
     }
@@ -86,7 +82,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                             try {
                                 convertToAdoptionRequest(it)
                             } catch (e: Exception) {
-                                println("❌ Erro ao converter ownership: ${e.message}")
+                                println("Erro ao converter ownership: ${e.message}")
                                 null
                             }
                         }
@@ -122,10 +118,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 ownershipRepository.approveOwnershipRequest(ownershipId)
                 _message.value = "Pedido aprovado com sucesso!"
                 _error.value = null
-                println("✅ Pedido $ownershipId aprovado")
+                println("Pedido $ownershipId aprovado")
             } catch (e: Exception) {
                 _error.value = "Erro ao aprovar pedido: ${e.message}"
-                println("❌ Erro ao aprovar: ${e.message}")
+                println("Erro ao aprovar: ${e.message}")
                 e.printStackTrace()
             } finally {
                 _isLoading.value = false
@@ -145,10 +141,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 ownershipRepository.rejectOwnershipRequest(ownershipId)
                 _message.value = "Pedido rejeitado"
                 _error.value = null
-                println("✅ Pedido $ownershipId rejeitado")
+                println("Pedido $ownershipId rejeitado")
             } catch (e: Exception) {
                 _error.value = "Erro ao rejeitar pedido: ${e.message}"
-                println("❌ Erro ao rejeitar: ${e.message}")
+                println("Erro ao rejeitar: ${e.message}")
                 e.printStackTrace()
             } finally {
                 _isLoading.value = false
@@ -230,7 +226,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             return "A data de nascimento é obrigatória."
         }
 
-        // Formato esperado: DD/MM/YYYY
         val parts = birthDate.split("/")
 
         if (parts.size != 3) {
@@ -243,17 +238,14 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         val month = monthStr.toIntOrNull()
         val year = yearStr.toIntOrNull()
 
-        // Validar se são números
         if (day == null || month == null || year == null) {
             return "Dia, mês e ano devem ser números."
         }
 
-        // Validar ranges
+
         if (day !in 1..31) return "Dia inválido."
         if (month !in 1..12) return "Mês inválido."
-        if (year < 1900) return "Ano inválido."
 
-        // Validar se a data existe
         return try {
             val date = LocalDate.of(year, month, day)
 

@@ -191,7 +191,6 @@ fun NavGraphUser(navController: NavHostController) {
 
         composable("Favourites") {
             val animalViewModel: AnimalViewModel = viewModel()
-        composable("Favorites") {
             FavoritesScreen(
                 viewModel = animalViewModel,
                 onAnimalClick = { animalId ->

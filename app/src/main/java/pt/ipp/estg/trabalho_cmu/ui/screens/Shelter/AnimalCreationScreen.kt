@@ -27,10 +27,10 @@ fun AnimalCreationScreen(
     val currentUser by authViewModel.currentUser.observeAsState()
     LaunchedEffect(currentUser) {
         currentUser?.let { user ->
-            println("🟢 User carregado: ${user.name}, ID: ${user.id}, ShelterId: ${user.shelterId}")
+            println("User carregado: ${user.name}, ID: ${user.id}, ShelterId: ${user.shelterId}")
             viewModel.getShelterIdByUserId(user.id)
         } ?: run {
-            println("❌ ERRO: currentUser é null!")
+            println("ERRO: currentUser é null!")
         }
     }
 

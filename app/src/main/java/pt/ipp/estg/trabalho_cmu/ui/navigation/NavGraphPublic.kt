@@ -4,7 +4,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
-import pt.ipp.estg.trabalho_cmu.ui.screens.startScreen.HomeScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

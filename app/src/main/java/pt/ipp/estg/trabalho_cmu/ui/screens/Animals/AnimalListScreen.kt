@@ -64,7 +64,6 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
-        // --- Empty state global (sem animais) ---
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -82,7 +81,7 @@ fun AnimalListScreen(
 
         val filteredAnimals = animals.filter { it.name.contains(search, ignoreCase = true) }
 
-        // --- Empty state de pesquisa (nenhum corresponde) ---
+
         if (filteredAnimals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
