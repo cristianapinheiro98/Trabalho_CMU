@@ -10,10 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.UserType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +23,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.UserType
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onRegisterSuccess: () -> Unit,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel = viewModel()
 ) {
     val name by viewModel.name.observeAsState("")
     val adress by viewModel.address.observeAsState("")
@@ -208,25 +210,35 @@ fun RegisterScreen(
 
 
 @SuppressLint("ViewModelConstructorInComposable")
-@Composable
-fun MockAuthViewModel(): AuthViewModel {
-    // devolve apenas uma instância estática simples
-    val context = LocalContext.current.applicationContext as Application
-    return AuthViewModel(context).apply {
+class MockAuthPreviewViewModel :
+    AuthViewModel(Application()) {
+
+    init {
         name.value = "Maria Silva"
         address.value = "Rua das Flores 123"
         contact.value = "912345678"
         email.value = "maria@example.com"
+        password.value = "Password1!"
         userType.value = UserType.ABRIGO
+
+        shelterName.value = "Abrigo Porto Feliz"
+        shelterAddress.value = "Rua dos Animais 321"
+        shelterContact.value = "222333444"
+    }
+
+    // Evitar chamadas reais a BD:
+    override fun register() {
+        message.value = "Conta criada (preview)"
     }
 }
+
 
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
-    val mockViewModel = MockAuthViewModel()
+    val mockViewModel = remember {  MockAuthPreviewViewModel()}
 
     MaterialTheme {
         RegisterScreen(

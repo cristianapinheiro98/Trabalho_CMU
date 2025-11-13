@@ -86,7 +86,7 @@ open class AuthViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun register() = viewModelScope.launch {
+    open fun register() = viewModelScope.launch {
         val nameValue = name.value?.trim().orEmpty()
         val addressValue = address.value?.trim().orEmpty()
         val phoneValue = contact.value?.trim().orEmpty()
