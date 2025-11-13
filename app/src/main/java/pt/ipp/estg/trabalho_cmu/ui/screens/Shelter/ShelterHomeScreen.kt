@@ -59,5 +59,7 @@ fun ShelterHomeScreen(
 /*@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAdminHomeScreen() {
-    ShelterHomeScreen()
+    ShelterHomeScreen(
+        authViewModel = AuthViewModel()
+    )
 }*/

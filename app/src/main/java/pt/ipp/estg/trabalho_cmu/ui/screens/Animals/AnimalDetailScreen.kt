@@ -125,7 +125,6 @@ fun AnimalDetailScreen(
             InfoLine("Raça", animal!!.breed ?: "Desconhecida")
             InfoLine("Porte", animal!!.size ?: "Desconhecido")
             InfoLine("Nascimento", animal!!.birthDate ?: "N/A")
-            InfoLine("Descrição", animal!!.description ?: "N/A")
             InfoRow("Idade", ageText)
             InfoLine("Abrigo", shelter?.address ?:"Desconhecido" )
 
@@ -262,7 +261,7 @@ private class Mock : AnimalViewModel(repository = null) {
 
     override fun selectAnimal(id: Int) { /* no-op for preview */ }
 }
-private class MockShelterViewModel : ShelterViewModel(Application()) {
+private class MockShelterViewModel : ShelterViewModel(repository = null) {
     override val selectedShelter: LiveData<Shelter?> = MutableLiveData(
         Shelter(
             id = 1,
@@ -283,13 +282,11 @@ private class MockShelterViewModel : ShelterViewModel(Application()) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AnimalDetailScreenPreview() {
-    val context = LocalContext.current.applicationContext as Application
-
     // ViewModel fake para o animal (já tinhas)
     val mockAnimalVM = Mock()
 
     // ShelterViewModel real só para o preview
-    val mockShelterVM = ShelterViewModel(context)
+    val mockShelterVM = MockShelterViewModel()
 
     MaterialTheme {
         AnimalDetailScreen(
