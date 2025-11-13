@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
 /**

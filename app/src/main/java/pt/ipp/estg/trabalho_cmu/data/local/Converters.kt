@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.local
 import androidx.room.TypeConverter
 import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import java.util.Date
 
 class Converters {

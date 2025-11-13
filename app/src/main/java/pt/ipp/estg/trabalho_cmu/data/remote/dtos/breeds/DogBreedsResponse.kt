@@ -8,7 +8,7 @@ data class DogBreedResponse(
     val name: String,
     val temperament: String?,
     val origin: String?,
-    val description: String?, 
+    val description: String?,
     @SerializedName("bred_for") val bredFor: String?,
     @SerializedName("life_span") val lifeSpan: String?
 )

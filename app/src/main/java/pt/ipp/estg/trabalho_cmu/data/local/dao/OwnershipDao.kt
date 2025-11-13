@@ -3,7 +3,7 @@ package pt.ipp.estg.trabalho_cmu.data.local.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
  * DAO for accessing and managing ownership requests.

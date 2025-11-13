@@ -73,6 +73,9 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 println("Erro ao verificar shelter: ${e.message}")
             }
         }
+    fun setShelterId(id: Int) {
+        _currentShelterId.value = id
+        println("🔍 VIEWMODEL - shelterId definido diretamente: $id")
     }
 
     // ---------------------- LISTAR PEDIDOS ----------------------

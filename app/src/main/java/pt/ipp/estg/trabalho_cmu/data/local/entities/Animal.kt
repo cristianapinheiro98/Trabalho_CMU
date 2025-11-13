@@ -19,9 +19,7 @@ import java.util.Date
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [
-        Index("shelterId")
-    ]
+    indices = [Index(value = ["shelterId"])]
 )
 data class Animal(
     @PrimaryKey(autoGenerate = true)

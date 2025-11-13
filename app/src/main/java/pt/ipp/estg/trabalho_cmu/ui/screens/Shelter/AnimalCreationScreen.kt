@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.remote.api.services.uploadImageToFirebase
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
 @Composable
@@ -29,9 +30,23 @@ fun AnimalCreationScreen(
     viewModel: ShelterMngViewModel = viewModel()
 ) {
     val currentUser by authViewModel.currentUser.observeAsState()
-    LaunchedEffect(currentUser) {
-        currentUser?.let { user ->
-            viewModel.getShelterIdByUserId(user.id)
+    val currentShelter by authViewModel.currentShelter.observeAsState()
+    val accountType by authViewModel.accountType.observeAsState()
+
+    LaunchedEffect(accountType) {
+        when (accountType) {
+            AccountType.SHELTER -> {
+                currentShelter?.let { shelter ->
+                    println("🟢 Shelter: ${shelter.name}, ID: ${shelter.id}")
+                    viewModel.setShelterId(shelter.id)
+                }
+            }
+            AccountType.USER -> {
+                println("⚠️ User não pode criar animais!")
+            }
+            else -> {
+                println("❌ Tipo de conta desconhecido")
+            }
         }
     }
 
@@ -196,6 +211,7 @@ fun AnimalCreationScreenContent(
                         )
                         else ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBreed)
                     },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                     enabled = form.species.isNotBlank(),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -252,8 +268,9 @@ fun AnimalCreationScreenContent(
                     }
                 }
             }
+            Spacer(Modifier.height(16.dp))
 
-            // Data
+            // Data de Nascimento
             OutlinedTextField(
                 value = form.birthDate,
                 onValueChange = onBirthDateChange,
@@ -309,7 +326,9 @@ fun AnimalCreationScreenContent(
                     TextButton(onClick = {
                         onClearMessage()
                         onNavigateBack()
-                    }) { Text("OK") }
+                    }) {
+                        Text("OK")
+                    }
                 },
                 title = { Text("Sucesso") },
                 text = { Text(it) }
@@ -327,5 +346,40 @@ fun AnimalCreationScreenContent(
                 text = { Text(it) }
             )
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalCreationPreview() {
+    MaterialTheme {
+        AnimalCreationScreenContent(
+            form = pt.ipp.estg.trabalho_cmu.data.models.AnimalForm(
+                name = "Rex",
+                species = "Cão",
+                breed = "Labrador",
+                size = "Grande",
+                birthDate = "01/01/2020",
+                imageUrl = 1
+            ),
+            availableBreeds = listOf(
+                pt.ipp.estg.trabalho_cmu.data.models.Breed("1", "Labrador", "Raça de cão"),
+                pt.ipp.estg.trabalho_cmu.data.models.Breed("2", "Golden Retriever", "Raça de cão"),
+                pt.ipp.estg.trabalho_cmu.data.models.Breed("3", "Beagle", "Raça de cão")
+            ),
+            isLoadingBreeds = false,
+            message = null,
+            error = null,
+            onNameChange = {},
+            onSpeciesChange = {},
+            onBreedChange = {},
+            onSizeChange = {},
+            onBirthDateChange = {},
+            onImageUrlChange = {},
+            onSave = {},
+            onNavigateBack = {},
+            onClearMessage = {},
+            onClearError = {}
+        )
     }
 }

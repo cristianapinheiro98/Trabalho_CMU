@@ -4,7 +4,7 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import androidx.lifecycle.LiveData
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
  * Repository that handles data operations for Ownerships.

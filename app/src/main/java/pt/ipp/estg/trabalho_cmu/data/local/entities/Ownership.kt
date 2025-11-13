@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
  * Represents a "special adoption" (ownership) request.
@@ -36,9 +36,9 @@ import pt.ipp.estg.trabalho_cmu.data.models.OwnershipStatus
         )
     ],
     indices = [
-        Index("userId"),
-        Index("animalId"),
-        Index("shelterId")
+        Index(value = ["userId"]),
+        Index(value = ["animalId"]),
+        Index(value = ["shelterId"])
     ]
 )
 data class Ownership(
