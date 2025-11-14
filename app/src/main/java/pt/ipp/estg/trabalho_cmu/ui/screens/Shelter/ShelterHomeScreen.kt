@@ -22,6 +22,20 @@ fun ShelterHomeScreen(
 ) {
     val currentUser by authViewModel.currentUser.observeAsState()
 
+    ShelterHomeScreenContent(
+        userName = currentUser?.name ?: "",
+        onRegisterClick = onRegisterClick,
+        onRequestsClick = onRequestsClick
+    )
+}
+
+@Composable
+fun ShelterHomeScreenContent(
+    userName: String,
+    onRegisterClick: () -> Unit,
+    onRequestsClick: () -> Unit
+) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,8 +43,9 @@ fun ShelterHomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
-            text = "Bem-Vindo",
+            text = "Bem-vindo $userName",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 32.dp)
@@ -56,8 +71,14 @@ fun ShelterHomeScreen(
     }
 }
 
-/*@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewAdminHomeScreen() {
-    ShelterHomeScreen()
-}*/
+fun PreviewShelterHomeScreen() {
+    MaterialTheme {
+        ShelterHomeScreenContent(
+            userName = "Abrigo Porto",
+            onRegisterClick = {},
+            onRequestsClick = {}
+        )
+    }
+}

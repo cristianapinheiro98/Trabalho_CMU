@@ -37,7 +37,6 @@ fun ActivitiesHistoryScreen(
     userId: Int,
     modifier: Modifier = Modifier
 ) {
-    // Get ViewModel instance (without Hilt)
     val viewModel: ActivityViewModel = viewModel()
 
     val scrollState = rememberScrollState()
@@ -120,6 +119,7 @@ private fun ActivitiesHistoryContent(
             val activity = item.activity
             val animal = item.animal
             val shelter = item.shelter
+            val imageUrl = animal.imageUrls.firstOrNull()
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -133,12 +133,13 @@ private fun ActivitiesHistoryContent(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     ActivityAnimalInfoCard(
                         animalName = animal.name,
                         shelterName = shelter.name,
-                        shelterContact = shelter.contact,
+                        shelterContact = shelter.phone,
                         shelterAddress = shelter.address,
-                        imageRes = R.drawable.cat_image
+                        imageUrl = imageUrl
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -172,6 +173,7 @@ private fun ActivitiesHistoryContent(
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -201,14 +203,16 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "14/05/2020",
                     size = "medium",
                     species = "dog",
-                    imageUrl = listOf(R.drawable.cat_image)
+                    imageUrls = listOf(""),
+                    description = "Muito dócil"
                 ),
                 shelter = Shelter(
                     id = 0,
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
-                    contact = "253 000 000",
-                    email = "abrigo_felgueiras@gmail.com"
+                    phone = "253 000 000",
+                    email = "abrigo_felgueiras@gmail.com",
+                    password = ""
                 )
             ),
             ActivityWithAnimalAndShelter(
@@ -229,14 +233,16 @@ private fun ActivitiesHistoryContentPreview() {
                     birthDate = "20/03/2021",
                     size = "large",
                     species = "dog",
-                    imageUrl = listOf(R.drawable.cat_image)
+                    imageUrls = listOf("cat_image"),
+                    description = "Muito dócil"
                 ),
                 shelter = Shelter(
                     id = 0,
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
-                    contact = "253 000 000",
-                    email = "abrigo_felgueiras@gmail.com"
+                    phone = "253 000 000",
+                    email = "abrigo_felgueiras@gmail.com",
+                    password = ""
                 )
             )
         )

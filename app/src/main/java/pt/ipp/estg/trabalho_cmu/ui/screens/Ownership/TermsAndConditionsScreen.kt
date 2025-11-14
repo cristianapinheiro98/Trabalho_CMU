@@ -21,7 +21,8 @@ import pt.ipp.estg.trabalho_cmu.R
 @Composable
 fun TermsAndConditionsScreen(
     onAccept: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -44,7 +45,6 @@ fun TermsAndConditionsScreen(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Título
                 Text(
                     text = stringResource(R.string.terms_title),
                     fontSize = 20.sp,
@@ -53,8 +53,7 @@ fun TermsAndConditionsScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-
-                // Card com informações
+                
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -79,7 +78,6 @@ fun TermsAndConditionsScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Checkbox com termos
                 var termsAccepted by remember { mutableStateOf(false) }
 
                 Row(
@@ -110,7 +108,6 @@ fun TermsAndConditionsScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botão de aceitar
                 Button(
                     onClick = {
                         if (termsAccepted) {
@@ -134,13 +131,34 @@ fun TermsAndConditionsScreen(
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.terms_continue_button),
+                        text = stringResource(R.string.continue_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
+                
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF4A4A4A)
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.back_button),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
+
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 
+
 class ShelterRepository(private val shelterDao: ShelterDao) {
 
     fun getAllShelters(): LiveData<List<Shelter>> = shelterDao.getAllShelters()

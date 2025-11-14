@@ -38,13 +38,11 @@ fun OwnershipConfirmationScreen(
     LaunchedEffect(animalId) {
         animalViewModel.selectAnimal(animalId)
     }
-
-    // Observa os dados
+    
     val user by userViewModel.user.observeAsState()
     val animal by animalViewModel.selectedAnimal.observeAsState()
     val shelter by shelterViewModel.selectedShelter.observeAsState()
-
-    // Carrega o shelter quando o animal for carregado
+    
     LaunchedEffect(animal?.shelterId) {
         animal?.shelterId?.let { shelterId ->
             shelterViewModel.loadShelterById(shelterId)
@@ -54,8 +52,7 @@ fun OwnershipConfirmationScreen(
     val userName = user?.name ?: "Utilizador"
     val animalName = animal?.name ?: ""
     val shelterName = shelter?.name ?: ""
-
-    // Mostra loading enquanto carrega os dados
+    
     if (animal == null || shelter == null) {
         Box(
             modifier = modifier.fillMaxSize(),
@@ -91,7 +88,6 @@ fun OwnershipConfirmationScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // Título
                 Text(
                     text = stringResource(R.string.confirmation_title, userName),
                     fontSize = 24.sp,
@@ -99,8 +95,6 @@ fun OwnershipConfirmationScreen(
                     color = Color(0xFF2C2C2C),
                     textAlign = TextAlign.Center
                 )
-
-                // Mensagem
                 Text(
                     text = stringResource(R.string.confirmation_message, shelterName, animalName),
                     fontSize = 16.sp,
@@ -108,8 +102,6 @@ fun OwnershipConfirmationScreen(
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
-
-                // Aviso de notificações
                 Text(
                     text = stringResource(R.string.confirmation_notification),
                     fontSize = 14.sp,
@@ -120,14 +112,12 @@ fun OwnershipConfirmationScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Ícone de check (visto)
                 CheckmarkIcon(
                     modifier = Modifier.size(120.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botão Regressar ao Menu Inicial
                 Button(
                     onClick = onBackToHome,
                     modifier = Modifier
@@ -159,20 +149,15 @@ fun CheckmarkIcon(
         val circleColor = Color(0xFF2C8B7E)
         val strokeWidth = 12f
 
-        // Desenhar círculo exterior
         drawCircle(
             color = circleColor,
             radius = size.minDimension / 2,
             style = Stroke(width = strokeWidth)
         )
 
-        // Desenhar o visto (checkmark)
         val checkmarkPath = androidx.compose.ui.graphics.Path().apply {
-            // Ponto inicial (parte inferior esquerda do visto)
             moveTo(size.width * 0.25f, size.height * 0.5f)
-            // Ponto do meio (canto do visto)
             lineTo(size.width * 0.45f, size.height * 0.7f)
-            // Ponto final (parte superior direita do visto)
             lineTo(size.width * 0.75f, size.height * 0.3f)
         }
 
@@ -217,7 +202,7 @@ fun OwnershipConfirmationScreenPreview() {
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     Text(
-                        text = "Parabéns, Utilizador Demo!",
+                        text = "Obrigado André!",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2C2C2C),

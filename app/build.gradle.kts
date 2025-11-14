@@ -100,6 +100,7 @@ dependencies {
 
     // Coil (Load images)
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
 
     // Google Play Services - Location (GPS)
     implementation("com.google.android.gms:play-services-location:21.3.0")

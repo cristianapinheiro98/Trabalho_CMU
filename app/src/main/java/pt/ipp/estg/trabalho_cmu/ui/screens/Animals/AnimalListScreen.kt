@@ -19,29 +19,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AnimalListScreen(
+    viewModel: AnimalViewModel,
+    onAnimalClick: (Int) -> Unit = {},
+    isLoggedIn: Boolean,
+) {
+    val animals by viewModel.animals.observeAsState(emptyList())
+    val favorites by viewModel.favorites.observeAsState(emptyList())
+
+    AnimalListContent(
+        animals = animals,
+        favorites = if (isLoggedIn) favorites else emptyList(),
+        isLoggedIn = isLoggedIn,
+        onAnimalClick = onAnimalClick,
+        onToggleFavorite = { viewModel.toggleFavorite(it) }
+    )
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimalListScreen(
-    viewModel: AnimalViewModel,
-    onAnimalClick: (Int) -> Unit = {}
+fun AnimalListContent(
+    animals: List<Animal>,
+    favorites: List<Animal>,
+    isLoggedIn: Boolean,
+    onAnimalClick: (Int) -> Unit,
+    onToggleFavorite: (Animal) -> Unit
 ) {
-    val favorites by viewModel.favorites.observeAsState(emptyList())
     var search by remember { mutableStateOf("") }
-
-    val animals by viewModel.animals.observeAsState(emptyList())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
+
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -49,10 +68,10 @@ fun AnimalListScreen(
             placeholder = { Text("Pesquisar") },
             trailingIcon = {
                 Row {
-                    IconButton(onClick = { /* abrir filtros */ }) {
+                    IconButton(onClick = { /* TODO filtros */ }) {
                         Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
                     }
-                    IconButton(onClick = { /* abrir ordenação */ }) {
+                    IconButton(onClick = { /* TODO ordenação */ }) {
                         Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
                     }
                 }
@@ -64,7 +83,6 @@ fun AnimalListScreen(
             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
         )
 
-        // --- Empty state global (sem animais) ---
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -77,25 +95,23 @@ fun AnimalListScreen(
                     )
                 )
             }
-            return@Column
+            return
         }
 
-        val filteredAnimals = animals.filter { it.name.contains(search, ignoreCase = true) }
+        val filteredAnimals = animals.filter {
+            it.name.contains(search, ignoreCase = true)
+        }
 
-        // --- Empty state de pesquisa (nenhum corresponde) ---
         if (filteredAnimals.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
                 Text(
-                    text = "Nenhum animal corresponde à pesquisa.",
+                    "Nenhum animal corresponde à pesquisa.",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.outline
                     )
                 )
             }
-            return@Column
+            return
         }
 
         LazyVerticalGrid(
@@ -109,36 +125,70 @@ fun AnimalListScreen(
                 AnimalCard(
                     animal = animal,
                     isFavorite = favorites.any { it.id == animal.id },
+                    isLoggedIn = isLoggedIn,
                     onClick = { onAnimalClick(animal.id) },
-                    onToggleFavorite = {
-                        viewModel.toggleFavorite(animal)
-                    }
+                    onToggleFavorite = { onToggleFavorite(animal) }
                 )
             }
         }
     }
 }
 
-class MockAnimalViewModel : AnimalViewModel(repository = null) {
 
-    override val animals: LiveData<List<Animal>> = MutableLiveData(
-        listOf(
-            Animal(1, "Leia", "Desconhecida", "Gato", "Pequeno", "2019-01-01", listOf(R.drawable.gato1), 1),
-            Animal(2, "Noa", "Desconhecida", "Gato", "Pequeno", "2022-01-01", listOf(R.drawable.gato2), 1),
-            Animal(3, "Tito", "Desconhecida", "Gato", "Médio", "2011-01-01", listOf(R.drawable.gato3), 1)
-        )
+private val previewAnimals = listOf(
+    Animal(
+        id = 1,
+        name = "Leia",
+        breed = "Desconhecida",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = "2019-01-01",
+        imageUrls = listOf(""),
+        shelterId = 1,
+        description = "Muito meiga!"
+    ),
+    Animal(
+        id = 2,
+        name = "Noa",
+        breed = "Desconhecida",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = "2022-01-01",
+        imageUrls = listOf(""),
+        shelterId = 1,
+        description = "Adora colo!"
     )
+)
 
-}
 
-
-@SuppressLint("ViewModelConstructorInComposable")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AnimalListScreenPreview() {
-    val mockViewModel = MockAnimalViewModel()
+fun AnimalListScreenPreviewLoggedIn() {
     MaterialTheme {
-        AnimalListScreen(viewModel = mockViewModel)
+        AnimalListContent(
+            animals = previewAnimals,
+            favorites = listOf(previewAnimals.first()),
+            isLoggedIn = true,
+            onAnimalClick = {},
+            onToggleFavorite = {}
+        )
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreviewGuest() {
+    MaterialTheme {
+        AnimalListContent(
+            animals = previewAnimals,
+            favorites = emptyList(),
+            isLoggedIn = false,
+            onAnimalClick = {},
+            onToggleFavorite = {}
+        )
     }
 }

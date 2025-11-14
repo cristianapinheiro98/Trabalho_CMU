@@ -21,7 +21,7 @@ class ShelterOwnershipRequestRepository(
      * Retrieves all ownership requests.
      * You can modify the DAO to return only pending ones if desired.
      */
-    fun getAllOwnershipRequests(shelterId : Int): LiveData<List<Ownership>> =
+    fun getAllOwnershipRequestsByShelter(shelterId : Int): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByShelter(shelterId)
 
     /**

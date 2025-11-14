@@ -17,6 +17,7 @@ import pt.ipp.estg.trabalho_cmu.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import pt.ipp.estg.trabalho_cmu.ui.components.RankingCard
 import pt.ipp.estg.trabalho_cmu.ui.theme.BronzeTrophy
 import pt.ipp.estg.trabalho_cmu.ui.theme.GrayTrophy
 import pt.ipp.estg.trabalho_cmu.ui.theme.YellowTrophy
@@ -124,50 +125,7 @@ fun SocialTailsRankingScreen(
     }
 }
 
-// Função para mostrar os detalhes do ranking em formato de Card
-@Composable
-fun RankingCard(rank: RankingData) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Ícone do Troféu (emoji)
-            Text(
-                text = "🏆",
-                fontSize = 24.sp,
-                color = rank.trophyColor
-            )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Detalhes do ranking
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "${rank.position}º ${rank.name}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2C2C2C)
-                )
-
-                Text(
-                    text = "${rank.distance} km",
-                    fontSize = 14.sp,
-                    color = Color(0xFF757575)
-                )
-            }
-        }
-    }
-}
-
-// Modelo de dados para ranking
 data class RankingData(
     val position: Int,
     val name: String,

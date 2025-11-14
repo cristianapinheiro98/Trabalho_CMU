@@ -6,5 +6,6 @@ data class AnimalForm(
     val species: String = "",
     val size: String = "",
     val birthDate: String = "",
+    val description: String = "",
     val imageUrl: Int = 0
 )
