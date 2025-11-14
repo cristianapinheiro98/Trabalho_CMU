@@ -70,7 +70,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 
     // Firebase products
     implementation("com.google.firebase:firebase-analytics")
@@ -80,13 +80,12 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.9.5")
-
+    implementation("androidx.navigation:navigation-compose:2.9.6")
 
     // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.3.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
     // Room
@@ -100,7 +99,7 @@ dependencies {
 
     // Coil (Load images)
     implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
     // Google Play Services - Location (GPS)
     implementation("com.google.android.gms:play-services-location:21.3.0")
