@@ -107,7 +107,7 @@ fun calculateAge(birthDate: String?): Int? {
     if (birthDate.isNullOrBlank()) return null
 
     return try {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val dateOfBirth = LocalDate.parse(birthDate, formatter)
         val today = LocalDate.now()
 

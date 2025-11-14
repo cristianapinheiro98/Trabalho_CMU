@@ -19,7 +19,10 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val ownershipRepository: OwnershipRepository by lazy {
         val db = AppDatabase.getDatabase(application)
-        OwnershipRepository(db.ownershipDao())
+        OwnershipRepository(
+            db.ownershipDao(),
+            FirebaseFirestore.getInstance()  // ← Passa o Firestore!
+        )
     }
 
     private val animalRepository: AnimalRepository by lazy {
@@ -28,7 +31,6 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= USER OWNERSHIPS ========= //
-
     private val _userId = MutableLiveData<Int>()
 
     val ownerships: LiveData<List<Ownership>> =
@@ -38,18 +40,23 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun loadOwnershipsForUser(userId: Int) {
         _userId.value = userId
+        // Busca do Firebase ao carregar
+        viewModelScope.launch {
+            ownershipRepository.fetchOwnerships()
+        }
     }
 
     // ========= UI STATES ========= //
-
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // ========= ANIMAL DETAILS ========= //
+    private val _message = MutableLiveData<String?>()
+    val message: LiveData<String?> = _message
 
+    // ========= ANIMAL DETAILS ========= //
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
@@ -69,13 +76,20 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= OWNERSHIP ACTIONS ========= //
-
     fun submitOwnership(request: Ownership) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                ownershipRepository.addOwnership(request)
-                _error.value = null
+
+                // Usa createOwnership em vez de addOwnership
+                val result = ownershipRepository.createOwnership(request)
+
+                result.onSuccess {
+                    _message.value = "Pedido de adoção submetido com sucesso!"
+                    _error.value = null
+                }.onFailure { e ->
+                    _error.value = "Erro ao submeter pedido: ${e.message}"
+                }
             } catch (e: Exception) {
                 _error.value = "Erro ao submeter pedido: ${e.message}"
             } finally {
@@ -106,7 +120,6 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun clearError() {
-        _error.value = null
-    }
+    fun clearError() { _error.value = null }
+    fun clearMessage() { _message.value = null }
 }

@@ -22,7 +22,10 @@ interface OwnershipDao {
     suspend fun getOwnershipById(id: Int): Ownership?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOwnership(ownership: Ownership)
+    suspend fun insertOwnership(ownership: Ownership) : Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(ownerships: List<Ownership>)
 
     @Query("UPDATE OwnershipRequests SET status = :status WHERE id = :id")
     suspend fun updateOwnershipStatus(id: Int, status: OwnershipStatus)
