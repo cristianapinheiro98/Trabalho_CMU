@@ -92,6 +92,7 @@
     <string name="catalogue">Animals Catalogue</string>
     <string name="favorites">Favourite Animals</string>
     <string name="community">SocialTails Community</string>
+    <string name="preferences">Preferences</string>
 
     <!-- Buttons -->
     <string name="cancel_button">Cancel</string>

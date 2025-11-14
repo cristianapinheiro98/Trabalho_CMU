@@ -32,13 +32,24 @@ fun MainOptionsScreen(
     val medals by viewModel.medals.collectAsState()
 
     var showAnimalDialog by remember { mutableStateOf(false) }
+    var showScheduleDialog by remember { mutableStateOf(false) }
 
     if (showAnimalDialog) {
         AnimalSelectionDialog(
             onDismiss = { showAnimalDialog = false },
             onAnimalSelected = { animal ->
-                // TODO: Navegar para WalkScreen com animal.id
-                println("Selecionado: ${animal.name}")
+                showAnimalDialog = false
+                navController.navigate("Walk/${animal.id}/${animal.name}")
+            }
+        )
+    }
+
+    if (showScheduleDialog) {
+        AnimalSelectionDialog(
+            onDismiss = { showScheduleDialog = false },
+            onAnimalSelected = { animal ->
+                showScheduleDialog = false
+                navController.navigate("ActivityScheduling/${animal.id}")
             }
         )
     }
@@ -73,7 +84,7 @@ fun MainOptionsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            MainActionButtons(navController, onStartWalk = { showAnimalDialog = true })
+            MainActionButtons(navController, onStartWalk = { showAnimalDialog = true }, onScheduleVisit = { showScheduleDialog = true })
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -166,7 +177,11 @@ fun WalkDetailRow(label: String, value: String) {
 }
 
 @Composable
-fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit ) {
+fun MainActionButtons(
+    navController: NavController,
+    onStartWalk: () -> Unit,
+    onScheduleVisit: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -179,7 +194,7 @@ fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit ) {
                 text = "Agendar Visita",
                 color = Color(0xFF2196F3),
                 modifier = Modifier.weight(1f),
-                onClick = { /* TODO: Navegar */ }
+                onClick = onScheduleVisit
             )
             ActionButton(
                 text = "Iniciar Passeio",
@@ -197,7 +212,7 @@ fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit ) {
                 text = "Agendamentos",
                 color = Color(0xFFE57373),
                 modifier = Modifier.weight(1f),
-                onClick = { /* TODO: Navegar */ }
+                onClick = { navController.navigate("ActivitiesHistory") }
             )
             ActionButton(
                 text = "Concluir Passeio",
@@ -211,7 +226,7 @@ fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit ) {
             text = "Histórico de Passeios",
             color = Color(0xFF26A69A),
             modifier = Modifier.fillMaxWidth(),
-            onClick = { navController.navigate("ActivitiesHistory") }
+            onClick = { navController.navigate("WalkHistory") }
         )
     }
 }
@@ -227,13 +242,6 @@ fun CommonOptions(navController: NavController) {
             color = Color(0xFF5C6BC0),
             modifier = Modifier.fillMaxWidth(),
             onClick = { navController.navigate("SocialTailsCommunity") }
-        )
-
-        ActionButton(
-            text = "Preferências",
-            color = Color(0xFF546E7A),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { /* TODO: Navegar para preferências */ }
         )
     }
 }

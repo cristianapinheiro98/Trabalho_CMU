@@ -6,6 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -14,6 +16,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
@@ -24,13 +35,16 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommun
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraphUser(navController: NavHostController) {
-
-    // ViewModels agora criam os repositórios internamente (AndroidViewModel)
     val authViewModel: AuthViewModel = viewModel()
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
@@ -38,21 +52,17 @@ fun NavGraphUser(navController: NavHostController) {
 
     val isLoggedIn by authViewModel.isAuthenticated.observeAsState(false)
 
-    NavHost(
-        navController = navController,
-        startDestination = "UserHome"
-    ) {
+    NavHost(navController = navController, startDestination = "UserHome") {
+        composable("UserHome") { Text("Menu Principal") }
+        composable("Community") { Text(stringResource(id = R.string.community)) }
 
-        composable("UserHome") {
-            MainOptionsScreen(
-                navController = navController,
-                hasAdoptedAnimal = true
-            )
+        composable("Preferences") {
+            PreferencesScreen()
         }
 
-        composable("UserProfile") { Text(stringResource(id = R.string.profile)) }
-        composable("Community") { Text(stringResource(id = R.string.community)) }
-        composable("Veterinarians") { Text(stringResource(id = R.string.veterinaries_list)) }
+        composable("Veterinarians") {
+            VeterinariansScreen()
+        }
 
         // ========== TERMS AND CONDITIONS ==========
         composable(
@@ -75,6 +85,9 @@ fun NavGraphUser(navController: NavHostController) {
             route = "OwnershipForm/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.IntType })
         ) { backStackEntry ->
+            val userViewModel: UserViewModel = viewModel()
+            val animalViewModel: AnimalViewModel = viewModel()
+            val shelterViewModel: ShelterViewModel = viewModel()
 
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
             val userId = authViewModel.getCurrentUserId()
@@ -174,7 +187,6 @@ fun NavGraphUser(navController: NavHostController) {
             route = "AnimalDetail/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.IntType })
         ) { backStackEntry ->
-
             val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
 
             AnimalDetailScreen(
@@ -202,5 +214,48 @@ fun NavGraphUser(navController: NavHostController) {
                 }
             )
         }
+
+        composable("UserHome") {
+            MainOptionsScreen(
+                navController = navController,
+                hasAdoptedAnimal = true
+            )
+        }
+
+        composable(
+            route = "Walk/{animalId}/{animalName}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.IntType },
+                navArgument("animalName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
+
+            WalkScreen(
+                animalId = animalId,
+                animalName = animalName,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = "WalkSummary/{animalName}",
+            arguments = listOf(
+                navArgument("animalName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
+
+            WalkSummaryScreen(
+                navController = navController,
+                animalName = animalName
+            )
+        }
+
+        composable("WalkHistory") {
+            WalkHistoryScreen()
+        }
     }
 }
+
