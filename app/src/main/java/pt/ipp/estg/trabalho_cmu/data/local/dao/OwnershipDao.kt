@@ -33,4 +33,7 @@ interface OwnershipDao {
     @Delete
     suspend fun deleteOwnership(ownership: Ownership)
 
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND animalId = :animalId AND status IN ('PENDING', 'APPROVED') LIMIT 1")
+    suspend fun getExistingRequest(userId: Int, animalId: Int): Ownership?
+
 }

@@ -61,6 +61,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // ===== LOGIN =====
     fun login() = viewModelScope.launch {
+
         if (checkAndRestoreOfflineSession()) return@launch
 
         val emailValue = email.value?.trim().orEmpty()
@@ -80,6 +81,20 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 accountType = offlineSession.accountType,
                 message = "Sessão recuperada!"
             )
+            viewModelScope.launch {
+                try {
+                    val db = AppDatabase.getDatabase(getApplication())
+                    val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
+                        db.ownershipDao(),
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    )
+
+                    ownershipRepo.fetchOwnerships()
+                } catch (e: Exception) {
+                    println("[Offline] Error: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
             return true
         }
         return false
@@ -105,6 +120,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     accountType = loginResult.accountType,
                     message = "Login efetuado com sucesso!"
                 )
+                viewModelScope.launch {
+                    try {
+                        val db = AppDatabase.getDatabase(getApplication())
+                        val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
+                            db.ownershipDao(),
+                            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        )
+
+                        ownershipRepo.fetchOwnerships()
+                    } catch (e: Exception) {
+                        println("Error syncronizing ownerships: ${e.message}")
+                        e.printStackTrace()
+                    }
+                }
+
             }.onFailure { exception ->
                 handleLoginFailure(exception)
             }

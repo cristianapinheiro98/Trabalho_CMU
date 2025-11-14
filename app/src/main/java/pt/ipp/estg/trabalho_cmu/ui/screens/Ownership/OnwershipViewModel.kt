@@ -56,6 +56,13 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
 
+    private val _submissionSuccess = MutableLiveData<Boolean>()
+    val submissionSuccess: LiveData<Boolean> = _submissionSuccess
+
+    fun resetSubmissionSuccess() {
+        _submissionSuccess.value = false
+    }
+
     // ========= ANIMAL DETAILS ========= //
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
@@ -81,6 +88,13 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 _isLoading.value = true
 
+                val animal = animalRepository.getAnimalById(request.animalId)
+
+                if (animal == null) {
+                    _error.value = "Error:Animal not found in room (animalId=${request.animalId})"
+                    _isLoading.value = false
+                    return@launch
+                }
                 val result = ownershipRepository.createOwnership(request)
 
                 result.onSuccess {

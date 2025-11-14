@@ -90,7 +90,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     val shelter: LiveData<Shelter?> = _shelter
 
 
-    fun loadAnimalAndShelter(animalId: Int) {
+    /*fun loadAnimalAndShelter(animalId: Int) {
         viewModelScope.launch {
             try {
                 val animal = animalRepository.getAnimalById(animalId)

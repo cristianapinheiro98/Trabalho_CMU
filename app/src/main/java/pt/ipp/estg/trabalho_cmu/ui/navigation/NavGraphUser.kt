@@ -54,7 +54,6 @@ fun NavGraphUser(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
-        composable("Community") { Text(stringResource(id = R.string.community)) }
 
         composable("Preferences") {
             PreferencesScreen()

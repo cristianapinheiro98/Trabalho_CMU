@@ -80,6 +80,18 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     fun setShelterId(id: Int) {
         _currentShelterId.value = id
+
+        //Load ownerships from firebase
+        viewModelScope.launch {
+            try {
+                ownershipRepository.fetchOwnerships()
+
+                val loaded = ownershipRepository.getOwnershipsByShelter(id).value
+            } catch (e: Exception) {
+                println("Error getting ownerships: ${e.message}")
+                e.printStackTrace()
+            }
+        }
     }
 
     // ---------------------- ADOPTION REQUEST ---------------
@@ -88,7 +100,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             if (shelterId != null) {
                 MediatorLiveData<List<AdoptionRequest>>().apply {
                     addSource(
-                        ownershipRepository.getOwnershipsByShelter(shelterId)  // ✅ Atualizado
+                        ownershipRepository.getOwnershipsByShelter(shelterId)
                     ) { ownerships ->
                         viewModelScope.launch {
                             value = try {
@@ -125,7 +137,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                ownershipRepository.approveOwnershipRequest(ownershipId)  // ✅ Atualizado
+                ownershipRepository.approveOwnershipRequest(ownershipId)
 
                 val ownership = ownershipRepository.getOwnershipById(ownershipId)
                 val animalId = ownership?.animalId ?: return@launch
@@ -149,7 +161,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                ownershipRepository.rejectOwnershipRequest(ownershipId)  // ✅ Atualizado
+                ownershipRepository.rejectOwnershipRequest(ownershipId)
 
                 _message.value = "Pedido rejeitado"
                 _error.value = null
@@ -222,7 +234,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             val date = LocalDate.of(year, month, day)
             if (date.isAfter(LocalDate.now())) "A data não pode ser no futuro." else null
         } catch (e: Exception) {
-            "Data inválida."
+            "Imvalid date."
         }
     }
 

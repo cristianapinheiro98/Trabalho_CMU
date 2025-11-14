@@ -26,6 +26,17 @@ class OwnershipRepository(
 
     suspend fun createOwnership(ownership: Ownership): Result<Unit> = withContext(Dispatchers.IO) {
         try {
+
+            val existingRequest = ownershipDao.getExistingRequest(
+                userId = ownership.userId,
+                animalId = ownership.animalId
+            )
+
+            if (existingRequest != null) {
+                return@withContext Result.failure(
+                    Exception("You already have an ownerhsip request for this animal!")
+                )
+            }
             val generatedId = ownershipDao.insertOwnership(ownership).toInt()
 
             val ownershipWithId = ownership.copy(id = generatedId)
@@ -39,14 +50,13 @@ class OwnershipRepository(
                 "status" to ownershipWithId.status.name,
                 "createdAt" to ownershipWithId.createdAt
             )
-
             firestore.collection("ownerships")
                 .document(generatedId.toString())
                 .set(data)
                 .await()
-
             Result.success(Unit)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.failure(e)
         }
     }
@@ -60,7 +70,7 @@ class OwnershipRepository(
                 ownershipDao.insertAll(ownerships)
             }
         } catch (e: Exception) {
-            println("Erro ao buscar ownerships do Firebase: ${e.message}")
+            println("Error getting ownerships from firebase: ${e.message}")
         }
     }
 
@@ -73,7 +83,7 @@ class OwnershipRepository(
                 .update("status", OwnershipStatus.APPROVED.name)
                 .await()
         } catch (e: Exception) {
-            println("Erro ao aprovar pedido: ${e.message}")
+            println("Error approving ownership request: ${e.message}")
             throw e
         }
     }
@@ -87,7 +97,7 @@ class OwnershipRepository(
                 .update("status", OwnershipStatus.REJECTED.name)
                 .await()
         } catch (e: Exception) {
-            println("Erro ao rejeitar pedido: ${e.message}")
+            println("Error rejecting ownership request: ${e.message}")
             throw e
         }
     }
@@ -101,7 +111,7 @@ class OwnershipRepository(
                 .update("status", status.name)
                 .await()
         } catch (e: Exception) {
-            println("Erro ao atualizar status: ${e.message}")
+            println("Error updating ownership status: ${e.message}")
             throw e
         }
     }
@@ -115,7 +125,7 @@ class OwnershipRepository(
                 .delete()
                 .await()
         } catch (e: Exception) {
-            println("Erro ao eliminar ownership: ${e.message}")
+            println("Error deleting ownership ownership: ${e.message}")
             throw e
         }
     }
@@ -134,7 +144,7 @@ class OwnershipRepository(
             createdAt = getLong("createdAt") ?: System.currentTimeMillis()
         )
     } catch (e: Exception) {
-        println("Erro ao converter ownership: ${e.message}")
+        println("Error converting ownership: ${e.message}")
         null
     }
 }

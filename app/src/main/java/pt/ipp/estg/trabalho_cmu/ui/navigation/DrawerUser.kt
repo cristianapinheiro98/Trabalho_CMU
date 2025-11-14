@@ -35,10 +35,9 @@ data class DrawerOption(@StringRes val label: Int, val icon: ImageVector, val ro
 
 fun getUserDrawerOptions() = listOf(
     DrawerOption( R.string.main_menu,Icons.Outlined.Home, "UserHome"),
-    DrawerOption(R.string.profile, Icons.Outlined.Person, "UserProfile"),
     DrawerOption(R.string.catalogue, Icons.Outlined.Pets, "AnimalsCatalogue"),
     DrawerOption(R.string.favorites, Icons.Outlined.FavoriteBorder, "Favorites"),
-    DrawerOption(R.string.community, Icons.Outlined.Groups, "Community"),
+    DrawerOption(R.string.community, Icons.Outlined.Groups, "SocialTailsCommunity"),
     DrawerOption(R.string.veterinaries_list, Icons.Outlined.Vaccines, "Veterinarians"),
     DrawerOption( label = R.string.preferences, Icons.Outlined.Settings, "Preferences")
 )

@@ -16,15 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
-/**
- * Screen for submitting an ownership request.
- */
 @Composable
 fun OwnershipFormScreen(
     userId: Int,
@@ -36,10 +33,20 @@ fun OwnershipFormScreen(
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
+    val submissionSuccess by viewModel.submissionSuccess.observeAsState(false)
 
     // Load animal details to get shelter ID
     LaunchedEffect(animalId) {
         viewModel.loadAnimalDetails(animalId)
+    }
+
+    // Navigate only on success
+    LaunchedEffect(submissionSuccess) {
+        if (submissionSuccess) {
+            delay(500)
+            viewModel.resetSubmissionSuccess()
+            onSubmitSuccess()
+        }
     }
 
     val animal by viewModel.animal.observeAsState()
@@ -54,11 +61,9 @@ fun OwnershipFormScreen(
             userId = userId,
             animalId = animalId,
             shelterId = animalData.shelterId,
-            onSubmitSuccess = onSubmitSuccess,
             modifier = modifier
         )
     } ?: run {
-        // Loading while fetching animal data
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -78,24 +83,19 @@ private fun OwnershipFormContent(
     userId: Int,
     animalId: Int,
     shelterId: Int,
-    onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
-    // Form states
     var accountNumber by remember { mutableStateOf("") }
     var ownerName by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
 
-    // Length rules
     val maxAccountDigits = 21
     val maxCardDigits = 8
 
-    // Form validation
     val isFormValid = accountNumber.isNotBlank() &&
             accountNumber.length <= maxAccountDigits &&
             ownerName.isNotBlank() &&
@@ -103,7 +103,7 @@ private fun OwnershipFormContent(
             cardNumber.isNotBlank() &&
             cardNumber.length <= maxCardDigits
 
-    // Show error if exists
+    // Show error message
     LaunchedEffect(error) {
         error?.let {
             snackbarHostState.showSnackbar(
@@ -128,7 +128,6 @@ private fun OwnershipFormContent(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Title
                 Text(
                     text = stringResource(R.string.ownership_title),
                     fontSize = 24.sp,
@@ -137,7 +136,6 @@ private fun OwnershipFormContent(
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                 )
 
-                // Subtitle
                 Text(
                     text = stringResource(R.string.ownership_subtitle),
                     fontSize = 16.sp,
@@ -145,7 +143,6 @@ private fun OwnershipFormContent(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Form card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,7 +162,6 @@ private fun OwnershipFormContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Account Number (IBAN)
                         OwnershipTextField(
                             value = accountNumber,
                             onValueChange = {
@@ -184,7 +180,6 @@ private fun OwnershipFormContent(
                             }
                         )
 
-                        // Owner Name
                         OwnershipTextField(
                             value = ownerName,
                             onValueChange = { ownerName = it },
@@ -192,7 +187,6 @@ private fun OwnershipFormContent(
                             enabled = !isLoading
                         )
 
-                        // CVV (3 digits)
                         OwnershipTextField(
                             value = cvv,
                             onValueChange = {
@@ -205,7 +199,6 @@ private fun OwnershipFormContent(
                             placeholder = "123"
                         )
 
-                        // Citizen Card
                         OwnershipTextField(
                             value = cardNumber,
                             onValueChange = {
@@ -221,7 +214,6 @@ private fun OwnershipFormContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Submit button
                 Button(
                     onClick = {
                         if (isFormValid) {
@@ -237,24 +229,7 @@ private fun OwnershipFormContent(
                                 status = OwnershipStatus.PENDING,
                                 createdAt = System.currentTimeMillis()
                             )
-
                             onSubmit(ownership)
-
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "Pedido enviado com sucesso!",
-                                    duration = SnackbarDuration.Short
-                                )
-                                kotlinx.coroutines.delay(500)
-                                onSubmitSuccess()
-                            }
-                        } else {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "Por favor, preencha todos os campos corretamente",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
                         }
                     },
                     modifier = Modifier
@@ -293,7 +268,6 @@ private fun OwnershipFormContent(
     }
 }
 
-// Reusable text field component
 @Composable
 private fun OwnershipTextField(
     value: String,
@@ -344,8 +318,7 @@ fun OwnershipFormScreenPreview() {
             onSubmit = { },
             userId = 1,
             animalId = 1,
-            shelterId = 1,
-            onSubmitSuccess = { }
+            shelterId = 1
         )
     }
 }
