@@ -58,8 +58,8 @@ fun AnimalCard(
                 AsyncImage(
                     model = mainImageUrl,
                     contentDescription = animal.name,
-                    placeholder = painterResource(R.drawable.dog_image),
-                    error = painterResource(R.drawable.dog_image),
+                    placeholder = painterResource(R.drawable.cat_image),
+                    error = painterResource(R.drawable.cat_image),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
@@ -107,7 +107,7 @@ fun calculateAge(birthDate: String?): Int? {
     if (birthDate.isNullOrBlank()) return null
 
     return try {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val dateOfBirth = LocalDate.parse(birthDate, formatter)
         val today = LocalDate.now()
 

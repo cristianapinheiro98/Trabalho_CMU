@@ -1,7 +1,9 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
@@ -48,6 +50,7 @@ fun AdoptionRequestScreen(
     val request by viewModel.requests.observeAsState(emptyList())
     val message by viewModel.message.observeAsState()
     val error by viewModel.error.observeAsState()
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -71,6 +74,7 @@ fun AdoptionRequestScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally

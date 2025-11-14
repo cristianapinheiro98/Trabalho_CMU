@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
@@ -24,36 +25,57 @@ import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 
 
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalListScreen(
     viewModel: AnimalViewModel,
     onAnimalClick: (Int) -> Unit = {},
     isLoggedIn: Boolean,
+    onNavigateBack: () -> Unit
 ) {
     val animals by viewModel.animals.observeAsState(emptyList())
+    val animalsFiltered by viewModel.animalsFiltered.observeAsState(emptyList())
     val favorites by viewModel.favorites.observeAsState(emptyList())
 
+    val listToShow = if (animalsFiltered.isNotEmpty()) animalsFiltered else animals
+
     AnimalListContent(
-        animals = animals,
+        animals = listToShow,
         favorites = if (isLoggedIn) favorites else emptyList(),
         isLoggedIn = isLoggedIn,
         onAnimalClick = onAnimalClick,
-        onToggleFavorite = { viewModel.toggleFavorite(it) }
+        onToggleFavorite = { viewModel.toggleFavorite(it) },
+        onSearch = { viewModel.searchByName(it) },
+        onFilterSpecies = { viewModel.filterBySpecies(it) },
+        onFilterSize = { viewModel.filterBySize(it) },
+        onSortName = { viewModel.sortByName() },
+        onSortAge = { viewModel.sortByAge() },
+        onClearFilters = { viewModel.clearFilters() },
+        onNavigateBack = onNavigateBack
     )
 }
 
 
+
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalListContent(
     animals: List<Animal>,
     favorites: List<Animal>,
     isLoggedIn: Boolean,
     onAnimalClick: (Int) -> Unit,
-    onToggleFavorite: (Animal) -> Unit
+    onToggleFavorite: (Animal) -> Unit,
+    onSearch: (String) -> Unit,
+    onFilterSpecies: (String) -> Unit,
+    onFilterSize: (String) -> Unit,
+    onSortName: () -> Unit,
+    onSortAge: () -> Unit,
+    onClearFilters: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     var search by remember { mutableStateOf("") }
+    var filterMenuOpen by remember { mutableStateOf(false) }
+    var sortMenuOpen by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -61,59 +83,102 @@ fun AnimalListContent(
             .padding(horizontal = 12.dp)
     ) {
 
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it },
-            leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
-            placeholder = { Text("Pesquisar") },
-            trailingIcon = {
-                Row {
-                    IconButton(onClick = { /* TODO filtros */ }) {
-                        Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
-                    }
-                    IconButton(onClick = { /* TODO ordenação */ }) {
-                        Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
-                    }
-                }
-            },
-            singleLine = true,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
-        )
+                .padding(top = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
+            IconButton(onClick = onNavigateBack) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+            }
+
+            OutlinedTextField(
+                value = search,
+                onValueChange = {
+                    search = it
+                    onSearch(it)
+                },
+                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
+                placeholder = { Text("Pesquisar") },
+                trailingIcon = {
+                    Row {
+                        IconButton(onClick = { filterMenuOpen = true }) {
+                            Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
+                        }
+                        IconButton(onClick = { sortMenuOpen = true }) {
+                            Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
+                        }
+                    }
+                },
+                singleLine = true,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
+                textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
+            )
+        }
+
+        // ------------ FILTER MENU ------------
+        DropdownMenu(
+            expanded = filterMenuOpen,
+            onDismissRequest = { filterMenuOpen = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Cães") },
+                onClick = { onFilterSpecies("Cão"); filterMenuOpen = false }
+            )
+            DropdownMenuItem(
+                text = { Text("Gatos") },
+                onClick = { onFilterSpecies("Gato"); filterMenuOpen = false }
+            )
+            DropdownMenuItem(
+                text = { Text("Porte Pequeno") },
+                onClick = { onFilterSize("Pequeno"); filterMenuOpen = false }
+            )
+            DropdownMenuItem(
+                text = { Text("Porte Médio") },
+                onClick = { onFilterSize("Médio"); filterMenuOpen = false }
+            )
+            DropdownMenuItem(
+                text = { Text("Porte Grande") },
+                onClick = { onFilterSize("Grande"); filterMenuOpen = false }
+            )
+            Divider()
+            DropdownMenuItem(
+                text = { Text("Limpar filtros") },
+                onClick = { onClearFilters(); filterMenuOpen = false }
+            )
+        }
+
+        // ------------ SORT MENU ------------
+        DropdownMenu(
+            expanded = sortMenuOpen,
+            onDismissRequest = { sortMenuOpen = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Ordenar por nome") },
+                onClick = { onSortName(); sortMenuOpen = false }
+            )
+            DropdownMenuItem(
+                text = { Text("Ordenar por idade") },
+                onClick = { onSortAge(); sortMenuOpen = false }
+            )
+        }
+
+        // ------------ EMPTY LIST CHECK ------------
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Ainda não há animais disponíveis 🐾",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                )
+                Text("Sem animais disponíveis.")
             }
             return
         }
 
-        val filteredAnimals = animals.filter {
-            it.name.contains(search, ignoreCase = true)
-        }
-
-        if (filteredAnimals.isEmpty()) {
-            Box(Modifier.fillMaxSize(), Alignment.Center) {
-                Text(
-                    "Nenhum animal corresponde à pesquisa.",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                )
-            }
-            return
-        }
-
+        // ------------ GRID LIST ------------
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -121,7 +186,7 @@ fun AnimalListContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(filteredAnimals) { animal ->
+            items(animals) { animal ->
                 AnimalCard(
                     animal = animal,
                     isFavorite = favorites.any { it.id == animal.id },
@@ -160,7 +225,7 @@ private val previewAnimals = listOf(
     )
 )
 
-
+//user logged in
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
@@ -172,11 +237,19 @@ fun AnimalListScreenPreviewLoggedIn() {
             favorites = listOf(previewAnimals.first()),
             isLoggedIn = true,
             onAnimalClick = {},
-            onToggleFavorite = {}
+            onToggleFavorite = {},
+            onSearch = {},
+            onFilterSpecies = {},
+            onFilterSize = {},
+            onSortName = {},
+            onSortAge = {},
+            onClearFilters = {},
+            onNavigateBack = {}
         )
     }
 }
 
+//user not logged in
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
@@ -188,7 +261,94 @@ fun AnimalListScreenPreviewGuest() {
             favorites = emptyList(),
             isLoggedIn = false,
             onAnimalClick = {},
-            onToggleFavorite = {}
+            onToggleFavorite = {},
+            onSearch = {},
+            onFilterSpecies = {},
+            onFilterSize = {},
+            onSortName = {},
+            onSortAge = {},
+            onClearFilters = {},
+            onNavigateBack = {}
         )
     }
 }
+
+//empty list
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreviewEmpty() {
+    MaterialTheme {
+        AnimalListContent(
+            animals = emptyList(),
+            favorites = emptyList(),
+            isLoggedIn = true,
+            onAnimalClick = {},
+            onToggleFavorite = {},
+            onSearch = {},
+            onFilterSpecies = {},
+            onFilterSize = {},
+            onSortName = {},
+            onSortAge = {},
+            onClearFilters = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+//search by name = noa
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreviewSearch() {
+    MaterialTheme {
+        AnimalListContent(
+            animals = previewAnimals.filter { it.name.contains("Noa", ignoreCase = true) },
+            favorites = emptyList(),
+            isLoggedIn = true,
+            onAnimalClick = {},
+            onToggleFavorite = {},
+            onSearch = {},
+            onFilterSpecies = {},
+            onFilterSize = {},
+            onSortName = {},
+            onSortAge = {},
+            onClearFilters = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+
+//filters by size = pequeno and species = gato
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AnimalListScreenPreviewFiltered() {
+    MaterialTheme {
+        val filtered = previewAnimals.filter {
+            it.species == "Gato" && it.size == "Pequeno"
+        }
+
+        AnimalListContent(
+            animals = filtered,
+            favorites = emptyList(),
+            isLoggedIn = true,
+            onAnimalClick = {},
+            onToggleFavorite = {},
+            onSearch = {},
+            onFilterSpecies = {},
+            onFilterSize = {},
+            onSortName = {},
+            onSortAge = {},
+            onClearFilters = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+
+

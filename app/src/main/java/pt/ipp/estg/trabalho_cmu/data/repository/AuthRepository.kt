@@ -47,9 +47,10 @@ class AuthRepository(
                 email = email,
                 password = "" // password is not stored locally
             )
-            userDao.insertUser(user)
+            val generatedId = userDao.insertUser(user).toInt()
+            val userWithId = user.copy(id = generatedId)
 
-            Result.success(user)
+            Result.success(userWithId)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -86,52 +87,67 @@ class AuthRepository(
                 email = email,
                 password = "" // password is not stored locally
             )
-            shelterDao.insertShelter(shelter)
+            val generatedId = shelterDao.insertShelter(shelter).toInt()
 
-            Result.success(shelter)
+            val shelterWithId = shelter.copy(id = generatedId)
+
+            Result.success(shelterWithId)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
     // ===== LOGIN ONLINE =====
-
     suspend fun login(email: String, password: String): Result<LoginResult> {
         return try {
-            // Authenticate through Firebase Auth
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: throw Exception("UID not found")
 
             // Try as user
             val userDoc = firestore.collection("users").document(uid).get().await()
             if (userDoc.exists()) {
-                val user = User(
-                    firebaseUid = uid,
-                    name = userDoc.getString("name") ?: "",
-                    adress = userDoc.getString("address") ?: "",
-                    phone = userDoc.getString("phone") ?: "",
-                    email = userDoc.getString("email") ?: "",
-                    password = ""
-                )
-                // Room cache
-                userDao.insertUser(user)
-                return Result.success(LoginResult(user = user, accountType = AccountType.USER))
+                val existingUser = userDao.getUserByFirebaseUid(uid)
+
+                val userWithId = if (existingUser != null) {
+                    existingUser
+                } else {
+                    val user = User(
+                        firebaseUid = uid,
+                        name = userDoc.getString("name") ?: "",
+                        adress = userDoc.getString("address") ?: "",
+                        phone = userDoc.getString("phone") ?: "",
+                        email = userDoc.getString("email") ?: "",
+                        password = ""
+                    )
+                    val generatedId = userDao.insertUser(user).toInt()
+                    user.copy(id = generatedId)
+                }
+
+                return Result.success(LoginResult(user = userWithId, accountType = AccountType.USER))
             }
 
             // Try as Shelter
             val shelterDoc = firestore.collection("shelters").document(uid).get().await()
             if (shelterDoc.exists()) {
-                val shelter = Shelter(
-                    firebaseUid = uid,
-                    name = shelterDoc.getString("name") ?: "",
-                    address = shelterDoc.getString("address") ?: "",
-                    phone = shelterDoc.getString("contact") ?: "",
-                    email = userDoc.getString("email") ?: "",
-                    password = ""
-                )
-                // Room cache
-                shelterDao.insertShelter(shelter)
-                return Result.success(LoginResult(shelter = shelter, accountType = AccountType.SHELTER))
+                val existingShelter = shelterDao.getShelterByFirebaseUid(uid)
+
+                val shelterWithId = if (existingShelter != null) {
+                    existingShelter
+                } else {
+                    println("🔍 Criando novo shelter no Room")
+                    val shelter = Shelter(
+                        firebaseUid = uid,
+                        name = shelterDoc.getString("name") ?: "",
+                        address = shelterDoc.getString("address") ?: "",
+                        phone = shelterDoc.getString("contact") ?: "",
+                        email = shelterDoc.getString("email") ?: "",
+                        password = ""
+                    )
+                    val generatedId = shelterDao.insertShelter(shelter).toInt()
+                    shelter.copy(id = generatedId)
+                }
+
+                return Result.success(LoginResult(shelter = shelterWithId, accountType = AccountType.SHELTER))
             }
 
             throw Exception("Account not found")
@@ -139,7 +155,6 @@ class AuthRepository(
             Result.failure(e)
         }
     }
-
     // ===== LOGIN OFFLINE =====
 
     suspend fun checkOfflineSession(): LoginResult? {

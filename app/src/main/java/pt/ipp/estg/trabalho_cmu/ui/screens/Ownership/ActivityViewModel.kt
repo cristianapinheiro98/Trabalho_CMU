@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -43,7 +44,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     private val animalRepository: AnimalRepository by lazy {
-        AnimalRepository(database.animalDao())
+        AnimalRepository(database.animalDao(), FirebaseFirestore.getInstance())
     }
 
     private val shelterRepository: ShelterRepository by lazy {
@@ -72,32 +73,24 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
             }
         }
 
-    // Loading state
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // Error message
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // Activity scheduled confirmation
     private val _activityScheduled = MutableLiveData(false)
     val activityScheduled: LiveData<Boolean> = _activityScheduled
 
-    // Animal data for visit scheduling screen
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
-    // Shelter data for visit scheduling screen
     private val _shelter = MutableLiveData<Shelter?>()
     val shelter: LiveData<Shelter?> = _shelter
 
-    /**
-     * Load animal and shelter data for the visit scheduling screen.
-     * Used when user wants to schedule a visit to see an animal.
-     */
-    /*
-    fun loadAnimalAndShelter(animalId: Int) {
+
+    /*fun loadAnimalAndShelter(animalId: Int) {
         viewModelScope.launch {
             try {
                 val animal = animalRepository.getAnimalById(animalId)
@@ -236,17 +229,12 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         _userId.value = userId
     }
 
-    /**
-     * Schedule a new activity (visit).
-     * Shows loading state and handles errors.
-     */
     fun scheduleActivity(activity: Activity) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 activityRepository.addActivity(activity)
                 _activityScheduled.value = true
-                _error.value = null
             } catch (e: Exception) {
                 _error.value = "Erro ao agendar atividade: ${e.message}"
                 _activityScheduled.value = false
@@ -256,9 +244,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /**
-     * Delete an activity.
-     */
     fun deleteActivity(activity: Activity) {
         viewModelScope.launch {
             try {
@@ -269,17 +254,10 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /**
-     * Reset the activity scheduled flag.
-     * Call this after navigating away from the scheduling screen.
-     */
     fun resetActivityScheduled() {
         _activityScheduled.value = false
     }
 
-    /**
-     * Clear error message.
-     */
     fun clearError() {
         _error.value = null
     }

@@ -61,6 +61,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // ===== LOGIN =====
     fun login() = viewModelScope.launch {
+
         if (checkAndRestoreOfflineSession()) return@launch
 
         val emailValue = email.value?.trim().orEmpty()
@@ -80,6 +81,20 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 accountType = offlineSession.accountType,
                 message = "Sessão recuperada!"
             )
+            viewModelScope.launch {
+                try {
+                    val db = AppDatabase.getDatabase(getApplication())
+                    val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
+                        db.ownershipDao(),
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    )
+
+                    ownershipRepo.fetchOwnerships()
+                } catch (e: Exception) {
+                    println("[Offline] Error: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
             return true
         }
         return false
@@ -105,6 +120,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     accountType = loginResult.accountType,
                     message = "Login efetuado com sucesso!"
                 )
+                viewModelScope.launch {
+                    try {
+                        val db = AppDatabase.getDatabase(getApplication())
+                        val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
+                            db.ownershipDao(),
+                            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        )
+
+                        ownershipRepo.fetchOwnerships()
+                    } catch (e: Exception) {
+                        println("Error syncronizing ownerships: ${e.message}")
+                        e.printStackTrace()
+                    }
+                }
+
             }.onFailure { exception ->
                 handleLoginFailure(exception)
             }
@@ -234,13 +264,19 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 registerShelterAccount(fields)
             }
 
-            result.onSuccess {
-                _isRegistered.value = true
-                _message.value = if (accountType == AccountType.USER) {
-                    "Conta criada com sucesso!"
+            result.onSuccess { entity ->
+                if (accountType == AccountType.USER) {
+                    _currentUser.value = entity as User
+                    _accountType.value = AccountType.USER
+                    _message.value = "Conta criada com sucesso!"
                 } else {
-                    "Abrigo criado com sucesso!"
+                    _currentShelter.value = entity as Shelter
+                    _accountType.value = AccountType.SHELTER
+                    _message.value = "Abrigo criado com sucesso!"
                 }
+
+                _isRegistered.value = true
+                _isAuthenticated.value = true
                 _error.value = null
             }.onFailure { exception ->
                 _error.value = "Erro ao criar conta: ${exception.message}"
@@ -254,7 +290,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun registerUserAccount(fields: BasicRegistrationFields) =
+    private suspend fun registerUserAccount(fields: BasicRegistrationFields) : Result<Any> =
         authRepository.registerUser(
             name = fields.name,
             address = fields.address,
@@ -263,7 +299,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             password = fields.password
         )
 
-    private suspend fun registerShelterAccount(fields: BasicRegistrationFields) =
+    private suspend fun registerShelterAccount(fields: BasicRegistrationFields) : Result<Any> =
         authRepository.registerShelter(
             name = fields.name,
             address = fields.address,

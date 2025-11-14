@@ -7,6 +7,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -52,6 +54,7 @@ fun AnimalCreationScreen(
     val isLoadingBreeds by viewModel.isLoadingBreeds.observeAsState(false)
     val message by viewModel.message.observeAsState()
     val error by viewModel.error.observeAsState()
+    val isUploadingImages by viewModel.isUploadingImages.observeAsState(false)
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -59,9 +62,15 @@ fun AnimalCreationScreen(
         uris.forEach { uri ->
             uploadImageToFirebase(
                 uri = uri,
+                onStart = { viewModel.setUploadingImages(true) },
                 onSuccess = { url -> viewModel.addImageUrl(url) },
-                onError = { viewModel.clearError() }
+                onError = {
+                    viewModel.setUploadingImages(false)
+                    viewModel.clearError()
+                },
+                onComplete = { viewModel.setUploadingImages(false) }
             )
+
         }
     }
 
@@ -82,8 +91,10 @@ fun AnimalCreationScreen(
         onSave = viewModel::saveAnimal,
         onNavigateBack = onNavigateBack,
         onClearMessage = viewModel::clearMessage,
-        onClearError = viewModel::clearError
-    )
+        onClearError = viewModel::clearError,
+        isUploadingImages = isUploadingImages,
+
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,11 +116,14 @@ fun AnimalCreationScreenContent(
     onSave: () -> Unit,
     onNavigateBack: () -> Unit,
     onClearMessage: () -> Unit,
-    onClearError: () -> Unit
-) {
+    onClearError: () -> Unit,
+    isUploadingImages: Boolean,
+
+    ) {
     var expandedBreed by remember { mutableStateOf(false) }
     var expandedSpecies by remember { mutableStateOf(false) }
     var expandedSize by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -130,6 +144,7 @@ fun AnimalCreationScreenContent(
         Column(
             Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -267,15 +282,6 @@ fun AnimalCreationScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = form.description,
-                onValueChange = onDescriptionChange,
-                label = { Text("Descrição") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
             Spacer(Modifier.height(24.dp))
 
             // Botão de seleção de imagens
@@ -304,9 +310,18 @@ fun AnimalCreationScreenContent(
 
             Button(
                 onClick = onSave,
+                enabled = !isUploadingImages,
                 modifier = Modifier.fillMaxWidth().height(50.dp)
             ) {
-                Text("Guardar", fontSize = 16.sp)
+                if (isUploadingImages) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Guardar", fontSize = 16.sp)
+                }
             }
         }
 
@@ -369,7 +384,8 @@ fun AnimalCreationPreview() {
             onSave = {},
             onNavigateBack = {},
             onClearMessage = {},
-            onClearError = {}
+            onClearError = {},
+            isUploadingImages = false
         )
     }
 }

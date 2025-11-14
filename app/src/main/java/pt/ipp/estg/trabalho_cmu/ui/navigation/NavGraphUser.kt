@@ -54,7 +54,6 @@ fun NavGraphUser(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }
-        composable("Community") { Text(stringResource(id = R.string.community)) }
 
         composable("Preferences") {
             PreferencesScreen()
@@ -175,6 +174,9 @@ fun NavGraphUser(navController: NavHostController) {
                 isLoggedIn = isLoggedIn,
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -193,6 +195,11 @@ fun NavGraphUser(navController: NavHostController) {
                 showAdoptButton = isLoggedIn,
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
+                },
+                onNavigateBack = {
+                    navController.navigate("AnimalsCatalogue") {
+                        popUpTo("AnimalsCatalogue") { inclusive = true }
+                    }
                 }
             )
         }

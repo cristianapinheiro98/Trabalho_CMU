@@ -98,12 +98,17 @@ private fun AnimalDetailScreenContent(
             .fillMaxSize()
             .background(Color(0xFFF9F9F9))
             .verticalScroll(rememberScrollState())
+            .statusBarsPadding()
     ) {
 
         ImageGallery(
             mainImageUrl = mainImage,
             thumbnails = imageGallery,
-            onThumbnailClick = { mainImage = it },
+            onThumbnailClick = {
+                if (it.isNotBlank()) {
+                    mainImage = it
+                }
+            },
             onNavigateBack = onNavigateBack
         )
 
@@ -200,8 +205,8 @@ private fun ImageGallery(
                     .fillMaxWidth()
                     .height(280.dp),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.dog_image),
-                error = painterResource(R.drawable.dog_image)
+                placeholder = painterResource(R.drawable.cat_image),
+                error = painterResource(R.drawable.cat_image)
             )
 
             Row(
@@ -210,7 +215,7 @@ private fun ImageGallery(
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                thumbnails.forEach { url ->
+                thumbnails.filter { it.isNotBlank() }.forEach { url ->
                     AsyncImage(
                         model = url,
                         contentDescription = "Miniatura",
@@ -220,8 +225,8 @@ private fun ImageGallery(
                             .clip(RoundedCornerShape(8.dp))
                             .clickable { onThumbnailClick(url) },
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.dog_image),
-                        error = painterResource(R.drawable.dog_image)
+                        placeholder = painterResource(R.drawable.cat_image),
+                        error = painterResource(R.drawable.cat_image)
                     )
                 }
             }

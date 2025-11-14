@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -18,11 +19,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private val db = AppDatabase.getDatabase(application)
 
-    private val shelterOwnershipRequestRepository =
-        ShelterOwnershipRequestRepository(db.ownershipDao())
+    private val ownershipRepository = OwnershipRepository(
+        db.ownershipDao(),
+        FirebaseFirestore.getInstance()
+    )
 
-    private val ownershipRepository = OwnershipRepository(db.ownershipDao())
-    private val animalRepository = AnimalRepository(db.animalDao())
+    private val animalRepository = AnimalRepository(
+        db.animalDao(),
+        FirebaseFirestore.getInstance()
+    )
+
     private val shelterRepository = ShelterRepository(db.shelterDao())
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
@@ -52,8 +58,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _selectedImages = MutableLiveData<List<String>>(emptyList())
     val selectedImages: LiveData<List<String>> = _selectedImages
 
+    private val _isUploadingImages = MutableLiveData(false)
+    val isUploadingImages: LiveData<Boolean> = _isUploadingImages
+
+    fun setUploadingImages(value: Boolean) {
+        _isUploadingImages.value = value
+    }
+
     fun addImageUrl(url: String) {
         _selectedImages.value = _selectedImages.value!! + url
+        _isUploadingImages.value = false
     }
 
     fun clearImages() {
@@ -66,22 +80,33 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     fun setShelterId(id: Int) {
         _currentShelterId.value = id
+
+        //Load ownerships from firebase
+        viewModelScope.launch {
+            try {
+                ownershipRepository.fetchOwnerships()
+
+                val loaded = ownershipRepository.getOwnershipsByShelter(id).value
+            } catch (e: Exception) {
+                println("Error getting ownerships: ${e.message}")
+                e.printStackTrace()
+            }
+        }
     }
 
-    // ---------------------- PEDIDOS DE ADOÇÃO ---------------
+    // ---------------------- ADOPTION REQUEST ---------------
     val requests: LiveData<List<AdoptionRequest>> =
         _currentShelterId.switchMap { shelterId ->
             if (shelterId != null) {
                 MediatorLiveData<List<AdoptionRequest>>().apply {
                     addSource(
-                        shelterOwnershipRequestRepository
-                            .getAllOwnershipRequestsByShelter(shelterId)
+                        ownershipRepository.getOwnershipsByShelter(shelterId)
                     ) { ownerships ->
                         viewModelScope.launch {
                             value = try {
                                 ownerships.mapNotNull { convertToAdoptionRequest(it) }
                             } catch (e: Exception) {
-                                println("❌ Erro ao converter ownership: ${e.message}")
+                                println("Erro ao converter ownership: ${e.message}")
                                 emptyList()
                             }
                         }
@@ -104,7 +129,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         )
     }
 
-    // ---------------------- APROVAR / REJEITAR --------------
+    // ---------------------- APPROVE / REJECT OWNERSHIP REQUESTS --------------
 
     fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
@@ -112,7 +137,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                shelterOwnershipRequestRepository.approveOwnershipRequest(ownershipId)
+                ownershipRepository.approveOwnershipRequest(ownershipId)
 
                 val ownership = ownershipRepository.getOwnershipById(ownershipId)
                 val animalId = ownership?.animalId ?: return@launch
@@ -136,7 +161,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                shelterOwnershipRequestRepository.rejectOwnershipRequest(ownershipId)
+                ownershipRepository.rejectOwnershipRequest(ownershipId)
 
                 _message.value = "Pedido rejeitado"
                 _error.value = null
@@ -192,7 +217,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     // ---------------------- VALIDATE DATE -------------------
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
-
         if (birthDate.isBlank()) return "A data de nascimento é obrigatória."
 
         val parts = birthDate.split("/")
@@ -210,7 +234,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             val date = LocalDate.of(year, month, day)
             if (date.isAfter(LocalDate.now())) "A data não pode ser no futuro." else null
         } catch (e: Exception) {
-            "Data inválida."
+            "Imvalid date."
         }
     }
 
@@ -240,9 +264,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
 
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-
                 val newAnimal = Animal(
                     name = form.name.trim(),
                     breed = form.breed.trim(),
@@ -254,17 +277,22 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     shelterId = shelterId
                 )
 
-                animalRepository.insertAnimal(newAnimal)
+                // Firebase + Room
+                val result = animalRepository.createAnimal(newAnimal)
 
-                _animalForm.value = AnimalForm()
-                clearImages()
-                _availableBreeds.value = emptyList()
+                result.onSuccess {
+                    _animalForm.value = AnimalForm()
+                    clearImages()
+                    _availableBreeds.value = emptyList()
 
-                _message.value = "Animal criado com sucesso!"
-                _error.value = null
+                    _message.value = "Animal criado com sucesso!"
+                    _error.value = null
+                }
 
-            } catch (e: Exception) {
-                _error.value = "Erro ao salvar o animal: ${e.message}"
+                result.onFailure { e ->
+                    _error.value = "Erro ao salvar o animal: ${e.message}"
+                }
+
             } finally {
                 _isLoading.value = false
             }
