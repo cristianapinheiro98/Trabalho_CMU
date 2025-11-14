@@ -86,9 +86,11 @@ class AuthRepository(
                 email = email,
                 password = "" // password is not stored locally
             )
-            shelterDao.insertShelter(shelter)
+            val generatedId = shelterDao.insertShelter(shelter).toInt()
 
-            Result.success(shelter)
+            val shelterWithId = shelter.copy(id = generatedId)
+
+            Result.success(shelterWithId)
         } catch (e: Exception) {
             Result.failure(e)
         }

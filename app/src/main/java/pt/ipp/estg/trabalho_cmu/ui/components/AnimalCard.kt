@@ -58,8 +58,8 @@ fun AnimalCard(
                 AsyncImage(
                     model = mainImageUrl,
                     contentDescription = animal.name,
-                    placeholder = painterResource(R.drawable.dog_image),
-                    error = painterResource(R.drawable.dog_image),
+                    placeholder = painterResource(R.drawable.cat_image),
+                    error = painterResource(R.drawable.cat_image),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),

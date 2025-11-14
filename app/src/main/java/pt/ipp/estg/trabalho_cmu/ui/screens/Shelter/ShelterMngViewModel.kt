@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -22,7 +23,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         ShelterOwnershipRequestRepository(db.ownershipDao())
 
     private val ownershipRepository = OwnershipRepository(db.ownershipDao())
-    private val animalRepository = AnimalRepository(db.animalDao())
+    private val animalRepository = AnimalRepository(db.animalDao(), FirebaseFirestore.getInstance())
     private val shelterRepository = ShelterRepository(db.shelterDao())
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
@@ -52,8 +53,15 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _selectedImages = MutableLiveData<List<String>>(emptyList())
     val selectedImages: LiveData<List<String>> = _selectedImages
 
+    private val _isUploadingImages = MutableLiveData(false)
+    val isUploadingImages: LiveData<Boolean> = _isUploadingImages
+
+    fun setUploadingImages(value: Boolean) {
+        _isUploadingImages.value = value
+    }
     fun addImageUrl(url: String) {
         _selectedImages.value = _selectedImages.value!! + url
+        _isUploadingImages.value = false
     }
 
     fun clearImages() {
@@ -68,7 +76,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         _currentShelterId.value = id
     }
 
-    // ---------------------- PEDIDOS DE ADOÇÃO ---------------
+    // ---------------------- ADOPTION REQUEST ---------------
     val requests: LiveData<List<AdoptionRequest>> =
         _currentShelterId.switchMap { shelterId ->
             if (shelterId != null) {
@@ -81,7 +89,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                             value = try {
                                 ownerships.mapNotNull { convertToAdoptionRequest(it) }
                             } catch (e: Exception) {
-                                println("❌ Erro ao converter ownership: ${e.message}")
+                                println(" Erro ao converter ownership: ${e.message}")
                                 emptyList()
                             }
                         }
@@ -104,7 +112,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         )
     }
 
-    // ---------------------- APROVAR / REJEITAR --------------
+    // ---------------------- APROVE / REJECT OWNERSHIP REQUESTS --------------
 
     fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
@@ -240,9 +248,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
 
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-
                 val newAnimal = Animal(
                     name = form.name.trim(),
                     breed = form.breed.trim(),
@@ -254,22 +261,28 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     shelterId = shelterId
                 )
 
-                animalRepository.insertAnimal(newAnimal)
+                // Firebase + Room
+                val result = animalRepository.createAnimal(newAnimal)
 
-                _animalForm.value = AnimalForm()
-                clearImages()
-                _availableBreeds.value = emptyList()
+                result.onSuccess {
+                    _animalForm.value = AnimalForm()
+                    clearImages()
+                    _availableBreeds.value = emptyList()
 
-                _message.value = "Animal criado com sucesso!"
-                _error.value = null
+                    _message.value = "Animal criado com sucesso!"
+                    _error.value = null
+                }
 
-            } catch (e: Exception) {
-                _error.value = "Erro ao salvar o animal: ${e.message}"
+                result.onFailure { e ->
+                    _error.value = "Erro ao salvar o animal: ${e.message}"
+                }
+
             } finally {
                 _isLoading.value = false
             }
         }
     }
+
 
     // ---------------------- UTIL FUNCS ----------------------
     fun clearMessage() { _message.value = null }

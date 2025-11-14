@@ -24,11 +24,15 @@ interface ShelterDao {
     @Query("DELETE FROM shelters")
     suspend fun deleteAllShelters()
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShelter(shelter: Shelter)
+    suspend fun insertShelter(shelter: Shelter) : Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShelters(shelters: List<Shelter>)
     @Update
     suspend fun updateShelter(shelter: Shelter)
     @Delete
     suspend fun deleteShelter(shelter: Shelter)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAllSync(shelters: List<Shelter>)
+
 }

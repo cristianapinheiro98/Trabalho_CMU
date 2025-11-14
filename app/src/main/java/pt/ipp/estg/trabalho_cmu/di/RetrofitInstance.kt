@@ -71,7 +71,4 @@ object RetrofitInstance {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    val animalApi: AnimalApiService by lazy {
-        localRetrofit.create(AnimalApiService::class.java)
-    }
 }

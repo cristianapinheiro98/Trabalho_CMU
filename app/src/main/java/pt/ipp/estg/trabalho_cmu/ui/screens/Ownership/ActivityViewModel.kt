@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
@@ -28,7 +29,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     private val animalRepository: AnimalRepository by lazy {
-        AnimalRepository(database.animalDao())
+        AnimalRepository(database.animalDao(), FirebaseFirestore.getInstance())
     }
 
     private val shelterRepository: ShelterRepository by lazy {

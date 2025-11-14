@@ -162,6 +162,9 @@ fun NavGraphUser(navController: NavHostController) {
                 isLoggedIn = isLoggedIn,
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetail/$animalId")
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
