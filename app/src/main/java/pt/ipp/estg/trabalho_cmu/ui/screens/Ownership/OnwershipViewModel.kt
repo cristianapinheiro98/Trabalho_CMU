@@ -81,7 +81,6 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 _isLoading.value = true
 
-                // Usa createOwnership em vez de addOwnership
                 val result = ownershipRepository.createOwnership(request)
 
                 result.onSuccess {

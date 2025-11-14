@@ -12,8 +12,6 @@ import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
-import pt.ipp.estg.trabalho_cmu.data.remote.RetrofitInstance
-import java.io.IOException
 
 class AnimalRepository(private val animalDao: AnimalDao,  private val firestore: FirebaseFirestore) {
     private var listenerRegistration: ListenerRegistration? = null
@@ -25,15 +23,12 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
 
     suspend fun createAnimal(animal: Animal): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            // 1. Insere no Room PRIMEIRO para obter o ID
             val generatedId = animalDao.insertAnimal(animal).toInt()
 
-            // 2. Cria o animal com o ID correto
             val animalWithId = animal.copy(id = generatedId)
 
-            // 3. Prepara os dados para o Firebase
             val data = hashMapOf(
-                "id" to generatedId,  // ← Adiciona o ID!
+                "id" to generatedId,
                 "name" to animalWithId.name,
                 "breed" to animalWithId.breed,
                 "species" to animalWithId.species,
@@ -41,15 +36,14 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
                 "birthDate" to animalWithId.birthDate,
                 "imageUrls" to animalWithId.imageUrls,
                 "description" to animalWithId.description,
-                "shelterId" to animalWithId.shelterId,  // ← Já tem o ID correto!
+                "shelterId" to animalWithId.shelterId,
                 "status" to animalWithId.status.name,
                 "createdAt" to animalWithId.createdAt
             )
 
-            // 4. Guarda no Firebase usando o ID do Room como document ID
             firestore.collection("animals")
-                .document(generatedId.toString())  // ← Usa o ID do Room!
-                .set(data)  // ← Usa set() em vez de add()
+                .document(generatedId.toString())
+                .set(data)
                 .await()
 
             Result.success(Unit)
@@ -69,7 +63,7 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
                 animalDao.clearAll()
                 animalDao.insertAll(animals)
             } else {
-                println("Firebase vazio — manter dados locais")
+                println("Firebase is empty: keep local data")
             }
 
 
@@ -98,8 +92,19 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
         animalDao.sortByDateLocal()
 
 
-    suspend fun changeAnimalStatusToOwned(animalId: Int) {
-        animalDao.updateAnimalToOwned(animalId)
+    suspend fun changeAnimalStatusToOwned(animalId: Int) = withContext(Dispatchers.IO) {
+        try {
+            animalDao.updateAnimalToOwned(animalId)
+
+            firestore.collection("animals")
+                .document(animalId.toString())
+                .update("status", AnimalStatus.HASOWNED.name)
+                .await()
+
+        } catch (e: Exception) {
+            println("Error updating animal status: ${e.message}")
+            throw e
+        }
     }
     fun startFirebaseListener() {
         listenerRegistration?.remove()
@@ -107,7 +112,7 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
         listenerRegistration = firestore.collection("animals")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    println("🔥 Firestore Listener Error: ${error.message}")
+                    println("Firestore Listener Error: ${error.message}")
                     return@addSnapshotListener
                 }
 
@@ -126,6 +131,7 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
                 }
             }
     }
+
 
     fun stopListener() {
         listenerRegistration?.remove()

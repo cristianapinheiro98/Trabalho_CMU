@@ -19,11 +19,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private val db = AppDatabase.getDatabase(application)
 
-    private val shelterOwnershipRequestRepository =
-        ShelterOwnershipRequestRepository(db.ownershipDao())
+    private val ownershipRepository = OwnershipRepository(
+        db.ownershipDao(),
+        FirebaseFirestore.getInstance()
+    )
 
-    private val ownershipRepository = OwnershipRepository(db.ownershipDao())
-    private val animalRepository = AnimalRepository(db.animalDao(), FirebaseFirestore.getInstance())
+    private val animalRepository = AnimalRepository(
+        db.animalDao(),
+        FirebaseFirestore.getInstance()
+    )
+
     private val shelterRepository = ShelterRepository(db.shelterDao())
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
@@ -59,6 +64,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     fun setUploadingImages(value: Boolean) {
         _isUploadingImages.value = value
     }
+
     fun addImageUrl(url: String) {
         _selectedImages.value = _selectedImages.value!! + url
         _isUploadingImages.value = false
@@ -82,14 +88,13 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             if (shelterId != null) {
                 MediatorLiveData<List<AdoptionRequest>>().apply {
                     addSource(
-                        shelterOwnershipRequestRepository
-                            .getAllOwnershipRequestsByShelter(shelterId)
+                        ownershipRepository.getOwnershipsByShelter(shelterId)  // ✅ Atualizado
                     ) { ownerships ->
                         viewModelScope.launch {
                             value = try {
                                 ownerships.mapNotNull { convertToAdoptionRequest(it) }
                             } catch (e: Exception) {
-                                println(" Erro ao converter ownership: ${e.message}")
+                                println("Erro ao converter ownership: ${e.message}")
                                 emptyList()
                             }
                         }
@@ -112,7 +117,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         )
     }
 
-    // ---------------------- APROVE / REJECT OWNERSHIP REQUESTS --------------
+    // ---------------------- APPROVE / REJECT OWNERSHIP REQUESTS --------------
 
     fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
@@ -120,7 +125,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                shelterOwnershipRequestRepository.approveOwnershipRequest(ownershipId)
+                ownershipRepository.approveOwnershipRequest(ownershipId)  // ✅ Atualizado
 
                 val ownership = ownershipRepository.getOwnershipById(ownershipId)
                 val animalId = ownership?.animalId ?: return@launch
@@ -144,7 +149,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _isLoading.value = true
 
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
-                shelterOwnershipRequestRepository.rejectOwnershipRequest(ownershipId)
+                ownershipRepository.rejectOwnershipRequest(ownershipId)  // ✅ Atualizado
 
                 _message.value = "Pedido rejeitado"
                 _error.value = null
@@ -200,7 +205,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     // ---------------------- VALIDATE DATE -------------------
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
-
         if (birthDate.isBlank()) return "A data de nascimento é obrigatória."
 
         val parts = birthDate.split("/")
@@ -282,7 +286,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
-
 
     // ---------------------- UTIL FUNCS ----------------------
     fun clearMessage() { _message.value = null }

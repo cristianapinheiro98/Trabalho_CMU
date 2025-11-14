@@ -47,7 +47,10 @@ class AuthRepository(
                 email = email,
                 password = "" // password is not stored locally
             )
-            userDao.insertUser(user)
+            val generatedId = userDao.insertUser(user).toInt()
+            val userWithId = user.copy(id = generatedId)
+
+            Result.success(userWithId)
 
             Result.success(user)
         } catch (e: Exception) {
@@ -116,8 +119,9 @@ class AuthRepository(
                     password = ""
                 )
                 // Room cache
-                userDao.insertUser(user)
-                return Result.success(LoginResult(user = user, accountType = AccountType.USER))
+                val generatedId = userDao.insertUser(user).toInt()
+                val userWithId = user.copy(id = generatedId)
+                return Result.success(LoginResult(user = userWithId, accountType = AccountType.USER))
             }
 
             // Try as Shelter
@@ -132,8 +136,9 @@ class AuthRepository(
                     password = ""
                 )
                 // Room cache
-                shelterDao.insertShelter(shelter)
-                return Result.success(LoginResult(shelter = shelter, accountType = AccountType.SHELTER))
+                val generatedId = shelterDao.insertShelter(shelter).toInt()
+                val shelterWithId = shelter.copy(id = generatedId)
+                return Result.success(LoginResult(shelter = shelterWithId, accountType = AccountType.SHELTER))
             }
 
             throw Exception("Account not found")

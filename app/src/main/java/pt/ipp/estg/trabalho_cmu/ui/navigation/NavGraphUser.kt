@@ -185,7 +185,7 @@ fun NavGraphUser(navController: NavHostController) {
                 onAdoptClick = {
                     navController.navigate("TermsAndConditions/$animalId")
                 },
-                onNavigateBack = {  // ← Altera aqui!
+                onNavigateBack = {
                     navController.navigate("AnimalsCatalogue") {
                         popUpTo("AnimalsCatalogue") { inclusive = true }
                     }

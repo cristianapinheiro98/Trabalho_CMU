@@ -44,7 +44,9 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
+
+        //migration example
+       /* private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE users ADD COLUMN firebaseUid TEXT")
                 db.execSQL("ALTER TABLE shelters ADD COLUMN firebaseUid TEXT")
@@ -58,42 +60,18 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX index_OwnershipRequests_animalId ON OwnershipRequests(animalId)")
                 db.execSQL("CREATE INDEX index_OwnershipRequests_shelterId ON OwnershipRequests(shelterId)")
             }
-        }
+        }*/
 
-        private fun ioThread(f: () -> Unit) {
-            Thread(f).start()
-        }
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pet_adoption_database"
+                    "pet_adoption_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    .addCallback(object : RoomDatabase.Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-
-                            ioThread {
-                                val daoUser = INSTANCE?.userDao()
-                                val daoShelter = INSTANCE?.shelterDao()
-                                val daoAnimal = INSTANCE?.animalDao()
-
-                                println("SEED: Inserindo shelters...")
-                                daoShelter?.insertAllSync(SeedShelters.shelters)
-
-                                println("SEED: Inserindo users...")
-                                daoUser?.insertAllSync(SeedUsers.users)
-
-                                println("SEED: Inserindo animals...")
-                                daoAnimal?.insertAllSync(SeedAnimals.animals)
-
-                                println("SEED concluído com sucesso!")
-                            }
-                        }
-                    })
-                    .fallbackToDestructiveMigration()
+                    //.addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    //ISTO DEITA ABAIXO A BD TODA
+                    //.fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
