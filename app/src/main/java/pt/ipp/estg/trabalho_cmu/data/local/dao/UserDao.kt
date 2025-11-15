@@ -18,15 +18,16 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     suspend fun getUserById(userId: Int): User?
 
-    // Inserir (usado no registo)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User) : Long
 
-    // Atualizar perfil
     @Update
     suspend fun updateUser(user: User)
 
-    // Eliminar (opcional)
     @Delete
     suspend fun deleteUser(user: User)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAllSync(users: List<User>)
+
 }

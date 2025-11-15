@@ -32,8 +32,7 @@ interface ShelterDao {
     suspend fun deleteAllShelters()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShelter(shelter: Shelter)
-
+    suspend fun insertShelter(shelter: Shelter) : Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShelters(shelters: List<Shelter>)
 
@@ -42,4 +41,8 @@ interface ShelterDao {
 
     @Delete
     suspend fun deleteShelter(shelter: Shelter)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAllSync(shelters: List<Shelter>)
+
 }

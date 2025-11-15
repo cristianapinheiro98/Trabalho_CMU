@@ -19,6 +19,9 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
+import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedAnimals
+import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedShelters
+import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedUsers
 
 @Database(
     entities = [
@@ -45,7 +48,9 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
+
+        //migration example
+       /* private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE users ADD COLUMN firebaseUid TEXT")
                 db.execSQL("ALTER TABLE shelters ADD COLUMN firebaseUid TEXT")
@@ -59,17 +64,18 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX index_OwnershipRequests_animalId ON OwnershipRequests(animalId)")
                 db.execSQL("CREATE INDEX index_OwnershipRequests_shelterId ON OwnershipRequests(shelterId)")
             }
-        }
+        }*/
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pet_adoption_database"
+                    "pet_adoption_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    .fallbackToDestructiveMigration()
+                    //.addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    //ISTO DEITA ABAIXO A BD TODA
+                    //.fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

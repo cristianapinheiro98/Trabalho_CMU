@@ -67,6 +67,11 @@ fun NavGraphPublic(
                 isLoggedIn = false,
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetailGuest/$animalId")
+                },
+                onNavigateBack = {
+                    navController.navigate("AnimalsCatalogue") {
+                        popUpTo("AnimalsCatalogue") { inclusive = true }
+                    }
                 }
             )
         }
