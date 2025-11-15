@@ -17,12 +17,20 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+/**
+ * Defines the dark color scheme for the application's theme.
+ * These colors are used when the app is in dark mode and dynamic color is disabled.
+ */
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
+/**
+ * Defines the light color scheme for the application's theme.
+ * These colors are used when the app is in light mode and dynamic color is disabled.
+ */
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
@@ -39,6 +47,19 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+/**
+ * The main theme composable for the "Trabalho_CMU" application.
+ *
+ * This function applies the appropriate color scheme and typography to its content.
+ * It supports both light and dark themes and enables dynamic coloring on Android 12+
+ * if available and enabled.
+ *
+ * @param darkTheme A boolean that determines whether to use the dark color scheme.
+ *                  Defaults to the system's current setting ([isSystemInDarkTheme]).
+ * @param dynamicColor A boolean that enables the use of user-generated wallpaper colors
+ *                     on Android 12 (API 31) and higher. Defaults to `true`.
+ * @param content The composable content to which this theme will be applied.
+ */
 @Composable
 fun Trabalho_CMUTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
