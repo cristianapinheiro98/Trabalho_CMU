@@ -11,14 +11,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
-import java.io.IOException
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 
 class AnimalRepository(private val animalDao: AnimalDao,  private val firestore: FirebaseFirestore) {
     private var listenerRegistration: ListenerRegistration? = null
 
     fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
+
     suspend fun getAnimalById(animalId: Int) = animalDao.getAnimalById(animalId)
 
     suspend fun insertAnimal(animal: Animal) = animalDao.insertAnimal(animal)
@@ -75,9 +74,6 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
         }
     }
 
-
-
-
     suspend fun filterBySpecies(species: String): List<Animal> =
         animalDao.filterBySpeciesLocal(species)
 
@@ -92,8 +88,6 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
 
     suspend fun sortByDate(): List<Animal> =
         animalDao.sortByDateLocal()
-
-
     suspend fun changeAnimalStatusToOwned(animalId: Int) = withContext(Dispatchers.IO) {
         try {
             animalDao.updateAnimalToOwned(animalId)
@@ -134,11 +128,9 @@ class AnimalRepository(private val animalDao: AnimalDao,  private val firestore:
             }
     }
 
-
     fun stopListener() {
         listenerRegistration?.remove()
     }
-
     fun DocumentSnapshot.toAnimal(): Animal? = try {
         Animal(
             id = (getLong("id") ?: 0).toInt(),

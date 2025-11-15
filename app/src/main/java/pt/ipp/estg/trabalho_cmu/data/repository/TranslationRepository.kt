@@ -8,7 +8,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class TranslationRepository {
-
     private val api = RetrofitInstance.translateApi
 
     fun translateToPortuguese(

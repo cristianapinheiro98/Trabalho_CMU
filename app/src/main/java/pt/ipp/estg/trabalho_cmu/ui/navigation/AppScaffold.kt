@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens
+package pt.ipp.estg.trabalho_cmu.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi

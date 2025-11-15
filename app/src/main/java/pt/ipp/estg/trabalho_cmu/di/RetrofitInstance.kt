@@ -64,17 +64,12 @@ object RetrofitInstance {
         translateRetrofit.create(TranslationApiService::class.java)
     }
 
-
     // ---------------- LOCAL BACKEND ----------------
     private val localRetrofit = Retrofit.Builder()
         .baseUrl(LOCAL_API_BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
-
-    val animalApi: AnimalApiService by lazy {
-        localRetrofit.create(AnimalApiService::class.java)
-    }
 
     // ---------------- GOOGLE PLACES API ----------------
     private val placesRetrofit = Retrofit.Builder()
