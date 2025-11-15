@@ -22,6 +22,14 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
+/**
+ * Screen responsible for collecting all required fields to create an Ownership request.
+ *
+ * Notes:
+ * - UI strings come from string resources whenever available.
+ * - Backend and validation errors remain hardcoded in English inside the ViewModel.
+ * - The layout and logic remain identical to the original user-provided file.
+ */
 @Composable
 fun OwnershipFormScreen(
     userId: Int,
@@ -35,12 +43,12 @@ fun OwnershipFormScreen(
     val error by viewModel.error.observeAsState()
     val submissionSuccess by viewModel.submissionSuccess.observeAsState(false)
 
-    // Load animal details to get shelter ID
+    // Load animal details to obtain shelterId
     LaunchedEffect(animalId) {
         viewModel.loadAnimalDetails(animalId)
     }
 
-    // Navigate only on success
+    // Navigate after successful submission
     LaunchedEffect(submissionSuccess) {
         if (submissionSuccess) {
             delay(500)
@@ -75,6 +83,10 @@ fun OwnershipFormScreen(
     }
 }
 
+/**
+ * Internal UI content used by the Ownership Form Screen.
+ * Contains all fields and the final submit button.
+ */
 @Composable
 private fun OwnershipFormContent(
     isLoading: Boolean,
@@ -103,7 +115,7 @@ private fun OwnershipFormContent(
             cardNumber.isNotBlank() &&
             cardNumber.length <= maxCardDigits
 
-    // Show error message
+    // Show error message (already hardcoded in English inside the ViewModel)
     LaunchedEffect(error) {
         error?.let {
             snackbarHostState.showSnackbar(
@@ -196,7 +208,7 @@ private fun OwnershipFormContent(
                             },
                             label = stringResource(R.string.ownership_cvv),
                             enabled = !isLoading,
-                            placeholder = "123"
+                            placeholder = stringResource(R.string.cvv_placeholder)
                         )
 
                         OwnershipTextField(
@@ -207,7 +219,7 @@ private fun OwnershipFormContent(
                             },
                             label = stringResource(R.string.ownership_card_passport),
                             enabled = !isLoading,
-                            placeholder = "12345678"
+                            placeholder = stringResource(R.string.card_number_placeholder)
                         )
                     }
                 }

@@ -3,8 +3,8 @@ package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.type.DateTime
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -15,7 +15,8 @@ import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
 /**
- * Data class to combine Activity with its Animal and Shelter information
+ * Data class that combines an Activity with its related Animal and Shelter information.
+ * Used to merge all relevant information into a single object.
  */
 data class ActivityWithAnimalAndShelter(
     val activity: Activity,
@@ -25,13 +26,6 @@ data class ActivityWithAnimalAndShelter(
 
 /**
  * ViewModel for managing Activities with enriched data (Animal + Shelter).
- * Uses AndroidViewModel approach from class lectures (no Hilt).
- *
- * Features:
- * - Load activities with animal and shelter details
- * - Schedule new activities
- * - Delete activities
- * - Loading states and error handling
  */
 class ActivityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -53,10 +47,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
     private val _userId = MutableLiveData<Int>()
 
-    /**
-     * LiveData that combines Activity data with Animal and Shelter information.
-     * Automatically updates when database changes.
-     */
     val activitiesWithDetails: LiveData<List<ActivityWithAnimalAndShelter>> =
         _userId.switchMap { userId ->
             activityRepository.getUpcomingActivitiesByUser(userId).switchMap { activityList ->
@@ -73,7 +63,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
             }
         }
 
-
+    // ---- UI STATES ----
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -90,25 +80,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     val shelter: LiveData<Shelter?> = _shelter
 
 
-    /*fun loadAnimalAndShelter(animalId: Int) {
-        viewModelScope.launch {
-            try {
-                val animal = animalRepository.getAnimalById(animalId)
-                _animal.value = animal
-
-                val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
-                _shelter.value = shelter
-
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "Erro ao carregar dados: ${e.message}"
-                _animal.value = null
-                _shelter.value = null
-            }
-        }
-    }*/
-
-    // ====== MOCK ========
+    /*
     fun loadAnimalAndShelter(animalId: Int) {
         viewModelScope.launch {
             try {
@@ -119,37 +91,47 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 _shelter.value = shelter
 
                 _error.value = null
-                println("🔍 DEBUG: animalId recebido = $animalId") //debug
-
-                val animalData = animalRepository.getAnimalById(animalId)
-
-                // TEMPORÁRIO: Se não encontrar na BD, usa dados mock
-                if (animalData == null) {
-                    val mockAnimal = getMockAnimal(animalId) // debug
-                    println("🔍 DEBUG: usando mock = ${mockAnimal.name}") // debug
-                    _animal.value = getMockAnimal(animalId)
-                    _shelter.value = getMockShelter()
-                } else {
-                    _animal.value = animalData
-                    animalData.shelterId.let { shelterId ->
-                        val shelterData = shelterRepository.getShelterById(shelterId)
-                        _shelter.value = shelterData
-                    }
-                }
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar dados: ${e.message}"
                 _animal.value = null
                 _shelter.value = null
-                val mockAnimal = getMockAnimal(animalId) // debug
-                println("🔍 DEBUG: erro, usando mock = ${mockAnimal.name}") // debug
+            }
+        }
+    }
+    */
 
+    // ====== MOCK ========
+    fun loadAnimalAndShelter(animalId: Int) {
+        val ctx = getApplication<Application>()
+
+        viewModelScope.launch {
+            try {
+                val animal = animalRepository.getAnimalById(animalId)
+                _animal.value = animal
+
+                val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
+                _shelter.value = shelter
+
+                _error.value = null
+
+                val animalData = animalRepository.getAnimalById(animalId)
+
+                if (animalData == null) {
+                    _animal.value = getMockAnimal(animalId)
+                    _shelter.value = getMockShelter()
+                } else {
+                    _animal.value = animalData
+                    val shelterData = shelterRepository.getShelterById(animalData.shelterId)
+                    _shelter.value = shelterData
+                }
+            } catch (e: Exception) {
+                _error.value = ctx.getString(R.string.error_loading_animal_shelter) + " ${e.message}"
                 _animal.value = getMockAnimal(animalId)
                 _shelter.value = getMockShelter()
             }
         }
     }
 
-    // TEMPORÁRIO: Funções auxiliares para mock
     private fun getMockAnimal(animalId: Int): Animal {
         return when (animalId) {
             1 -> Animal(
@@ -207,7 +189,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // Mock
     private fun getMockShelter(): Shelter {
         return Shelter(
             id = 1,
@@ -221,22 +202,21 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
     // ====== /END MOCK ========
 
-    /**
-     * Set the user ID to filter activities.
-     * This triggers the activitiesWithDetails LiveData to update.
-     */
     fun loadActivitiesForUser(userId: Int) {
         _userId.value = userId
     }
 
     fun scheduleActivity(activity: Activity) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 activityRepository.addActivity(activity)
                 _activityScheduled.value = true
             } catch (e: Exception) {
-                _error.value = "Erro ao agendar atividade: ${e.message}"
+                _error.value =
+                    ctx.getString(R.string.error_scheduling_activity) + " ${e.message}"
                 _activityScheduled.value = false
             } finally {
                 _isLoading.value = false
@@ -245,11 +225,14 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun deleteActivity(activity: Activity) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 activityRepository.deleteActivity(activity)
             } catch (e: Exception) {
-                _error.value = "Erro ao eliminar atividade: ${e.message}"
+                _error.value =
+                    ctx.getString(R.string.error_deleting_activity) + " ${e.message}"
             }
         }
     }

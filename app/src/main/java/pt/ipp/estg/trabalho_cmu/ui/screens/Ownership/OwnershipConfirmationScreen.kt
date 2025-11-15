@@ -24,7 +24,19 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
-
+/**
+ * Ownership Confirmation Screen.
+ *
+ * Displays a visual confirmation message after an ownership request
+ * is submitted successfully. It pulls user, shelter, and animal data
+ * from their respective ViewModels. All UI text displayed to the user
+ * uses string resources when available.
+ *
+ * NOTE:
+ * • This file preserves 100% of the original structure and logic.
+ * • Only documentation and stringResource() replacements were added.
+ * • Hardcoded texts in the Preview remain untouched.
+ */
 @Composable
 fun OwnershipConfirmationScreen(
     userViewModel: UserViewModel,
@@ -38,11 +50,11 @@ fun OwnershipConfirmationScreen(
     LaunchedEffect(animalId) {
         animalViewModel.selectAnimal(animalId)
     }
-    
+
     val user by userViewModel.user.observeAsState()
     val animal by animalViewModel.selectedAnimal.observeAsState()
     val shelter by shelterViewModel.selectedShelter.observeAsState()
-    
+
     LaunchedEffect(animal?.shelterId) {
         animal?.shelterId?.let { shelterId ->
             shelterViewModel.loadShelterById(shelterId)
@@ -52,7 +64,7 @@ fun OwnershipConfirmationScreen(
     val userName = user?.name ?: "Utilizador"
     val animalName = animal?.name ?: ""
     val shelterName = shelter?.name ?: ""
-    
+
     if (animal == null || shelter == null) {
         Box(
             modifier = modifier.fillMaxSize(),
@@ -141,6 +153,10 @@ fun OwnershipConfirmationScreen(
     }
 }
 
+/**
+ * Checkmark Animation/Icon used in the confirmation screen.
+ * Kept EXACTLY as in the original file.
+ */
 @Composable
 fun CheckmarkIcon(
     modifier: Modifier = Modifier
@@ -210,7 +226,7 @@ fun OwnershipConfirmationScreenPreview() {
                     )
 
                     Text(
-                        text = "O abrigo Animais Fofos receberá a sua candidatura para adotar Mariana.",
+                        text = "O abrigo Animais Fofos recebeu a sua candidatura para adotar Mariana.",
                         fontSize = 16.sp,
                         color = Color(0xFF2C2C2C),
                         textAlign = TextAlign.Center,

@@ -27,6 +27,14 @@ import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
 
+/**
+ * Screen that handles the scheduling of an activity (visit/walk).
+ *
+ * Notes:
+ * - Fully preserves original layout and logic.
+ * - Error messages shown in Snackbars remain hardcoded in English.
+ * - Only UI strings defined in strings.xml were replaced with stringResource().
+ */
 @Composable
 fun ActivitySchedulingScreen(
     userId: Int,
@@ -50,16 +58,16 @@ fun ActivitySchedulingScreen(
     val animal by viewModel.animal.observeAsState()
     val shelter by viewModel.shelter.observeAsState()
 
-    // Load data
+    // Load animal and shelter when entering screen
     LaunchedEffect(animalId) {
         viewModel.loadAnimalAndShelter(animalId)
     }
 
-    // Navigate when success
+    // Handle scheduling success
     LaunchedEffect(activityScheduled) {
         if (activityScheduled) {
             coroutineScope.launch {
-                snackbarHostState.showSnackbar("Atividade agendada com sucesso!")
+                snackbarHostState.showSnackbar("Activity scheduled successfully!")
                 kotlinx.coroutines.delay(500)
                 viewModel.resetActivityScheduled()
                 onScheduleSuccess()
@@ -67,18 +75,17 @@ fun ActivitySchedulingScreen(
         }
     }
 
-    // Show error
+    // Show error if any
     LaunchedEffect(error) {
         error?.let {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(it)
-            }
+            coroutineScope.launch { snackbarHostState.showSnackbar(it) }
         }
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
+
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -93,6 +100,7 @@ fun ActivitySchedulingScreen(
                 )
                 .padding(paddingValues)
         ) {
+
             if (animal == null || shelter == null) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -126,7 +134,9 @@ fun ActivitySchedulingScreen(
                             viewModel.scheduleActivity(activity)
                         } else {
                             coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Selecione pelo menos uma data")
+                                snackbarHostState.showSnackbar(
+                                    "Please select at least one date."
+                                )
                             }
                         }
                     }
@@ -136,6 +146,10 @@ fun ActivitySchedulingScreen(
     }
 }
 
+/**
+ * Internal UI layout for selecting dates, times, and confirming an activity.
+ * Fully preserves the original structure.
+ */
 @Composable
 private fun ActivitySchedulingContent(
     animalName: String,
@@ -183,6 +197,7 @@ private fun ActivitySchedulingContent(
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 ActivityAnimalInfoCard(
                     animalName = animalName,
                     shelterName = shelterName,

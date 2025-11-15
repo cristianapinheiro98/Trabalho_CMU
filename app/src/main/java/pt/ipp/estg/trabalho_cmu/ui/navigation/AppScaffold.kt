@@ -26,7 +26,7 @@ fun AppScaffold(
     onLogout: () -> Unit
 ) {
     val authViewModel: AuthViewModel = viewModel()
-
+    
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
