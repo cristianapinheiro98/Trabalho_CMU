@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import pt.ipp.estg.trabalho_cmu.data.remote.RetrofitInstance
+import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
 import java.io.IOException
 
 class AnimalRepository(private val animalDao: AnimalDao) {

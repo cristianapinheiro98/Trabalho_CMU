@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -30,17 +32,21 @@ class MainActivity : ComponentActivity() {
         val context = LocaleHelper.setLocale(newBase, lang)
         super.attachBaseContext(context)
     }
-
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val windowSize = calculateWindowSizeClass(this)
+
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    PetAdoptionApp()
+                    PetAdoptionApp(
+                        windowSize = windowSize.widthSizeClass
+                    )
                 }
             }
         }

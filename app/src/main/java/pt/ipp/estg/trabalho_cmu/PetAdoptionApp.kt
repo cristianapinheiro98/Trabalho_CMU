@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +15,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.AppScaffold
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PetAdoptionApp() {
+fun PetAdoptionApp(windowSize: WindowWidthSizeClass) {
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
 
@@ -30,7 +31,8 @@ fun PetAdoptionApp() {
             onLogout = {
                 isLoggedIn = false
                 isAdmin = false
-            }
+            },
+            windowSize = windowSize
         )
     }
 }

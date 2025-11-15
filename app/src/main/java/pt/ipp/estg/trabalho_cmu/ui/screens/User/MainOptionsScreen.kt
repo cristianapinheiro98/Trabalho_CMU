@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +26,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun MainOptionsScreen(
     navController: NavController,
-    hasAdoptedAnimal: Boolean
+    hasAdoptedAnimal: Boolean,
+    windowSize: WindowWidthSizeClass
 ) {
     val viewModel: MainOptionsViewModel = viewModel()
     val lastWalk by viewModel.lastWalk.collectAsState()
@@ -84,7 +86,12 @@ fun MainOptionsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            MainActionButtons(navController, onStartWalk = { showAnimalDialog = true }, onScheduleVisit = { showScheduleDialog = true })
+            MainActionButtons(
+                navController,
+                onStartWalk = { showAnimalDialog = true },
+                onScheduleVisit = { showScheduleDialog = true },
+                windowSize = windowSize
+                )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -180,54 +187,108 @@ fun WalkDetailRow(label: String, value: String) {
 fun MainActionButtons(
     navController: NavController,
     onStartWalk: () -> Unit,
-    onScheduleVisit: () -> Unit
+    onScheduleVisit: () -> Unit,
+    windowSize: WindowWidthSizeClass
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ActionButton(
-                text = "Agendar Visita",
-                color = Color(0xFF2196F3),
-                modifier = Modifier.weight(1f),
-                onClick = onScheduleVisit
-            )
-            ActionButton(
-                text = "Iniciar Passeio",
-                color = Color(0xFF4CAF50),
-                modifier = Modifier.weight(1f),
-                onClick = onStartWalk
-            )
-        }
+    when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            // SMARTPHONE: 2 colunas
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendar Visita",
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier.weight(1f),
+                        onClick = onScheduleVisit
+                    )
+                    ActionButton(
+                        text = "Iniciar Passeio",
+                        color = Color(0xFF4CAF50),
+                        modifier = Modifier.weight(1f),
+                        onClick = onStartWalk
+                    )
+                }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ActionButton(
-                text = "Agendamentos",
-                color = Color(0xFFE57373),
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("ActivitiesHistory") }
-            )
-            ActionButton(
-                text = "Concluir Passeio",
-                color = Color(0xFFFF9800),
-                modifier = Modifier.weight(1f),
-                onClick = { /* TODO: Navegar */ }
-            )
-        }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendamentos",
+                        color = Color(0xFFE57373),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("ActivitiesHistory") }
+                    )
+                    ActionButton(
+                        text = "Concluir Passeio",
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier.weight(1f),
+                        onClick = { /* TODO */ }
+                    )
+                }
 
-        ActionButton(
-            text = "Histórico de Passeios",
-            color = Color(0xFF26A69A),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { navController.navigate("WalkHistory") }
-        )
+                ActionButton(
+                    text = "Histórico de Passeios",
+                    color = Color(0xFF26A69A),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate("WalkHistory") }
+                )
+            }
+        }
+        else -> {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendar Visita",
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier.weight(1f),
+                        onClick = onScheduleVisit
+                    )
+                    ActionButton(
+                        text = "Iniciar Passeio",
+                        color = Color(0xFF4CAF50),
+                        modifier = Modifier.weight(1f),
+                        onClick = onStartWalk
+                    )
+                    ActionButton(
+                        text = "Agendamentos",
+                        color = Color(0xFFE57373),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("ActivitiesHistory") }
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Concluir Passeio",
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier.weight(1f),
+                        onClick = { /* TODO */ }
+                    )
+                    ActionButton(
+                        text = "Histórico de Passeios",
+                        color = Color(0xFF26A69A),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("WalkHistory") }
+                    )
+                }
+            }
+        }
     }
 }
 

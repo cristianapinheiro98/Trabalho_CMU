@@ -126,7 +126,7 @@ class AuthRepository(
                     name = shelterDoc.getString("name") ?: "",
                     address = shelterDoc.getString("address") ?: "",
                     phone = shelterDoc.getString("contact") ?: "",
-                    email = userDoc.getString("email") ?: "",
+                    email = shelterDoc.getString("email") ?: "",
                     password = ""
                 )
                 // Room cache

@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,16 +24,15 @@ fun AppScaffold(
     isLoggedIn: Boolean,
     isAdmin: Boolean,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    windowSize: WindowWidthSizeClass
 ) {
     val authViewModel: AuthViewModel = viewModel()
-
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
 
     val onLogoutAndNavigate: () -> Unit = {
         authViewModel.logout()
@@ -95,7 +95,7 @@ fun AppScaffold(
                     else -> {
                         NavGraphUser(
                             navController = navController,
-                            //authViewModel = authViewModel
+                            windowSize = windowSize
                         )
                     }
                 }

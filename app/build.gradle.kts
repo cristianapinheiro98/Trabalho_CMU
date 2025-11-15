@@ -18,6 +18,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GOOGLE_PLACES_API_KEY", "\"${project.findProperty("GOOGLE_PLACES_API_KEY") ?: ""}\"")
     }
 
     buildTypes {
@@ -38,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -121,5 +123,12 @@ dependencies {
     // Accompanist (Permissions helper)
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 
+    // Responsive (phone + tablet)
+    implementation("androidx.compose.material3:material3-window-size-class:1.4.0")
 
+    // Google Places API
+    implementation("com.google.android.libraries.places:places:5.0.0")
+
+    // Parsing JSON from Places API
+    implementation("com.google.code.gson:gson:2.13.2")
 }

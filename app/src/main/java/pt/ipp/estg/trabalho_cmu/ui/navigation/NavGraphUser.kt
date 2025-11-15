@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -44,7 +45,7 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraphUser(navController: NavHostController) {
+fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeClass) {
     val authViewModel: AuthViewModel = viewModel()
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
@@ -206,11 +207,12 @@ fun NavGraphUser(navController: NavHostController) {
                 }
             )
         }
-
+        // ========== USER MAIN OPTIONS ==========
         composable("UserHome") {
             MainOptionsScreen(
                 navController = navController,
-                hasAdoptedAnimal = true
+                hasAdoptedAnimal = true,
+                windowSize = windowSize
             )
         }
 

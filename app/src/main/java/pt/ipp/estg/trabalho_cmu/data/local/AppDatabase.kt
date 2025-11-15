@@ -12,11 +12,13 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.VeterinarianDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
 
 @Database(
     entities = [
@@ -24,9 +26,10 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
         Activity::class,
         Animal::class,
         Shelter::class,
-        User::class
+        User::class,
+        Veterinarian::class
     ],
-    version = 5, // Increase value when making changes!!!
+    version = 7, // Increase value when making changes!!!
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -37,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun animalDao(): AnimalDao
     abstract fun shelterDao(): ShelterDao
     abstract fun userDao(): UserDao
+    abstract fun veterinarianDao(): VeterinarianDao
 
     companion object {
         @Volatile
