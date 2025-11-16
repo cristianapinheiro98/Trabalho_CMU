@@ -2,8 +2,6 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.type.DateTime
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -38,12 +36,11 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     private val animalRepository: AnimalRepository by lazy {
-        AnimalRepository(database.animalDao(), FirebaseFirestore.getInstance())
+        AnimalRepository(database.animalDao())
     }
 
     private val shelterRepository = ShelterRepository(
-        database.shelterDao(),
-        FirebaseFirestore.getInstance()
+        database.shelterDao()
     )
 
     private val _userId = MutableLiveData<Int>()

@@ -38,9 +38,6 @@ fun AppScaffold(
     val onLogoutAndNavigate: () -> Unit = {
         authViewModel.logout()
         onLogout()
-        navController.navigate("home") {
-            popUpTo("home") { inclusive = true }
-        }
     }
 
     val userDrawerOptions = getUserDrawerOptions()

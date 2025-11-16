@@ -12,8 +12,10 @@ import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
+import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 
-class AnimalRepository(private val animalDao: AnimalDao,  private val firestore: FirebaseFirestore) {
+class AnimalRepository(private val animalDao: AnimalDao) {
+    private val firestore = FirebaseProvider.firestore
     private var listenerRegistration: ListenerRegistration? = null
 
     fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
