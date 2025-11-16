@@ -18,25 +18,5 @@ class PetAdoptionApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        syncPendingData()
-    }
-
-    private fun syncPendingData() {
-        applicationScope.launch {
-            try {
-                val db = AppDatabase.getDatabase(applicationContext)
-                val firestore = FirebaseFirestore.getInstance()
-
-                // Sync animals
-                val animalRepository = AnimalRepository(db.animalDao(), firestore)
-                // animalRepository.syncPendingAnimals()
-
-                // Sync Pending Ownership Requests
-                val ownershipRepository = OwnershipRepository(db.ownershipDao(), firestore)
-                // ownershipRepository.syncPendingOwnerships()
-            } catch (e: Exception) {
-                println("Error syncing pending data: ${e.message}")
-            }
-        }
     }
 }

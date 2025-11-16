@@ -19,7 +19,6 @@ fun PetAdoptionApp(windowSize: WindowWidthSizeClass) {
     var isAdmin by remember { mutableStateOf(false) }
 
     MaterialTheme {
-        // Sends the status and the callbacks to the AppScaffold
         AppScaffold(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,
