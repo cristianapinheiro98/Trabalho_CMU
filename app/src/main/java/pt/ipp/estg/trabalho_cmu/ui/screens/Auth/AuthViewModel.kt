@@ -25,9 +25,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val db = AppDatabase.getDatabase(application)
         AuthRepository(
             userDao = db.userDao(),
-            shelterDao = db.shelterDao(),
-            firebaseAuth = Firebase.auth,
-            firestore = Firebase.firestore
+            shelterDao = db.shelterDao()
         )
     }
 
@@ -96,8 +94,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     val db = AppDatabase.getDatabase(ctx)
                     val ownershipRepo = OwnershipRepository(
-                            db.ownershipDao(),
-                            FirebaseFirestore.getInstance()
+                            db.ownershipDao()
                         )
                     ownershipRepo.fetchOwnerships()
                 } catch (e: Exception) {
@@ -139,12 +136,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 viewModelScope.launch {
                     try {
                         val db = AppDatabase.getDatabase(ctx)
-                        val firestore = FirebaseFirestore.getInstance()
 
-                        val ownershipRepo = OwnershipRepository(db.ownershipDao(), firestore)
+                        val ownershipRepo = OwnershipRepository(db.ownershipDao())
                         ownershipRepo.fetchOwnerships()
 
-                        val animalRepo = AnimalRepository(db.animalDao(), firestore)
+                        val animalRepo = AnimalRepository(db.animalDao())
                         animalRepo.syncPendingAnimals()
 
                         ownershipRepo.syncPendingOwnerships()

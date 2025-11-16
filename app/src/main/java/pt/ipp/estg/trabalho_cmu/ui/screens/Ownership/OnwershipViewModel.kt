@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -27,14 +26,13 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     private val ownershipRepository: OwnershipRepository by lazy {
         val db = AppDatabase.getDatabase(application)
         OwnershipRepository(
-            db.ownershipDao(),
-            FirebaseFirestore.getInstance()
+            db.ownershipDao()
         )
     }
 
     private val animalRepository: AnimalRepository by lazy {
         val db = AppDatabase.getDatabase(application)
-        AnimalRepository(db.animalDao(), FirebaseFirestore.getInstance())
+        AnimalRepository(db.animalDao())
     }
 
     // ========= USER OWNERSHIPS ========= //

@@ -9,12 +9,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 
 
 class ShelterRepository(
-    private val shelterDao: ShelterDao,
-    private val firestore: FirebaseFirestore
+    private val shelterDao: ShelterDao
 ) {
+    private val firestore = FirebaseProvider.firestore
     // Online first then offline (Room)
     fun getAllShelters(): LiveData<List<Shelter>> {
         refreshSheltersFromFirebase()

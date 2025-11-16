@@ -32,8 +32,7 @@ class ShelterViewModel(
     private val shelterRepository: ShelterRepository by lazy {
         val db = AppDatabase.getDatabase(ctx)
         ShelterRepository(
-            db.shelterDao(),
-            FirebaseFirestore.getInstance()
+            db.shelterDao()
         )
     }
     private val _isLoading = MutableLiveData(false)

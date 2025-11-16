@@ -28,7 +28,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
     /** Repository providing access to Room DAO and Firebase synchronization */
     private val repository: AnimalRepository by lazy {
         val db = AppDatabase.getDatabase(application)
-        AnimalRepository(db.animalDao(), FirebaseFirestore.getInstance())
+        AnimalRepository(db.animalDao())
     }
 
     /** Live list of all animals stored locally */

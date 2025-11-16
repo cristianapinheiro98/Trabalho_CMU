@@ -39,18 +39,15 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val db = AppDatabase.getDatabase(application)
 
     private val ownershipRepository = OwnershipRepository(
-        db.ownershipDao(),
-        FirebaseFirestore.getInstance()
+        db.ownershipDao()
     )
 
     private val animalRepository = AnimalRepository(
-        db.animalDao(),
-        FirebaseFirestore.getInstance()
+        db.animalDao()
     )
 
     private val shelterRepository = ShelterRepository(
-        db.shelterDao(),
-        FirebaseFirestore.getInstance()
+        db.shelterDao()
     )
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()

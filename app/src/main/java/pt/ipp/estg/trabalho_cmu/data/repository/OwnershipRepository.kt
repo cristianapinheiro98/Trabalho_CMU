@@ -9,12 +9,12 @@ import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
+import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 
 class OwnershipRepository(
-    private val ownershipDao: OwnershipDao,
-    private val firestore: FirebaseFirestore
+    private val ownershipDao: OwnershipDao
 ) {
-
+    private val firestore = FirebaseProvider.firestore
     fun getOwnershipsByUser(userFirebaseUid: String): LiveData<List<Ownership>> =
         ownershipDao.getOwnershipsByUser(userFirebaseUid)
 

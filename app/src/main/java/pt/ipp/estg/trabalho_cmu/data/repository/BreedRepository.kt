@@ -4,18 +4,17 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedsResponse
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedsResponse
-import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
+
 
 class BreedRepository {
 
     private val dogApi = RetrofitInstance.dogApi
     private val catApi = RetrofitInstance.catApi
-
     private val translationRepo = TranslationRepository()
-
 
     fun getDogBreeds(
         onSuccess: (List<Breed>) -> Unit,
@@ -48,7 +47,6 @@ class BreedRepository {
         })
     }
 
-
     fun getCatBreeds(
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
@@ -80,9 +78,8 @@ class BreedRepository {
         })
     }
 
-
     /**
-     * Obter raças baseado na espécie
+     * Breeds based on species
      */
     fun getBreedsBySpecies(
         species: String,
@@ -133,5 +130,4 @@ class BreedRepository {
             )
         }
     }
-
 }

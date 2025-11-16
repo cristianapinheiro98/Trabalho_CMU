@@ -9,13 +9,14 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.data.models.LoginResult
+import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 
 class AuthRepository(
     private val userDao: UserDao,
-    private val shelterDao: ShelterDao,
-    private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val shelterDao: ShelterDao
 ) {
+    private val firebaseAuth = FirebaseProvider.auth
+    private val firestore = FirebaseProvider.firestore
     suspend fun registerUser(
         name: String,
         address: String,

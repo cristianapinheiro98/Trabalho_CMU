@@ -8,6 +8,7 @@ class UserRepository(private val userDao: UserDao) {
     fun getAllUsers() = userDao.getAllUsers()
 
     suspend fun getUserByEmail(email: String) = userDao.getUserByEmail(email)
+
     suspend fun getUserById(userId: Int) = userDao.getUserById(userId)
 
     suspend fun getUserByFirebaseUid(uid: String) = userDao.getUserByFirebaseUid(uid)
