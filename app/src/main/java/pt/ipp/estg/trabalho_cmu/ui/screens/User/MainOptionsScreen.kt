@@ -21,6 +21,8 @@ import androidx.navigation.NavController
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalSelectionDialog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
@@ -326,5 +328,14 @@ fun ActionButton(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium
         )
+    }
+}
+
+
+@Preview
+@Composable
+private fun PreviewMainOptionsScreen(){
+    MaterialTheme {
+        MainOptionsScreen(navController = NavController(LocalContext.current), hasAdoptedAnimal = true,  windowSize = WindowWidthSizeClass.Compact)
     }
 }

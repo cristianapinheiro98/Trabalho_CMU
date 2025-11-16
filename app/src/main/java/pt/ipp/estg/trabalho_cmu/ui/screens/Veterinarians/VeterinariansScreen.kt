@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +24,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.LocationServices
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
 import pt.ipp.estg.trabalho_cmu.ui.components.VeterinarianCard
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -315,5 +317,43 @@ private fun openGoogleMaps(context: android.content.Context, lat: Double, lng: D
             "https://www.google.com/maps/search/?api=1&query=$lat,$lng"
         ))
         context.startActivity(webIntent)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VeterinariansScreenPreview() {
+    val fakeList = listOf(
+        Veterinarian(
+            placeId = "place_123",
+            name = "Clínica Vet Amiga",
+            address = "Rua do Sol 21",
+            phone = "912345678",
+            isOpenNow = true,
+            todaySchedule = "09:00 - 19:00",
+            weekdaySchedules = "Seg-Sex: 09-19\nSáb: 10-17",
+            latitude = 41.15,
+            longitude = -8.61,
+            rating = 4.5
+        ),
+        Veterinarian(
+            placeId = "place_456",
+            name = "VetSaúde",
+            address = "Av. da Boavista 500",
+            phone = "934567890",
+            isOpenNow = false,
+            todaySchedule = "Fechado",
+            weekdaySchedules = "Seg-Sex: 09-18\nSáb: 09-13",
+            latitude = 41.16,
+            longitude = -8.63,
+            rating = 4.0
+        )
+    )
+
+    MaterialTheme {
+        VeterinariansList(
+            veterinarians = fakeList,
+            context = LocalContext.current
+        )
     }
 }

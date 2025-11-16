@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -146,5 +147,13 @@ fun UserInfoRow(icon: ImageVector, text: String) {
             fontSize = 14.sp,
             color = Color(0xFF555555)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PreferenceScreenPreview(){
+    MaterialTheme {
+        PreferencesScreen()
     }
 }
