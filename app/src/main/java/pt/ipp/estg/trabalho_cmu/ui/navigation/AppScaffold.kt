@@ -1,10 +1,11 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens
+package pt.ipp.estg.trabalho_cmu.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,8 +14,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.ui.navigation.*
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,16 +24,16 @@ fun AppScaffold(
     isLoggedIn: Boolean,
     isAdmin: Boolean,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    windowSize: WindowWidthSizeClass
 ) {
     val authViewModel: AuthViewModel = viewModel()
-
+    val shelterMngViewModel: ShelterMngViewModel = viewModel()
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
 
     val onLogoutAndNavigate: () -> Unit = {
         authViewModel.logout()
@@ -95,7 +96,7 @@ fun AppScaffold(
                     else -> {
                         NavGraphUser(
                             navController = navController,
-                            //authViewModel = authViewModel
+                            windowSize = windowSize
                         )
                     }
                 }

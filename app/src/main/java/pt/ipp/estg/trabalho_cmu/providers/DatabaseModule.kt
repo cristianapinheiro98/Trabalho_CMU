@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.di
+package pt.ipp.estg.trabalho_cmu.providers
 
 import android.content.Context
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase

@@ -1,14 +1,13 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
-import pt.ipp.estg.trabalho_cmu.data.remote.RetrofitInstance
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.TranslationRequest
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.TranslationResponse
+import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class TranslationRepository {
-
     private val api = RetrofitInstance.translateApi
 
     fun translateToPortuguese(

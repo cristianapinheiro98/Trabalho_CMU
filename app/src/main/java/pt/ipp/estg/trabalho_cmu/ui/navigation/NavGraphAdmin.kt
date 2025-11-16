@@ -1,5 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,7 +10,9 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterHomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AnimalCreationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AdoptionRequestScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraphAdmin(
     navController: NavHostController,
@@ -24,8 +28,8 @@ fun NavGraphAdmin(
         }
         composable("AnimalCreation") {
             AnimalCreationScreen(
-                authViewModel = authViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                authViewModel = authViewModel
             )
         }
         composable("AdoptionRequest") {

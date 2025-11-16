@@ -8,30 +8,36 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Login screen: collects credentials and forwards login logic to AuthViewModel.
+ * Shows success/errors through dialogs bound to ViewModel state.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: AuthViewModel = viewModel()
+    authviewModel: AuthViewModel = viewModel()
 ) {
-    val isLoading by viewModel.isLoading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val message by viewModel.message.observeAsState()
-    val isAuthenticated by viewModel.isAuthenticated.observeAsState(false)
-    val email by viewModel.email.observeAsState("")
-    val password by viewModel.password.observeAsState("")
+    val isLoading by authviewModel.isLoading.observeAsState(false)
+    val error by authviewModel.error.observeAsState()
+    val message by authviewModel.message.observeAsState()
+    val isAuthenticated by authviewModel.isAuthenticated.observeAsState(false)
+    val email by authviewModel.email.observeAsState("")
+    val password by authviewModel.password.observeAsState("")
 
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
-            val isAdmin = viewModel.isAdmin()
+            val isAdmin = authviewModel.isAdmin()
             onLoginSuccess(isAdmin)
-            viewModel.clearMessage()
+            authviewModel.clearMessage()
         }
     }
 
@@ -41,12 +47,12 @@ fun LoginScreen(
         isLoading = isLoading,
         error = error,
         message = message,
-        onEmailChange = { viewModel.email.value = it },
-        onPasswordChange = { viewModel.password.value = it },
-        onLoginClick = { viewModel.login() },
+        onEmailChange = { authviewModel.email.value = it },
+        onPasswordChange = { authviewModel.password.value = it },
+        onLoginClick = { authviewModel.login() },
         onNavigateBack = onNavigateBack,
-        onClearError = { viewModel.clearError() },
-        onClearMessage = { viewModel.clearMessage() }
+        onClearError = { authviewModel.clearError() },
+        onClearMessage = { authviewModel.clearMessage() }
     )
 }
 
@@ -65,21 +71,23 @@ private fun LoginScreenContent(
     onClearError: () -> Unit,
     onClearMessage: () -> Unit
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Login") },
+                title = { Text(stringResource(R.string.login_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Voltar"
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back_button)
                         )
                     }
                 }
             )
         }
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -89,12 +97,10 @@ private fun LoginScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(Modifier.height(16.dp))
-
             OutlinedTextField(
                 value = email,
                 onValueChange = onEmailChange,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.email_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -103,7 +109,7 @@ private fun LoginScreenContent(
             OutlinedTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -124,43 +130,48 @@ private fun LoginScreenContent(
                         modifier = Modifier.size(22.dp)
                     )
                 } else {
-                    Text("Entrar")
+                    Text(stringResource(R.string.login_button))
                 }
             }
         }
 
+        // Error dialog
         error?.let {
             AlertDialog(
                 onDismissRequest = onClearError,
                 confirmButton = {
-                    TextButton(onClick = onClearError) { Text("OK") }
+                    TextButton(onClick = onClearError) {
+                        Text(stringResource(R.string.confirm_button_ok))
+                    }
                 },
-                title = { Text("Erro") },
+                title = { Text(stringResource(R.string.error_title)) },
                 text = { Text(it) }
             )
         }
 
+        // Success dialog
         message?.let {
             AlertDialog(
                 onDismissRequest = onClearMessage,
                 confirmButton = {
-                    TextButton(onClick = onClearMessage) { Text("OK") }
+                    TextButton(onClick = onClearMessage) {
+                        Text(stringResource(R.string.confirm_button_ok))
+                    }
                 },
-                title = { Text("Sucesso") },
+                title = { Text(stringResource(R.string.success_title)) },
                 text = { Text(it) }
             )
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-private fun LoginScreenContentPreview() {
+private fun LoginPreview() {
     MaterialTheme {
         LoginScreenContent(
-            email = "user@example.com",
-            password = "1234",
+            email = "",
+            password = "",
             isLoading = false,
             error = null,
             message = null,

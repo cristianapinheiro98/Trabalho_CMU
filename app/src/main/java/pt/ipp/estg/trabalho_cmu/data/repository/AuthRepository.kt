@@ -100,6 +100,7 @@ class AuthRepository(
     // ===== LOGIN ONLINE =====
     suspend fun login(email: String, password: String): Result<LoginResult> {
         return try {
+            // Authenticate through Firebase Auth
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: throw Exception("UID not found")
 

@@ -7,13 +7,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AuthRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -58,8 +62,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val password = MutableLiveData("")
     val accountTypeChoice = MutableLiveData(AccountType.USER)
 
+    fun getCurrentUserFirebaseUid(): String? {
+        return authRepository.getCurrentFirebaseUid()
+    }
 
-    // ===== LOGIN =====
+    // LOGIN =======================================================================================
+
     fun login() = viewModelScope.launch {
 
         if (checkAndRestoreOfflineSession()) return@launch
@@ -74,21 +82,23 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun checkAndRestoreOfflineSession(): Boolean {
         val offlineSession = authRepository.checkOfflineSession()
+        val ctx = getApplication<Application>()
+
         if (offlineSession != null) {
             updateAuthState(
                 user = offlineSession.user,
                 shelter = offlineSession.shelter,
                 accountType = offlineSession.accountType,
-                message = "Sessão recuperada!"
+                message = ctx.getString(R.string.offline_session_restored)
             )
+
             viewModelScope.launch {
                 try {
-                    val db = AppDatabase.getDatabase(getApplication())
-                    val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
-                        db.ownershipDao(),
-                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                    )
-
+                    val db = AppDatabase.getDatabase(ctx)
+                    val ownershipRepo = OwnershipRepository(
+                            db.ownershipDao(),
+                            FirebaseFirestore.getInstance()
+                        )
                     ownershipRepo.fetchOwnerships()
                 } catch (e: Exception) {
                     println("[Offline] Error: ${e.message}")
@@ -101,14 +111,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun validateLoginFields(email: String, password: String): Boolean {
+        val ctx = getApplication<Application>()
+
         if (email.isBlank() || password.isBlank()) {
-            _error.value = "Preenche todos os campos."
+            _error.value = ctx.getString(R.string.empty_fields_error)
             return false
         }
         return true
     }
 
     private suspend fun performOnlineLogin(email: String, password: String) {
+        val ctx = getApplication<Application>()
+
         try {
             _isLoading.value = true
             val result = authRepository.login(email, password)
@@ -118,19 +132,24 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     user = loginResult.user,
                     shelter = loginResult.shelter,
                     accountType = loginResult.accountType,
-                    message = "Login efetuado com sucesso!"
+                    message = ctx.getString(R.string.login_success_message)
                 )
+
+                // Sync after login
                 viewModelScope.launch {
                     try {
-                        val db = AppDatabase.getDatabase(getApplication())
-                        val ownershipRepo = pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository(
-                            db.ownershipDao(),
-                            com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                        )
+                        val db = AppDatabase.getDatabase(ctx)
+                        val firestore = FirebaseFirestore.getInstance()
 
+                        val ownershipRepo = OwnershipRepository(db.ownershipDao(), firestore)
                         ownershipRepo.fetchOwnerships()
+
+                        val animalRepo = AnimalRepository(db.animalDao(), firestore)
+                        animalRepo.syncPendingAnimals()
+
+                        ownershipRepo.syncPendingOwnerships()
                     } catch (e: Exception) {
-                        println("Error syncronizing ownerships: ${e.message}")
+                        println("Sync error: ${e.message}")
                         e.printStackTrace()
                     }
                 }
@@ -138,6 +157,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             }.onFailure { exception ->
                 handleLoginFailure(exception)
             }
+
         } catch (e: Exception) {
             handleLoginFailure(e)
         } finally {
@@ -151,22 +171,29 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         accountType: AccountType,
         message: String
     ) {
+        println("updateAuthState: accountType = $accountType") //debug
+        println("updateAuthState: user = $user") //debug
+        println("updateAuthState: shelter = $shelter") //debug
+
         _currentUser.value = user
         _currentShelter.value = shelter
         _accountType.value = accountType
         _isAuthenticated.value = true
         _message.value = message
         _error.value = null
+
+        println("APÓS update: _accountType.value = ${_accountType.value}") //debug
     }
 
     private fun handleLoginFailure(exception: Throwable) {
-        _error.value = "Erro ao fazer login: ${exception.message}"
+        val ctx = getApplication<Application>()
+        _error.value = ctx.getString(R.string.login_failure_message) + " ${exception.message}"
         _isAuthenticated.value = false
         _currentUser.value = null
         _currentShelter.value = null
     }
 
-    // ===== REGISTER =====
+    // REGISTRATION ===============================================================================
 
     fun register() = viewModelScope.launch {
         val basicFields = getBasicRegistrationFields()
@@ -179,9 +206,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 basicFields.contact
             )
         ) return@launch
-
-
-
 
         performRegistration(basicFields, accountType)
     }
@@ -203,15 +227,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     )
 
     private fun validateBasicFields(fields: BasicRegistrationFields): Boolean {
+        val ctx = getApplication<Application>()
+
         if (fields.name.isBlank() || fields.address.isBlank() ||
             fields.contact.isBlank() || fields.email.isBlank() || fields.password.isBlank()) {
-            _error.value = "Preenche todos os campos obrigatórios."
+            _error.value = ctx.getString(R.string.required_fields_error)
             return false
         }
         return true
     }
-
-
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -231,30 +255,30 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 (phone.startsWith("9") || phone.startsWith("2"))
     }
 
-
     private fun validateCredentials(email: String, password: String, phone: String): Boolean {
+        val ctx = getApplication<Application>()
 
         if (!isValidEmail(email)) {
-            _error.value = "Email inválido."
+            _error.value = ctx.getString(R.string.invalid_email_error)
             return false
         }
 
         if (!isValidPassword(password)) {
-            _error.value = "A palavra-passe deve ter pelo menos 6 caracteres, uma letra maiúscula, minúscula, um número e um caracter especial."
+            _error.value = ctx.getString(R.string.invalid_password_error)
             return false
         }
 
         if (!isValidPhone(phone)) {
-            _error.value = "O contacto deve ter 9 dígitos numéricos."
+            _error.value = ctx.getString(R.string.invalid_phone_error)
             return false
         }
 
         return true
     }
 
-
-
     private suspend fun performRegistration(fields: BasicRegistrationFields, accountType: AccountType) {
+        val ctx = getApplication<Application>()
+
         try {
             _isLoading.value = true
 
@@ -268,29 +292,28 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 if (accountType == AccountType.USER) {
                     _currentUser.value = entity as User
                     _accountType.value = AccountType.USER
-                    _message.value = "Conta criada com sucesso!"
+                    _message.value = ctx.getString(R.string.register_success_message)
                 } else {
                     _currentShelter.value = entity as Shelter
                     _accountType.value = AccountType.SHELTER
-                    _message.value = "Abrigo criado com sucesso!"
+                    _message.value = ctx.getString(R.string.shelter_register_success)
                 }
 
                 _isRegistered.value = true
                 _isAuthenticated.value = true
                 _error.value = null
+
             }.onFailure { exception ->
-                _error.value = "Erro ao criar conta: ${exception.message}"
+                _error.value = ctx.getString(R.string.register_failure_message) + " ${exception.message}"
             }
         } catch (e: Exception) {
-            println("Erro no registo: ${e.message}")
-            e.printStackTrace()
-            _error.value = "Erro ao criar conta: ${e.message}"
+            _error.value = ctx.getString(R.string.register_failure_message) + " ${e.message}"
         } finally {
             _isLoading.value = false
         }
     }
 
-    private suspend fun registerUserAccount(fields: BasicRegistrationFields) : Result<Any> =
+    private suspend fun registerUserAccount(fields: BasicRegistrationFields): Result<Any> =
         authRepository.registerUser(
             name = fields.name,
             address = fields.address,
@@ -299,7 +322,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             password = fields.password
         )
 
-    private suspend fun registerShelterAccount(fields: BasicRegistrationFields) : Result<Any> =
+    private suspend fun registerShelterAccount(fields: BasicRegistrationFields): Result<Any> =
         authRepository.registerShelter(
             name = fields.name,
             address = fields.address,
@@ -308,7 +331,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             password = fields.password
         )
 
-    // ===== UTILS =====
+    // UTILITIES ================================================================================
 
     fun logout() {
         authRepository.logout()
@@ -329,10 +352,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearMessage() { _message.value = null }
+
     fun clearError() { _error.value = null }
+
     fun resetRegistration() { _isRegistered.value = false }
 
     fun getCurrentUserId(): Int = _currentUser.value?.id ?: 0
 
-    fun isAdmin(): Boolean = _accountType.value == AccountType.SHELTER
+    fun isAdmin(): Boolean {
+        val result = _accountType.value == AccountType.SHELTER
+        println("isAdmin() chamado: _accountType.value = ${_accountType.value}, result = $result") //debug
+        return result
+    }
 }

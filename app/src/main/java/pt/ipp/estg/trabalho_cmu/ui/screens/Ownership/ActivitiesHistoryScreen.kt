@@ -25,8 +25,6 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.MapLocationButton
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDateTimeCard
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityWithAnimalAndShelter
 import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 
 /**
@@ -169,7 +167,7 @@ private fun ActivitiesHistoryContent(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Cancelar Visita")
+                        Text(stringResource(R.string.cancel_visit_button))
                     }
                 }
             }
@@ -197,7 +195,7 @@ private fun ActivitiesHistoryContentPreview() {
                 ),
                 animal = Animal(
                     id = 0,
-                    shelterId = 0,
+                    shelterFirebaseUid = "0",
                     name = "Mariana",
                     breed = "Golden Retriever",
                     birthDate = "14/05/2020",
@@ -208,6 +206,7 @@ private fun ActivitiesHistoryContentPreview() {
                 ),
                 shelter = Shelter(
                     id = 0,
+                    firebaseUid = "0",
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
                     phone = "253 000 000",
@@ -227,7 +226,7 @@ private fun ActivitiesHistoryContentPreview() {
                 ),
                 animal = Animal(
                     id = 0,
-                    shelterId = 0,
+                    shelterFirebaseUid = "0",
                     name = "Max",
                     breed = "Labrador",
                     birthDate = "20/03/2021",
@@ -238,6 +237,7 @@ private fun ActivitiesHistoryContentPreview() {
                 ),
                 shelter = Shelter(
                     id = 0,
+                    firebaseUid = "0",
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
                     phone = "253 000 000",

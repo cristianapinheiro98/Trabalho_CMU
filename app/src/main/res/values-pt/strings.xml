@@ -30,6 +30,8 @@
     <string name="visit_pickup_time">Hora de levantamento:</string>
     <string name="visit_delivery_time">Hora de Entrega:</string>
     <string name="visit_schedule_button">Vamos agendar!</string>
+    <string name="select_at_least_one_date">Selecione pelo menos uma data</string>
+    <string name="activity_scheduled_success">Atividade agendada com sucesso!</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Agendamentos Ativos</string>
@@ -66,9 +68,18 @@
     <string name="animal_name_label">Nome:</string>
     <string name="animal_size_label">Porte:</string>
     <string name="animal_birthdate_label">Data Nascimento:</string>
-    <string name="animal_description_label">Descrição:</string>"
+    <string name="animal_description_label">Descrição:</string>
     <string name="shelter_name_label">Abrigo:</string>
     <string name="animal_age_label">Idade:</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="name_label">Nome completo</string>
+    <string name="address_label">Morada</string>
+    <string name="phone_label">Telefone</string>
+    <string name="account_type_label">Tipo de conta</string>
+    <string name="user_label">Utilizador</string>
+    <string name="shelter_label">Abrigo</string>
+
 
     <!-- Navigation -->
     <string name="open_menu">Abrir Menu</string>
@@ -87,7 +98,7 @@
     <string name="cancel_button">Cancelar</string>
     <string name="confirm_button">Confirmar</string>
     <string name="continue_button">Continuar</string>
-    <string name="submit_button">Enviar"</string>
+    <string name="submit_button">Enviar</string>
     <string name="back_button">Voltar</string>
     <string name="next_button">Próximo</string>
     <string name="login_button">Login</string>
@@ -95,8 +106,157 @@
     <string name="save_button">Guardar</string>
     <string name="ownership_button">Adotar</string>
     <string name="view_ranking">Ver Ranking</string>
+    <string name="view_animals_button">Ver Lista de Animais</string>
+    <string name="confirm_button_ok">OK</string>
+    <string name="go_back_main_menu">Regressar ao menu inicial</string>
+    <string name="cancel_visit_button">Cancelar visita</string>
+
 
     <!-- Images Description -->
     <string name="map_description">Mapa</string>
+
+
+    <!-- Validation placeholders -->
+    <string name="cvv_placeholder">123</string>
+    <string name="card_number_placeholder">12345678</string>
+
+    <!-- Animal List Screen -->
+    <string name="search_label">Pesquisar</string>
+    <string name="filter_label">Filtrar</string>
+    <string name="sort_label">Ordenar</string>
+    <string name="filter_dogs">Cães</string>
+    <string name="filter_cats">Gatos</string>
+    <string name="filter_small_size">Porte Pequeno</string>
+    <string name="filter_medium_size">Porte Médio</string>
+    <string name="filter_large_size">Porte Grande</string>
+    <string name="filter_clear">Limpar filtros</string>
+    <string name="sort_by_name">Ordenar por nome</string>
+    <string name="sort_by_age">Ordenar por idade</string>
+    <string name="no_animals_available">Sem animais disponíveis.</string>
+
+    <!-- Animal Detail Screen -->
+    <string name="loading_shelter">A carregar...</string>
+    <string name="unknown_shelter">Desconhecido</string>
+    <string name="description_title">Descrição</string>
+    <string name="adopt_button">Adotar</string>
+
+    <!-- Image Gallery -->
+    <string name="main_image_description">Imagem Principal</string>
+    <string name="thumbnail_image_description">Miniatura</string>
+    <string name="go_back">Voltar</string>
+
+    <!-- Titles for authentication screens -->
+    <string name="login_title">Login</string>
+    <string name="register_title">Criar Conta</string>
+    <string name="home_title">Bem-vindo</string>
+
+    <!-- Error and success messages coming from AuthViewModel -->
+    <string name="error_title">Erro</string>
+    <string name="success_title">Sucesso</string>
+    <string name="empty_fields_error">Preenche todos os campos.</string>
+    <string name="invalid_email_error">Email inválido.</string>
+    <string name="invalid_password_error">A palavra-passe deve ter pelo menos 6 caracteres, uma letra maiúscula, minúscula, um número e um caracter especial.</string>
+    <string name="invalid_phone_error">O contacto deve ter 9 dígitos numéricos.</string>
+    <string name="login_success_message">Login efetuado com sucesso!</string>
+    <string name="register_success_message">Conta criada com sucesso!</string>
+    <string name="shelter_register_success">Abrigo criado com sucesso!</string>
+    <string name="login_failure_message">Erro ao fazer login:</string>
+    <string name="register_failure_message">Erro ao criar conta:</string>
+    <string name="offline_session_restored">Sessão recuperada!</string>
+
+    <!-- UI Responses -->
+    <string name="loading_text">A carregar...</string>
+    <string name="dialog_ok">OK</string>
+    <string name="choose_option">Escolha uma opção</string>
+
+    <!-- Adoption Request Screen -->
+    <string name="adoption_requests_title">Pedidos de Adoção</string>
+    <string name="back_button_description">Voltar</string>
+    <string name="no_pending_requests">Sem pedidos pendentes</string>
+
+    <!-- Request Card Labels -->
+    <string name="request_label">Pedido</string>
+    <string name="approve_request_description">Aprovar pedido</string>
+    <string name="reject_request_description">Rejeitar pedido</string>
+    <string name="animal_label">Animal:</string>
+    <string name="id_label">ID:</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_warning_title">Aviso</string>
+    <string name="dialog_error_title">Erro</string>
+    <string name="dialog_ok_button">OK</string>
+
+    <!-- Animal Creation Screen -->
+    <string name="animal_creation_title">Criar Novo Animal</string>
+
+    <!-- Form Fields -->
+    <string name="animal_species_label">Espécie</string>
+    <string name="animal_species_dog">Cão</string>
+    <string name="animal_species_cat">Gato</string>
+    <string name="animal_size_small">Pequeno</string>
+    <string name="animal_size_medium">Médio</string>
+    <string name="animal_size_large">Grande</string>
+    <string name="animal_birthdate_placeholder">DD/MM/AAAA</string>
+
+    <!-- Images -->
+    <string name="select_images_button">Escolher imagens</string>
+
+    <!-- Save -->
+    <string name="save_animal_button">Guardar</string>
+
+    <!-- Shelter Home Screen -->
+    <string name="shelter_home_welcome">Bem-vindo %1$s</string>
+    <string name="shelter_home_register_animal">Registar Animal</string>
+    <string name="shelter_home_view_requests">Ver pedidos de adoção</string>
+
+    <!-- Error and success messages coming from ShelterMngViewModel -->
+    <string name="error_birthdate_required">A data de nascimento é obrigatória.</string>
+    <string name="error_birthdate_format">A data deve estar no formato DD/MM/AAAA.</string>
+    <string name="error_invalid_day">Dia inválido.</string>
+    <string name="error_invalid_month">Mês inválido.</string>
+    <string name="error_invalid_date_numbers">Dia, mês e ano devem ser números.</string>
+    <string name="error_future_date">A data não pode ser no futuro.</string>
+    <string name="error_name_required">Por favor preenche o nome.</string>
+    <string name="error_breed_required">Seleciona uma raça.</string>
+    <string name="error_size_required">Seleciona um tamanho.</string>
+    <string name="error_species_required">Seleciona uma espécie.</string>
+    <string name="error_no_shelter_id">Shelter ID não disponível.</string>
+    <string name="error_add_image">Adiciona pelo menos uma imagem.</string>
+    <string name="success_animal_created">Animal criado com sucesso!</string>
+    <string name="success_request_approved">Pedido aprovado com sucesso!</string>
+    <string name="success_request_rejected">Pedido rejeitado</string>
+    <string name="error_approve_request">Erro ao aprovar pedido:</string>
+    <string name="error_reject_request">Erro ao rejeitar pedido:</string>
+    <string name="error_save_animal">Erro ao salvar o animal:</string>
+
+
+    <!-- Error and success messages coming from ShelterViewModel -->
+    <string name="error_shelter_not_found">Shelter not found.</string>
+    <string name="error_loading_shelter">Error loading shelter:</string>
+    <string name="error_loading_shelters">Error loading shelters:</string>
+    <string name="error_adding_shelter">Error adding shelter:</string>
+    <string name="error_updating_shelter">Error updating shelter:</string>
+    <string name="error_removing_shelter">Error removing shelter:</string>
+    <string name="error_searching_shelters">Error searching shelters:</string>
+    <string name="success_shelter_added">Shelter added successfully!</string>
+    <string name="success_shelter_updated">Shelter updated successfully!</string>
+    <string name="success_shelter_removed">Shelter removed successfully!</string>
+
+
+    <!-- AuthViewModel Messages -->
+    <string name="required_fields_error">Preenche todos os campos obrigatórios.</string>
+
+    <!-- ActivityViewModel Messages -->
+    <string name="error_loading_animal_shelter">Erro ao carregar dados do animal e abrigo:</string>
+    <string name="error_scheduling_activity">Erro ao agendar atividade:</string>
+    <string name="error_deleting_activity">Erro ao eliminar atividade:</string>
+
+    <!-- OwnershipViewModel Messages-->
+    <string name="error_loading_animal">Erro ao carregar animal:</string>
+    <string name="error_animal_not_found_room">Erro: Animal não encontrado na base de dados local.</string>
+    <string name="success_ownership_submitted">Pedido de ownership enviado com sucesso!</string>
+    <string name="error_submit_ownership">Erro ao submeter pedido de ownership:</string>
+
+
 
 </resources>

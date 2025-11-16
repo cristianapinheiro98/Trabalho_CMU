@@ -3,21 +3,16 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import pt.ipp.estg.trabalho_cmu.R
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
@@ -29,10 +24,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.*
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
@@ -44,7 +36,7 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraphUser(navController: NavHostController) {
+fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeClass) {
     val authViewModel: AuthViewModel = viewModel()
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
@@ -81,22 +73,22 @@ fun NavGraphUser(navController: NavHostController) {
 
         // ========== OWNERSHIP FORM ==========
         composable(
-            route = "OwnershipForm/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            route = "OwnershipForm/{animalFirebaseUid}",
+            arguments = listOf(navArgument("animalFirebaseUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val userViewModel: UserViewModel = viewModel()
             val animalViewModel: AnimalViewModel = viewModel()
             val shelterViewModel: ShelterViewModel = viewModel()
 
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
-            val userId = authViewModel.getCurrentUserId()
+            val animalFirebaseUid = backStackEntry.arguments?.getString("animalFirebaseUid") ?: ""
+            val userFirebaseUid = authViewModel.getCurrentUserFirebaseUid() ?: ""
 
             OwnershipFormScreen(
-                userId = userId,
-                animalId = animalId,
+                userFirebaseUid = userFirebaseUid,
+                animalFirebaseUid = animalFirebaseUid,
                 onSubmitSuccess = {
-                    navController.navigate("ownership_confirmation/$animalId") {
-                        popUpTo("OwnershipForm/$animalId") { inclusive = true }
+                    navController.navigate("ownership_confirmation/$animalFirebaseUid") {
+                        popUpTo("OwnershipForm/$animalFirebaseUid") { inclusive = true }
                     }
                 }
             )
@@ -213,11 +205,12 @@ fun NavGraphUser(navController: NavHostController) {
                 }
             )
         }
-
+        // ========== USER MAIN OPTIONS ==========
         composable("UserHome") {
             MainOptionsScreen(
                 navController = navController,
-                hasAdoptedAnimal = true
+                hasAdoptedAnimal = true,
+                windowSize = windowSize
             )
         }
 

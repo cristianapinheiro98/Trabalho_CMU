@@ -35,7 +35,11 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
-
+/**
+ * Wrapper composable that loads both animal and shelter information
+ * based on the provided animal ID. Displays loading state when necessary
+ * and forwards data to the content composable.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalDetailScreen(
@@ -50,14 +54,14 @@ fun AnimalDetailScreen(
     val shelter by shelterViewModel.selectedShelter.observeAsState()
     val isLoadingShelter by shelterViewModel.isLoading.observeAsState(false)
 
-    // Load animal
+    // Load the selected animal when screen is opened
     LaunchedEffect(animalId) {
         animalViewModel.selectAnimal(animalId)
     }
 
-    // Load shelter after animal is known
+    // Load shelter once animal data is available
     LaunchedEffect(animal) {
-        animal?.let { shelterViewModel.loadShelterById(it.shelterId) }
+        animal?.let { shelterViewModel.loadShelterByFirebaseUid(it.shelterFirebaseUid) }
     }
 
     if (animal == null) {
@@ -77,7 +81,14 @@ fun AnimalDetailScreen(
     )
 }
 
-
+/**
+ * Main detail page content section:
+ * - Image gallery
+ * - Animal characteristics
+ * - Shelter info
+ * - Description
+ * - Adopt button (optional)
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun AnimalDetailScreenContent(
@@ -105,15 +116,14 @@ private fun AnimalDetailScreenContent(
             mainImageUrl = mainImage,
             thumbnails = imageGallery,
             onThumbnailClick = {
-                if (it.isNotBlank()) {
-                    mainImage = it
-                }
+                if (it.isNotBlank()) mainImage = it
             },
             onNavigateBack = onNavigateBack
         )
 
         Column(modifier = Modifier.padding(20.dp)) {
 
+            // Animal name
             Text(
                 text = animal.name,
                 fontSize = 28.sp,
@@ -121,6 +131,7 @@ private fun AnimalDetailScreenContent(
                 color = Color(0xFF3F51B5)
             )
 
+            // Species and size
             Text(
                 text = "${animal.species} • ${animal.size}",
                 fontSize = 16.sp,
@@ -131,17 +142,18 @@ private fun AnimalDetailScreenContent(
             Divider()
             Spacer(Modifier.height(12.dp))
 
+            // Info table
             InfoLine(R.string.animal_breed_label, animal.breed)
             InfoLine(R.string.animal_size_label, animal.size)
-            InfoLine(R.string.animal_birthdate_label, animal.birthDate)
             InfoLine(R.string.animal_age_label, ageText)
 
+            // Shelter info
             InfoLine(
                 labelId = R.string.shelter_name_label,
                 value = when {
-                    isLoadingShelter -> "A carregar..."
+                    isLoadingShelter -> stringResource(R.string.loading_shelter)
                     shelter != null -> shelter.name
-                    else -> "Desconhecido"
+                    else -> stringResource(R.string.unknown_shelter)
                 }
             )
 
@@ -149,8 +161,9 @@ private fun AnimalDetailScreenContent(
             Divider()
             Spacer(Modifier.height(20.dp))
 
+            // Description section
             Text(
-                text = "Descrição",
+                text = stringResource(R.string.description_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF303F9F)
@@ -166,20 +179,25 @@ private fun AnimalDetailScreenContent(
 
             Spacer(Modifier.height(24.dp))
 
+            // Adopt button
             if (showAdoptButton) {
                 Button(
                     onClick = onAdoptClick,
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Adotar", fontSize = 18.sp)
+                    Text(stringResource(R.string.adopt_button), fontSize = 18.sp)
                 }
             }
         }
     }
 }
 
-
+/**
+ * Image gallery displaying the main image and a row of thumbnails.
+ */
 @Composable
 private fun ImageGallery(
     mainImageUrl: String,
@@ -200,7 +218,7 @@ private fun ImageGallery(
                     .data(mainImageUrl)
                     .crossfade(true)
                     .build(),
-                contentDescription = "Imagem Principal",
+                contentDescription = stringResource(R.string.main_image_description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp),
@@ -218,7 +236,7 @@ private fun ImageGallery(
                 thumbnails.filter { it.isNotBlank() }.forEach { url ->
                     AsyncImage(
                         model = url,
-                        contentDescription = "Miniatura",
+                        contentDescription = stringResource(R.string.thumbnail_image_description),
                         modifier = Modifier
                             .size(60.dp)
                             .padding(horizontal = 4.dp)
@@ -242,7 +260,7 @@ private fun ImageGallery(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Voltar",
+                contentDescription = stringResource(R.string.go_back),
                 tint = Color.White,
                 modifier = Modifier.size(24.dp)
             )
@@ -250,6 +268,9 @@ private fun ImageGallery(
     }
 }
 
+/**
+ * Small reusable component that prints a label + value in one row.
+ */
 @Composable
 fun InfoLine(labelId: Int, value: String) {
     Row(
@@ -281,11 +302,12 @@ private fun PreviewAnimalDetailScreen() {
             "https://placekitten.com/350/280",
             "https://placekitten.com/360/240"
         ),
-        shelterId = 1
+        shelterFirebaseUid = "1"
     )
 
     val mockShelter = Shelter(
         id = 1,
+        firebaseUid = "1",
         name = "Abrigo Porto",
         address = "Rua dos Animais 123",
         phone = "912345678",
@@ -320,7 +342,7 @@ private fun PreviewAnimalDetailWithoutAuth() {
         birthDate = "2019-01-01",
         description = "Muito meiga, adora colo e mantinhas!",
         imageUrls = listOf(""),
-        shelterId = 1
+        shelterFirebaseUid = "1"
     )
 
     MaterialTheme {

@@ -17,13 +17,19 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 
-
+/**
+ * Top-level screen responsible for displaying the list of animals.
+ * It observes state from the AnimalViewModel and forwards user interactions
+ * (search, filters, sorting, favorite toggles) to the ViewModel.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,10 +39,12 @@ fun AnimalListScreen(
     isLoggedIn: Boolean,
     onNavigateBack: () -> Unit
 ) {
+    // Observing data from ViewModel
     val animals by viewModel.animals.observeAsState(emptyList())
     val animalsFiltered by viewModel.animalsFiltered.observeAsState(emptyList())
     val favorites by viewModel.favorites.observeAsState(emptyList())
 
+    // Preference: if filtered results exist, show them
     val listToShow = if (animalsFiltered.isNotEmpty()) animalsFiltered else animals
 
     AnimalListContent(
@@ -55,8 +63,10 @@ fun AnimalListScreen(
     )
 }
 
-
-
+/**
+ * Full UI structure including search bar, filter menu, sort menu,
+ * empty state, and the grid of AnimalCard items.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalListContent(
@@ -83,6 +93,7 @@ fun AnimalListContent(
             .padding(horizontal = 12.dp)
     ) {
 
+        // Top row: Back button + search field with filter and sort actions
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -91,7 +102,10 @@ fun AnimalListContent(
         ) {
 
             IconButton(onClick = onNavigateBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.go_back)
+                )
             }
 
             OutlinedTextField(
@@ -100,15 +114,26 @@ fun AnimalListContent(
                     search = it
                     onSearch(it)
                 },
-                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Pesquisar") },
-                placeholder = { Text("Pesquisar") },
+                leadingIcon = {
+                    Icon(
+                        Icons.Outlined.Search,
+                        contentDescription = stringResource(R.string.search_label)
+                    )
+                },
+                placeholder = { Text(stringResource(R.string.search_label)) },
                 trailingIcon = {
                     Row {
                         IconButton(onClick = { filterMenuOpen = true }) {
-                            Icon(Icons.Outlined.FilterList, contentDescription = "Filtrar")
+                            Icon(
+                                Icons.Outlined.FilterList,
+                                contentDescription = stringResource(R.string.filter_label)
+                            )
                         }
                         IconButton(onClick = { sortMenuOpen = true }) {
-                            Icon(Icons.Outlined.Sort, contentDescription = "Ordenar")
+                            Icon(
+                                Icons.Outlined.Sort,
+                                contentDescription = stringResource(R.string.sort_label)
+                            )
                         }
                     }
                 },
@@ -120,65 +145,65 @@ fun AnimalListContent(
             )
         }
 
-        // ------------ FILTER MENU ------------
+        // Filter dropdown menu
         DropdownMenu(
             expanded = filterMenuOpen,
             onDismissRequest = { filterMenuOpen = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Cães") },
+                text = { Text(stringResource(R.string.filter_dogs)) },
                 onClick = { onFilterSpecies("Cão"); filterMenuOpen = false }
             )
             DropdownMenuItem(
-                text = { Text("Gatos") },
+                text = { Text(stringResource(R.string.filter_cats)) },
                 onClick = { onFilterSpecies("Gato"); filterMenuOpen = false }
             )
             DropdownMenuItem(
-                text = { Text("Porte Pequeno") },
+                text = { Text(stringResource(R.string.filter_small_size)) },
                 onClick = { onFilterSize("Pequeno"); filterMenuOpen = false }
             )
             DropdownMenuItem(
-                text = { Text("Porte Médio") },
+                text = { Text(stringResource(R.string.filter_medium_size)) },
                 onClick = { onFilterSize("Médio"); filterMenuOpen = false }
             )
             DropdownMenuItem(
-                text = { Text("Porte Grande") },
+                text = { Text(stringResource(R.string.filter_large_size)) },
                 onClick = { onFilterSize("Grande"); filterMenuOpen = false }
             )
             Divider()
             DropdownMenuItem(
-                text = { Text("Limpar filtros") },
+                text = { Text(stringResource(R.string.filter_clear)) },
                 onClick = { onClearFilters(); filterMenuOpen = false }
             )
         }
 
-        // ------------ SORT MENU ------------
+        // Sort dropdown menu
         DropdownMenu(
             expanded = sortMenuOpen,
             onDismissRequest = { sortMenuOpen = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Ordenar por nome") },
+                text = { Text(stringResource(R.string.sort_by_name)) },
                 onClick = { onSortName(); sortMenuOpen = false }
             )
             DropdownMenuItem(
-                text = { Text("Ordenar por idade") },
+                text = { Text(stringResource(R.string.sort_by_age)) },
                 onClick = { onSortAge(); sortMenuOpen = false }
             )
         }
 
-        // ------------ EMPTY LIST CHECK ------------
+        // Empty state
         if (animals.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Sem animais disponíveis.")
+                Text(stringResource(R.string.no_animals_available))
             }
             return
         }
 
-        // ------------ GRID LIST ------------
+        // Grid of animals
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -200,6 +225,7 @@ fun AnimalListContent(
 }
 
 
+
 private val previewAnimals = listOf(
     Animal(
         id = 1,
@@ -209,7 +235,7 @@ private val previewAnimals = listOf(
         size = "Pequeno",
         birthDate = "2019-01-01",
         imageUrls = listOf(""),
-        shelterId = 1,
+        shelterFirebaseUid = "1",
         description = "Muito meiga!"
     ),
     Animal(
@@ -220,7 +246,7 @@ private val previewAnimals = listOf(
         size = "Pequeno",
         birthDate = "2022-01-01",
         imageUrls = listOf(""),
-        shelterId = 1,
+        shelterFirebaseUid = "1",
         description = "Adora colo!"
     )
 )
