@@ -22,6 +22,9 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
+/**
+ * Screen responsible for collecting all required fields to create an Ownership request.
+ */
 @Composable
 fun OwnershipFormScreen(
     userFirebaseUid: String,
@@ -34,13 +37,14 @@ fun OwnershipFormScreen(
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
     val submissionSuccess by viewModel.submissionSuccess.observeAsState(false)
+    val animal by viewModel.animal.observeAsState()
 
+    // Load animal details to obtain shelterId
     LaunchedEffect(animalFirebaseUid) {
         viewModel.loadAnimalByFirebaseUid(animalFirebaseUid)
     }
-    val animal by viewModel.animal.observeAsState()
 
-    // Navigate only on success
+    // Navigate after successful submission
     LaunchedEffect(submissionSuccess) {
         if (submissionSuccess) {
             delay(500)
@@ -62,7 +66,6 @@ fun OwnershipFormScreen(
             modifier = modifier
         )
     } ?: run {
-        // Loading enquanto busca animal
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -72,6 +75,10 @@ fun OwnershipFormScreen(
     }
 }
 
+/**
+ * Internal UI content used by the Ownership Form Screen.
+ * Contains all fields and the final submit button.
+ */
 @Composable
 private fun OwnershipFormContent(
     isLoading: Boolean,
@@ -91,9 +98,10 @@ private fun OwnershipFormContent(
     var cardNumber by remember { mutableStateOf("") }
     var shelterFirebaseUid by remember { mutableStateOf("") }
 
+    /*
     LaunchedEffect(animalFirebaseUid) {
-        // TODO: Buscar animal para obter shelterFirebaseUid
-    }
+        // TODO: fetch animal to obtain shelterFirebaseUid
+    }*/
 
     val maxAccountDigits = 21
     val maxCardDigits = 8

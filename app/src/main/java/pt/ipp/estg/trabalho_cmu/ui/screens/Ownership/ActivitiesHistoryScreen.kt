@@ -167,7 +167,7 @@ private fun ActivitiesHistoryContent(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Cancelar Visita")
+                        Text(stringResource(R.string.cancel_visit_button))
                     }
                 }
             }

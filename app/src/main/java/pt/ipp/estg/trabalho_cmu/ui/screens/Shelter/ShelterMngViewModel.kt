@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
@@ -14,6 +15,24 @@ import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.repository.*
 import java.time.LocalDate
+
+
+/**
+ * ViewModel responsible for managing all shelter-side operations in the Tailwagger application.
+ *
+ * This includes:
+ * - Managing adoption/ownership requests
+ * - Creating animals and validating form data
+ * - Uploading and managing Firebase image URLs
+ * - Loading breeds dynamically from an external API based on species
+ * - Updating local Room database and synchronizing with Firebase Firestore
+ *
+ * The ViewModel uses LiveData to expose UI state such as:
+ * - Loading indicators
+ * - User-visible success and error messages
+ * - Form field values
+ * - Available breeds
+ */
 
 class ShelterMngViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -57,22 +76,36 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _isLoadingBreeds = MutableLiveData(false)
     val isLoadingBreeds: LiveData<Boolean> = _isLoadingBreeds
 
-    // ---------------------- IMAGES (FIREBASE URLS) ------------------------
+    // ---------------------- IMAGES ------------------------
     private val _selectedImages = MutableLiveData<List<String>>(emptyList())
     val selectedImages: LiveData<List<String>> = _selectedImages
 
     private val _isUploadingImages = MutableLiveData(false)
     val isUploadingImages: LiveData<Boolean> = _isUploadingImages
 
+    /**
+     * Sets whether image uploading to Firebase Storage is in progress.
+     *
+     * @param value True when upload is ongoing, false otherwise.
+     */
     fun setUploadingImages(value: Boolean) {
         _isUploadingImages.value = value
     }
 
+    /**
+     * Adds a Firebase Storage URL to the current list of uploaded images.
+     * This is called once an upload operation successfully returns a URL.
+     *
+     * @param url The public image URL returned from Firebase Storage.
+     */
     fun addImageUrl(url: String) {
         _selectedImages.value = _selectedImages.value!! + url
         _isUploadingImages.value = false
     }
 
+    /**
+     * Clears all previously uploaded Firebase image URLs.
+     */
     fun clearImages() {
         _selectedImages.value = emptyList()
     }
@@ -81,6 +114,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _currentShelterFirebaseUid = MutableLiveData<String?>(null)
     val currentShelterFirebaseUid: LiveData<String?> = _currentShelterFirebaseUid
 
+
+    /**
+     * Sets the active shelter firebaseUid for the session.
+     *
+     * Once the ID is set, this method triggers:
+     * - Fetching all ownership records from Firebase
+     * - Automatic filtering of adoption requests through the `requests` LiveData
+     *
+     * @param firebaseUid The unique identifier of the shelter currently logged in.
+     */
     fun setShelterFirebaseUid(firebaseUid: String) {
         _currentShelterFirebaseUid.value = firebaseUid
 
@@ -94,7 +137,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    // ---------------------- ADOPTION REQUEST ---------------
+    // ---------------------- ADOPTION REQUESTS ---------------
     val requests: LiveData<List<AdoptionRequest>> =
         _currentShelterFirebaseUid.switchMap { shelterFirebaseUid ->
             if (shelterFirebaseUid != null) {
@@ -117,6 +160,14 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
 
+
+    /**
+     * Converts an Ownership entity into an AdoptionRequest model suitable for the UI layer.
+     * This method fetches the associated User and Animal records before assembling the final model.
+     *
+     * @param ownership The ownership record retrieved from the database.
+     * @return An AdoptionRequest object.
+     */
     private suspend fun convertToAdoptionRequest(ownership: Ownership): AdoptionRequest {
         val user = userRepository.getUserByFirebaseUid(ownership.userFirebaseUid)
         val animal = animalRepository.getAnimalByFirebaseUid(ownership.animalFirebaseUid)
@@ -131,6 +182,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     // ---------------------- APPROVE / REJECT OWNERSHIP REQUESTS --------------
 
+    /**
+     * Approves an adoption/ownership request.
+     *
+     * @param request The adoption request selected by the shelter.
+     */
     fun approveRequest(request: AdoptionRequest) {
         viewModelScope.launch {
             try {
@@ -147,17 +203,23 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
                 animalRepository.changeAnimalStatusToOwned(animalId)
 
-                _message.value = "Request approved successfully!"
+                _message.value = getApplication<Application>().getString(R.string.success_request_approved)
                 _error.value = null
 
             } catch (e: Exception) {
-                _error.value = "Error approving request: ${e.message}"
+                _error.value =
+                    getApplication<Application>().getString(R.string.error_approve_request) + " ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    /**
+     * Rejects an adoption/ownership request.
+     *
+     * @param request The adoption request to reject.
+     */
     fun rejectRequest(request: AdoptionRequest) {
         viewModelScope.launch {
             try {
@@ -166,11 +228,12 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
                 ownershipRepository.rejectOwnershipRequest(ownershipId)
 
-                _message.value = "Request rejected"
+                _message.value = getApplication<Application>().getString(R.string.success_request_rejected)
                 _error.value = null
 
             } catch (e: Exception) {
-                _error.value = "Error rejecting request: ${e.message}"
+                _error.value =
+                    getApplication<Application>().getString(R.string.error_reject_request) + " ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -178,6 +241,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     // ---------------------- BREEDS LOADER -------------------
+
+    /**
+     * Loads breeds based on the provided species.
+     */
     private fun loadBreedsBySpecies(species: String) {
         if (species.isBlank()) {
             _availableBreeds.value = emptyList()
@@ -192,8 +259,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 _availableBreeds.value = it
                 _isLoadingBreeds.value = false
             },
-            onError = {
-                _error.value = it
+            onError = { error ->
+                _error.value = error
                 _availableBreeds.value = emptyList()
                 _isLoadingBreeds.value = false
             }
@@ -201,41 +268,103 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     // ---------------------- FORM HANDLERS -------------------
-    fun onNameChange(value: String) = updateForm { copy(name = value) }
-    fun onBreedChange(value: String) = updateForm { copy(breed = value) }
+    /**
+     * Updates the 'name' field in the animal creation form.
+     * @param value The entered name.
+     */
+    fun onNameChange(v: String) = updateForm { copy(name = v) }
 
-    fun onSpeciesChange(value: String) {
-        updateForm { copy(species = value) }
-        loadBreedsBySpecies(value)
+    /**
+     * Updates the 'breed' field in the animal creation form.
+     * @param value The selected breed.
+     */
+    fun onBreedChange(v: String) = updateForm { copy(breed = v) }
+
+    /**
+     * Updates the 'species' field in the animal creation form.
+     *
+     * This also triggers dynamic breed loading via the BreedRepository.
+     *
+     * @param value The selected species.
+     */
+    fun onSpeciesChange(v: String) {
+        updateForm { copy(species = v) }
+        loadBreedsBySpecies(v)
     }
 
-    fun onSizeChange(value: String) = updateForm { copy(size = value) }
-    fun onBirthDateChange(value: String) = updateForm { copy(birthDate = value) }
-    fun onDescriptionChange(value: String) = updateForm { copy(description = value) }
+    /**
+     * Updates the 'size' field in the animal creation form.
+     * @param value The selected size.
+     */
+    fun onSizeChange(v: String) = updateForm { copy(size = v) }
 
+
+    /**
+     * Updates the birthdate field in the animal creation form.
+     * @param value A string in DD/MM/YYYY format.
+     */
+    fun onBirthDateChange(v: String) = updateForm { copy(birthDate = v) }
+
+    /**
+     * Updates the 'description' field in the animal form.
+     * @param value The entered description.
+     */
+    fun onDescriptionChange(v: String) = updateForm { copy(description = v) }
+
+    /**
+     * Internal utility method that updates one or more fields in the AnimalForm.
+     *
+     * This method keeps the rest of the form unchanged by copying the existing
+     * fields and applying only the modified fields provided in the lambda block.
+     */
     private inline fun updateForm(block: AnimalForm.() -> AnimalForm) {
         _animalForm.value = (_animalForm.value ?: AnimalForm()).block()
     }
 
     // ---------------------- VALIDATE DATE -------------------
+
+    /**
+     * Validates the birthdate entered by the user.
+     *
+     * Validation rules:
+     * - Must not be empty
+     * - Must follow the DD/MM/YYYY format
+     * - Must contain valid day and month values
+     * - Must consist only of numeric components
+     * - Must not represent a future date
+     *
+     * @param birthDate A string representing the date.
+     * @return A user-visible error message if invalid, or null if valid.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
-        if (birthDate.isBlank()) return "Birth date is required."
+        val ctx = getApplication<Application>()
+
+        if (birthDate.isBlank())
+            return ctx.getString(R.string.error_birthdate_required)
 
         val parts = birthDate.split("/")
-        if (parts.size != 3) return "Date must be in DD/MM/YYYY format."
+        if (parts.size != 3)
+            return ctx.getString(R.string.error_birthdate_format)
 
         val day = parts[0].toIntOrNull()
         val month = parts[1].toIntOrNull()
         val year = parts[2].toIntOrNull()
 
-        if (day !in 1..31) return "Invalid day."
-        if (month !in 1..12) return "Invalid month."
-        if (day == null || month == null || year == null) return "Day, month and year must be numbers."
+        if (day !in 1..31)
+            return ctx.getString(R.string.error_invalid_day)
+
+        if (month !in 1..12)
+            return ctx.getString(R.string.error_invalid_month)
+
+        if (day == null || month == null || year == null)
+            return ctx.getString(R.string.error_invalid_date_numbers)
 
         return try {
             val date = LocalDate.of(year, month, day)
-            if (date.isAfter(LocalDate.now())) "Date cannot be in the future." else null
+            if (date.isAfter(LocalDate.now()))
+                ctx.getString(R.string.error_future_date)
+            else null
         } catch (e: Exception) {
             "Invalid date."
         }
@@ -243,26 +372,38 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     // ---------------------- SAVE ANIMAL ---------------------
 
+    /**
+     * Validates the form and creates a new animal entry.
+     *
+     * Steps:
+     * 1. Validates all form fields (name, species, breed, size, birthdate).
+     * 2. Ensures the user uploaded at least one image.
+     * 3. Constructs an Animal object with the provided data.
+     * 4. Saves the Animal to Firebase Firestore and Room using AnimalRepository.
+     * 5. Clears the form and image selection on success.
+     * 6. Emits an appropriate success or error message to the UI.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
+        val ctx = getApplication<Application>()
 
-        if (form.name.isBlank()) { _error.value = "Please fill in the name."; return }
-        if (form.breed.isBlank()) { _error.value = "Select a breed."; return }
-        if (form.size.isBlank()) { _error.value = "Select a size."; return }
-        if (form.species.isBlank()) { _error.value = "Select a species."; return }
+        if (form.name.isBlank()) { _error.value = ctx.getString(R.string.error_name_required); return }
+        if (form.breed.isBlank()) { _error.value = ctx.getString(R.string.error_breed_required); return }
+        if (form.size.isBlank()) { _error.value = ctx.getString(R.string.error_size_required); return }
+        if (form.species.isBlank()) { _error.value = ctx.getString(R.string.error_species_required); return }
 
         val birthError = validateBirthDate(form.birthDate)
         if (birthError != null) { _error.value = birthError; return }
 
         val shelterFirebaseUid = _currentShelterFirebaseUid.value ?: run {
-            _error.value = "Shelter Firebase UID not available"
+            _error.value = ctx.getString(R.string.error_no_shelter_id)
             return
         }
 
         val images = selectedImages.value ?: emptyList()
         if (images.isEmpty()) {
-            _error.value = "Add at least one image."
+            _error.value = ctx.getString(R.string.error_add_image)
             return
         }
 
@@ -280,20 +421,17 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     shelterFirebaseUid = shelterFirebaseUid
                 )
 
-                // Firebase + Room
                 val result = animalRepository.createAnimal(newAnimal)
 
                 result.onSuccess {
                     _animalForm.value = AnimalForm()
                     clearImages()
                     _availableBreeds.value = emptyList()
-
-                    _message.value = "Animal created successfully!"
-                    _error.value = null
+                    _message.value = ctx.getString(R.string.success_animal_created)
                 }
 
                 result.onFailure { e ->
-                    _error.value = "Error saving animal: ${e.message}"
+                    _error.value = ctx.getString(R.string.error_save_animal) + " ${e.message}"
                 }
 
             } finally {
@@ -302,7 +440,15 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    // ---------------------- UTIL FUNCS ----------------------
+    // ---------------------- UTILS ---------------------------
+
+    /**
+     * Clears the currently displayed success message.
+     */
     fun clearMessage() { _message.value = null }
+
+    /**
+     * Clears the currently displayed error message.
+     */
     fun clearError() { _error.value = null }
 }

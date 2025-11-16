@@ -8,6 +8,7 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
@@ -15,6 +16,12 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 
+/**
+ * ViewModel responsible for:
+ * - Loading the user's ownership records
+ * - Fetching animal details
+ * - Submitting new ownership requests
+ */
 class OwnershipViewModel(application: Application) : AndroidViewModel(application) {
 
     private val ownershipRepository: OwnershipRepository by lazy {
@@ -31,6 +38,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= USER OWNERSHIPS ========= //
+
     private val _userFirebaseUid = MutableLiveData<String>()
 
     val ownerships: LiveData<List<Ownership>> =
@@ -46,6 +54,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= UI STATES ========= //
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -63,17 +72,19 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= ANIMAL DETAILS ========= //
+
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
     fun loadAnimalDetails(animalId: Int) {
+        val ctx = getApplication<Application>()
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 _animal.value = animalRepository.getAnimalById(animalId)
                 _error.value = null
             } catch (e: Exception) {
-                _error.value = "Error loading animal: ${e.message}"
+                _error.value = ctx.getString(R.string.error_loading_animal) + " ${e.message}"
                 _animal.value = null
             } finally {
                 _isLoading.value = false
@@ -97,21 +108,25 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ========= OWNERSHIP ACTIONS ========= //
+
     fun submitOwnership(request: Ownership) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 val result = ownershipRepository.createOwnership(request)
 
                 result.onSuccess {
-                    _message.value = "Adoption request submitted successfully!"
+                    _message.value = ctx.getString(R.string.success_ownership_submitted)
                     _error.value = null
                     _submissionSuccess.value = true
                 }.onFailure { e ->
-                    _error.value = "Error submitting request: ${e.message}"
+                    _error.value = ctx.getString(R.string.error_submit_ownership) + " ${e.message}"
                 }
+
             } catch (e: Exception) {
-                _error.value = "Error submitting request: ${e.message}"
+                _error.value = ctx.getString(R.string.error_submit_ownership) + " ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -141,5 +156,6 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun clearError() { _error.value = null }
+
     fun clearMessage() { _message.value = null }
 }

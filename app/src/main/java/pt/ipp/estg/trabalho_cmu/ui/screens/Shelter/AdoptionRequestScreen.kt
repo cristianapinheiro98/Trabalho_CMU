@@ -14,22 +14,27 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
-
+/**
+ * Screen that displays all pending adoption requests for a shelter
+ * and allows approving or rejecting each one.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdoptionRequestScreen(
     onNavigateBack: () -> Unit = {},
     authViewModel: AuthViewModel = viewModel(),
-    viewModel: ShelterMngViewModel = viewModel()
+    shelterMngViewModel: ShelterMngViewModel = viewModel()
 ) {
     val currentShelter by authViewModel.currentShelter.observeAsState()
     val accountType by authViewModel.accountType.observeAsState()
@@ -39,7 +44,7 @@ fun AdoptionRequestScreen(
             AccountType.SHELTER -> {
                 currentShelter?.let { shelter ->
                     println("[AdoptionRequest] Shelter: ${shelter.name}, Firebase UID: ${shelter.firebaseUid}")
-                    viewModel.setShelterFirebaseUid(shelter.firebaseUid)
+                    shelterMngViewModel.setShelterFirebaseUid(shelter.firebaseUid)
                 }
             }
             else -> {
@@ -48,20 +53,20 @@ fun AdoptionRequestScreen(
         }
     }
 
-    val request by viewModel.requests.observeAsState(emptyList())
-    val message by viewModel.message.observeAsState()
-    val error by viewModel.error.observeAsState()
+    val requests by shelterMngViewModel.requests.observeAsState(emptyList())
+    val message by shelterMngViewModel.message.observeAsState()
+    val error by shelterMngViewModel.error.observeAsState()
     val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pedidos de Adoção") },
+                title = { Text(stringResource(R.string.adoption_requests_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.back_button_description)
                         )
                     }
                 },
@@ -80,48 +85,57 @@ fun AdoptionRequestScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (request.isEmpty()) {
+            if (requests.isEmpty()) {
                 Text(
-                    text = "Sem pedidos pendentes",
+                    text = stringResource(R.string.no_pending_requests),
                     color = Color.Gray,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 40.dp)
                 )
             } else {
-                request.forEach { pedido ->
+                requests.forEach { request ->
                     PedidoCard(
-                        request = pedido,
-                        onApprove = { viewModel.approveRequest(pedido) },
-                        onReject = { viewModel.rejectRequest(pedido) }
+                        request = request,
+                        onApprove = { shelterMngViewModel.approveRequest(request) },
+                        onReject = { shelterMngViewModel.rejectRequest(request) }
                     )
                 }
             }
         }
     }
 
+    // Success dialog
     message?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.clearMessage() },
+            onDismissRequest = { shelterMngViewModel.clearMessage() },
             confirmButton = {
-                TextButton(onClick = { viewModel.clearMessage() }) { Text("OK") }
+                TextButton(onClick = { shelterMngViewModel.clearMessage() }) {
+                    Text(stringResource(R.string.dialog_ok_button))
+                }
             },
-            title = { Text("Aviso") },
+            title = { Text(stringResource(R.string.dialog_warning_title)) },
             text = { Text(it) }
         )
     }
 
+    // Error dialog
     error?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.clearError() },
+            onDismissRequest = { shelterMngViewModel.clearError() },
             confirmButton = {
-                TextButton(onClick = { viewModel.clearError() }) { Text("OK") }
+                TextButton(onClick = { shelterMngViewModel.clearError() }) {
+                    Text(stringResource(R.string.dialog_ok_button))
+                }
             },
-            title = { Text("Erro") },
+            title = { Text(stringResource(R.string.dialog_error_title)) },
             text = { Text(it) }
         )
     }
 }
 
+/**
+ * Card showing the details of one adoption request and buttons to approve/reject it.
+ */
 @Composable
 fun PedidoCard(
     request: AdoptionRequest,
@@ -136,7 +150,7 @@ fun PedidoCard(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Pedido",
+            text = stringResource(R.string.request_label),
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
             color = Color(0xFF455A64)
@@ -146,14 +160,14 @@ fun PedidoCard(
             IconButton(onClick = onApprove) {
                 Icon(
                     imageVector = Icons.Outlined.Check,
-                    contentDescription = "Aprovar Pedido",
+                    contentDescription = stringResource(R.string.approve_request_description),
                     tint = Color(0xFF388E3C)
                 )
             }
             IconButton(onClick = onReject) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
-                    contentDescription = "Rejeitar Pedido",
+                    contentDescription = stringResource(R.string.reject_request_description),
                     tint = Color(0xFFD32F2F)
                 )
             }
@@ -174,8 +188,8 @@ fun PedidoCard(
             Text(request.nome, fontWeight = FontWeight.Bold)
             Text(request.email)
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Animal: ${request.animal}")
-            Text("ID: ${request.id}")
+            Text(stringResource(R.string.animal_label) + " " + request.animal)
+            Text(stringResource(R.string.id_label) + " " + request.id)
         }
     }
 }

@@ -24,7 +24,14 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 
-
+/**
+ * Ownership Confirmation Screen.
+ *
+ * Displays a visual confirmation message after an ownership request
+ * is submitted successfully. It pulls user, shelter, and animal data
+ * from their respective ViewModels. All UI text displayed to the user
+ * uses string resources when available.
+ */
 @Composable
 fun OwnershipConfirmationScreen(
     userViewModel: UserViewModel,
@@ -141,6 +148,9 @@ fun OwnershipConfirmationScreen(
     }
 }
 
+/**
+ * Checkmark Animation/Icon used in the confirmation screen.
+ */
 @Composable
 fun CheckmarkIcon(
     modifier: Modifier = Modifier
@@ -210,7 +220,7 @@ fun OwnershipConfirmationScreenPreview() {
                     )
 
                     Text(
-                        text = "O abrigo Animais Fofos receberá a sua candidatura para adotar Mariana.",
+                        text = "O abrigo Animais Fofos recebeu a sua candidatura para adotar Mariana.",
                         fontSize = 16.sp,
                         color = Color(0xFF2C2C2C),
                         textAlign = TextAlign.Center,

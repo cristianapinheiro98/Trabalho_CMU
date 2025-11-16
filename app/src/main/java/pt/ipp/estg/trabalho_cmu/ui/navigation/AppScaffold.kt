@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.ui.navigation.*
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +29,7 @@ fun AppScaffold(
     windowSize: WindowWidthSizeClass
 ) {
     val authViewModel: AuthViewModel = viewModel()
+    val shelterMngViewModel: ShelterMngViewModel = viewModel()
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -89,7 +91,8 @@ fun AppScaffold(
                     isAdmin -> {
                         NavGraphAdmin(
                             navController = navController,
-                            authViewModel = authViewModel
+                            authViewModel = authViewModel,
+                            shelterMngViewModel = shelterMngViewModel
                         )
                     }
                     else -> {

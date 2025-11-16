@@ -17,23 +17,28 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.data.remote.api.services.uploadImageToFirebase
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
+/**
+ * Screen that allows shelter accounts to create a new animal.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCreationScreen(
     onNavigateBack: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
-    viewModel: ShelterMngViewModel = viewModel()
+    shelterMngViewModel: ShelterMngViewModel= viewModel()
 ) {
     val currentUser by authViewModel.currentUser.observeAsState()
     val currentShelter by authViewModel.currentShelter.observeAsState()
@@ -43,18 +48,18 @@ fun AnimalCreationScreen(
         if (accountType == AccountType.SHELTER) {
             currentShelter?.let { shelter ->
                 println("Shelter: ${shelter.name}, ID: ${shelter.id}")
-                viewModel.setShelterFirebaseUid(shelter.firebaseUid)
+                shelterMngViewModel.setShelterFirebaseUid(shelter.firebaseUid)
             }
         }
     }
 
-    val form by viewModel.animalForm.observeAsState(AnimalForm())
-    val availableBreeds by viewModel.availableBreeds.observeAsState(emptyList())
-    val selectedImages by viewModel.selectedImages.observeAsState(emptyList())
-    val isLoadingBreeds by viewModel.isLoadingBreeds.observeAsState(false)
-    val message by viewModel.message.observeAsState()
-    val error by viewModel.error.observeAsState()
-    val isUploadingImages by viewModel.isUploadingImages.observeAsState(false)
+    val form by shelterMngViewModel.animalForm.observeAsState(AnimalForm())
+    val availableBreeds by shelterMngViewModel.availableBreeds.observeAsState(emptyList())
+    val selectedImages by shelterMngViewModel.selectedImages.observeAsState(emptyList())
+    val isLoadingBreeds by shelterMngViewModel.isLoadingBreeds.observeAsState(false)
+    val message by shelterMngViewModel.message.observeAsState()
+    val error by shelterMngViewModel.error.observeAsState()
+    val isUploadingImages by shelterMngViewModel.isUploadingImages.observeAsState(false)
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -62,15 +67,14 @@ fun AnimalCreationScreen(
         uris.forEach { uri ->
             uploadImageToFirebase(
                 uri = uri,
-                onStart = { viewModel.setUploadingImages(true) },
-                onSuccess = { url -> viewModel.addImageUrl(url) },
+                onStart = { shelterMngViewModel.setUploadingImages(true) },
+                onSuccess = { url -> shelterMngViewModel.addImageUrl(url) },
                 onError = {
-                    viewModel.setUploadingImages(false)
-                    viewModel.clearError()
+                    shelterMngViewModel.setUploadingImages(false)
+                    shelterMngViewModel.clearError()
                 },
-                onComplete = { viewModel.setUploadingImages(false) }
+                onComplete = { shelterMngViewModel.setUploadingImages(false) }
             )
-
         }
     }
 
@@ -81,20 +85,19 @@ fun AnimalCreationScreen(
         isLoadingBreeds = isLoadingBreeds,
         message = message,
         error = error,
-        onNameChange = viewModel::onNameChange,
-        onSpeciesChange = viewModel::onSpeciesChange,
-        onBreedChange = viewModel::onBreedChange,
-        onSizeChange = viewModel::onSizeChange,
-        onBirthDateChange = viewModel::onBirthDateChange,
-        onDescriptionChange = viewModel::onDescriptionChange,
+        onNameChange = shelterMngViewModel::onNameChange,
+        onSpeciesChange = shelterMngViewModel::onSpeciesChange,
+        onBreedChange = shelterMngViewModel::onBreedChange,
+        onSizeChange = shelterMngViewModel::onSizeChange,
+        onBirthDateChange = shelterMngViewModel::onBirthDateChange,
+        onDescriptionChange = shelterMngViewModel::onDescriptionChange,
         onSelectImages = { imagePicker.launch("image/*") },
-        onSave = viewModel::saveAnimal,
+        onSave = shelterMngViewModel::saveAnimal,
         onNavigateBack = onNavigateBack,
-        onClearMessage = viewModel::clearMessage,
-        onClearError = viewModel::clearError,
-        isUploadingImages = isUploadingImages,
-
-        )
+        onClearMessage = shelterMngViewModel::clearMessage,
+        onClearError = shelterMngViewModel::clearError,
+        isUploadingImages = isUploadingImages
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,22 +121,23 @@ fun AnimalCreationScreenContent(
     onClearMessage: () -> Unit,
     onClearError: () -> Unit,
     isUploadingImages: Boolean,
-
-    ) {
+) {
     var expandedBreed by remember { mutableStateOf(false) }
     var expandedSpecies by remember { mutableStateOf(false) }
     var expandedSize by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    val speciesDog = stringResource(R.string.animal_species_dog)
+    val speciesCat = stringResource(R.string.animal_species_cat)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Criar Novo Animal") },
+                title = { Text(stringResource(R.string.animal_creation_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.back_button_description)
                         )
                     }
                 }
@@ -154,7 +158,7 @@ fun AnimalCreationScreenContent(
             OutlinedTextField(
                 value = form.name,
                 onValueChange = onNameChange,
-                label = { Text("Nome") },
+                label = { Text(stringResource(R.string.animal_name_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(16.dp))
@@ -168,7 +172,7 @@ fun AnimalCreationScreenContent(
                     value = form.species,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Espécie") },
+                    label = { Text(stringResource(R.string.animal_species_label)) },
                     trailingIcon = { TrailingIcon(expanded = expandedSpecies) },
                     modifier = Modifier.fillMaxWidth().menuAnchor()
                 )
@@ -178,16 +182,16 @@ fun AnimalCreationScreenContent(
                     onDismissRequest = { expandedSpecies = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Cão") },
+                        text = { Text(stringResource(R.string.animal_species_dog)) },
                         onClick = {
-                            onSpeciesChange("Cão")
+                            onSpeciesChange(speciesDog)
                             expandedSpecies = false
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Gato") },
+                        text = { Text(stringResource(R.string.animal_species_cat)) },
                         onClick = {
-                            onSpeciesChange("Gato")
+                            onSpeciesChange(speciesCat)
                             expandedSpecies = false
                         }
                     )
@@ -206,7 +210,7 @@ fun AnimalCreationScreenContent(
                     value = form.breed,
                     readOnly = true,
                     onValueChange = {},
-                    label = { Text("Raça") },
+                    label = { Text(stringResource(R.string.animal_breed_label)) },
                     trailingIcon = {
                         if (isLoadingBreeds) CircularProgressIndicator(
                             modifier = Modifier.size(22.dp),
@@ -243,7 +247,7 @@ fun AnimalCreationScreenContent(
                     value = form.size,
                     readOnly = true,
                     onValueChange = {},
-                    label = { Text("Tamanho") },
+                    label = { Text(stringResource(R.string.animal_size_label)) },
                     trailingIcon = { TrailingIcon(expanded = expandedSize) },
                     modifier = Modifier.fillMaxWidth().menuAnchor()
                 )
@@ -252,7 +256,11 @@ fun AnimalCreationScreenContent(
                     expanded = expandedSize,
                     onDismissRequest = { expandedSize = false }
                 ) {
-                    listOf("Pequeno", "Médio", "Grande").forEach { size ->
+                    listOf(
+                        stringResource(R.string.animal_size_small),
+                        stringResource(R.string.animal_size_medium),
+                        stringResource(R.string.animal_size_large),
+                    ).forEach { size ->
                         DropdownMenuItem(
                             text = { Text(size) },
                             onClick = {
@@ -269,8 +277,8 @@ fun AnimalCreationScreenContent(
             OutlinedTextField(
                 value = form.birthDate,
                 onValueChange = onBirthDateChange,
-                label = { Text("Data de Nascimento") },
-                placeholder = { Text("DD/MM/AAAA") },
+                label = { Text(stringResource(R.string.animal_birthdate_label)) },
+                placeholder = { Text(stringResource(R.string.animal_birthdate_placeholder)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(16.dp))
@@ -278,7 +286,7 @@ fun AnimalCreationScreenContent(
             OutlinedTextField(
                 value = form.description,
                 onValueChange = onDescriptionChange,
-                label = { Text("Descrição") },
+                label = { Text(stringResource(R.string.animal_description_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -289,7 +297,7 @@ fun AnimalCreationScreenContent(
                 onClick = onSelectImages,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Escolher imagens")
+                Text(stringResource(R.string.select_images_button))
             }
 
             if (selectedImages.isNotEmpty()) {
@@ -320,12 +328,12 @@ fun AnimalCreationScreenContent(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Guardar", fontSize = 16.sp)
+                    Text(stringResource(R.string.save_animal_button), fontSize = 16.sp)
                 }
             }
         }
 
-        // Messages
+        // Success message dialog
         message?.let {
             AlertDialog(
                 onDismissRequest = onClearMessage,
@@ -333,19 +341,23 @@ fun AnimalCreationScreenContent(
                     TextButton(onClick = {
                         onClearMessage()
                         onNavigateBack()
-                    }) { Text("OK") }
+                    }) { Text(stringResource(R.string.dialog_ok)) }
                 },
-                title = { Text("Sucesso") },
+                title = { Text(stringResource(R.string.success_title)) },
                 text = { Text(it) }
             )
         }
+
+        // Error message dialog
         error?.let {
             AlertDialog(
                 onDismissRequest = onClearError,
                 confirmButton = {
-                    TextButton(onClick = onClearError) { Text("OK") }
+                    TextButton(onClick = onClearError) {
+                        Text(stringResource(R.string.dialog_ok))
+                    }
                 },
-                title = { Text("Erro") },
+                title = { Text(stringResource(R.string.error_title)) },
                 text = { Text(it) }
             )
         }

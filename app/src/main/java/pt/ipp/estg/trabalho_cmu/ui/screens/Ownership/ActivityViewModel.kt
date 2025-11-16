@@ -3,7 +3,9 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 import android.app.Application
 import androidx.lifecycle.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.type.DateTime
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
@@ -46,10 +48,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
     private val _userId = MutableLiveData<Int>()
 
-    /**
-     * LiveData that combines Activity data with Animal and Shelter information.
-     * Automatically updates when database changes.
-     */
     val activitiesWithDetails: LiveData<List<ActivityWithAnimalAndShelter>> =
         _userId.switchMap { userId ->
             activityRepository.getUpcomingActivitiesByUser(userId).switchMap { activityList ->
@@ -66,6 +64,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
             }
         }
 
+    // ---- UI STATES ----
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -102,6 +101,8 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
     // ====== MOCK ========
     fun loadAnimalAndShelter(animalId: Int) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 val animal = animalRepository.getAnimalById(animalId)
@@ -114,7 +115,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
                 val animalData = animalRepository.getAnimalById(animalId)
 
-                // TEMPORÁRIO: Se não encontrar na BD, usa dados mock
                 if (animalData == null) {
                     _animal.value = getMockAnimal(animalId)
                     _shelter.value = getMockShelter()
@@ -126,17 +126,14 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                     }
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar dados: ${e.message}"
-                _animal.value = null
-                _shelter.value = null
-
+                _error.value = ctx.getString(R.string.error_loading_animal_shelter) + " ${e.message}"
                 _animal.value = getMockAnimal(animalId)
                 _shelter.value = getMockShelter()
             }
         }
     }
 
-    // TEMPORÁRIO: Funções auxiliares para mock
+    // Auxiliary mock functions
     private fun getMockAnimal(animalId: Int): Animal {
         return when (animalId) {
             1 -> Animal(
@@ -194,7 +191,6 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // Mock
     private fun getMockShelter(): Shelter {
         return Shelter(
             id = 1,
@@ -208,22 +204,21 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
     // ====== /END MOCK ========
 
-    /**
-     * Set the user ID to filter activities.
-     * This triggers the activitiesWithDetails LiveData to update.
-     */
     fun loadActivitiesForUser(userId: Int) {
         _userId.value = userId
     }
 
     fun scheduleActivity(activity: Activity) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 activityRepository.addActivity(activity)
                 _activityScheduled.value = true
             } catch (e: Exception) {
-                _error.value = "Erro ao agendar atividade: ${e.message}"
+                _error.value =
+                    ctx.getString(R.string.error_scheduling_activity) + " ${e.message}"
                 _activityScheduled.value = false
             } finally {
                 _isLoading.value = false
@@ -232,11 +227,14 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun deleteActivity(activity: Activity) {
+        val ctx = getApplication<Application>()
+
         viewModelScope.launch {
             try {
                 activityRepository.deleteActivity(activity)
             } catch (e: Exception) {
-                _error.value = "Erro ao eliminar atividade: ${e.message}"
+                _error.value =
+                    ctx.getString(R.string.error_deleting_activity) + " ${e.message}"
             }
         }
     }

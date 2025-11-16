@@ -8,11 +8,13 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterHomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AnimalCreationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AdoptionRequestScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
 @Composable
 fun NavGraphAdmin(
     navController: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    shelterMngViewModel: ShelterMngViewModel
 ) {
     NavHost(navController = navController, startDestination = "AdminHome") {
         composable("AdminHome") {
@@ -24,8 +26,10 @@ fun NavGraphAdmin(
         }
         composable("AnimalCreation") {
             AnimalCreationScreen(
+                onNavigateBack = { navController.popBackStack() },
                 authViewModel = authViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                shelterMngViewModel = shelterMngViewModel,
+
             )
         }
         composable("AdoptionRequest") {

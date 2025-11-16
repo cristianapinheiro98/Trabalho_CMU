@@ -4,16 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,22 +22,22 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onRegisterSuccess: () -> Unit,
-    viewModel: AuthViewModel
+    authviewModel: AuthViewModel
 ) {
-    val name by viewModel.name.observeAsState("")
-    val adress by viewModel.address.observeAsState("")
-    val phone by viewModel.phone.observeAsState("")
-    val email by viewModel.email.observeAsState("")
-    val password by viewModel.password.observeAsState("")
-    val accountType by viewModel.accountTypeChoice.observeAsState(AccountType.USER)
+    val name by authviewModel.name.observeAsState("")
+    val address by authviewModel.address.observeAsState("")
+    val phone by authviewModel.phone.observeAsState("")
+    val email by authviewModel.email.observeAsState("")
+    val password by authviewModel.password.observeAsState("")
+    val accountType by authviewModel.accountTypeChoice.observeAsState(AccountType.USER)
 
-    val isLoading by viewModel.isLoading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val message by viewModel.message.observeAsState()
+    val isLoading by authviewModel.isLoading.observeAsState(false)
+    val error by authviewModel.error.observeAsState()
+    val message by authviewModel.message.observeAsState()
 
     RegisterScreenContent(
         name = name,
-        adress = adress,
+        address = address,
         phone = phone,
         email = email,
         password = password,
@@ -44,29 +45,28 @@ fun RegisterScreen(
         isLoading = isLoading,
         error = error,
         message = message,
-        onNameChange = { viewModel.name.value = it },
-        onAdressChange = { viewModel.address.value = it },
-        onPhoneChange = { newValue ->
-            val filtered = newValue.filter { it.isDigit() }.take(9)
-            viewModel.phone.value = filtered
+        onNameChange = { authviewModel.name.value = it },
+        onAddressChange = { authviewModel.address.value = it },
+        onPhoneChange = {
+            val filtered = it.filter(Char::isDigit).take(9)
+            authviewModel.phone.value = filtered
         },
-        onEmailChange = { viewModel.email.value = it },
-        onPasswordChange = { viewModel.password.value = it },
-        onAccountTypeChange = { viewModel.accountTypeChoice.value = it },
-        onRegisterClick = { viewModel.register() },
+        onEmailChange = { authviewModel.email.value = it },
+        onPasswordChange = { authviewModel.password.value = it },
+        onAccountTypeChange = { authviewModel.accountTypeChoice.value = it },
+        onRegisterClick = { authviewModel.register() },
         onNavigateBack = onNavigateBack,
         onRegisterSuccess = onRegisterSuccess,
-        onClearError = { viewModel.clearError() },
-        onClearMessage = { viewModel.clearMessage() }
+        onClearError = { authviewModel.clearError() },
+        onClearMessage = { authviewModel.clearMessage() }
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreenContent(
     name: String,
-    adress: String,
+    address: String,
     phone: String,
     email: String,
     password: String,
@@ -75,7 +75,7 @@ fun RegisterScreenContent(
     error: String?,
     message: String?,
     onNameChange: (String) -> Unit,
-    onAdressChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -92,18 +92,19 @@ fun RegisterScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Criar Conta") },
+                title = { Text(stringResource(R.string.register_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.back_button)
                         )
                     }
                 }
             )
         }
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -113,58 +114,64 @@ fun RegisterScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(Modifier.height(16.dp))
-
             OutlinedTextField(
                 value = name,
                 onValueChange = onNameChange,
-                label = { Text("Nome completo") },
+                label = { Text(stringResource(R.string.name_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = adress,
-                onValueChange = onAdressChange,
-                label = { Text("Morada") },
+                value = address,
+                onValueChange = onAddressChange,
+                label = { Text(stringResource(R.string.address_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = phone,
                 onValueChange = onPhoneChange,
-                label = { Text("Telefone") },
+                label = { Text(stringResource(R.string.phone_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = email,
                 onValueChange = onEmailChange,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.email_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(Modifier.height(8.dp))
 
-            // ACCOUNT TYPE DROPDOWN
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
             ) {
                 OutlinedTextField(
-                    value = if (accountType == AccountType.USER) "Utilizador" else "Abrigo",
+                    value =
+                        if (accountType == AccountType.USER)
+                            stringResource(R.string.user_label)
+                        else
+                            stringResource(R.string.shelter_label),
                     onValueChange = {},
-                    label = { Text("Tipo de conta") },
+                    label = { Text(stringResource(R.string.account_type_label)) },
                     readOnly = true,
                     modifier = Modifier
                         .menuAnchor()
@@ -176,14 +183,14 @@ fun RegisterScreenContent(
                     onDismissRequest = { expanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Utilizador") },
+                        text = { Text(stringResource(R.string.user_label)) },
                         onClick = {
                             onAccountTypeChange(AccountType.USER)
                             expanded = false
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Abrigo") },
+                        text = { Text(stringResource(R.string.shelter_label)) },
                         onClick = {
                             onAccountTypeChange(AccountType.SHELTER)
                             expanded = false
@@ -208,19 +215,20 @@ fun RegisterScreenContent(
                         modifier = Modifier.size(22.dp)
                     )
                 } else {
-                    Text("Criar Conta")
+                    Text(stringResource(R.string.register_button))
                 }
             }
         }
-
 
         error?.let {
             AlertDialog(
                 onDismissRequest = onClearError,
                 confirmButton = {
-                    TextButton(onClick = onClearError) { Text("OK") }
+                    TextButton(onClick = onClearError) {
+                        Text(stringResource(R.string.dialog_ok))
+                    }
                 },
-                title = { Text("Erro") },
+                title = { Text(stringResource(R.string.error_title)) },
                 text = { Text(it) }
             )
         }
@@ -232,21 +240,23 @@ fun RegisterScreenContent(
                     TextButton(onClick = {
                         onClearMessage()
                         onRegisterSuccess()
-                    }) { Text("OK") }
+                    }) {
+                        Text(stringResource(R.string.dialog_ok))
+                    }
                 },
-                title = { Text("Sucesso") },
+                title = { Text(stringResource(R.string.success_title)) },
                 text = { Text(it) }
             )
         }
     }
 }
 
-    @Preview(showBackground = true)
+@Preview(showBackground = true)
     @Composable
     fun RegisterPreview() {
         RegisterScreenContent(
             name = "Maria",
-            adress = "Rua das Flores",
+            address = "Rua das Flores",
             phone = "912345678",
             email = "maria@example.com",
             password = "123456",
@@ -255,7 +265,7 @@ fun RegisterScreenContent(
             error = null,
             message = null,
             onNameChange = {},
-            onAdressChange = {},
+            onAddressChange = {},
             onPhoneChange = {},
             onEmailChange = {},
             onPasswordChange = {},
