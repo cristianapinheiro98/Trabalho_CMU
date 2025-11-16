@@ -54,3 +54,4 @@ data class Medal(
     val icon: String,
     val title: String
 )
+

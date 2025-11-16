@@ -35,17 +35,17 @@ fun ActivitiesHistoryScreen(
     userId: Int,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ActivityViewModel = viewModel()
+    val activityViewModel: ActivityViewModel = viewModel()
 
     val scrollState = rememberScrollState()
 
     // Load user activities
     LaunchedEffect(userId) {
-        viewModel.loadActivitiesForUser(userId)
+        activityViewModel.loadActivitiesForUser(userId)
     }
 
-    val activitiesWithRelations by viewModel.activitiesWithDetails.observeAsState(emptyList())
-    val isLoading by viewModel.isLoading.observeAsState(false)
+    val activitiesWithRelations by activityViewModel.activitiesWithDetails.observeAsState(emptyList())
+    val isLoading by activityViewModel.isLoading.observeAsState(false)
 
     Box(
         modifier = modifier
@@ -81,7 +81,7 @@ fun ActivitiesHistoryScreen(
                 ActivitiesHistoryContent(
                     activitiesWithRelations = activitiesWithRelations,
                     onDeleteActivity = { activity ->
-                        viewModel.deleteActivity(activity)
+                        activityViewModel.deleteActivity(activity)
                     }
                 )
             }

@@ -41,7 +41,7 @@ fun ActivitySchedulingScreen(
     onScheduleSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ActivityViewModel = viewModel()
+    val activityViewModel: ActivityViewModel = viewModel()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -50,16 +50,16 @@ fun ActivitySchedulingScreen(
     var pickupTime by remember { mutableStateOf("09:00") }
     var deliveryTime by remember { mutableStateOf("18:00") }
 
-    val isLoading by viewModel.isLoading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val activityScheduled by viewModel.activityScheduled.observeAsState(false)
+    val isLoading by activityViewModel.isLoading.observeAsState(false)
+    val error by activityViewModel.error.observeAsState()
+    val activityScheduled by activityViewModel.activityScheduled.observeAsState(false)
 
-    val animal by viewModel.animal.observeAsState()
-    val shelter by viewModel.shelter.observeAsState()
+    val animal by activityViewModel.animal.observeAsState()
+    val shelter by activityViewModel.shelter.observeAsState()
 
     // Load animal and shelter when entering screen
     LaunchedEffect(animalId) {
-        viewModel.loadAnimalAndShelter(animalId)
+        activityViewModel.loadAnimalAndShelter(animalId)
     }
 
     // Handle scheduling success
@@ -68,7 +68,7 @@ fun ActivitySchedulingScreen(
             coroutineScope.launch {
                 snackbarHostState.showSnackbar("Activity scheduled successfully!")
                 kotlinx.coroutines.delay(500)
-                viewModel.resetActivityScheduled()
+                activityViewModel.resetActivityScheduled()
                 onScheduleSuccess()
             }
         }
@@ -130,7 +130,7 @@ fun ActivitySchedulingScreen(
                                 deliveryDate = sorted.last(),
                                 deliveryTime = deliveryTime
                             )
-                            viewModel.scheduleActivity(activity)
+                            activityViewModel.scheduleActivity(activity)
                         } else {
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
