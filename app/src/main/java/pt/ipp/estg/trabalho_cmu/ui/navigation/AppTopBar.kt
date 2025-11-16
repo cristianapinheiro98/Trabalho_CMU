@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.ui.components.NotificationDropdown
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +92,9 @@ fun AppTopBar(
                         )
                     }
                 }
+
+                // Mock
+                NotificationDropdown()
 
                 IconButton(onClick = onLogoutClick) {
                     Icon(
