@@ -36,13 +36,13 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeClass) {
+fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeClass, isLoggedIn: Boolean = false) {
     val authViewModel: AuthViewModel = viewModel()
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
 
-    val isLoggedIn by authViewModel.isAuthenticated.observeAsState(false)
+    //val isLoggedIn by authViewModel.isAuthenticated.observeAsState(false)
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") { Text("Menu Principal") }

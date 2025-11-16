@@ -96,7 +96,8 @@ fun AppScaffold(
                     else -> {
                         NavGraphUser(
                             navController = navController,
-                            windowSize = windowSize
+                            windowSize = windowSize,
+                            isLoggedIn = isLoggedIn
                         )
                     }
                 }
