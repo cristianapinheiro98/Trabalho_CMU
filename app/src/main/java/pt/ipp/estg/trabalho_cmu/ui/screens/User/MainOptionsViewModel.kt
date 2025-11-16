@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class MainOptionsViewModel : ViewModel() {
 
-    // Estado do último passeio
+    // Last walk status
     private val _lastWalk = MutableStateFlow<WalkInfo?>(null)
     val lastWalk: StateFlow<WalkInfo?> = _lastWalk.asStateFlow()
 
-    // Estado das medalhas
+    // Medal status
     private val _medals = MutableStateFlow<List<Medal>>(emptyList())
     val medals: StateFlow<List<Medal>> = _medals.asStateFlow()
 
@@ -21,7 +21,7 @@ class MainOptionsViewModel : ViewModel() {
     }
 
     private fun loadData() {
-        // Dados temporários (depois virão do Repository)
+        // Mock data
         _lastWalk.value = WalkInfo(
             animalName = "Molly",
             distance = "3km",
@@ -41,7 +41,7 @@ class MainOptionsViewModel : ViewModel() {
     }
 }
 
-// Data classes temporárias
+// Temporary Data Classes
 data class WalkInfo(
     val animalName: String,
     val distance: String,

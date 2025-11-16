@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 
-
 @Dao
 interface ShelterDao {
     @Query("SELECT * FROM shelters ORDER BY name ASC")
@@ -31,6 +30,9 @@ interface ShelterDao {
     @Query("DELETE FROM shelters")
     suspend fun deleteAllShelters()
 
+    @Query("SELECT * FROM shelters WHERE firebaseUid IS NULL")
+    suspend fun getSheltersWithoutFirebaseUid(): List<Shelter>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShelter(shelter: Shelter) : Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -44,5 +46,4 @@ interface ShelterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllSync(shelters: List<Shelter>)
-
 }

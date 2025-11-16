@@ -57,7 +57,7 @@ fun AnimalDetailScreen(
 
     // Load shelter after animal is known
     LaunchedEffect(animal) {
-        animal?.let { shelterViewModel.loadShelterById(it.shelterId) }
+        animal?.let { shelterViewModel.loadShelterByFirebaseUid(it.shelterFirebaseUid) }
     }
 
     if (animal == null) {
@@ -281,11 +281,12 @@ private fun PreviewAnimalDetailScreen() {
             "https://placekitten.com/350/280",
             "https://placekitten.com/360/240"
         ),
-        shelterId = 1
+        shelterFirebaseUid = "1"
     )
 
     val mockShelter = Shelter(
         id = 1,
+        firebaseUid = "1",
         name = "Abrigo Porto",
         address = "Rua dos Animais 123",
         phone = "912345678",
@@ -320,7 +321,7 @@ private fun PreviewAnimalDetailWithoutAuth() {
         birthDate = "2019-01-01",
         description = "Muito meiga, adora colo e mantinhas!",
         imageUrls = listOf(""),
-        shelterId = 1
+        shelterFirebaseUid = "1"
     )
 
     MaterialTheme {

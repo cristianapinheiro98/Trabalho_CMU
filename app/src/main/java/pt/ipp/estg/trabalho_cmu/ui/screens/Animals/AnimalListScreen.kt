@@ -209,7 +209,7 @@ private val previewAnimals = listOf(
         size = "Pequeno",
         birthDate = "2019-01-01",
         imageUrls = listOf(""),
-        shelterId = 1,
+        shelterFirebaseUid = "1",
         description = "Muito meiga!"
     ),
     Animal(
@@ -220,7 +220,7 @@ private val previewAnimals = listOf(
         size = "Pequeno",
         birthDate = "2022-01-01",
         imageUrls = listOf(""),
-        shelterId = 1,
+        shelterFirebaseUid = "1",
         description = "Adora colo!"
     )
 )

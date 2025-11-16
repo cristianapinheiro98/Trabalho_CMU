@@ -58,7 +58,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val password = MutableLiveData("")
     val accountTypeChoice = MutableLiveData(AccountType.USER)
 
-
+    fun getCurrentUserFirebaseUid(): String? {
+        return authRepository.getCurrentFirebaseUid()
+    }
     // ===== LOGIN =====
     fun login() = viewModelScope.launch {
 
@@ -180,9 +182,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             )
         ) return@launch
 
-
-
-
         performRegistration(basicFields, accountType)
     }
 
@@ -210,8 +209,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
         return true
     }
-
-
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -251,8 +248,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
         return true
     }
-
-
 
     private suspend fun performRegistration(fields: BasicRegistrationFields, accountType: AccountType) {
         try {

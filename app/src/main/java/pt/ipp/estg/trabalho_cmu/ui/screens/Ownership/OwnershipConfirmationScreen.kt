@@ -42,10 +42,10 @@ fun OwnershipConfirmationScreen(
     val user by userViewModel.user.observeAsState()
     val animal by animalViewModel.selectedAnimal.observeAsState()
     val shelter by shelterViewModel.selectedShelter.observeAsState()
-    
-    LaunchedEffect(animal?.shelterId) {
-        animal?.shelterId?.let { shelterId ->
-            shelterViewModel.loadShelterById(shelterId)
+
+    LaunchedEffect(animal?.shelterFirebaseUid) {
+        animal?.shelterFirebaseUid?.let { shelterFirebaseUid ->
+            shelterViewModel.loadShelterByFirebaseUid(shelterFirebaseUid)
         }
     }
 

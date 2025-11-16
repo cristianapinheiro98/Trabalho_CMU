@@ -13,42 +13,42 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
  * that can later be updated by an admin (Pending, Approved, Rejected).
  */
 @Entity(
-    tableName = "OwnershipRequests"
-,
+    tableName = "OwnershipRequests",
     foreignKeys = [
         ForeignKey(
             entity = User::class,
-            parentColumns = ["id"],
-            childColumns = ["userId"],
+            parentColumns = ["firebaseUid"],
+            childColumns = ["userFirebaseUid"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Animal::class,
-            parentColumns = ["id"],
-            childColumns = ["animalId"],
+            parentColumns = ["firebaseUid"],
+            childColumns = ["animalFirebaseUid"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Shelter::class,
-            parentColumns = ["id"],
-            childColumns = ["shelterId"],
+            parentColumns = ["firebaseUid"],
+            childColumns = ["shelterFirebaseUid"],
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = ["userId"]),
-        Index(value = ["animalId"]),
-        Index(value = ["shelterId"])
+        Index(value = ["userFirebaseUid"]),
+        Index(value = ["animalFirebaseUid"]),
+        Index(value = ["shelterFirebaseUid"])
     ]
 )
 data class Ownership(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val firebaseUid: String? = null,
 
     // Foreign Keys
-    val userId: Int,
-    val animalId: Int,
-    val shelterId: Int,
+    val userFirebaseUid: String,
+    val animalFirebaseUid: String,
+    val shelterFirebaseUid: String,
 
     // Payment and identification info
     val ownerName: String,

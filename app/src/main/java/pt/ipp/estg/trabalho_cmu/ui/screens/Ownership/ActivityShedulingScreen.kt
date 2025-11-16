@@ -25,7 +25,6 @@ import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.ActivityViewModel
 
 @Composable
 fun ActivitySchedulingScreen(

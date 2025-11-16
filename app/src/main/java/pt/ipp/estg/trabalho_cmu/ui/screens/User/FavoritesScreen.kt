@@ -39,8 +39,6 @@ fun FavoritesScreen(
     )
 }
 
-
-
 @Composable
 private fun FavoritesScreenContent(
     favorites: List<Animal>,
@@ -100,7 +98,6 @@ private fun FavoritesScreenContent(
     }
 }
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
@@ -110,24 +107,26 @@ private fun FavoritesScreenPreview() {
     val mockFavorites = listOf(
         Animal(
             id = 1,
+            firebaseUid = "mockFirebase1",
             name = "Boby",
             breed = "Labrador",
             species = "Cão",
             size = "Médio",
             birthDate = "2020-01-01",
             imageUrls = listOf(""),
-            shelterId = 1,
+            shelterFirebaseUid = "shelterMock1",
             description = "Muito amigável!"
         ),
         Animal(
             id = 2,
+            firebaseUid = "mockFirebase2",
             name = "Mia",
             breed = "Siamês",
             species = "Gato",
             size = "Pequeno",
             birthDate = "2021-03-10",
             imageUrls = listOf(""),
-            shelterId = 1,
+            shelterFirebaseUid = "shelterMock1",
             description = "Adora mimos!"
         )
     )

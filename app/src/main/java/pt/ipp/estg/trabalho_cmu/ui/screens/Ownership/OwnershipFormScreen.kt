@@ -24,8 +24,8 @@ import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
 @Composable
 fun OwnershipFormScreen(
-    userId: Int,
-    animalId: Int,
+    userFirebaseUid: String,
+    animalFirebaseUid: String,
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -35,10 +35,10 @@ fun OwnershipFormScreen(
     val error by viewModel.error.observeAsState()
     val submissionSuccess by viewModel.submissionSuccess.observeAsState(false)
 
-    // Load animal details to get shelter ID
-    LaunchedEffect(animalId) {
-        viewModel.loadAnimalDetails(animalId)
+    LaunchedEffect(animalFirebaseUid) {
+        viewModel.loadAnimalByFirebaseUid(animalFirebaseUid)
     }
+    val animal by viewModel.animal.observeAsState()
 
     // Navigate only on success
     LaunchedEffect(submissionSuccess) {
@@ -49,8 +49,6 @@ fun OwnershipFormScreen(
         }
     }
 
-    val animal by viewModel.animal.observeAsState()
-
     animal?.let { animalData ->
         OwnershipFormContent(
             isLoading = isLoading,
@@ -58,19 +56,18 @@ fun OwnershipFormScreen(
             onSubmit = { request ->
                 viewModel.submitOwnership(request)
             },
-            userId = userId,
-            animalId = animalId,
-            shelterId = animalData.shelterId,
+            userFirebaseUid = userFirebaseUid,
+            animalFirebaseUid = animalFirebaseUid,
+            shelterFirebaseUid = animalData.shelterFirebaseUid,
             modifier = modifier
         )
     } ?: run {
+        // Loading enquanto busca animal
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
-                color = Color(0xFF2C8B7E)
-            )
+            CircularProgressIndicator(color = Color(0xFF2C8B7E))
         }
     }
 }
@@ -80,9 +77,9 @@ private fun OwnershipFormContent(
     isLoading: Boolean,
     error: String?,
     onSubmit: (Ownership) -> Unit,
-    userId: Int,
-    animalId: Int,
-    shelterId: Int,
+    userFirebaseUid: String,
+    animalFirebaseUid: String,
+    shelterFirebaseUid: String,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -92,6 +89,11 @@ private fun OwnershipFormContent(
     var ownerName by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
+    var shelterFirebaseUid by remember { mutableStateOf("") }
+
+    LaunchedEffect(animalFirebaseUid) {
+        // TODO: Buscar animal para obter shelterFirebaseUid
+    }
 
     val maxAccountDigits = 21
     val maxCardDigits = 8
@@ -101,7 +103,8 @@ private fun OwnershipFormContent(
             ownerName.isNotBlank() &&
             cvv.length == 3 &&
             cardNumber.isNotBlank() &&
-            cardNumber.length <= maxCardDigits
+            cardNumber.length <= maxCardDigits &&
+            shelterFirebaseUid.isNotBlank()
 
     // Show error message
     LaunchedEffect(error) {
@@ -219,9 +222,10 @@ private fun OwnershipFormContent(
                         if (isFormValid) {
                             val ownership = Ownership(
                                 id = 0,
-                                userId = userId,
-                                animalId = animalId,
-                                shelterId = shelterId,
+                                firebaseUid = null,
+                                userFirebaseUid = userFirebaseUid,
+                                animalFirebaseUid = animalFirebaseUid,
+                                shelterFirebaseUid = shelterFirebaseUid,
                                 ownerName = ownerName,
                                 accountNumber = "PT50$accountNumber",
                                 cvv = cvv,
@@ -316,9 +320,9 @@ fun OwnershipFormScreenPreview() {
             isLoading = false,
             error = null,
             onSubmit = { },
-            userId = 1,
-            animalId = 1,
-            shelterId = 1
+            userFirebaseUid = "1",
+            animalFirebaseUid = "1",
+            shelterFirebaseUid = "1"
         )
     }
 }

@@ -73,22 +73,22 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
 
         // ========== OWNERSHIP FORM ==========
         composable(
-            route = "OwnershipForm/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            route = "OwnershipForm/{animalFirebaseUid}",
+            arguments = listOf(navArgument("animalFirebaseUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val userViewModel: UserViewModel = viewModel()
             val animalViewModel: AnimalViewModel = viewModel()
             val shelterViewModel: ShelterViewModel = viewModel()
 
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
-            val userId = authViewModel.getCurrentUserId()
+            val animalFirebaseUid = backStackEntry.arguments?.getString("animalFirebaseUid") ?: ""
+            val userFirebaseUid = authViewModel.getCurrentUserFirebaseUid() ?: ""
 
             OwnershipFormScreen(
-                userId = userId,
-                animalId = animalId,
+                userFirebaseUid = userFirebaseUid,
+                animalFirebaseUid = animalFirebaseUid,
                 onSubmitSuccess = {
-                    navController.navigate("ownership_confirmation/$animalId") {
-                        popUpTo("OwnershipForm/$animalId") { inclusive = true }
+                    navController.navigate("ownership_confirmation/$animalFirebaseUid") {
+                        popUpTo("OwnershipForm/$animalFirebaseUid") { inclusive = true }
                     }
                 }
             )

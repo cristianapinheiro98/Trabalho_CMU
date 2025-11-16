@@ -1,13 +1,46 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
 import androidx.lifecycle.LiveData
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 
 
-class ShelterRepository(private val shelterDao: ShelterDao) {
+class ShelterRepository(
+    private val shelterDao: ShelterDao,
+    private val firestore: FirebaseFirestore
+) {
+    // Online first then offline (Room)
+    fun getAllShelters(): LiveData<List<Shelter>> {
+        refreshSheltersFromFirebase()
+        return shelterDao.getAllShelters()
+    }
 
-    fun getAllShelters(): LiveData<List<Shelter>> = shelterDao.getAllShelters()
+    private fun refreshSheltersFromFirebase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val snapshot = firestore.collection("shelters").get().await()
+                val shelters = snapshot.documents.mapNotNull { doc ->
+                    Shelter(
+                        firebaseUid = doc.id,
+                        name = doc.getString("name") ?: "",
+                        address = doc.getString("address") ?: "",
+                        phone = doc.getString("contact") ?: "",
+                        email = doc.getString("email") ?: "",
+                        password = ""
+                    )
+                }
+                shelterDao.insertShelters(shelters)
+            } catch (e: Exception) {
+            }
+        }
+    }
+
     suspend fun getAllSheltersList(): List<Shelter> = shelterDao.getAllSheltersList()
     suspend fun getShelterById(id: Int): Shelter? = shelterDao.getShelterById(id)
 

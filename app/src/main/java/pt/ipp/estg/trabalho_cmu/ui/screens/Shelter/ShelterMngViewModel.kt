@@ -29,7 +29,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         FirebaseFirestore.getInstance()
     )
 
-    private val shelterRepository = ShelterRepository(db.shelterDao())
+    private val shelterRepository = ShelterRepository(
+        db.shelterDao(),
+        FirebaseFirestore.getInstance()
+    )
     private val userRepository = UserRepository(db.userDao())
     private val breedRepository = BreedRepository()
 
@@ -74,19 +77,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         _selectedImages.value = emptyList()
     }
 
-    // ---------------------- SHELTER ID ---------------------
-    private val _currentShelterId = MutableLiveData<Int?>(null)
-    val currentShelterId: LiveData<Int?> = _currentShelterId
+    // ---------------------- SHELTER FIREBASE UID ---------------------
+    private val _currentShelterFirebaseUid = MutableLiveData<String?>(null)
+    val currentShelterFirebaseUid: LiveData<String?> = _currentShelterFirebaseUid
 
-    fun setShelterId(id: Int) {
-        _currentShelterId.value = id
+    fun setShelterFirebaseUid(firebaseUid: String) {
+        _currentShelterFirebaseUid.value = firebaseUid
 
-        //Load ownerships from firebase
         viewModelScope.launch {
             try {
                 ownershipRepository.fetchOwnerships()
-
-                val loaded = ownershipRepository.getOwnershipsByShelter(id).value
             } catch (e: Exception) {
                 println("Error getting ownerships: ${e.message}")
                 e.printStackTrace()
@@ -96,17 +96,17 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     // ---------------------- ADOPTION REQUEST ---------------
     val requests: LiveData<List<AdoptionRequest>> =
-        _currentShelterId.switchMap { shelterId ->
-            if (shelterId != null) {
+        _currentShelterFirebaseUid.switchMap { shelterFirebaseUid ->
+            if (shelterFirebaseUid != null) {
                 MediatorLiveData<List<AdoptionRequest>>().apply {
                     addSource(
-                        ownershipRepository.getOwnershipsByShelter(shelterId)
+                        ownershipRepository.getOwnershipsByShelter(shelterFirebaseUid)
                     ) { ownerships ->
                         viewModelScope.launch {
                             value = try {
                                 ownerships.mapNotNull { convertToAdoptionRequest(it) }
                             } catch (e: Exception) {
-                                println("Erro ao converter ownership: ${e.message}")
+                                println("Error converting ownership: ${e.message}")
                                 emptyList()
                             }
                         }
@@ -118,14 +118,14 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
 
     private suspend fun convertToAdoptionRequest(ownership: Ownership): AdoptionRequest {
-        val user = userRepository.getUserById(ownership.userId)
-        val animal = animalRepository.getAnimalById(ownership.animalId)
+        val user = userRepository.getUserByFirebaseUid(ownership.userFirebaseUid)
+        val animal = animalRepository.getAnimalByFirebaseUid(ownership.animalFirebaseUid)
 
         return AdoptionRequest(
             id = ownership.id.toString(),
-            nome = user?.name ?: "Desconhecido",
+            nome = user?.name ?: "Unknown",
             email = user?.email ?: "N/A",
-            animal = animal?.name ?: "Animal #${ownership.animalId}"
+            animal = animal?.name ?: "Animal #${ownership.animalFirebaseUid}"
         )
     }
 
@@ -140,15 +140,18 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 ownershipRepository.approveOwnershipRequest(ownershipId)
 
                 val ownership = ownershipRepository.getOwnershipById(ownershipId)
-                val animalId = ownership?.animalId ?: return@launch
+                val animalFirebaseUid = ownership?.animalFirebaseUid ?: return@launch
+
+                val animal = animalRepository.getAnimalByFirebaseUid(animalFirebaseUid)
+                val animalId = animal?.id ?: return@launch
 
                 animalRepository.changeAnimalStatusToOwned(animalId)
 
-                _message.value = "Pedido aprovado com sucesso!"
+                _message.value = "Request approved successfully!"
                 _error.value = null
 
             } catch (e: Exception) {
-                _error.value = "Erro ao aprovar pedido: ${e.message}"
+                _error.value = "Error approving request: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -163,11 +166,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 val ownershipId = request.id.toIntOrNull() ?: return@launch
                 ownershipRepository.rejectOwnershipRequest(ownershipId)
 
-                _message.value = "Pedido rejeitado"
+                _message.value = "Request rejected"
                 _error.value = null
 
             } catch (e: Exception) {
-                _error.value = "Erro ao rejeitar pedido: ${e.message}"
+                _error.value = "Error rejecting request: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -217,24 +220,24 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     // ---------------------- VALIDATE DATE -------------------
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
-        if (birthDate.isBlank()) return "A data de nascimento é obrigatória."
+        if (birthDate.isBlank()) return "Birth date is required."
 
         val parts = birthDate.split("/")
-        if (parts.size != 3) return "A data deve estar no formato DD/MM/AAAA."
+        if (parts.size != 3) return "Date must be in DD/MM/YYYY format."
 
         val day = parts[0].toIntOrNull()
         val month = parts[1].toIntOrNull()
         val year = parts[2].toIntOrNull()
 
-        if (day !in 1..31) return "Dia inválido."
-        if (month !in 1..12) return "Mês inválido."
-        if (day == null || month == null || year == null) return "Dia, mês e ano devem ser números."
+        if (day !in 1..31) return "Invalid day."
+        if (month !in 1..12) return "Invalid month."
+        if (day == null || month == null || year == null) return "Day, month and year must be numbers."
 
         return try {
             val date = LocalDate.of(year, month, day)
-            if (date.isAfter(LocalDate.now())) "A data não pode ser no futuro." else null
+            if (date.isAfter(LocalDate.now())) "Date cannot be in the future." else null
         } catch (e: Exception) {
-            "Imvalid date."
+            "Invalid date."
         }
     }
 
@@ -244,22 +247,22 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     fun saveAnimal() {
         val form = _animalForm.value ?: AnimalForm()
 
-        if (form.name.isBlank()) { _error.value = "Por favor preenche o nome."; return }
-        if (form.breed.isBlank()) { _error.value = "Seleciona uma raça."; return }
-        if (form.size.isBlank()) { _error.value = "Seleciona um tamanho."; return }
-        if (form.species.isBlank()) { _error.value = "Seleciona uma espécie."; return }
+        if (form.name.isBlank()) { _error.value = "Please fill in the name."; return }
+        if (form.breed.isBlank()) { _error.value = "Select a breed."; return }
+        if (form.size.isBlank()) { _error.value = "Select a size."; return }
+        if (form.species.isBlank()) { _error.value = "Select a species."; return }
 
         val birthError = validateBirthDate(form.birthDate)
         if (birthError != null) { _error.value = birthError; return }
 
-        val shelterId = _currentShelterId.value ?: run {
-            _error.value = "Shelter ID não disponível"
+        val shelterFirebaseUid = _currentShelterFirebaseUid.value ?: run {
+            _error.value = "Shelter Firebase UID not available"
             return
         }
 
         val images = selectedImages.value ?: emptyList()
         if (images.isEmpty()) {
-            _error.value = "Adiciona pelo menos uma imagem."
+            _error.value = "Add at least one image."
             return
         }
 
@@ -274,7 +277,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     birthDate = form.birthDate.trim(),
                     description = form.description.trim(),
                     imageUrls = images,
-                    shelterId = shelterId
+                    shelterFirebaseUid = shelterFirebaseUid
                 )
 
                 // Firebase + Room
@@ -285,12 +288,12 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                     clearImages()
                     _availableBreeds.value = emptyList()
 
-                    _message.value = "Animal criado com sucesso!"
+                    _message.value = "Animal created successfully!"
                     _error.value = null
                 }
 
                 result.onFailure { e ->
-                    _error.value = "Erro ao salvar o animal: ${e.message}"
+                    _error.value = "Error saving animal: ${e.message}"
                 }
 
             } finally {

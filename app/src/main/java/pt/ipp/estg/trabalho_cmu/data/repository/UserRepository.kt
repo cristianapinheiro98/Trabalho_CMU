@@ -12,8 +12,6 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUserByFirebaseUid(uid: String) = userDao.getUserByFirebaseUid(uid)
 
-    suspend fun insertUser(user: User): Long = userDao.insertUser(user)
-
     suspend fun updateUser(user: User) = userDao.updateUser(user)
 
     suspend fun deleteUser(user: User) = userDao.deleteUser(user)

@@ -42,8 +42,8 @@ fun AnimalCreationScreen(
     LaunchedEffect(accountType) {
         if (accountType == AccountType.SHELTER) {
             currentShelter?.let { shelter ->
-                println("🟢 Shelter: ${shelter.name}, ID: ${shelter.id}")
-                viewModel.setShelterId(shelter.id)
+                println("Shelter: ${shelter.name}, ID: ${shelter.id}")
+                viewModel.setShelterFirebaseUid(shelter.firebaseUid)
             }
         }
     }
@@ -150,7 +150,7 @@ fun AnimalCreationScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Nome
+            // Name
             OutlinedTextField(
                 value = form.name,
                 onValueChange = onNameChange,
@@ -159,7 +159,7 @@ fun AnimalCreationScreenContent(
             )
             Spacer(Modifier.height(16.dp))
 
-            // Espécie
+            // Species
             ExposedDropdownMenuBox(
                 expanded = expandedSpecies,
                 onExpandedChange = { expandedSpecies = !expandedSpecies }
@@ -195,7 +195,7 @@ fun AnimalCreationScreenContent(
             }
             Spacer(Modifier.height(16.dp))
 
-            // Raça
+            // Breed
             ExposedDropdownMenuBox(
                 expanded = expandedBreed,
                 onExpandedChange = {
@@ -234,7 +234,7 @@ fun AnimalCreationScreenContent(
             }
             Spacer(Modifier.height(16.dp))
 
-            // Tamanho
+            // Size
             ExposedDropdownMenuBox(
                 expanded = expandedSize,
                 onExpandedChange = { expandedSize = !expandedSize }
@@ -265,7 +265,7 @@ fun AnimalCreationScreenContent(
             }
             Spacer(Modifier.height(16.dp))
 
-            // Data nascimento
+            // Birthdate
             OutlinedTextField(
                 value = form.birthDate,
                 onValueChange = onBirthDateChange,
@@ -284,7 +284,7 @@ fun AnimalCreationScreenContent(
 
             Spacer(Modifier.height(24.dp))
 
-            // Botão de seleção de imagens
+            // Image selection button
             Button(
                 onClick = onSelectImages,
                 modifier = Modifier.fillMaxWidth()
@@ -325,7 +325,7 @@ fun AnimalCreationScreenContent(
             }
         }
 
-        // Mensagens
+        // Messages
         message?.let {
             AlertDialog(
                 onDismissRequest = onClearMessage,

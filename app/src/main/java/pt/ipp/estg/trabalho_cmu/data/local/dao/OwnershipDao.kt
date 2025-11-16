@@ -11,15 +11,23 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
  */
 @Dao
 interface OwnershipDao {
+    @Query("SELECT * FROM OwnershipRequests WHERE userFirebaseUid = :userFirebaseUid AND status = 'PENDING' ORDER BY createdAt DESC")
+    fun getOwnershipsByUser(userFirebaseUid: String): LiveData<List<Ownership>>
 
-    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'PENDING' ORDER BY createdAt DESC")
-    fun getOwnershipsByUser(userId: Int): LiveData<List<Ownership>>
-
-    @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId AND status = 'PENDING' ORDER BY createdAt DESC")
-    fun getOwnershipsByShelter(shelterId: Int): LiveData<List<Ownership>>
+    @Query("SELECT * FROM OwnershipRequests WHERE shelterFirebaseUid = :shelterFirebaseUid AND status = 'PENDING' ORDER BY createdAt DESC")
+    fun getOwnershipsByShelter(shelterFirebaseUid: String): LiveData<List<Ownership>>
 
     @Query("SELECT * FROM OwnershipRequests WHERE id = :id LIMIT 1")
     suspend fun getOwnershipById(id: Int): Ownership?
+
+    @Query("SELECT * FROM OwnershipRequests WHERE firebaseUid IS NULL")
+    suspend fun getOwnershipsWithoutFirebaseUid(): List<Ownership>
+
+    @Query("SELECT * FROM OwnershipRequests WHERE userFirebaseUid = :userFirebaseUid AND animalFirebaseUid = :animalFirebaseUid AND status IN ('PENDING', 'APPROVED') LIMIT 1")
+    suspend fun getExistingRequest(userFirebaseUid: String, animalFirebaseUid: String): Ownership?
+
+    @Query("UPDATE OwnershipRequests SET status = :status WHERE id = :id")
+    suspend fun updateOwnershipStatus(id: Int, status: OwnershipStatus)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOwnership(ownership: Ownership) : Long
@@ -27,13 +35,6 @@ interface OwnershipDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(ownerships: List<Ownership>)
 
-    @Query("UPDATE OwnershipRequests SET status = :status WHERE id = :id")
-    suspend fun updateOwnershipStatus(id: Int, status: OwnershipStatus)
-
     @Delete
     suspend fun deleteOwnership(ownership: Ownership)
-
-    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND animalId = :animalId AND status IN ('PENDING', 'APPROVED') LIMIT 1")
-    suspend fun getExistingRequest(userId: Int, animalId: Int): Ownership?
-
 }

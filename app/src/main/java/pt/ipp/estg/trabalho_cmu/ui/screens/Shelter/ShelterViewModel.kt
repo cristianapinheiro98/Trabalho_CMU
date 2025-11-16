@@ -1,11 +1,9 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
-import android.app.Application
+
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 
 open class ShelterViewModel(  private val repository: ShelterRepository? = null
@@ -21,66 +19,27 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
 
     private val _selectedShelter = MutableLiveData<Shelter?>()
     open val selectedShelter: LiveData<Shelter?> = _selectedShelter
+    val shelters: LiveData<List<Shelter>> = repository?.getAllShelters() ?: MutableLiveData(emptyList())
 
-    private val _shelters = MutableLiveData<List<Shelter>>(emptyList())
-    val shelters: LiveData<List<Shelter>> = _shelters
-
-
-    open fun loadShelterById(shelterId: Int) = viewModelScope.launch {
+    fun loadShelterByFirebaseUid(firebaseUid: String) = viewModelScope.launch {
         try {
             _isLoading.value = true
-
-            val shelter = repository?.getShelterById(shelterId)
+            val shelter = repository?.getShelterByFirebaseUid(firebaseUid)
 
             if (shelter != null) {
                 _selectedShelter.value = shelter
                 _error.value = null
             } else {
-                _error.value = "Abrigo não encontrado"
+                _error.value = "Shelter not found"
                 _selectedShelter.value = null
             }
         } catch (e: Exception) {
-            _error.value = "Erro ao carregar abrigo: ${e.message}"
+            _error.value = "Error loading shelter: ${e.message}"
             _selectedShelter.value = null
         } finally {
             _isLoading.value = false
         }
     }
-
-
-    fun loadAllShelters() = viewModelScope.launch {
-        try {
-            _isLoading.value = true
-
-            val allShelters = repository?.getAllSheltersList()
-            _shelters.value = allShelters!!
-            _error.value = null
-
-        } catch (e: Exception) {
-            _error.value = "Erro ao carregar abrigos: ${e.message}"
-            _shelters.value = emptyList()
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
-    fun addShelter(shelter: Shelter) = viewModelScope.launch {
-        try {
-            _isLoading.value = true
-
-            repository?.insertShelter(shelter)
-            _message.value = "Abrigo adicionado com sucesso!"
-            _error.value = null
-
-            loadAllShelters()
-
-        } catch (e: Exception) {
-            _error.value = "Erro ao adicionar abrigo: ${e.message}"
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
 
     fun updateShelter(shelter: Shelter) = viewModelScope.launch {
         try {
@@ -101,43 +60,21 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
         }
     }
 
-    fun deleteShelter(shelter: Shelter) = viewModelScope.launch {
-        try {
-            _isLoading.value = true
-
-            repository?.deleteShelter(shelter)
-            _message.value = "Abrigo removido com sucesso!"
-            _error.value = null
-
-            // Limpa o shelter selecionado se for o mesmo
-            if (_selectedShelter.value?.id == shelter.id) {
-                _selectedShelter.value = null
-            }
-            loadAllShelters()
-
-        } catch (e: Exception) {
-            _error.value = "Erro ao remover abrigo: ${e.message}"
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
-
-    fun searchSheltersByName(name: String) = viewModelScope.launch {
-        try {
-            _isLoading.value = true
-
-            val results = repository?.searchSheltersByName(name)
-            _shelters.value = results!!
-            _error.value = null
-
-        } catch (e: Exception) {
-            _error.value = "Erro ao pesquisar abrigos: ${e.message}"
-            _shelters.value = emptyList()
-        } finally {
-            _isLoading.value = false
-        }
-    }
+//    fun searchSheltersByName(name: String) = viewModelScope.launch {
+//        try {
+//            _isLoading.value = true
+//
+//            val results = repository?.searchSheltersByName(name)
+//            _shelters.value = results!!
+//            _error.value = null
+//
+//        } catch (e: Exception) {
+//            _error.value = "Erro ao pesquisar abrigos: ${e.message}"
+//            _shelters.value = emptyList()
+//        } finally {
+//            _isLoading.value = false
+//        }
+//    }
 
     fun clearMessage() { _message.value = null }
     fun clearError() { _error.value = null }

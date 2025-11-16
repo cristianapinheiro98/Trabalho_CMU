@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
 
@@ -35,14 +36,14 @@ fun AdoptionRequestScreen(
 
     LaunchedEffect(accountType) {
         when (accountType) {
-            pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType.SHELTER -> {
+            AccountType.SHELTER -> {
                 currentShelter?.let { shelter ->
-                    println("[AdoptionRequest] Shelter: ${shelter.name}, ID: ${shelter.id}")
-                    viewModel.setShelterId(shelter.id)
+                    println("[AdoptionRequest] Shelter: ${shelter.name}, Firebase UID: ${shelter.firebaseUid}")
+                    viewModel.setShelterFirebaseUid(shelter.firebaseUid)
                 }
             }
             else -> {
-                println(" Apenas Shelters podem ver pedidos de adoção")
+                println("Only Shelters can view adoption requests")
             }
         }
     }
@@ -98,7 +99,6 @@ fun AdoptionRequestScreen(
         }
     }
 
-    // 🔹 Diálogo de sucesso/erro
     message?.let {
         AlertDialog(
             onDismissRequest = { viewModel.clearMessage() },
@@ -179,8 +179,6 @@ fun PedidoCard(
         }
     }
 }
-
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

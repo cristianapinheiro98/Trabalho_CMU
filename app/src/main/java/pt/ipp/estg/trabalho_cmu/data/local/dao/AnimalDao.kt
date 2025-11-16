@@ -57,9 +57,16 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY birthDate ASC")
     suspend fun sortByAgeLocal(): List<Animal>
 
-
     //search
     @Query("SELECT * FROM animals WHERE name LIKE '%' || :query || '%' AND status = 'AVAILABLE'")
     suspend fun searchAnimalsLocal(query: String): List<Animal>
 
+    @Query("SELECT * FROM animals WHERE firebaseUid IS NULL")
+    suspend fun getAnimalsWithoutFirebaseUid(): List<Animal>
+
+    @Query("SELECT * FROM animals WHERE firebaseUid = :firebaseUid LIMIT 1")
+    suspend fun getAnimalByFirebaseUid(firebaseUid: String): Animal?
+
+    @Update
+    suspend fun updateAnimal(animal: Animal)
 }

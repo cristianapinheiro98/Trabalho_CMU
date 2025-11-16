@@ -2,11 +2,17 @@ package pt.ipp.estg.trabalho_cmu.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
+import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val userRepository: UserRepository by lazy {
+        val db = AppDatabase.getDatabase(application)
+        UserRepository(db.userDao())
+    }
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -20,25 +26,18 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
 
-    // Simula o carregamento de um utilizador por email
-    fun loadUserByEmail(email: String) = viewModelScope.launch {
+    fun loadUserByFirebaseUid(firebaseUid: String) = viewModelScope.launch {
         try {
             _isLoading.value = true
-            delay(500) // simula latência
 
-            if (email.isNotBlank()) {
-                _user.value = User(
-                    id = 1,
-                    name = "Utilizador Demo",
-                    email = email,
-                    adress = "Rua de Exemplo, 123",
-                    phone = "912345678",
-                    password = ""
-                )
-                _message.value = "Utilizador carregado com sucesso!"
+            val userFromDb = userRepository.getUserByFirebaseUid(firebaseUid)
+
+            if (userFromDb != null) {
+                _user.value = userFromDb
+                _message.value = "User loaded successfully!"
                 _error.value = null
             } else {
-                _error.value = "Email inválido"
+                _error.value = "User not found"
                 _user.value = null
             }
         } catch (e: Exception) {
@@ -48,14 +47,36 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Simula uma atualização de perfil
-    fun updateUser(u: User) = viewModelScope.launch {
+    fun loadUserByEmail(email: String) = viewModelScope.launch {
         try {
             _isLoading.value = true
-            delay(500)
-            _user.value = u.copy(name = u.name.ifBlank { "Nome Atualizado" })
-            _message.value = "Perfil atualizado com sucesso!"
+
+            val userFromDb = userRepository.getUserByEmail(email)
+
+            if (userFromDb != null) {
+                _user.value = userFromDb
+                _message.value = "User loaded successfully!"
+                _error.value = null
+            } else {
+                _error.value = "User not found"
+                _user.value = null
+            }
+        } catch (e: Exception) {
+            _error.value = "Error loading user: ${e.message}"
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    fun updateUser(user: User) = viewModelScope.launch {
+        try {
+            _isLoading.value = true
+
+            userRepository.updateUser(user)
+            _user.value = user
+            _message.value = "Profile updated successfully!"
             _error.value = null
+
         } catch (e: Exception) {
             _error.value = "Error updating: ${e.message}"
         } finally {

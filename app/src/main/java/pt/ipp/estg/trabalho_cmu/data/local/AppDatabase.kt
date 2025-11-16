@@ -19,9 +19,6 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
-import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedAnimals
-import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedShelters
-import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedUsers
 
 @Database(
     entities = [
@@ -32,7 +29,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.seeds.SeedUsers
         User::class,
         Veterinarian::class
     ],
-    version = 7, // Increase value when making changes!!!
+    version = 11, // Increase value when making changes!!!
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -75,7 +72,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     //.addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     //ISTO DEITA ABAIXO A BD TODA
-                    //.fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

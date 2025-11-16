@@ -11,16 +11,20 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
     foreignKeys = [
         ForeignKey(
             entity = Shelter::class,
-            parentColumns = ["id"],
-            childColumns = ["shelterId"],
+            parentColumns = ["firebaseUid"],
+            childColumns = ["shelterFirebaseUid"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["shelterId"])]
+    indices = [
+        Index(value = ["shelterFirebaseUid"]),
+        Index(value = ["firebaseUid"], unique = true)
+    ]
 )
 data class Animal(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val firebaseUid: String? = null,
     val name: String,
     val breed: String,
     val species: String,
@@ -28,7 +32,7 @@ data class Animal(
     val birthDate: String,
     val imageUrls: List<String>,
     val description:String,
-    val shelterId: Int,
+    val shelterFirebaseUid: String, // Foreign Key
     val status: AnimalStatus = AnimalStatus.AVAILABLE,
     val createdAt: Long = System.currentTimeMillis()
 )
