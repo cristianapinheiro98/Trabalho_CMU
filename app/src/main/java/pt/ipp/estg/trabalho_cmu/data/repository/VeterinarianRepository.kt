@@ -1,13 +1,12 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.VeterinarianDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.google.PlaceDetails
-import pt.ipp.estg.trabalho_cmu.di.RetrofitInstance
+import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
 import java.util.Calendar
 
 class VeterinarianRepository(

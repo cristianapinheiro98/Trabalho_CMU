@@ -42,7 +42,6 @@ fun NavGraphPublic(
 
         composable("Login") {
             LoginScreen(
-                viewModel = authViewModel,
                 onLoginSuccess = { isAdmin -> onLoginSuccess(isAdmin) },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -50,13 +49,13 @@ fun NavGraphPublic(
 
         composable("Register") {
             RegisterScreen(
-                viewModel = authViewModel,
                 onRegisterSuccess = {
                     navController.navigate("Login") {
                         popUpTo("Register") { inclusive = true }
                     }
                 },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                authviewModel = authViewModel
             )
         }
 

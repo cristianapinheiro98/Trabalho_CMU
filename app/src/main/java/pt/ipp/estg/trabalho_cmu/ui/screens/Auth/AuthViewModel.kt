@@ -15,6 +15,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AuthRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 
@@ -134,16 +135,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     message = ctx.getString(R.string.login_success_message)
                 )
 
+                // Sync after login
                 viewModelScope.launch {
                     try {
                         val db = AppDatabase.getDatabase(ctx)
-                        val ownershipRepo = OwnershipRepository(
-                                db.ownershipDao(),
-                                com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                            )
+                        val firestore = FirebaseFirestore.getInstance()
+
+                        val ownershipRepo = OwnershipRepository(db.ownershipDao(), firestore)
                         ownershipRepo.fetchOwnerships()
+
+                        val animalRepo = AnimalRepository(db.animalDao(), firestore)
+                        animalRepo.syncPendingAnimals()
+
+                        ownershipRepo.syncPendingOwnerships()
                     } catch (e: Exception) {
-                        println("Error synchronizing ownerships: ${e.message}")
+                        println("Sync error: ${e.message}")
                         e.printStackTrace()
                     }
                 }
@@ -165,12 +171,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         accountType: AccountType,
         message: String
     ) {
+        println("updateAuthState: accountType = $accountType") //debug
+        println("updateAuthState: user = $user") //debug
+        println("updateAuthState: shelter = $shelter") //debug
+
         _currentUser.value = user
         _currentShelter.value = shelter
         _accountType.value = accountType
         _isAuthenticated.value = true
         _message.value = message
         _error.value = null
+
+        println("APÓS update: _accountType.value = ${_accountType.value}") //debug
     }
 
     private fun handleLoginFailure(exception: Throwable) {
@@ -347,5 +359,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getCurrentUserId(): Int = _currentUser.value?.id ?: 0
 
-    fun isAdmin(): Boolean = _accountType.value == AccountType.SHELTER
+    fun isAdmin(): Boolean {
+        val result = _accountType.value == AccountType.SHELTER
+        println("isAdmin() chamado: _accountType.value = ${_accountType.value}, result = $result") //debug
+        return result
+    }
 }

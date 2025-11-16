@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.di
+package pt.ipp.estg.trabalho_cmu.providers
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

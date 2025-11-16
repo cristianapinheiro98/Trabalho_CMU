@@ -14,7 +14,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.ui.navigation.*
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
@@ -91,8 +90,7 @@ fun AppScaffold(
                     isAdmin -> {
                         NavGraphAdmin(
                             navController = navController,
-                            authViewModel = authViewModel,
-                            shelterMngViewModel = shelterMngViewModel
+                            authViewModel = authViewModel
                         )
                     }
                     else -> {

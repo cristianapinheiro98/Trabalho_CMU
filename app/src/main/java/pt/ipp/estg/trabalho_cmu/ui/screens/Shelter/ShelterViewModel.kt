@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
@@ -24,8 +25,17 @@ import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
  * - List of shelters
  * - Selected shelter
  */
-open class ShelterViewModel(  private val repository: ShelterRepository? = null
-) : ViewModel() {
+class ShelterViewModel(
+    application: Application
+) : AndroidViewModel(application) {
+    private val ctx = getApplication<Application>()
+    private val shelterRepository: ShelterRepository by lazy {
+        val db = AppDatabase.getDatabase(ctx)
+        ShelterRepository(
+            db.shelterDao(),
+            FirebaseFirestore.getInstance()
+        )
+    }
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -36,9 +46,13 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
     val message: LiveData<String?> = _message
 
     private val _selectedShelter = MutableLiveData<Shelter?>()
-    open val selectedShelter: LiveData<Shelter?> = _selectedShelter
-    val shelters: LiveData<List<Shelter>> = repository?.getAllShelters() ?: MutableLiveData(emptyList())
+    val selectedShelter: LiveData<Shelter?> = _selectedShelter
 
+    val shelters: LiveData<List<Shelter>> =
+        shelterRepository?.getAllShelters() ?: MutableLiveData(emptyList())
+
+    private val _sheltersList = MutableLiveData<List<Shelter>>(emptyList())
+    val sheltersList: LiveData<List<Shelter>> = _sheltersList
 
     /**
      * Loads a shelter by its firebaseUid.
@@ -49,14 +63,12 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
      * - Updates the selected shelter
      * - Emits corresponding UI error messages if the shelter does not exist
      *
-     * @param firebaseUid The ID of the shelter to load.
+     * @param firebaseUid The Firebase UID of the shelter to load.
      */
     fun loadShelterByFirebaseUid(firebaseUid: String) = viewModelScope.launch {
-        val ctx = getApplication<Application>()
-
         try {
             _isLoading.value = true
-            val shelter = repository?.getShelterByFirebaseUid(firebaseUid)
+            val shelter = shelterRepository?.getShelterByFirebaseUid(firebaseUid)
 
             if (shelter != null) {
                 _selectedShelter.value = shelter
@@ -79,27 +91,24 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
      * Workflow:
      * - Sets loading state
      * - Retrieves all shelters
-     * - Updates the 'shelters' LiveData with the results
+     * - Updates the 'sheltersList' LiveData with the results
      * - Emits an error message in case of failure
      */
     fun loadAllShelters() = viewModelScope.launch {
-        val ctx = getApplication<Application>()
-
         try {
             _isLoading.value = true
 
-            val allShelters = shelterRepository.getAllSheltersList()
-            _shelters.value = allShelters
+            val allShelters = shelterRepository?.getAllSheltersList()
+            _sheltersList.value = allShelters ?: emptyList()
             _error.value = null
 
         } catch (e: Exception) {
             _error.value = ctx.getString(R.string.error_loading_shelters) + " ${e.message}"
-            _shelters.value = emptyList()
+            _sheltersList.value = emptyList()
         } finally {
             _isLoading.value = false
         }
     }
-
 
     /**
      * Updates an existing shelter in the database.
@@ -114,12 +123,10 @@ open class ShelterViewModel(  private val repository: ShelterRepository? = null
      * @param shelter The shelter entity with updated fields.
      */
     fun updateShelter(shelter: Shelter) = viewModelScope.launch {
-        val ctx = getApplication<Application>()
-
         try {
             _isLoading.value = true
 
-            repository?.updateShelter(shelter)
+            shelterRepository?.updateShelter(shelter)
             _message.value = ctx.getString(R.string.success_shelter_updated)
             _error.value = null
 

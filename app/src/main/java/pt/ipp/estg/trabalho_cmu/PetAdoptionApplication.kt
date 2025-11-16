@@ -29,11 +29,11 @@ class PetAdoptionApplication : Application() {
 
                 // Sync animals
                 val animalRepository = AnimalRepository(db.animalDao(), firestore)
-                animalRepository.syncPendingAnimals()
+                // animalRepository.syncPendingAnimals()
 
                 // Sync Pending Ownership Requests
                 val ownershipRepository = OwnershipRepository(db.ownershipDao(), firestore)
-                ownershipRepository.syncPendingOwnerships()
+                // ownershipRepository.syncPendingOwnerships()
             } catch (e: Exception) {
                 println("Error syncing pending data: ${e.message}")
             }
