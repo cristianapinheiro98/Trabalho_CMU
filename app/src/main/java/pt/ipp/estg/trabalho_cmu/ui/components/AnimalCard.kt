@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +21,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCard(
     animal: Animal,
@@ -103,19 +99,11 @@ fun AnimalCard(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun calculateAge(birthDate: String?): Int? {
-    if (birthDate.isNullOrBlank()) return null
+fun calculateAge(birthDateMillis: Long): Int {
+    val birthDate = java.time.Instant.ofEpochMilli(birthDateMillis)
+        .atZone(java.time.ZoneId.systemDefault())
+        .toLocalDate()
+    val today = java.time.LocalDate.now()
 
-    return try {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val dateOfBirth = LocalDate.parse(birthDate, formatter)
-        val today = LocalDate.now()
-
-        Period.between(dateOfBirth, today).years
-    } catch (e: DateTimeParseException) {
-        null
-    }
+    return java.time.Period.between(birthDate, today).years
 }
-
-
-

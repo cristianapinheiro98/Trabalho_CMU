@@ -17,48 +17,43 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
     foreignKeys = [
         ForeignKey(
             entity = User::class,
-            parentColumns = ["firebaseUid"],
-            childColumns = ["userFirebaseUid"],
+            parentColumns = ["id"],
+            childColumns = ["userId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Animal::class,
-            parentColumns = ["firebaseUid"],
-            childColumns = ["animalFirebaseUid"],
+            parentColumns = ["id"],
+            childColumns = ["animalId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Shelter::class,
-            parentColumns = ["firebaseUid"],
-            childColumns = ["shelterFirebaseUid"],
+            parentColumns = ["id"],
+            childColumns = ["shelterId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = ["userFirebaseUid"]),
-        Index(value = ["animalFirebaseUid"]),
-        Index(value = ["shelterFirebaseUid"])
+        Index(value = ["userId"]),
+        Index(value = ["animalId"]),
+        Index(value = ["shelterId"])
     ]
 )
 data class Ownership(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val firebaseUid: String? = null,
+    @PrimaryKey
+    val id: String,
 
     // Foreign Keys
-    val userFirebaseUid: String,
-    val animalFirebaseUid: String,
-    val shelterFirebaseUid: String,
+    val userId: String,
+    val animalId: String,
+    val shelterId: String,
 
-    // Payment and identification info
+    // identification info
     val ownerName: String,
-    val accountNumber: String,
-    val cvv: String,
-    val cardNumber: String,
 
-    // Ownership status
-    @ColumnInfo(defaultValue = "PENDING")
     val status: OwnershipStatus = OwnershipStatus.PENDING,
 
     val createdAt: Long = System.currentTimeMillis()
+
 )

@@ -1,89 +1,55 @@
-package pt.ipp.estg.trabalho_cmu.ui.viewmodel
+package pt.ipp.estg.trabalho_cmu.ui.screens.User
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
-import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
+import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val userRepository: UserRepository by lazy {
-        val db = AppDatabase.getDatabase(application)
-        UserRepository(db.userDao())
-    }
+    private val userRepository = DatabaseModule.provideUserRepository(application)
 
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
+    // --- MUDANÇA: StateFlow -> LiveData ---
+    private val _uiState = MutableLiveData<UserUiState>(UserUiState.Initial)
+    val uiState: LiveData<UserUiState> = _uiState
 
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
-
-    private val _message = MutableLiveData<String?>()
-    val message: LiveData<String?> = _message
-
+    // User data
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
 
-    fun loadUserByFirebaseUid(firebaseUid: String) = viewModelScope.launch {
+    // ========== LOAD USER BY ID ==========
+    fun loadUserById(userId: String) = viewModelScope.launch {
+        _uiState.value = UserUiState.Loading
         try {
-            _isLoading.value = true
-
-            val userFromDb = userRepository.getUserByFirebaseUid(firebaseUid)
-
+            val userFromDb = userRepository.getUserById(userId)
             if (userFromDb != null) {
                 _user.value = userFromDb
-                _message.value = "User loaded successfully!"
-                _error.value = null
+                _uiState.value = UserUiState.Success
             } else {
-                _error.value = "User not found"
-                _user.value = null
+                _uiState.value = UserUiState.Error("Utilizador não encontrado")
             }
         } catch (e: Exception) {
-            _error.value = "Error loading user: ${e.message}"
-        } finally {
-            _isLoading.value = false
+            _uiState.value = UserUiState.Error("Erro: ${e.message}")
         }
     }
 
-    fun loadUserByEmail(email: String) = viewModelScope.launch {
-        try {
-            _isLoading.value = true
-
-            val userFromDb = userRepository.getUserByEmail(email)
-
-            if (userFromDb != null) {
-                _user.value = userFromDb
-                _message.value = "User loaded successfully!"
-                _error.value = null
-            } else {
-                _error.value = "User not found"
-                _user.value = null
-            }
-        } catch (e: Exception) {
-            _error.value = "Error loading user: ${e.message}"
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
+    // ========== UPDATE USER ==========
     fun updateUser(user: User) = viewModelScope.launch {
+        _uiState.value = UserUiState.Loading
         try {
-            _isLoading.value = true
-
             userRepository.updateUser(user)
-            _user.value = user
-            _message.value = "Profile updated successfully!"
-            _error.value = null
-
+            _user.value = user // Atualiza localmente
+            _uiState.value = UserUiState.UserUpdated
         } catch (e: Exception) {
-            _error.value = "Error updating: ${e.message}"
-        } finally {
-            _isLoading.value = false
+            _uiState.value = UserUiState.Error("Erro ao atualizar: ${e.message}")
         }
     }
 
-    fun clearMessage() { _message.value = null }
-    fun clearError() { _error.value = null }
+    fun resetState() {
+        _uiState.value = UserUiState.Initial
+    }
 }

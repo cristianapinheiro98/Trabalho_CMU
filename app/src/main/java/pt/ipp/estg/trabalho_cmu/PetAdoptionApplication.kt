@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
+import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
 /**
  * Application class for the Pet Adoption app.
@@ -18,5 +19,6 @@ class PetAdoptionApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        NetworkUtils.init(this)
     }
 }

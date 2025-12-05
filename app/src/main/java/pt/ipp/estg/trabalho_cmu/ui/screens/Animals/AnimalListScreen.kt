@@ -2,6 +2,7 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,68 +22,143 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
+import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
+
+private const val TAG = "AnimalListScreen"
 
 /**
- * Top-level screen responsible for displaying the list of animals.
- * It observes state from the AnimalViewModel and forwards user interactions
- * (search, filters, sorting, favorite toggles) to the ViewModel.
+ * Ecrã principal do Catálogo.
+ * Liga o ViewModel à UI e gere os estados dos favoritos.
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimalListScreen(
-    viewModel: AnimalViewModel,
-    onAnimalClick: (Int) -> Unit = {},
-    isLoggedIn: Boolean,
+    animalViewModel: AnimalViewModel,
+    favoriteViewModel: FavoriteViewModel = viewModel(),
+    userId: String?,
+    onAnimalClick: (String) -> Unit = {},
     onNavigateBack: () -> Unit
 ) {
-    // Observing data from ViewModel
-    val animals by viewModel.animals.observeAsState(emptyList())
-    val animalsFiltered by viewModel.animalsFiltered.observeAsState(emptyList())
-    val favorites by viewModel.favorites.observeAsState(emptyList())
+    Log.d(TAG, "=== INICIO AnimalListScreen ===")
+    Log.d(TAG, "userId recebido: $userId")
 
-    // Preference: if filtered results exist, show them
-    val listToShow = if (animalsFiltered.isNotEmpty()) animalsFiltered else animals
+    // Define o userId no FavoriteViewModel quando o ecrã é criado/atualizado
+    LaunchedEffect(userId) {
+        Log.d(TAG, "LaunchedEffect: setCurrentUser($userId)")
+        favoriteViewModel.setCurrentUser(userId)
+    }
 
+    // 1. Dados dos Animais (Observar do Room)
+    val animals by animalViewModel.animals.observeAsState(emptyList())
+    Log.d(TAG, "animals observados: ${animals.size} itens")
+
+    val filteredAnimals by animalViewModel.filteredAnimals.observeAsState(emptyList())
+    Log.d(TAG, "filteredAnimals: ${filteredAnimals.size} itens")
+
+    // 2. Favoritos - agora observados diretamente do ViewModel
+    val favorites by favoriteViewModel.favorites.observeAsState(emptyList())
+    Log.d(TAG, "favorites: ${favorites.size} itens")
+
+    // 3. Decidir que lista mostrar (Filtrada ou Completa)
+    val listToShow = if (filteredAnimals.isNotEmpty()) filteredAnimals else animals
+    Log.d(TAG, "listToShow: ${listToShow.size} itens")
+
+    // Proteção adicional: só renderiza quando tiver dados
+    if (animals.isEmpty() && filteredAnimals.isEmpty()) {
+        Log.d(TAG, "Ainda não há dados para mostrar - aguardando...")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    Log.d(TAG, "A chamar AnimalListContent...")
+
+    // Chama a UI com os dados reais
     AnimalListContent(
         animals = listToShow,
-        favorites = if (isLoggedIn) favorites else emptyList(),
-        isLoggedIn = isLoggedIn,
+        favorites = favorites,
+        isLoggedIn = userId != null,
         onAnimalClick = onAnimalClick,
-        onToggleFavorite = { viewModel.toggleFavorite(it) },
-        onSearch = { viewModel.searchByName(it) },
-        onFilterSpecies = { viewModel.filterBySpecies(it) },
-        onFilterSize = { viewModel.filterBySize(it) },
-        onSortName = { viewModel.sortByName() },
-        onSortAge = { viewModel.sortByAge() },
-        onClearFilters = { viewModel.clearFilters() },
-        onNavigateBack = onNavigateBack
+        onSearch = { query ->
+            Log.d(TAG, "onSearch: $query")
+            animalViewModel.searchAnimals(query)
+        },
+        onFilterSpecies = { species ->
+            Log.d(TAG, "onFilterSpecies: $species")
+            animalViewModel.filterBySpecies(species)
+        },
+        onFilterSize = { size ->
+            Log.d(TAG, "onFilterSize: $size")
+            animalViewModel.filterBySize(size)
+        },
+        onSortName = {
+            Log.d(TAG, "onSortName")
+            animalViewModel.sortByName()
+        },
+        onSortAge = {
+            Log.d(TAG, "onSortAge")
+            animalViewModel.sortByAge()
+        },
+        onClearFilters = {
+            Log.d(TAG, "onClearFilters")
+            animalViewModel.clearFilters()
+        },
+        onNavigateBack = onNavigateBack,
+        // --- Ação do ViewModel de Favoritos ---
+        onToggleFavorite = { animal ->
+            Log.d(TAG, "onToggleFavorite: animal=${animal.id}, userId=$userId")
+            if (userId != null) {
+                val isFav = favorites.any { it.animalId == animal.id }
+                Log.d(TAG, "Animal ${animal.id} isFavorite: $isFav")
+
+                if (isFav) {
+                    favoriteViewModel.removeFavorite(userId, animal.id)
+                } else {
+                    favoriteViewModel.addFavorite(userId, animal.id)
+                }
+            } else {
+                Log.w(TAG, "Tentativa de toggle favorite sem userId")
+            }
+        }
     )
 }
 
 /**
- * Full UI structure including search bar, filter menu, sort menu,
- * empty state, and the grid of AnimalCard items.
+ * Conteúdo da UI (SearchBar, Filtros, Grid).
+ * Mantido exatamente com as opções que tinhas.
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalListContent(
     animals: List<Animal>,
-    favorites: List<Animal>,
+    favorites: List<Favorite>, // Recebe lista de favoritos para pintar corações
     isLoggedIn: Boolean,
-    onAnimalClick: (Int) -> Unit,
-    onToggleFavorite: (Animal) -> Unit,
+    onAnimalClick: (String) -> Unit,
     onSearch: (String) -> Unit,
     onFilterSpecies: (String) -> Unit,
     onFilterSize: (String) -> Unit,
     onSortName: () -> Unit,
     onSortAge: () -> Unit,
     onClearFilters: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onToggleFavorite: (Animal) -> Unit
 ) {
+    Log.d(TAG, "=== AnimalListContent renderizado ===")
+    Log.d(TAG, "animals.size: ${animals.size}")
+    Log.d(TAG, "favorites.size: ${favorites.size}")
+    Log.d(TAG, "isLoggedIn: $isLoggedIn")
+
     var search by remember { mutableStateOf("") }
     var filterMenuOpen by remember { mutableStateOf(false) }
     var sortMenuOpen by remember { mutableStateOf(false) }
@@ -93,7 +169,7 @@ fun AnimalListContent(
             .padding(horizontal = 12.dp)
     ) {
 
-        // Top row: Back button + search field with filter and sort actions
+        // --- Top row: Back button + Search field + Filters ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,7 +177,10 @@ fun AnimalListContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            IconButton(onClick = onNavigateBack) {
+            IconButton(onClick = {
+                Log.d(TAG, "Back button clicked")
+                onNavigateBack()
+            }) {
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.go_back)
@@ -123,17 +202,69 @@ fun AnimalListContent(
                 placeholder = { Text(stringResource(R.string.search_label)) },
                 trailingIcon = {
                     Row {
-                        IconButton(onClick = { filterMenuOpen = true }) {
-                            Icon(
-                                Icons.Outlined.FilterList,
-                                contentDescription = stringResource(R.string.filter_label)
-                            )
+                        // Filter icon
+                        Box {
+                            IconButton(onClick = { filterMenuOpen = true }) {
+                                Icon(
+                                    Icons.Outlined.FilterList,
+                                    contentDescription = stringResource(R.string.filter_label)
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = filterMenuOpen,
+                                onDismissRequest = { filterMenuOpen = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_dogs)) },
+                                    onClick = { onFilterSpecies("Cão"); filterMenuOpen = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_cats)) },
+                                    onClick = { onFilterSpecies("Gato"); filterMenuOpen = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_small_size)) },
+                                    onClick = { onFilterSize("Pequeno"); filterMenuOpen = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_medium_size)) },
+                                    onClick = { onFilterSize("Médio"); filterMenuOpen = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_large_size)) },
+                                    onClick = { onFilterSize("Grande"); filterMenuOpen = false }
+                                )
+                                HorizontalDivider()
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.filter_clear)) },
+                                    onClick = { onClearFilters(); filterMenuOpen = false }
+                                )
+                            }
                         }
-                        IconButton(onClick = { sortMenuOpen = true }) {
-                            Icon(
-                                Icons.Outlined.Sort,
-                                contentDescription = stringResource(R.string.sort_label)
-                            )
+
+                        // Sort icon
+                        Box {
+                            IconButton(onClick = { sortMenuOpen = true }) {
+                                Icon(
+                                    Icons.Outlined.Sort,
+                                    contentDescription = stringResource(R.string.sort_label)
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = sortMenuOpen,
+                                onDismissRequest = { sortMenuOpen = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_name)) },
+                                    onClick = { onSortName(); sortMenuOpen = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_age)) },
+                                    onClick = { onSortAge(); sortMenuOpen = false }
+                                )
+                            }
                         }
                     }
                 },
@@ -145,55 +276,9 @@ fun AnimalListContent(
             )
         }
 
-        // Filter dropdown menu
-        DropdownMenu(
-            expanded = filterMenuOpen,
-            onDismissRequest = { filterMenuOpen = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_dogs)) },
-                onClick = { onFilterSpecies("Cão"); filterMenuOpen = false }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_cats)) },
-                onClick = { onFilterSpecies("Gato"); filterMenuOpen = false }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_small_size)) },
-                onClick = { onFilterSize("Pequeno"); filterMenuOpen = false }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_medium_size)) },
-                onClick = { onFilterSize("Médio"); filterMenuOpen = false }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_large_size)) },
-                onClick = { onFilterSize("Grande"); filterMenuOpen = false }
-            )
-            Divider()
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.filter_clear)) },
-                onClick = { onClearFilters(); filterMenuOpen = false }
-            )
-        }
-
-        // Sort dropdown menu
-        DropdownMenu(
-            expanded = sortMenuOpen,
-            onDismissRequest = { sortMenuOpen = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.sort_by_name)) },
-                onClick = { onSortName(); sortMenuOpen = false }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.sort_by_age)) },
-                onClick = { onSortAge(); sortMenuOpen = false }
-            )
-        }
-
         // Empty state
         if (animals.isEmpty()) {
+            Log.d(TAG, "Lista vazia - mostrando empty state")
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -202,6 +287,8 @@ fun AnimalListContent(
             }
             return
         }
+
+        Log.d(TAG, "A renderizar grid com ${animals.size} animais")
 
         // Grid of animals
         LazyVerticalGrid(
@@ -212,12 +299,22 @@ fun AnimalListContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(animals) { animal ->
+                // Verifica se este animal está na lista de favoritos
+                val isFavorite = favorites.any { it.animalId == animal.id }
+                Log.d(TAG, "Renderizando animal: ${animal.id}, isFav: $isFavorite")
+
                 AnimalCard(
                     animal = animal,
-                    isFavorite = favorites.any { it.id == animal.id },
+                    isFavorite = isFavorite,
                     isLoggedIn = isLoggedIn,
-                    onClick = { onAnimalClick(animal.id) },
-                    onToggleFavorite = { onToggleFavorite(animal) }
+                    onClick = {
+                        Log.d(TAG, "Animal clicked: ${animal.id}")
+                        onAnimalClick(animal.id)
+                    },
+                    onToggleFavorite = {
+                        Log.d(TAG, "Toggle favorite clicked: ${animal.id}")
+                        onToggleFavorite(animal)
+                    }
                 )
             }
         }
@@ -228,30 +325,29 @@ fun AnimalListContent(
 
 private val previewAnimals = listOf(
     Animal(
-        id = 1,
+        id = "preview-1",
         name = "Leia",
         breed = "Desconhecida",
         species = "Gato",
         size = "Pequeno",
-        birthDate = "2019-01-01",
+        birthDate = dateStringToLong("2019-01-01"),
         imageUrls = listOf(""),
-        shelterFirebaseUid = "1",
+        shelterId = "shelter-1",
         description = "Muito meiga!"
     ),
     Animal(
-        id = 2,
+        id = "preview-2",
         name = "Noa",
         breed = "Desconhecida",
         species = "Gato",
         size = "Pequeno",
-        birthDate = "2022-01-01",
+        birthDate = dateStringToLong("2022-01-01"),
         imageUrls = listOf(""),
-        shelterFirebaseUid = "1",
+        shelterId = "shelter-1",
         description = "Adora colo!"
     )
 )
 
-//user logged in
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
@@ -260,22 +356,21 @@ fun AnimalListScreenPreviewLoggedIn() {
     MaterialTheme {
         AnimalListContent(
             animals = previewAnimals,
-            favorites = listOf(previewAnimals.first()),
+            favorites = emptyList(),
             isLoggedIn = true,
             onAnimalClick = {},
-            onToggleFavorite = {},
             onSearch = {},
             onFilterSpecies = {},
             onFilterSize = {},
             onSortName = {},
             onSortAge = {},
             onClearFilters = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onToggleFavorite = {}
         )
     }
 }
 
-//user not logged in
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
@@ -287,94 +382,14 @@ fun AnimalListScreenPreviewGuest() {
             favorites = emptyList(),
             isLoggedIn = false,
             onAnimalClick = {},
-            onToggleFavorite = {},
             onSearch = {},
             onFilterSpecies = {},
             onFilterSize = {},
             onSortName = {},
             onSortAge = {},
             onClearFilters = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onToggleFavorite = {}
         )
     }
 }
-
-//empty list
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AnimalListScreenPreviewEmpty() {
-    MaterialTheme {
-        AnimalListContent(
-            animals = emptyList(),
-            favorites = emptyList(),
-            isLoggedIn = true,
-            onAnimalClick = {},
-            onToggleFavorite = {},
-            onSearch = {},
-            onFilterSpecies = {},
-            onFilterSize = {},
-            onSortName = {},
-            onSortAge = {},
-            onClearFilters = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-//search by name = noa
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AnimalListScreenPreviewSearch() {
-    MaterialTheme {
-        AnimalListContent(
-            animals = previewAnimals.filter { it.name.contains("Noa", ignoreCase = true) },
-            favorites = emptyList(),
-            isLoggedIn = true,
-            onAnimalClick = {},
-            onToggleFavorite = {},
-            onSearch = {},
-            onFilterSpecies = {},
-            onFilterSize = {},
-            onSortName = {},
-            onSortAge = {},
-            onClearFilters = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-
-//filters by size = pequeno and species = gato
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AnimalListScreenPreviewFiltered() {
-    MaterialTheme {
-        val filtered = previewAnimals.filter {
-            it.species == "Gato" && it.size == "Pequeno"
-        }
-
-        AnimalListContent(
-            animals = filtered,
-            favorites = emptyList(),
-            isLoggedIn = true,
-            onAnimalClick = {},
-            onToggleFavorite = {},
-            onSearch = {},
-            onFilterSpecies = {},
-            onFilterSize = {},
-            onSortName = {},
-            onSortAge = {},
-            onClearFilters = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-
-

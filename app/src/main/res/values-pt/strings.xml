@@ -245,6 +245,12 @@
 
     <!-- AuthViewModel Messages -->
     <string name="required_fields_error">Preenche todos os campos obrigatórios.</string>
+    <string name="session_restored">Sessão recuperada!</string>
+    <string name="login_failed">Erro ao fazer login.</string>
+    <string name="register_failed">Erro ao criar conta.</string>
+    <string name="register_success">Conta criada com sucesso!</string>
+
+
 
     <!-- ActivityViewModel Messages -->
     <string name="error_loading_animal_shelter">Erro ao carregar dados do animal e abrigo:</string>

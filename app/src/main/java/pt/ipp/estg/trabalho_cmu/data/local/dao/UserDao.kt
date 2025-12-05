@@ -6,28 +6,31 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM users ORDER BY id ASC")
+    @Query("SELECT * FROM users ORDER BY name ASC")
     fun getAllUsers(): LiveData<List<User>>
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): User?
 
-    @Query("SELECT * FROM users WHERE firebaseUid = :uid LIMIT 1")
-    suspend fun getUserByFirebaseUid(uid: String): User?
-
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
-    suspend fun getUserById(userId: Int): User?
+    suspend fun getUserById(userId: String): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User) : Long
+    suspend fun insert(user: User)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: List<User>)
+
+    @Query("DELETE FROM users")
+    suspend fun deleteAll()
+
+    // Atualizar cache de utilizadores (para admins, por exemplo)
+    @Transaction
+    suspend fun refreshCache(users: List<User>) {
+        deleteAll()
+        insertAll(users)
+    }
 
     @Update
-    suspend fun updateUser(user: User)
-
-    @Delete
-    suspend fun deleteUser(user: User)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllSync(users: List<User>)
-
+    suspend fun update(user: User)
 }

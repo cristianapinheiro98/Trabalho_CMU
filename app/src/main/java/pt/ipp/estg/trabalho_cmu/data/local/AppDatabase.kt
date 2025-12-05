@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ActivityDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.FavoriteDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
@@ -16,6 +17,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.VeterinarianDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
@@ -27,9 +29,10 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
         Animal::class,
         Shelter::class,
         User::class,
-        Veterinarian::class
+        Veterinarian::class,
+        Favorite::class
     ],
-    version = 11, // Increase value when making changes!!!
+    version = 13,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -41,6 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun shelterDao(): ShelterDao
     abstract fun userDao(): UserDao
     abstract fun veterinarianDao(): VeterinarianDao
+    abstract fun favoriteDao(): FavoriteDao
 
     companion object {
         @Volatile

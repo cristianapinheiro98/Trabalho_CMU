@@ -1,159 +1,51 @@
-package pt.ipp.estg.trabalho_cmu.ui.viewmodel
+package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.R
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
+import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 
-/**
- * ViewModel responsible for:
- * - Loading the user's ownership records
- * - Fetching animal details
- * - Submitting new ownership requests
- */
 class OwnershipViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val ownershipRepository: OwnershipRepository by lazy {
-        val db = AppDatabase.getDatabase(application)
-        OwnershipRepository(
-            db.ownershipDao()
-        )
-    }
+    private val ownershipRepository = DatabaseModule.provideOwnershipRepository(application)
+    private val animalRepository = DatabaseModule.provideAnimalRepository(application)
 
-    private val animalRepository: AnimalRepository by lazy {
-        val db = AppDatabase.getDatabase(application)
-        AnimalRepository(db.animalDao())
-    }
+    // --- UI STATE ---
+    private val _uiState = MutableLiveData<OwnershipUiState>(OwnershipUiState.Initial)
+    val uiState: LiveData<OwnershipUiState> = _uiState
 
-    // ========= USER OWNERSHIPS ========= //
-
-    private val _userFirebaseUid = MutableLiveData<String>()
-
-    val ownerships: LiveData<List<Ownership>> =
-        _userFirebaseUid.switchMap { firebaseUid ->
-            ownershipRepository.getOwnershipsByUser(firebaseUid)
-        }
-
-    fun loadOwnershipsForUser(userFirebaseUid: String) {
-        _userFirebaseUid.value = userFirebaseUid
-        viewModelScope.launch {
-            ownershipRepository.fetchOwnerships()
-        }
-    }
-
-    // ========= UI STATES ========= //
-
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
-
-    private val _message = MutableLiveData<String?>()
-    val message: LiveData<String?> = _message
-
-    private val _submissionSuccess = MutableLiveData<Boolean>()
-    val submissionSuccess: LiveData<Boolean> = _submissionSuccess
-
-    fun resetSubmissionSuccess() {
-        _submissionSuccess.value = false
-    }
-
-    // ========= ANIMAL DETAILS ========= //
-
+    // --- DADOS DO ANIMAL (Necessário para saber o Shelter ID) ---
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
-    fun loadAnimalDetails(animalId: Int) {
-        val ctx = getApplication<Application>()
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _animal.value = animalRepository.getAnimalById(animalId)
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = ctx.getString(R.string.error_loading_animal) + " ${e.message}"
-                _animal.value = null
-            } finally {
-                _isLoading.value = false
-            }
-        }
+    // --- CARREGAR ANIMAL ---
+    fun loadAnimal(animalId: String) = viewModelScope.launch {
+        // Não metemos loading aqui para não bloquear o ecrã todo se for rápido
+        val animalData = animalRepository.getAnimalById(animalId)
+        _animal.value = animalData
     }
 
-    fun loadAnimalByFirebaseUid(firebaseUid: String) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _animal.value = animalRepository.getAnimalByFirebaseUid(firebaseUid)
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "Error loading animal: ${e.message}"
-                _animal.value = null
-            } finally {
-                _isLoading.value = false
+    // --- SUBMETER PEDIDO ---
+    fun submitOwnership(ownership: Ownership) = viewModelScope.launch {
+        _uiState.value = OwnershipUiState.Loading
+
+        // O repositório agora trata da verificação online e inserção no Firebase
+        ownershipRepository.createOwnership(ownership)
+            .onSuccess { createdOwnership ->
+                _uiState.value = OwnershipUiState.OwnershipCreated(createdOwnership)
             }
-        }
+            .onFailure { exception ->
+                _uiState.value = OwnershipUiState.Error(exception.message ?: "Erro desconhecido ao criar pedido.")
+            }
     }
 
-    // ========= OWNERSHIP ACTIONS ========= //
-
-    fun submitOwnership(request: Ownership) {
-        val ctx = getApplication<Application>()
-
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                val result = ownershipRepository.createOwnership(request)
-
-                result.onSuccess {
-                    _message.value = ctx.getString(R.string.success_ownership_submitted)
-                    _error.value = null
-                    _submissionSuccess.value = true
-                }.onFailure { e ->
-                    _error.value = ctx.getString(R.string.error_submit_ownership) + " ${e.message}"
-                }
-
-            } catch (e: Exception) {
-                _error.value = ctx.getString(R.string.error_submit_ownership) + " ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
+    // --- RESET ---
+    fun resetState() {
+        _uiState.value = OwnershipUiState.Initial
     }
-
-    fun updateOwnershipStatus(id: Int, status: OwnershipStatus) {
-        viewModelScope.launch {
-            try {
-                ownershipRepository.updateOwnershipStatus(id, status)
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "Error updating status: ${e.message}"
-            }
-        }
-    }
-
-    fun deleteOwnership(ownership: Ownership) {
-        viewModelScope.launch {
-            try {
-                ownershipRepository.deleteOwnership(ownership)
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "Error deleting request: ${e.message}"
-            }
-        }
-    }
-
-    fun clearError() { _error.value = null }
-
-    fun clearMessage() { _message.value = null }
 }

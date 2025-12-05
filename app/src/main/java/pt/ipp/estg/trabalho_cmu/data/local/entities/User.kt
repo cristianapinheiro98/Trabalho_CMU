@@ -4,17 +4,12 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "users",
-    indices = [Index(value = ["firebaseUid"], unique = true)]
-)
+@Entity(tableName = "users")
 data class User(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val firebaseUid: String,
+    @PrimaryKey
+    val id: String, // Firebase Auth UID - usado diretamente como PK
     val name: String,
-    val adress: String,
+    val address: String,
     val email: String,
-    val phone: String,
-    val password: String
+    val phone: String
 )

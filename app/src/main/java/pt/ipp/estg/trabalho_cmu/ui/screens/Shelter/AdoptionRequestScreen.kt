@@ -22,13 +22,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
-import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
-/**
- * Screen that displays all pending adoption requests for a shelter
- * and allows approving or rejecting each one.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdoptionRequestScreen(
@@ -37,25 +33,20 @@ fun AdoptionRequestScreen(
     shelterMngViewModel: ShelterMngViewModel = viewModel()
 ) {
     val currentShelter by authViewModel.currentShelter.observeAsState()
-    val accountType by authViewModel.accountType.observeAsState()
 
-    LaunchedEffect(accountType) {
-        when (accountType) {
-            AccountType.SHELTER -> {
-                currentShelter?.let { shelter ->
-                    println("[AdoptionRequest] Shelter: ${shelter.name}, Firebase UID: ${shelter.firebaseUid}")
-                    shelterMngViewModel.setShelterFirebaseUid(shelter.firebaseUid)
-                }
-            }
-            else -> {
-                println("Only Shelters can view adoption requests")
-            }
+    // Carregar ID do abrigo
+    LaunchedEffect(currentShelter) {
+        currentShelter?.let {
+            shelterMngViewModel.setShelterFirebaseUid(it.id)
         }
     }
 
     val requests by shelterMngViewModel.requests.observeAsState(emptyList())
     val message by shelterMngViewModel.message.observeAsState()
     val error by shelterMngViewModel.error.observeAsState()
+    val uiState by shelterMngViewModel.uiState.observeAsState(ShelterMngUiState.Initial)
+
+    val isLoading = uiState is ShelterMngUiState.Loading
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -77,57 +68,57 @@ fun AdoptionRequestScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (requests.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_pending_requests),
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 40.dp)
-                )
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            if (isLoading) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
             } else {
-                requests.forEach { request ->
-                    PedidoCard(
-                        request = request,
-                        onApprove = { shelterMngViewModel.approveRequest(request) },
-                        onReject = { shelterMngViewModel.rejectRequest(request) }
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (requests.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.no_pending_requests),
+                            color = Color.Gray,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(top = 40.dp)
+                        )
+                    } else {
+                        requests.forEach { request ->
+                            PedidoCard(
+                                request = request,
+                                onApprove = { shelterMngViewModel.approveRequest(request) },
+                                onReject = { shelterMngViewModel.rejectRequest(request) }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Success dialog
+    // Dialogs
     message?.let {
         AlertDialog(
             onDismissRequest = { shelterMngViewModel.clearMessage() },
             confirmButton = {
-                TextButton(onClick = { shelterMngViewModel.clearMessage() }) {
-                    Text(stringResource(R.string.dialog_ok_button))
-                }
+                TextButton(onClick = { shelterMngViewModel.clearMessage() }) { Text("OK") }
             },
-            title = { Text(stringResource(R.string.dialog_warning_title)) },
+            title = { Text("Sucesso") },
             text = { Text(it) }
         )
     }
 
-    // Error dialog
     error?.let {
         AlertDialog(
             onDismissRequest = { shelterMngViewModel.clearError() },
             confirmButton = {
-                TextButton(onClick = { shelterMngViewModel.clearError() }) {
-                    Text(stringResource(R.string.dialog_ok_button))
-                }
+                TextButton(onClick = { shelterMngViewModel.clearError() }) { Text("OK") }
             },
-            title = { Text(stringResource(R.string.dialog_error_title)) },
+            title = { Text("Erro") },
             text = { Text(it) }
         )
     }

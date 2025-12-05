@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,95 +12,88 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.OwnershipViewModel
 
-/**
- * Screen responsible for collecting all required fields to create an Ownership request.
- */
 @Composable
 fun OwnershipFormScreen(
     userFirebaseUid: String,
-    animalFirebaseUid: String,
+    animalFirebaseUid: String, // ID String
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: OwnershipViewModel = viewModel()
 
-    val isLoading by viewModel.isLoading.observeAsState(false)
-    val error by viewModel.error.observeAsState()
-    val submissionSuccess by viewModel.submissionSuccess.observeAsState(false)
+    // Observar Estados
+    val uiState by viewModel.uiState.observeAsState(OwnershipUiState.Initial)
     val animal by viewModel.animal.observeAsState()
 
-    // Load animal details to obtain shelterId
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Carregar dados do animal para obter o shelterId
     LaunchedEffect(animalFirebaseUid) {
-        viewModel.loadAnimalByFirebaseUid(animalFirebaseUid)
+        viewModel.loadAnimal(animalFirebaseUid)
     }
 
-    // Navigate after successful submission
-    LaunchedEffect(submissionSuccess) {
-        if (submissionSuccess) {
-            delay(500)
-            viewModel.resetSubmissionSuccess()
-            onSubmitSuccess()
+    // Reagir a mudanças de estado (Sucesso ou Erro)
+    LaunchedEffect(uiState) {
+        when(val state = uiState) {
+            is OwnershipUiState.OwnershipCreated -> {
+                onSubmitSuccess()
+                viewModel.resetState()
+            }
+            is OwnershipUiState.Error -> {
+                snackbarHostState.showSnackbar(state.message)
+                viewModel.resetState()
+            }
+            else -> {}
         }
     }
 
-    animal?.let { animalData ->
-        OwnershipFormContent(
-            isLoading = isLoading,
-            error = error,
-            onSubmit = { request ->
-                viewModel.submitOwnership(request)
-            },
-            userFirebaseUid = userFirebaseUid,
-            animalFirebaseUid = animalFirebaseUid,
-            shelterFirebaseUid = animalData.shelterFirebaseUid,
-            modifier = modifier
-        )
-    } ?: run {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+    // Verifica se temos o animal carregado (precisamos do shelterId)
+    if (animal == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = Color(0xFF2C8B7E))
         }
+    } else {
+        // Mostrar Formulário
+        OwnershipFormContent(
+            isLoading = uiState is OwnershipUiState.Loading,
+            snackbarHostState = snackbarHostState,
+            onSubmit = { formName, formAccount, formCvv, formCard ->
+                val ownership = Ownership(
+                    id = "", // O Firebase gera o ID
+                    userId = userFirebaseUid,
+                    animalId = animalFirebaseUid,
+                    shelterId = animal!!.shelterId, // Vem do animal carregado
+                    ownerName = formName
+                )
+                viewModel.submitOwnership(ownership)
+            },
+            modifier = modifier
+        )
     }
 }
 
-/**
- * Internal UI content used by the Ownership Form Screen.
- * Contains all fields and the final submit button.
- */
 @Composable
 private fun OwnershipFormContent(
     isLoading: Boolean,
-    error: String?,
-    onSubmit: (Ownership) -> Unit,
-    userFirebaseUid: String,
-    animalFirebaseUid: String,
-    shelterFirebaseUid: String,
+    snackbarHostState: SnackbarHostState,
+    onSubmit: (String, String, String, String) -> Unit, // Name, Account, CVV, Card
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
-    var accountNumber by remember { mutableStateOf("") }
+    // Form States
     var ownerName by remember { mutableStateOf("") }
+    var accountNumber by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
-    var shelterFirebaseUid by remember { mutableStateOf("") }
-
-    /*
-    LaunchedEffect(animalFirebaseUid) {
-        // TODO: fetch animal to obtain shelterFirebaseUid
-    }*/
 
     val maxAccountDigits = 21
     val maxCardDigits = 8
@@ -111,18 +103,7 @@ private fun OwnershipFormContent(
             ownerName.isNotBlank() &&
             cvv.length == 3 &&
             cardNumber.isNotBlank() &&
-            cardNumber.length <= maxCardDigits &&
-            shelterFirebaseUid.isNotBlank()
-
-    // Show error message
-    LaunchedEffect(error) {
-        error?.let {
-            snackbarHostState.showSnackbar(
-                message = it,
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
+            cardNumber.length <= maxCardDigits
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -155,22 +136,13 @@ private fun OwnershipFormContent(
                 )
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFB8D4D0)
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    )
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFB8D4D0)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         OwnershipTextField(
@@ -228,20 +200,7 @@ private fun OwnershipFormContent(
                 Button(
                     onClick = {
                         if (isFormValid) {
-                            val ownership = Ownership(
-                                id = 0,
-                                firebaseUid = null,
-                                userFirebaseUid = userFirebaseUid,
-                                animalFirebaseUid = animalFirebaseUid,
-                                shelterFirebaseUid = shelterFirebaseUid,
-                                ownerName = ownerName,
-                                accountNumber = "PT50$accountNumber",
-                                cvv = cvv,
-                                cardNumber = cardNumber,
-                                status = OwnershipStatus.PENDING,
-                                createdAt = System.currentTimeMillis()
-                            )
-                            onSubmit(ownership)
+                            onSubmit(ownerName, accountNumber, cvv, cardNumber)
                         }
                     },
                     modifier = Modifier
@@ -256,15 +215,10 @@ private fun OwnershipFormContent(
                         disabledContainerColor = Color(0xFFE0E0E0),
                         disabledContentColor = Color(0xFF9E9E9E)
                     ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 2.dp
-                    )
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color(0xFF2C8B7E)
-                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color(0xFF2C8B7E))
                     } else {
                         Text(
                             text = stringResource(R.string.ownership_button),
@@ -290,9 +244,7 @@ private fun OwnershipTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
             fontSize = 14.sp,
@@ -326,11 +278,8 @@ fun OwnershipFormScreenPreview() {
     MaterialTheme {
         OwnershipFormContent(
             isLoading = false,
-            error = null,
-            onSubmit = { },
-            userFirebaseUid = "1",
-            animalFirebaseUid = "1",
-            shelterFirebaseUid = "1"
+            snackbarHostState = SnackbarHostState(),
+            onSubmit = { _, _, _, _ -> }
         )
     }
 }

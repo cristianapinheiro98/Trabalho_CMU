@@ -5,19 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.User
+import pt.ipp.estg.trabalho_cmu.data.models.LoginResult
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AuthRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
+import android.util.Log
+
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -25,10 +22,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val db = AppDatabase.getDatabase(application)
         AuthRepository(
             userDao = db.userDao(),
-            shelterDao = db.shelterDao()
+            shelterDao = db.shelterDao(),
+            application = application
         )
     }
 
+    // --- UI STATE (Principal) ---
+    private val _uiState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
+    val uiState: LiveData<AuthUiState> = _uiState
+
+    // --- UI STATES INDIVIDUAIS (Compatibilidade com os teus ecrãs) ---
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -38,6 +41,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
 
+    // --- AUTH STATE ---
     private val _isAuthenticated = MutableLiveData(false)
     val isAuthenticated: LiveData<Boolean> = _isAuthenticated
 
@@ -53,6 +57,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _accountType = MutableLiveData<AccountType>(AccountType.NONE)
     val accountType: LiveData<AccountType> = _accountType
 
+    // --- FORM FIELDS (Two-way binding) ---
     val name = MutableLiveData("")
     val address = MutableLiveData("")
     val phone = MutableLiveData("")
@@ -60,56 +65,77 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val password = MutableLiveData("")
     val accountTypeChoice = MutableLiveData(AccountType.USER)
 
-    fun getCurrentUserFirebaseUid(): String? {
-        return authRepository.getCurrentFirebaseUid()
+    init {
+        checkSession()
     }
 
-    // LOGIN =======================================================================================
+    fun getCurrentUserFirebaseUid(): String? {
+        return authRepository.getCurrentUserId()
+    }
 
+    fun isAdmin(): Boolean {
+        return _accountType.value == AccountType.SHELTER
+    }
+
+    // ================= CHECK SESSION =================
+    private fun checkSession() = viewModelScope.launch {
+        _isLoading.value = true
+        _uiState.value = AuthUiState.Loading
+
+        // O Repositório decide: se offline usa cache, se online valida token e atualiza cache
+        val result = authRepository.checkSession()
+
+        result.onSuccess { loginResult ->
+            _isLoading.value = false
+            if (loginResult != null) {
+                updateAuthState(
+                    user = loginResult.user,
+                    shelter = loginResult.shelter,
+                    accountType = loginResult.accountType,
+                    message = "Sessão iniciada" // Mensagem discreta
+                )
+            } else {
+                _uiState.value = AuthUiState.Idle
+            }
+        }.onFailure {
+            _isLoading.value = false
+            _uiState.value = AuthUiState.TokenExpired
+            // Não mostramos erro intrusivo no arranque, apenas pedimos login
+        }
+    }
+
+    // ================= LOGIN =================
     fun login() = viewModelScope.launch {
-
-        if (checkAndRestoreOfflineSession()) return@launch
-
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
-
-        if (!validateLoginFields(emailValue, passwordValue)) return@launch
-
-        performOnlineLogin(emailValue, passwordValue)
-    }
-
-    private suspend fun checkAndRestoreOfflineSession(): Boolean {
-        val offlineSession = authRepository.checkOfflineSession()
         val ctx = getApplication<Application>()
 
-        if (offlineSession != null) {
-            updateAuthState(
-                user = offlineSession.user,
-                shelter = offlineSession.shelter,
-                accountType = offlineSession.accountType,
-                message = ctx.getString(R.string.offline_session_restored)
-            )
+        // Validação de campos
+        if (!validateLoginFields(emailValue, passwordValue)) return@launch
 
-            viewModelScope.launch {
-                try {
-                    val db = AppDatabase.getDatabase(ctx)
-                    val ownershipRepo = OwnershipRepository(
-                            db.ownershipDao()
-                        )
-                    ownershipRepo.fetchOwnerships()
-                } catch (e: Exception) {
-                    println("[Offline] Error: ${e.message}")
-                    e.printStackTrace()
-                }
+        // Login
+        _isLoading.value = true
+        _uiState.value = AuthUiState.Loading
+
+        // O repositório trata da verificação de rede
+        authRepository.login(emailValue, passwordValue)
+            .onSuccess { loginResult ->
+                _isLoading.value = false
+                updateAuthState(
+                    user = loginResult.user,
+                    shelter = loginResult.shelter,
+                    accountType = loginResult.accountType,
+                    message = ctx.getString(R.string.login_success_message)
+                )
             }
-            return true
-        }
-        return false
+            .onFailure { exception ->
+                _isLoading.value = false
+                handleLoginFailure(exception)
+            }
     }
 
     private fun validateLoginFields(email: String, password: String): Boolean {
         val ctx = getApplication<Application>()
-
         if (email.isBlank() || password.isBlank()) {
             _error.value = ctx.getString(R.string.empty_fields_error)
             return false
@@ -117,59 +143,77 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    private suspend fun performOnlineLogin(email: String, password: String) {
+    // ================= REGISTER =================
+    fun register() = viewModelScope.launch {
+        val basicFields = getBasicRegistrationFields()
+        val accType = accountTypeChoice.value ?: AccountType.USER
+
+        // Validações
+        if (!validateBasicFields(basicFields)) return@launch
+        if (!validateCredentials(basicFields.email, basicFields.password, basicFields.contact)) return@launch
+
+        // Registo
+        _isLoading.value = true
+        _uiState.value = AuthUiState.Loading
         val ctx = getApplication<Application>()
 
+        // O repositório valida a rede
         try {
-            _isLoading.value = true
-            val result = authRepository.login(email, password)
-
-            result.onSuccess { loginResult ->
-                updateAuthState(
-                    user = loginResult.user,
-                    shelter = loginResult.shelter,
-                    accountType = loginResult.accountType,
-                    message = ctx.getString(R.string.login_success_message)
-                )
-
-                // Sync after login
-                viewModelScope.launch {
-                    try {
-                        val db = AppDatabase.getDatabase(ctx)
-
-                        val ownershipRepo = OwnershipRepository(db.ownershipDao())
-                        ownershipRepo.fetchOwnerships()
-
-                        val animalRepo = AnimalRepository(db.animalDao())
-                        animalRepo.syncPendingAnimals()
-
-                        ownershipRepo.syncPendingOwnerships()
-                    } catch (e: Exception) {
-                        println("Sync error: ${e.message}")
-                        e.printStackTrace()
-                    }
+            val result = if (accType == AccountType.USER) {
+                authRepository.registerUser(
+                    basicFields.name, basicFields.address, basicFields.contact,
+                    basicFields.email, basicFields.password
+                ).map {
+                    LoginResult(user = it, accountType = AccountType.USER)
                 }
+            } else {
+                authRepository.registerShelter(
+                    basicFields.name, basicFields.address, basicFields.contact,
+                    basicFields.email, basicFields.password
+                ).map {
+                    LoginResult(shelter = it, accountType = AccountType.SHELTER)
+                }
+            }
 
-            }.onFailure { exception ->
-                handleLoginFailure(exception)
+            result.onSuccess { loginRes ->
+                _isLoading.value = false
+
+                // Atualiza estado local (Login automático após registo)
+                updateAuthState(
+                    user = loginRes.user,
+                    shelter = loginRes.shelter,
+                    accountType = loginRes.accountType,
+                    message = if (loginRes.accountType == AccountType.USER)
+                        ctx.getString(R.string.register_success_message)
+                    else
+                        ctx.getString(R.string.shelter_register_success)
+                )
+                _isRegistered.value = true
+
+            }.onFailure { e ->
+                _isLoading.value = false
+                _error.value = ctx.getString(R.string.register_failure_message) + " ${e.message}"
+                _uiState.value = AuthUiState.Error(_error.value!!)
             }
 
         } catch (e: Exception) {
-            handleLoginFailure(e)
-        } finally {
             _isLoading.value = false
+            _error.value = e.message
+            _uiState.value = AuthUiState.Error(e.message ?: "Erro desconhecido")
         }
     }
 
+    // ================= HELPERS DE ESTADO =================
     private fun updateAuthState(
         user: User? = null,
         shelter: Shelter? = null,
         accountType: AccountType,
         message: String
     ) {
-        println("updateAuthState: accountType = $accountType") //debug
-        println("updateAuthState: user = $user") //debug
-        println("updateAuthState: shelter = $shelter") //debug
+        Log.d("AUTH_DEBUG", "---- UPDATE AUTH STATE ----")
+        Log.d("AUTH_DEBUG", "AccountType: $accountType")
+        Log.d("AUTH_DEBUG", "User: $user")
+        Log.d("AUTH_DEBUG", "Shelter: $shelter")
 
         _currentUser.value = user
         _currentShelter.value = shelter
@@ -178,7 +222,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _message.value = message
         _error.value = null
 
-        println("APÓS update: _accountType.value = ${_accountType.value}") //debug
+        _uiState.value = AuthUiState.Success(
+            LoginResult(user, shelter, accountType),
+            message
+        )
     }
 
     private fun handleLoginFailure(exception: Throwable) {
@@ -187,31 +234,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _isAuthenticated.value = false
         _currentUser.value = null
         _currentShelter.value = null
+        _uiState.value = AuthUiState.Error(_error.value!!)
     }
 
-    // REGISTRATION ===============================================================================
-
-    fun register() = viewModelScope.launch {
-        val basicFields = getBasicRegistrationFields()
-        val accountType = accountTypeChoice.value ?: AccountType.USER
-
-        if (!validateBasicFields(basicFields)) return@launch
-        if (!validateCredentials(
-                basicFields.email,
-                basicFields.password,
-                basicFields.contact
-            )
-        ) return@launch
-
-        performRegistration(basicFields, accountType)
-    }
-
+    // ================= VALIDAÇÕES (Mantidas do original) =================
     private data class BasicRegistrationFields(
-        val name: String,
-        val address: String,
-        val contact: String,
-        val email: String,
-        val password: String
+        val name: String, val address: String, val contact: String, val email: String, val password: String
     )
 
     private fun getBasicRegistrationFields() = BasicRegistrationFields(
@@ -224,7 +252,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun validateBasicFields(fields: BasicRegistrationFields): Boolean {
         val ctx = getApplication<Application>()
-
         if (fields.name.isBlank() || fields.address.isBlank() ||
             fields.contact.isBlank() || fields.email.isBlank() || fields.password.isBlank()) {
             _error.value = ctx.getString(R.string.required_fields_error)
@@ -233,38 +260,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    private fun isValidPassword(password: String): Boolean {
-        val passwordRegex =
-            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!?.*()-_])[A-Za-z\\d@#\$%^&+=!?.*()-_]{6,}$")
-
-        return passwordRegex.matches(password)
-    }
-
-
-    private fun isValidPhone(phone: String): Boolean {
-        return phone.length == 9 &&
-                phone.all { it.isDigit() } &&
-                (phone.startsWith("9") || phone.startsWith("2"))
-    }
-
     private fun validateCredentials(email: String, password: String, phone: String): Boolean {
         val ctx = getApplication<Application>()
 
-        if (!isValidEmail(email)) {
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _error.value = ctx.getString(R.string.invalid_email_error)
             return false
         }
 
-        if (!isValidPassword(password)) {
+        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!?.*()-_])[A-Za-z\\d@#\$%^&+=!?.*()-_]{6,}$")
+        if (!passwordRegex.matches(password)) {
             _error.value = ctx.getString(R.string.invalid_password_error)
             return false
         }
 
-        if (!isValidPhone(phone)) {
+        if (phone.length != 9 || !phone.all { it.isDigit() } || !(phone.startsWith("9") || phone.startsWith("2"))) {
             _error.value = ctx.getString(R.string.invalid_phone_error)
             return false
         }
@@ -272,69 +282,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    private suspend fun performRegistration(fields: BasicRegistrationFields, accountType: AccountType) {
-        val ctx = getApplication<Application>()
-
-        try {
-            _isLoading.value = true
-
-            val result = if (accountType == AccountType.USER) {
-                registerUserAccount(fields)
-            } else {
-                registerShelterAccount(fields)
-            }
-
-            result.onSuccess { entity ->
-                if (accountType == AccountType.USER) {
-                    _currentUser.value = entity as User
-                    _accountType.value = AccountType.USER
-                    _message.value = ctx.getString(R.string.register_success_message)
-                } else {
-                    _currentShelter.value = entity as Shelter
-                    _accountType.value = AccountType.SHELTER
-                    _message.value = ctx.getString(R.string.shelter_register_success)
-                }
-
-                _isRegistered.value = true
-                _isAuthenticated.value = true
-                _error.value = null
-
-            }.onFailure { exception ->
-                _error.value = ctx.getString(R.string.register_failure_message) + " ${exception.message}"
-            }
-        } catch (e: Exception) {
-            _error.value = ctx.getString(R.string.register_failure_message) + " ${e.message}"
-        } finally {
-            _isLoading.value = false
-        }
-    }
-
-    private suspend fun registerUserAccount(fields: BasicRegistrationFields): Result<Any> =
-        authRepository.registerUser(
-            name = fields.name,
-            address = fields.address,
-            phone = fields.contact,
-            email = fields.email,
-            password = fields.password
-        )
-
-    private suspend fun registerShelterAccount(fields: BasicRegistrationFields): Result<Any> =
-        authRepository.registerShelter(
-            name = fields.name,
-            address = fields.address,
-            contact = fields.contact,
-            email = fields.email,
-            password = fields.password
-        )
-
-    // UTILITIES ================================================================================
-
+    // ================= UTILITIES =================
     fun logout() {
         authRepository.logout()
         _isAuthenticated.value = false
         _currentUser.value = null
         _currentShelter.value = null
         _accountType.value = AccountType.NONE
+        _uiState.value = AuthUiState.Idle
         clearFields()
     }
 
@@ -348,16 +303,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearMessage() { _message.value = null }
-
     fun clearError() { _error.value = null }
-
     fun resetRegistration() { _isRegistered.value = false }
-
-    fun getCurrentUserId(): Int = _currentUser.value?.id ?: 0
-
-    fun isAdmin(): Boolean {
-        val result = _accountType.value == AccountType.SHELTER
-        println("isAdmin() chamado: _accountType.value = ${_accountType.value}, result = $result") //debug
-        return result
-    }
 }

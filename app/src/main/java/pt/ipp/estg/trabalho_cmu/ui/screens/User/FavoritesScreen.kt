@@ -21,38 +21,87 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
-    viewModel: AnimalViewModel,
-    onAnimalClick: (Int) -> Unit = {}
+    animalViewModel: AnimalViewModel,
+    favoriteViewModel: FavoriteViewModel,
+    userId: String,
+    onAnimalClick: (String) -> Unit = {}
 ) {
-    val favorites by viewModel.favorites.observeAsState(emptyList())
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    FavoritesScreenContent(
-        favorites = favorites,
-        onAnimalClick = onAnimalClick,
-        onToggleFavorite = { viewModel.toggleFavorite(it) }
-    )
+    // Define o userId no FavoriteViewModel quando o ecrã é criado/atualizado
+    LaunchedEffect(userId) {
+        favoriteViewModel.setCurrentUser(userId)
+        favoriteViewModel.syncFavorites(userId)
+    }
+
+    // 1. Obter favoritos do user - agora observados diretamente do ViewModel
+    val favoritesList by favoriteViewModel.favorites.observeAsState(emptyList())
+
+    // 2. Obter todos os animais
+    val allAnimals by animalViewModel.animals.observeAsState(emptyList())
+
+    // 3. Relacionar favoritos com animais
+    val favoriteAnimals = remember(favoritesList, allAnimals) {
+        allAnimals.filter { animal ->
+            favoritesList.any { fav -> fav.animalId == animal.id }
+        }
+    }
+
+    // UI State de erros
+    val uiState by favoriteViewModel.uiState.observeAsState(FavoriteUiState.Initial)
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is FavoriteUiState.Error -> {
+                snackbarHostState.showSnackbar((uiState as FavoriteUiState.Error).message)
+                favoriteViewModel.resetState()
+            }
+            is FavoriteUiState.FavoriteRemoved -> {
+                snackbarHostState.showSnackbar("Removido dos favoritos")
+                favoriteViewModel.resetState()
+            }
+            else -> Unit
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        FavoritesScreenContent(
+            favorites = favoriteAnimals,
+            onAnimalClick = onAnimalClick,
+            onRemoveFavorite = { animal ->
+                favoriteViewModel.removeFavorite(userId, animal.id)
+            },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun FavoritesScreenContent(
     favorites: List<Animal>,
-    onAnimalClick: (Int) -> Unit,
-    onToggleFavorite: (Animal) -> Unit
+    onAnimalClick: (String) -> Unit,
+    onRemoveFavorite: (Animal) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
 
         Text(
-            text = "Favoritos",
+            text = "Meus Favoritos",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -87,10 +136,10 @@ private fun FavoritesScreenContent(
                 items(favorites) { animal ->
                     AnimalCard(
                         animal = animal,
-                        isFavorite = true,
+                        isFavorite = true, // Sempre true nesta lista
                         isLoggedIn = true,
                         onClick = { onAnimalClick(animal.id) },
-                        onToggleFavorite = { onToggleFavorite(animal) }
+                        onToggleFavorite = { onRemoveFavorite(animal) }
                     )
                 }
             }
@@ -103,31 +152,17 @@ private fun FavoritesScreenContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FavoritesScreenPreview() {
-
     val mockFavorites = listOf(
         Animal(
-            id = 1,
-            firebaseUid = "mockFirebase1",
+            id = "mock-id-1",
             name = "Boby",
             breed = "Labrador",
             species = "Cão",
             size = "Médio",
-            birthDate = "2020-01-01",
+            birthDate = dateStringToLong("2020-01-01"),
             imageUrls = listOf(""),
-            shelterFirebaseUid = "shelterMock1",
+            shelterId = "shelter-1",
             description = "Muito amigável!"
-        ),
-        Animal(
-            id = 2,
-            firebaseUid = "mockFirebase2",
-            name = "Mia",
-            breed = "Siamês",
-            species = "Gato",
-            size = "Pequeno",
-            birthDate = "2021-03-10",
-            imageUrls = listOf(""),
-            shelterFirebaseUid = "shelterMock1",
-            description = "Adora mimos!"
         )
     )
 
@@ -135,7 +170,7 @@ private fun FavoritesScreenPreview() {
         FavoritesScreenContent(
             favorites = mockFavorites,
             onAnimalClick = {},
-            onToggleFavorite = {}
+            onRemoveFavorite = {}
         )
     }
 }

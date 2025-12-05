@@ -1,67 +1,33 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.R
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
-import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
-import pt.ipp.estg.trabalho_cmu.data.repository.ActivityRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
-
-/**
- * Data class to combine Activity with its Animal and Shelter information
- */
+import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 data class ActivityWithAnimalAndShelter(
     val activity: Activity,
     val animal: Animal,
     val shelter: Shelter
 )
 
-/**
- * ViewModel for managing Activities with enriched data (Animal + Shelter).
- */
 class ActivityViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database: AppDatabase by lazy {
-        AppDatabase.getDatabase(application)
-    }
+    private val activityRepository = DatabaseModule.provideActivityRepository(application)
+    private val animalRepository = DatabaseModule.provideAnimalRepository(application)
+    private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
-    private val activityRepository: ActivityRepository by lazy {
-        ActivityRepository(database.activityDao())
-    }
+    // --- UI STATE ---
+    private val _uiState = MutableLiveData<ActivityUiState>(ActivityUiState.Initial)
+    val uiState: LiveData<ActivityUiState> = _uiState
 
-    private val animalRepository: AnimalRepository by lazy {
-        AnimalRepository(database.animalDao())
-    }
-
-    private val shelterRepository = ShelterRepository(
-        database.shelterDao()
-    )
-
-    private val _userId = MutableLiveData<Int>()
-
-    val activitiesWithDetails: LiveData<List<ActivityWithAnimalAndShelter>> =
-        _userId.switchMap { userId ->
-            activityRepository.getUpcomingActivitiesByUser(userId).switchMap { activityList ->
-                liveData {
-                    val enriched = activityList.mapNotNull { act ->
-                        val animal = animalRepository.getAnimalById(act.animalId)
-                        val shelter = animal?.let { shelterRepository.getShelterByFirebaseUid(it.shelterFirebaseUid) }
-                        if (animal != null && shelter != null)
-                            ActivityWithAnimalAndShelter(act, animal, shelter)
-                        else null
-                    }
-                    emit(enriched)
-                }
-            }
-        }
-
-    // ---- UI STATES ----
+    // --- HELPERS MANUAIS ---
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -71,176 +37,129 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     private val _activityScheduled = MutableLiveData(false)
     val activityScheduled: LiveData<Boolean> = _activityScheduled
 
-    private val _animal = MutableLiveData<Animal?>()
+    // --- DADOS HISTÓRICO (Mediator) ---
+    private val _activitiesSource = MutableLiveData<List<Activity>>()
+    val activitiesWithDetails = MediatorLiveData<List<ActivityWithAnimalAndShelter>>()
+
+    // --- DETALHES PARA AGENDAMENTO (1 Animal + 1 Shelter) ---
+    private val _animal = MutableLiveData<Animal?>(null)
     val animal: LiveData<Animal?> = _animal
 
-    private val _shelter = MutableLiveData<Shelter?>()
+    private val _shelter = MutableLiveData<Shelter?>(null)
     val shelter: LiveData<Shelter?> = _shelter
 
+    // --- FORM FIELDS ---
+    val pickupDate = MutableLiveData("")
+    val pickupTime = MutableLiveData("09:00")
+    val deliveryDate = MutableLiveData("")
+    val deliveryTime = MutableLiveData("18:00")
 
-    /*fun loadAnimalAndShelter(animalId: Int) {
-        viewModelScope.launch {
-            try {
-                val animal = animalRepository.getAnimalById(animalId)
-                _animal.value = animal
-
-                val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
-                _shelter.value = shelter
-
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = "Erro ao carregar dados: ${e.message}"
-                _animal.value = null
-                _shelter.value = null
-            }
+    init {
+        // Configura Mediator para lista de histórico
+        activitiesWithDetails.addSource(_activitiesSource) { activities ->
+            loadDetailsForActivities(activities)
         }
-    }*/
+    }
 
-    // ====== MOCK ========
-    fun loadAnimalAndShelter(animalId: Int) {
-        val ctx = getApplication<Application>()
+    private fun setUiState(state: ActivityUiState) {
+        _uiState.value = state
+        _isLoading.value = state is ActivityUiState.Loading
+        _error.value = (state as? ActivityUiState.Error)?.message
+        _activityScheduled.value = state is ActivityUiState.ActivityScheduled
+    }
 
+    // =========================================================================
+    //  CARREGAR HISTÓRICO
+    // =========================================================================
+    fun loadActivitiesForUser(userId: String) {
         viewModelScope.launch {
-            try {
-                val animal = animalRepository.getAnimalById(animalId)
-                _animal.value = animal
+            activityRepository.syncActivities(userId)
+        }
+        val roomLiveData = activityRepository.getAllActivitiesByUser(userId)
 
-                val shelter = animal?.let { shelterRepository.getShelterByFirebaseUid(it.shelterFirebaseUid) }
-                _shelter.value = shelter
+        activitiesWithDetails.removeSource(roomLiveData) // Evitar duplicados
+        activitiesWithDetails.addSource(roomLiveData) { activities ->
+            loadDetailsForActivities(activities)
+        }
+    }
 
-                _error.value = null
-
-                val animalData = animalRepository.getAnimalById(animalId)
-
-                if (animalData == null) {
-                    _animal.value = getMockAnimal(animalId)
-                    _shelter.value = getMockShelter()
-                } else {
-                    _animal.value = animalData
-                    animalData.shelterFirebaseUid.let { shelterFirebaseUid ->
-                        val shelterData = shelterRepository.getShelterByFirebaseUid(shelterFirebaseUid)
-                        _shelter.value = shelterData
-                    }
+    private fun loadDetailsForActivities(activities: List<Activity>) = viewModelScope.launch {
+        val list = mutableListOf<ActivityWithAnimalAndShelter>()
+        for (act in activities) {
+            val anim = animalRepository.getAnimalById(act.animalId)
+            if (anim != null) {
+                val shelt = shelterRepository.getShelterById(anim.shelterId)
+                if (shelt != null) {
+                    list.add(ActivityWithAnimalAndShelter(act, anim, shelt))
                 }
-            } catch (e: Exception) {
-                _error.value = ctx.getString(R.string.error_loading_animal_shelter) + " ${e.message}"
-                _animal.value = getMockAnimal(animalId)
-                _shelter.value = getMockShelter()
             }
         }
+        activitiesWithDetails.value = list
     }
 
-    // Auxiliary mock functions
-    private fun getMockAnimal(animalId: Int): Animal {
-        return when (animalId) {
-            1 -> Animal(
-                id = 1,
-                name = "Molly",
-                breed = "Golden Retriever",
-                species = "Dog",
-                size = "Large",
-                birthDate = "2020-01-01",
-                imageUrls = listOf(),
-                shelterFirebaseUid = "1",
-                status = AnimalStatus.AVAILABLE,
-                createdAt = System.currentTimeMillis(),
-                description = "cãozinho fofo"
-            )
-            2 -> Animal(
-                id = 2,
-                name = "Max",
-                breed = "Labrador",
-                species = "Dog",
-                size = "Medium",
-                birthDate = "2021-03-15",
-                imageUrls = listOf(),
-                shelterFirebaseUid = "1",
-                status = AnimalStatus.AVAILABLE,
-                createdAt = System.currentTimeMillis(),
-                description = "cãozinho fofo"
-            )
-            3 -> Animal(
-                id = 3,
-                name = "Luna",
-                breed = "Siamese",
-                species = "Cat",
-                size = "Small",
-                birthDate = "2022-06-10",
-                imageUrls = listOf(),
-                shelterFirebaseUid = "1",
-                status = AnimalStatus.AVAILABLE,
-                createdAt = System.currentTimeMillis(),
-                description = "cãozinho fofo"
-            )
-            else -> Animal(
-                id = animalId,
-                name = "Animal Desconhecido",
-                breed = "Desconhecido",
-                species = "Dog",
-                size = "Medium",
-                birthDate = "2020-01-01",
-                imageUrls = listOf(),
-                shelterFirebaseUid = "1",
-                status = AnimalStatus.AVAILABLE,
-                createdAt = System.currentTimeMillis(),
-                description = "cãozinho fofo"
-            )
+    // =========================================================================
+    //  CARREGAR DADOS PARA O ECRÃ DE AGENDAMENTO
+    // =========================================================================
+    fun loadAnimalAndShelter(animalId: String) = viewModelScope.launch {
+        setUiState(ActivityUiState.Loading)
+        try {
+            val anim = animalRepository.getAnimalById(animalId)
+            _animal.value = anim
+
+            if (anim != null) {
+                _shelter.value = shelterRepository.getShelterById(anim.shelterId)
+            }
+            setUiState(ActivityUiState.Success)
+        } catch (e: Exception) {
+            setUiState(ActivityUiState.Error("Erro ao carregar dados: ${e.message}"))
         }
     }
 
-    private fun getMockShelter(): Shelter {
-        return Shelter(
-            id = 1,
-            firebaseUid = "1",
-            name = "Abrigo de Felgueiras",
-            address = "Rua da Saúde, 1234 Santa Marta",
-            phone = "253 000 000",
-            email = "abrigo@example.com",
-            password = ""
+    // =========================================================================
+    //  CRIAR ATIVIDADE
+    // =========================================================================
+    fun scheduleActivity(userId: String, animalId: String, selectedDates: List<String>) = viewModelScope.launch {
+        val pTime = pickupTime.value ?: "09:00"
+        val dTime = deliveryTime.value ?: "18:00"
+
+        if (selectedDates.isEmpty()) {
+            setUiState(ActivityUiState.Error("Selecione pelo menos uma data."))
+            return@launch
+        }
+
+        val sorted = selectedDates.sorted()
+
+        val activity = Activity(
+            id = "", userId = userId, animalId = animalId,
+            pickupDate = sorted.first(), pickupTime = pTime,
+            deliveryDate = sorted.last(), deliveryTime = dTime
         )
-    }
-    // ====== /END MOCK ========
 
-    fun loadActivitiesForUser(userId: Int) {
-        _userId.value = userId
-    }
-
-    fun scheduleActivity(activity: Activity) {
-        val ctx = getApplication<Application>()
-
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                activityRepository.addActivity(activity)
-                _activityScheduled.value = true
-            } catch (e: Exception) {
-                _error.value =
-                    ctx.getString(R.string.error_scheduling_activity) + " ${e.message}"
-                _activityScheduled.value = false
-            } finally {
-                _isLoading.value = false
+        setUiState(ActivityUiState.Loading)
+        activityRepository.createActivity(activity)
+            .onSuccess {
+                setUiState(ActivityUiState.ActivityScheduled(it))
+                resetFields()
             }
-        }
-    }
-
-    fun deleteActivity(activity: Activity) {
-        val ctx = getApplication<Application>()
-
-        viewModelScope.launch {
-            try {
-                activityRepository.deleteActivity(activity)
-            } catch (e: Exception) {
-                _error.value =
-                    ctx.getString(R.string.error_deleting_activity) + " ${e.message}"
+            .onFailure {
+                setUiState(ActivityUiState.Error(it.message ?: "Erro ao agendar."))
             }
-        }
     }
 
-    fun resetActivityScheduled() {
-        _activityScheduled.value = false
+    fun deleteActivity(activityId: String) = viewModelScope.launch {
+        setUiState(ActivityUiState.Loading)
+        activityRepository.deleteActivity(activityId)
+            .onSuccess { setUiState(ActivityUiState.ActivityDeleted) }
+            .onFailure { setUiState(ActivityUiState.Error(it.message ?: "Erro ao apagar.")) }
     }
 
-    fun clearError() {
-        _error.value = null
+    private fun resetFields() {
+        pickupDate.value = ""
+        pickupTime.value = "09:00"
+        deliveryDate.value = ""
+        deliveryTime.value = "18:00"
     }
+
+    fun resetActivityScheduled() { setUiState(ActivityUiState.Initial) }
+    fun resetState() { setUiState(ActivityUiState.Initial) }
 }

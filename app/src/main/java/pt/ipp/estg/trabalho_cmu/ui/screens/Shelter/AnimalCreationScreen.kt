@@ -17,39 +17,37 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
-import pt.ipp.estg.trabalho_cmu.data.remote.api.services.uploadImageToFirebase
+import pt.ipp.estg.trabalho_cmu.data.repository.CloudinaryRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.CloudinaryRepository.uploadImageToFirebase
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
-/**
- * Screen that allows shelter accounts to create a new animal.
- */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCreationScreen(
     onNavigateBack: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
-    shelterMngViewModel: ShelterMngViewModel= viewModel()
+    shelterMngViewModel: ShelterMngViewModel = viewModel()
 ) {
-    val currentUser by authViewModel.currentUser.observeAsState()
     val currentShelter by authViewModel.currentShelter.observeAsState()
-    val accountType by authViewModel.accountType.observeAsState()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    LaunchedEffect(accountType) {
-        if (accountType == AccountType.SHELTER) {
-            currentShelter?.let { shelter ->
-                println("Shelter: ${shelter.name}, ID: ${shelter.id}")
-                shelterMngViewModel.setShelterFirebaseUid(shelter.firebaseUid)
-            }
+    // Set Shelter ID
+    LaunchedEffect(currentShelter) {
+        if (currentShelter != null) {
+            shelterMngViewModel.setShelterFirebaseUid(currentShelter!!.id)
         }
     }
 
@@ -57,24 +55,39 @@ fun AnimalCreationScreen(
     val availableBreeds by shelterMngViewModel.availableBreeds.observeAsState(emptyList())
     val selectedImages by shelterMngViewModel.selectedImages.observeAsState(emptyList())
     val isLoadingBreeds by shelterMngViewModel.isLoadingBreeds.observeAsState(false)
+    val isUploadingImages by shelterMngViewModel.isUploadingImages.observeAsState(false)
+
+    // Estados de UI
+    val uiState by shelterMngViewModel.uiState.observeAsState(ShelterMngUiState.Initial)
     val message by shelterMngViewModel.message.observeAsState()
     val error by shelterMngViewModel.error.observeAsState()
-    val isUploadingImages by shelterMngViewModel.isUploadingImages.observeAsState(false)
+
+    // Navegar de volta se criado com sucesso
+    LaunchedEffect(uiState) {
+        if (uiState is ShelterMngUiState.AnimalCreated) {
+            shelterMngViewModel.resetState()
+            onNavigateBack()
+        }
+    }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris ->
         uris.forEach { uri ->
-            uploadImageToFirebase(
-                uri = uri,
-                onStart = { shelterMngViewModel.setUploadingImages(true) },
-                onSuccess = { url -> shelterMngViewModel.addImageUrl(url) },
-                onError = {
+            scope.launch {
+                shelterMngViewModel.setUploadingImages(true)
+
+                val url = CloudinaryRepository.uploadImageToFirebase(context, uri)
+
+                if (url != null) {
+                    shelterMngViewModel.addImageUrl(url)
+                } else {
+                    // Se quiseres podes setar uma mensagem de erro no ViewModel
                     shelterMngViewModel.setUploadingImages(false)
-                    shelterMngViewModel.clearError()
-                },
-                onComplete = { shelterMngViewModel.setUploadingImages(false) }
-            )
+                }
+
+                shelterMngViewModel.setUploadingImages(false)
+            }
         }
     }
 
@@ -99,6 +112,7 @@ fun AnimalCreationScreen(
         isUploadingImages = isUploadingImages
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

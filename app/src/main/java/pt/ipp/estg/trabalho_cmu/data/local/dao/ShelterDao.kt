@@ -13,13 +13,7 @@ interface ShelterDao {
     suspend fun getAllSheltersList(): List<Shelter>
 
     @Query("SELECT * FROM shelters WHERE id = :shelterId LIMIT 1")
-    suspend fun getShelterById(shelterId: Int): Shelter?
-
-    @Query("SELECT * FROM shelters WHERE firebaseUid = :uid LIMIT 1")
-    suspend fun getShelterByFirebaseUid(uid: String): Shelter?
-
-    @Query("DELETE FROM shelters WHERE id = :shelterId")
-    suspend fun deleteShelterById(shelterId: Int)
+    suspend fun getShelterById(shelterId: String): Shelter?
 
     @Query("SELECT * FROM shelters WHERE name LIKE :searchQuery ORDER BY name ASC")
     suspend fun searchSheltersByName(searchQuery: String): List<Shelter>
@@ -27,23 +21,25 @@ interface ShelterDao {
     @Query("SELECT COUNT(*) FROM shelters")
     suspend fun getShelterCount(): Int
 
-    @Query("DELETE FROM shelters")
-    suspend fun deleteAllShelters()
-
-    @Query("SELECT * FROM shelters WHERE firebaseUid IS NULL")
-    suspend fun getSheltersWithoutFirebaseUid(): List<Shelter>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(shelter: Shelter)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShelter(shelter: Shelter) : Long
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShelters(shelters: List<Shelter>)
+    suspend fun insertAll(shelters: List<Shelter>)
 
     @Update
-    suspend fun updateShelter(shelter: Shelter)
+    suspend fun update(shelter: Shelter)
 
     @Delete
-    suspend fun deleteShelter(shelter: Shelter)
+    suspend fun delete(shelter: Shelter)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllSync(shelters: List<Shelter>)
+    @Query("DELETE FROM shelters")
+    suspend fun deleteAll()
+
+    // --- MÉTODOS EM FALTA ADICIONADOS ---
+    @Transaction
+    suspend fun refreshCache(shelters: List<Shelter>) {
+        deleteAll()
+        insertAll(shelters)
+    }
 }

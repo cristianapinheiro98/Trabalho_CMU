@@ -5,8 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,11 +26,11 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.UserViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
-import pt.ipp.estg.trabalho_cmu.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -42,31 +40,32 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
     val shelterViewModel: ShelterViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
 
-    //val isLoggedIn by authViewModel.isAuthenticated.observeAsState(false)
-
     NavHost(navController = navController, startDestination = "UserHome") {
-        composable("UserHome") { Text("Menu Principal") }
+        composable("UserHome") {
+            MainOptionsScreen(
+                navController = navController,
+                hasAdoptedAnimal = true,
+                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
+                windowSize = windowSize
+            )
+        }
 
         composable("Preferences") {
-            PreferencesScreen()
+            PreferencesScreen(userId = authViewModel.getCurrentUserFirebaseUid() ?: "")
         }
 
         composable("Veterinarians") {
             VeterinariansScreen()
         }
 
-        // ========== TERMS AND CONDITIONS ==========
+        // ========== TERMS AND CONDITIONS (ID String) ==========
         composable(
             route = "TermsAndConditions/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
-
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
             TermsAndConditionsScreen(
-                onAccept = {
-                    navController.navigate("OwnershipForm/$animalId")
-                },
+                onAccept = { navController.navigate("OwnershipForm/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -76,10 +75,6 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             route = "OwnershipForm/{animalFirebaseUid}",
             arguments = listOf(navArgument("animalFirebaseUid") { type = NavType.StringType })
         ) { backStackEntry ->
-            val userViewModel: UserViewModel = viewModel()
-            val animalViewModel: AnimalViewModel = viewModel()
-            val shelterViewModel: ShelterViewModel = viewModel()
-
             val animalFirebaseUid = backStackEntry.arguments?.getString("animalFirebaseUid") ?: ""
             val userFirebaseUid = authViewModel.getCurrentUserFirebaseUid() ?: ""
 
@@ -94,13 +89,12 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== OWNERSHIP CONFIRMATION ==========
+        // ========== OWNERSHIP CONFIRMATION (ID String) ==========
         composable(
             route = "ownership_confirmation/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
 
             OwnershipConfirmationScreen(
                 userViewModel = userViewModel,
@@ -115,16 +109,13 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== ACTIVITY SCHEDULING ==========
+        // ========== ACTIVITY SCHEDULING (ID String) ==========
         composable(
             route = "ActivityScheduling/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val animalId = backStackEntry.arguments?.getInt("animalId")
-                ?: return@composable // cancel render if it is invalid
-
-            val userId = authViewModel.getCurrentUserId()
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: return@composable
+            val userId = authViewModel.getCurrentUserFirebaseUid() ?: ""
 
             ActivitySchedulingScreen(
                 userId = userId,
@@ -139,19 +130,14 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
 
         // ========== ACTIVITIES HISTORY ==========
         composable("ActivitiesHistory") {
-            val userId = authViewModel.getCurrentUserId()
-
-            ActivitiesHistoryScreen(
-                userId = userId
-            )
+            val userId = authViewModel.getCurrentUserFirebaseUid() ?: ""
+            ActivitiesHistoryScreen(userId = userId)
         }
 
         // ========== SOCIAL COMMUNITY ==========
         composable("SocialTailsCommunity") {
             SocialTailsCommunityScreen(
-                onViewRanking = {
-                    navController.navigate("SocialTailsRanking")
-                }
+                onViewRanking = { navController.navigate("SocialTailsRanking") }
             )
         }
 
@@ -162,32 +148,27 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         // ========== ANIMALS CATALOGUE ==========
         composable("AnimalsCatalogue") {
             AnimalListScreen(
-                viewModel = animalViewModel,
-                isLoggedIn = isLoggedIn,
-                onAnimalClick = { animalId ->
-                    navController.navigate("AnimalDetail/$animalId")
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                animalViewModel = animalViewModel,
+                favoriteViewModel = viewModel(), // Usa o FavoriteViewModel
+                userId = authViewModel.getCurrentUserFirebaseUid(),
+                onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        // ========== ANIMAL DETAIL ==========
+        // ========== ANIMAL DETAIL (ID String) ==========
         composable(
             route = "AnimalDetail/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
 
             AnimalDetailScreen(
                 animalId = animalId,
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
                 showAdoptButton = isLoggedIn,
-                onAdoptClick = {
-                    navController.navigate("TermsAndConditions/$animalId")
-                },
+                onAdoptClick = { navController.navigate("TermsAndConditions/$animalId") },
                 onNavigateBack = {
                     navController.navigate("AnimalsCatalogue") {
                         popUpTo("AnimalsCatalogue") { inclusive = true }
@@ -199,29 +180,22 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         // ========== FAVORITES ==========
         composable("Favorites") {
             FavoritesScreen(
-                viewModel = animalViewModel,
-                onAnimalClick = { animalId ->
-                    navController.navigate("AnimalDetail/$animalId")
-                }
-            )
-        }
-        // ========== USER MAIN OPTIONS ==========
-        composable("UserHome") {
-            MainOptionsScreen(
-                navController = navController,
-                hasAdoptedAnimal = true,
-                windowSize = windowSize
+                animalViewModel = animalViewModel,
+                favoriteViewModel = viewModel(),
+                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
+                onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") }
             )
         }
 
+        // ========== WALK (ID String) ==========
         composable(
             route = "Walk/{animalId}/{animalName}",
             arguments = listOf(
-                navArgument("animalId") { type = NavType.IntType },
+                navArgument("animalId") { type = NavType.StringType },
                 navArgument("animalName") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
             val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
 
             WalkScreen(
@@ -233,16 +207,10 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
 
         composable(
             route = "WalkSummary/{animalName}",
-            arguments = listOf(
-                navArgument("animalName") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("animalName") { type = NavType.StringType })
         ) { backStackEntry ->
             val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
-
-            WalkSummaryScreen(
-                navController = navController,
-                animalName = animalName
-            )
+            WalkSummaryScreen(navController = navController, animalName = animalName)
         }
 
         composable("WalkHistory") {
@@ -250,4 +218,3 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         }
     }
 }
-

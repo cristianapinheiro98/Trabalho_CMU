@@ -20,29 +20,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
-import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
 
-/**
- * Screen that handles the scheduling of an activity (visit/walk).
- *
- * Notes:
- * - Fully preserves original layout and logic.
- * - Error messages shown in Snackbars remain hardcoded in English.
- * - Only UI strings defined in strings.xml were replaced with stringResource().
- */
 @Composable
 fun ActivitySchedulingScreen(
-    userId: Int,
-    animalId: Int,
+    userId: String,
+    animalId: String,
     onScheduleSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activityViewModel: ActivityViewModel = viewModel()
-
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -50,56 +40,46 @@ fun ActivitySchedulingScreen(
     var pickupTime by remember { mutableStateOf("09:00") }
     var deliveryTime by remember { mutableStateOf("18:00") }
 
-    val isLoading by activityViewModel.isLoading.observeAsState(false)
-    val error by activityViewModel.error.observeAsState()
-    val activityScheduled by activityViewModel.activityScheduled.observeAsState(false)
-
+    // Observar estados
+    val uiState by activityViewModel.uiState.observeAsState(ActivityUiState.Initial)
     val animal by activityViewModel.animal.observeAsState()
     val shelter by activityViewModel.shelter.observeAsState()
 
-    // Load animal and shelter when entering screen
+    // Sync ViewModel times
+    LaunchedEffect(pickupTime) { activityViewModel.pickupTime.value = pickupTime }
+    LaunchedEffect(deliveryTime) { activityViewModel.deliveryTime.value = deliveryTime }
+
     LaunchedEffect(animalId) {
         activityViewModel.loadAnimalAndShelter(animalId)
     }
 
-    // Handle scheduling success
-    LaunchedEffect(activityScheduled) {
-        if (activityScheduled) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar("Activity scheduled successfully!")
-                kotlinx.coroutines.delay(500)
-                activityViewModel.resetActivityScheduled()
-                onScheduleSuccess()
+    LaunchedEffect(uiState) {
+        when(val state = uiState) {
+            is ActivityUiState.ActivityScheduled -> {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Atividade agendada com sucesso!")
+                    activityViewModel.resetActivityScheduled()
+                    onScheduleSuccess()
+                }
             }
+            is ActivityUiState.Error -> {
+                snackbarHostState.showSnackbar(state.message)
+            }
+            else -> {}
         }
     }
 
-    // Show error if any
-    LaunchedEffect(error) {
-        error?.let {
-            coroutineScope.launch { snackbarHostState.showSnackbar(it) }
-        }
-    }
+    val isLoading = uiState is ActivityUiState.Loading
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFE8F5F3),
-                            Color(0xFFF8FFFE),
-                            Color(0xFFE8F5F3)
-                        )
-                    )
-                )
+                .background(Brush.verticalGradient(listOf(Color(0xFFE8F5F3), Color(0xFFF8FFFE))))
                 .padding(paddingValues)
         ) {
-
             if (animal == null || shelter == null) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -120,24 +100,7 @@ fun ActivitySchedulingScreen(
                     onDeliveryTimeChange = { deliveryTime = it },
                     isLoading = isLoading,
                     onScheduleClick = {
-                        if (selectedDates.isNotEmpty()) {
-                            val sorted = selectedDates.sorted()
-                            val activity = Activity(
-                                userId = userId,
-                                animalId = animalId,
-                                pickupDate = sorted.first(),
-                                pickupTime = pickupTime,
-                                deliveryDate = sorted.last(),
-                                deliveryTime = deliveryTime
-                            )
-                            activityViewModel.scheduleActivity(activity)
-                        } else {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    "Please select at least one date."
-                                )
-                            }
-                        }
+                        activityViewModel.scheduleActivity(userId, animalId, selectedDates.toList())
                     }
                 )
             }
@@ -145,10 +108,7 @@ fun ActivitySchedulingScreen(
     }
 }
 
-/**
- * Internal UI layout for selecting dates, times, and confirming an activity.
- * Fully preserves the original structure.
- */
+// O Content Composable e Preview mantêm-se iguais (UI pura)
 @Composable
 private fun ActivitySchedulingContent(
     animalName: String,
@@ -175,13 +135,10 @@ private fun ActivitySchedulingContent(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = stringResource(id = R.string.visit_title),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF2C8B7E),
-            modifier = Modifier.padding(bottom = 16.dp)
+            fontSize = 22.sp, fontWeight = FontWeight.Bold,
+            color = Color(0xFF2C8B7E), modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Card(
@@ -190,91 +147,34 @@ private fun ActivitySchedulingContent(
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                ActivityAnimalInfoCard(
-                    animalName = animalName,
-                    shelterName = shelterName,
-                    shelterContact = shelterContact,
-                    shelterAddress = shelterAddress,
-                    imageUrl = imageUrl
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                CalendarView(
-                    selectedDates = selectedDates,
-                    onDatesChanged = onDatesChanged
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                ActivityDatesChosen(selectedDates = selectedDates)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                TimeInputFields(
-                    pickupTime = pickupTime,
-                    deliveryTime = deliveryTime,
-                    onPickupTimeChange = onPickupTimeChange,
-                    onDeliveryTimeChange = onDeliveryTimeChange
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
+            Column(Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                ActivityAnimalInfoCard(animalName, shelterName, shelterContact, shelterAddress, imageUrl)
+                Spacer(Modifier.height(20.dp))
+                CalendarView(selectedDates, onDatesChanged)
+                Spacer(Modifier.height(20.dp))
+                ActivityDatesChosen(selectedDates)
+                Spacer(Modifier.height(16.dp))
+                TimeInputFields(pickupTime, deliveryTime, onPickupTimeChange, onDeliveryTimeChange)
+                Spacer(Modifier.height(20.dp))
 
                 Button(
                     onClick = onScheduleClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
                     enabled = !isLoading && selectedDates.isNotEmpty(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2C8B7E),
-                        contentColor = Color.White
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C8B7E))
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.visit_schedule_button),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    if (isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                    else Text(stringResource(R.string.visit_schedule_button), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(Modifier.height(32.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PreviewSchedulingContent() {
-    ActivitySchedulingContent(
-        animalName = "Mariana",
-        shelterName = "Abrigo Felgueiras",
-        shelterAddress = "Rua da Saúde 123",
-        shelterContact = "253 000 000",
-        imageUrl = "",
-        selectedDates = emptySet(),
-        onDatesChanged = {},
-        pickupTime = "09:00",
-        onPickupTimeChange = {},
-        deliveryTime = "18:00",
-        onDeliveryTimeChange = {},
-        isLoading = false,
-        onScheduleClick = {}
-    )
+    ActivitySchedulingContent("Mariana", "Abrigo Felgueiras", "Rua X", "911", "", emptySet(), {}, "09:00", {}, "18:00", {}, false, {})
 }

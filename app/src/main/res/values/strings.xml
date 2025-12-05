@@ -255,6 +255,11 @@
 
     <!-- AuthViewModel Messages -->
     <string name="required_fields_error">Please fill in all required fields.</string>
+    <string name="session_restored">Session restores!</string>
+    <string name="login_failed">Error doing login.</string>
+    <string name="register_failed">Error registing the account.</string>
+    <string name="register_success">Account created successfully!</string>
+
 
     <!-- ActivityViewModel Messages -->
     <string name="error_loading_animal_shelter">Error loading animal and shelter data:</string>

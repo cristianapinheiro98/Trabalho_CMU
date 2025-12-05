@@ -6,18 +6,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import java.util.Date
 
 class Converters {
-    // --------------------------
-    // DATE <-> LONG
-    // --------------------------
-    @TypeConverter
-    fun timestampToDate(value: Long?): Date? {
-        return value?.let { Date(it) }
-    }
 
-    @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
-    }
 
     // --------------------------
     // OWNERSHIP STATUS ENUM

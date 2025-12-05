@@ -4,17 +4,12 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "shelters",
-    indices = [Index(value = ["firebaseUid"], unique = true)]
-)
+@Entity(tableName = "shelters")
 data class Shelter(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val firebaseUid: String,
+    @PrimaryKey
+    val id: String, // Firebase Auth UID - usado diretamente como PK
     val name: String,
     val address: String,
     val phone: String,
-    val email: String,
-    val password: String
+    val email: String
 )

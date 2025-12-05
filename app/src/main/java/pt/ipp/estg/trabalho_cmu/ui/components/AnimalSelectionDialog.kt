@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,31 +13,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 
-data class AnimalMock(
-    val id: Int,
-    val name: String,
-    val imageRes: Int
-)
+// Removemos a classe AnimalMock, agora usamos a entidade real
 
 @Composable
 fun AnimalSelectionDialog(
+    animals: List<Animal>, // Agora recebe a lista real filtrada pelo ViewModel
     onDismiss: () -> Unit,
-    onAnimalSelected: (AnimalMock) -> Unit
+    onAnimalSelected: (Animal) -> Unit
 ) {
-    // Mock data - animais do utilizador
-    val userAnimals = listOf(
-        AnimalMock(1, "Molly", R.drawable.gato1),
-        AnimalMock(2, "Max", R.drawable.gato2),
-        AnimalMock(3, "Luna", R.drawable.gato3)
-    )
-
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -60,17 +53,27 @@ fun AnimalSelectionDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(userAnimals) { animal ->
-                        AnimalItem(
-                            animal = animal,
-                            onClick = {
-                                onAnimalSelected(animal)
-                                onDismiss()
-                            }
-                        )
+                if (animals.isEmpty()) {
+                    Text(
+                        text = "Não tens animais aprovados para passear.",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.heightIn(max = 300.dp) // Limita a altura se a lista for grande
+                    ) {
+                        items(animals) { animal ->
+                            AnimalItem(
+                                animal = animal,
+                                onClick = {
+                                    onAnimalSelected(animal)
+                                    onDismiss()
+                                }
+                            )
+                        }
                     }
                 }
 
@@ -89,9 +92,11 @@ fun AnimalSelectionDialog(
 
 @Composable
 fun AnimalItem(
-    animal: AnimalMock,
+    animal: Animal,
     onClick: () -> Unit
 ) {
+    val imageUrl = animal.imageUrls.firstOrNull() ?: ""
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,8 +111,14 @@ fun AnimalItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = animal.imageRes),
+            // Imagem do Animal (Coil)
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.cat_image), // Imagem default
+                error = painterResource(R.drawable.cat_image),
                 contentDescription = animal.name,
                 modifier = Modifier
                     .size(60.dp)

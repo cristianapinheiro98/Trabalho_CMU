@@ -1,189 +1,164 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
-import com.google.firebase.auth.FirebaseAuth
+import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
+import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
-import pt.ipp.estg.trabalho_cmu.data.local.entities.User
+import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
-import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.data.local.entities.User
 import pt.ipp.estg.trabalho_cmu.data.models.LoginResult
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toShelter
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toUser
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
+import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
 class AuthRepository(
     private val userDao: UserDao,
-    private val shelterDao: ShelterDao
+    private val shelterDao: ShelterDao,
+    private val application: Application
 ) {
     private val firebaseAuth = FirebaseProvider.auth
     private val firestore = FirebaseProvider.firestore
+
+    // --- REGISTER USER (APENAS FIREBASE - SEM ROOM) ---
     suspend fun registerUser(
-        name: String,
-        address: String,
-        phone: String,
-        email: String,
-        password: String
-    ): Result<User> {
-        return try {
-            // Create in Firebase Auth
+        name: String, address: String, phone: String, email: String, password: String
+    ): Result<User> = withContext(Dispatchers.IO) {
+        // Verificação de rede aqui no Repositório
+        if (!NetworkUtils.isConnected()) {
+            return@withContext Result.failure(Exception("Registo requer conexão à internet."))
+        }
+
+        return@withContext try {
             val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            val firebaseUid = authResult.user?.uid ?: throw Exception("Error creating user in Auth")
+            val uid = authResult.user?.uid ?: throw Exception("Erro UID")
 
-            // Save user in Firestore
-            val userData = hashMapOf(
-                "name" to name,
-                "address" to address,
-                "phone" to phone,
-                "email" to email,
-                "accountType" to "USER"
-            )
-            firestore.collection("users").document(firebaseUid).set(userData).await()
+            val user = User(uid, name, address, email, phone)
 
-            // Save user in Room
-            val user = User(
-                firebaseUid = firebaseUid,
-                name = name,
-                adress = address,
-                phone = phone,
-                email = email,
-                password = "" // password is not stored locally
-            )
-            val generatedId = userDao.insertUser(user).toInt()
-            val userWithId = user.copy(id = generatedId)
+            val userData = user.toFirebaseMap().toMutableMap()
+            userData["accountType"] = "USER"
 
-            Result.success(userWithId)
+            firestore.collection("users").document(uid).set(userData).await()
+
+
+            Result.success(user)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
+    // --- REGISTER SHELTER (APENAS FIREBASE - SEM ROOM) ---
     suspend fun registerShelter(
-        name: String,
-        address: String,
-        contact: String,
-        email: String,
-        password: String
-    ): Result<Shelter> {
-        return try {
-            // Create in Firebase Auth
+        name: String, address: String, contact: String, email: String, password: String
+    ): Result<Shelter> = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) {
+            return@withContext Result.failure(Exception("Registo requer conexão à internet."))
+        }
+
+        return@withContext try {
             val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            val firebaseUid = authResult.user?.uid ?: throw Exception("Error creating shelter in Auth")
+            val uid = authResult.user?.uid ?: throw Exception("Erro UID")
 
-            // Save shelter in Firestore
-            val shelterData = hashMapOf(
-                "name" to name,
-                "address" to address,
-                "contact" to contact,
-                "email" to email,
-                "accountType" to "SHELTER"
-            )
-            firestore.collection("shelters").document(firebaseUid).set(shelterData).await()
+            val shelter = Shelter(uid, name, address, contact, email)
 
-            // Save shelter in Room
-            val shelter = Shelter(
-                firebaseUid = firebaseUid,
-                name = name,
-                address = address,
-                phone = contact,
-                email = email,
-                password = "" // password is not stored locally
-            )
-            val generatedId = shelterDao.insertShelter(shelter).toInt()
+            val shelterData = shelter.toFirebaseMap().toMutableMap()
+            shelterData["accountType"] = "SHELTER"
 
-            val shelterWithId = shelter.copy(id = generatedId)
+            firestore.collection("shelters").document(uid).set(shelterData).await()
 
-            Result.success(shelterWithId)
+
+
+            Result.success(shelter)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // ===== LOGIN ONLINE =====
-    suspend fun login(email: String, password: String): Result<LoginResult> {
-        return try {
-            // Authenticate through Firebase Auth
-            val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            val uid = authResult.user?.uid ?: throw Exception("UID not found")
+    // --- LOGIN (FIREBASE -> COPIA PARA ROOM) ---
+    suspend fun login(email: String, password: String): Result<LoginResult> = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) {
+            return@withContext Result.failure(Exception("Login requer conexão à internet."))
+        }
 
-            // Try as user
+        return@withContext try {
+            val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val uid = authResult.user?.uid ?: throw Exception("UID não encontrado")
+
+            // Tentar User
             val userDoc = firestore.collection("users").document(uid).get().await()
             if (userDoc.exists()) {
-                val existingUser = userDao.getUserByFirebaseUid(uid)
-
-                val userWithId = if (existingUser != null) {
-                    existingUser
-                } else {
-                    val user = User(
-                        firebaseUid = uid,
-                        name = userDoc.getString("name") ?: "",
-                        adress = userDoc.getString("address") ?: "",
-                        phone = userDoc.getString("phone") ?: "",
-                        email = userDoc.getString("email") ?: "",
-                        password = ""
-                    )
-                    val generatedId = userDao.insertUser(user).toInt()
-                    user.copy(id = generatedId)
-                }
-
-                return Result.success(LoginResult(user = userWithId, accountType = AccountType.USER))
+                val user = userDoc.toUser()!!.copy(id = uid)
+                // SYNC: Copiar para Room (Cache de Leitura)
+                userDao.insert(user)
+                return@withContext Result.success(LoginResult(user = user, accountType = AccountType.USER))
             }
 
-            // Try as Shelter
+            // Tentar Shelter
             val shelterDoc = firestore.collection("shelters").document(uid).get().await()
             if (shelterDoc.exists()) {
-                val existingShelter = shelterDao.getShelterByFirebaseUid(uid)
-
-                val shelterWithId = if (existingShelter != null) {
-                    existingShelter
-                } else {
-                    println("🔍 Criando novo shelter no Room")
-                    val shelter = Shelter(
-                        firebaseUid = uid,
-                        name = shelterDoc.getString("name") ?: "",
-                        address = shelterDoc.getString("address") ?: "",
-                        phone = shelterDoc.getString("contact") ?: "",
-                        email = shelterDoc.getString("email") ?: "",
-                        password = ""
-                    )
-                    val generatedId = shelterDao.insertShelter(shelter).toInt()
-                    shelter.copy(id = generatedId)
-                }
-
-                return Result.success(LoginResult(shelter = shelterWithId, accountType = AccountType.SHELTER))
+                val shelter = shelterDoc.toShelter()!!.copy(id = uid)
+                // SYNC: Copiar para Room (Cache de Leitura)
+                shelterDao.insert(shelter)
+                return@withContext Result.success(LoginResult(shelter = shelter, accountType = AccountType.SHELTER))
             }
 
-            throw Exception("Account not found")
+            throw Exception("Conta não encontrada.")
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-    // ===== LOGIN OFFLINE =====
 
-    suspend fun checkOfflineSession(): LoginResult? {
-        val uid = firebaseAuth.currentUser?.uid ?: return null
+    // --- CHECK SESSION (AUTO LOGIN) ---
+    suspend fun checkSession(): Result<LoginResult?> = withContext(Dispatchers.IO) {
+        val uid = firebaseAuth.currentUser?.uid ?: return@withContext Result.success(null)
 
-        // Get user from cache
-        val user = userDao.getUserByFirebaseUid(uid)
-        if (user != null) {
-            return LoginResult(user = user, accountType = AccountType.USER)
+        // Se Offline: Usa o que tem no Room (Cache válida)
+        if (!NetworkUtils.isConnected()) {
+            val localUser = userDao.getUserById(uid)
+            if (localUser != null) {
+                return@withContext Result.success(LoginResult(user = localUser, accountType = AccountType.USER))
+            }
+            val localShelter = shelterDao.getShelterById(uid)
+            if (localShelter != null) {
+                return@withContext Result.success(LoginResult(shelter = localShelter, accountType = AccountType.SHELTER))
+            }
+            // Se não tem cache, obriga a login
+            return@withContext Result.success(null)
         }
 
-        // Get shelter from cache
-        val shelter = shelterDao.getShelterByFirebaseUid(uid)
-        if (shelter != null) {
-            return LoginResult(shelter = shelter, accountType = AccountType.SHELTER)
-        }
+        // Se Online: Atualiza a Cache
+        return@withContext try {
+            firebaseAuth.currentUser?.getIdToken(true)?.await()
 
-        return null
+            val userDoc = firestore.collection("users").document(uid).get().await()
+            if (userDoc.exists()) {
+                val user = userDoc.toUser()!!.copy(id = uid)
+                userDao.insert(user) // Sync Room
+                return@withContext Result.success(LoginResult(user = user, accountType = AccountType.USER))
+            }
+
+            val shelterDoc = firestore.collection("shelters").document(uid).get().await()
+            if (shelterDoc.exists()) {
+                val shelter = shelterDoc.toShelter()!!.copy(id = uid)
+                shelterDao.insert(shelter) // Sync Room
+                return@withContext Result.success(LoginResult(shelter = shelter, accountType = AccountType.SHELTER))
+            }
+
+            Result.success(null)
+        } catch (e: Exception) {
+            firebaseAuth.signOut()
+            Result.failure(e)
+        }
     }
 
     fun logout() {
         firebaseAuth.signOut()
     }
 
-    // ===== HELPERS =====
-
-    fun isAuthenticated() = firebaseAuth.currentUser != null
-
-    fun getCurrentFirebaseUid() = firebaseAuth.currentUser?.uid
+    fun getCurrentUserId() = firebaseAuth.currentUser?.uid
 }

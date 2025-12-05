@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.LoginScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
@@ -62,8 +62,9 @@ fun NavGraphPublic(
         // GUEST — animals' catalogue without favorite button
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
-                viewModel = animalViewModel,
-                isLoggedIn = false,
+                animalViewModel = animalViewModel,
+                favoriteViewModel = viewModel(), // Necessário instanciar mesmo que não use
+                userId = null, // Guest
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetailGuest/$animalId")
                 },
@@ -78,16 +79,15 @@ fun NavGraphPublic(
         // GUEST — animal detail page without adopt button
         composable(
             route = "AnimalDetailGuest/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
 
             AnimalDetailScreen(
                 animalId = animalId,
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
-                showAdoptButton = false, // Guest cannot adopt
+                showAdoptButton = false,
                 onAdoptClick = {}
             )
         }

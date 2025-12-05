@@ -1,7 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
-import androidx.lifecycle.LiveData
-import com.google.firebase.firestore.DocumentSnapshot
+import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -10,196 +9,104 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
+import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toOwnership
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 
 class OwnershipRepository(
-    private val ownershipDao: OwnershipDao
+    private val ownershipDao: OwnershipDao,
+    private val application: Application
 ) {
-    private val firestore = FirebaseProvider.firestore
-    fun getOwnershipsByUser(userFirebaseUid: String): LiveData<List<Ownership>> =
-        ownershipDao.getOwnershipsByUser(userFirebaseUid)
+    private val firestore: FirebaseFirestore = FirebaseProvider.firestore
 
-    fun getOwnershipsByShelter(shelterFirebaseUid: String): LiveData<List<Ownership>> =
-        ownershipDao.getOwnershipsByShelter(shelterFirebaseUid)
+    // --- LEITURA ---
+    fun getPendingOwnershipsByUser(userId: String) = ownershipDao.getPendingOwnershipsByUser(userId)
+    fun getPendingOwnershipsByShelter(shelterId: String) = ownershipDao.getPendingOwnershipsByShelter(shelterId)
 
-    suspend fun getOwnershipById(ownershipId: Int): Ownership? =
-        ownershipDao.getOwnershipById(ownershipId)
+    suspend fun getOwnershipById(id: String) = ownershipDao.getOwnershipById(id)
 
+    // --- CREATE (Firebase Only) ---
     suspend fun createOwnership(ownership: Ownership): Result<Ownership> = withContext(Dispatchers.IO) {
         try {
-            val existingRequest = ownershipDao.getExistingRequest(
-                userFirebaseUid = ownership.userFirebaseUid,
-                animalFirebaseUid = ownership.animalFirebaseUid
-            )
+            if (!NetworkUtils.isConnected()) return@withContext Result.failure(Exception("Offline"))
 
-            if (existingRequest != null) {
-                return@withContext Result.failure(
-                    Exception("You already have an ownership request for this animal!")
-                )
+            // Validar duplicados locais antes de ir à net
+            if (ownershipDao.getExistingRequest(ownership.userId, ownership.animalId) != null) {
+                return@withContext Result.failure(Exception("Pedido duplicado."))
             }
 
-            // 1. Create in Room (offline-first)
-            val roomId = ownershipDao.insertOwnership(ownership).toInt()
-            val ownershipWithRoomId = ownership.copy(id = roomId)
+            // Usa o mapper externo 'toFirebaseMap()'
+            val docRef = firestore.collection("ownerships").add(ownership.toFirebaseMap()).await()
+            val savedOwnership = ownership.copy(id = docRef.id)
 
-            // 2. Try Firebase
-            try {
-                val data = hashMapOf(
-                    "id" to roomId,
-                    "userFirebaseUid" to ownershipWithRoomId.userFirebaseUid,
-                    "animalFirebaseUid" to ownershipWithRoomId.animalFirebaseUid,
-                    "shelterFirebaseUid" to ownershipWithRoomId.shelterFirebaseUid,
-                    "ownerName" to ownershipWithRoomId.ownerName,
-                    "status" to ownershipWithRoomId.status.name,
-                    "createdAt" to ownershipWithRoomId.createdAt
-                )
+            Result.success(savedOwnership)
+        } catch (e: Exception) { Result.failure(e) }
+    }
 
-                val docRef = firestore.collection("ownerships").add(data).await()
-                val firebaseUid = docRef.id
+    // --- ACTIONS (Firebase Only) ---
+    suspend fun approveOwnershipRequest(ownershipId: String, animalId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            if (!NetworkUtils.isConnected()) return@withContext Result.failure(Exception("Offline"))
 
-                // 3. Update Room with firebaseUid
-                val finalOwnership = ownershipWithRoomId.copy(firebaseUid = firebaseUid)
-                ownershipDao.insertOwnership(finalOwnership)
+            firestore.runTransaction { transaction ->
+                val ownRef = firestore.collection("ownerships").document(ownershipId)
+                val animRef = firestore.collection("animals").document(animalId)
+                transaction.update(ownRef, "status", OwnershipStatus.APPROVED.name)
+                transaction.update(animRef, "status", "HASOWNED")
+            }.await()
 
-                Result.success(finalOwnership)
-            } catch (e: Exception) {
-                println("Firebase offline, ownership saved locally only")
-                Result.success(ownershipWithRoomId)
-            }
+            Result.success(Unit)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun rejectOwnershipRequest(ownershipId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            if (!NetworkUtils.isConnected()) return@withContext Result.failure(Exception("Offline"))
+
+            firestore.collection("ownerships").document(ownershipId)
+                .update("status", OwnershipStatus.REJECTED.name).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    // --- SYNC (Firebase -> Room) ---
+    suspend fun syncPendingOwnerships(shelterId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) return@withContext Result.failure(Exception("Offline"))
+
+        try {
+            val snapshot = firestore.collection("ownerships")
+                .whereEqualTo("shelterId", shelterId)
+                .whereEqualTo("status", OwnershipStatus.PENDING.name)
+                .get().await()
+
+            // Usa o mapper externo 'toOwnership()'
+            val list = snapshot.documents.mapNotNull { it.toOwnership() }
+
+            ownershipDao.refreshCache(list)
+            Result.success(Unit)
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    // 1. Buscar localmente
+    suspend fun getApprovedOwnershipsByUser(userId: String) = ownershipDao.getApprovedOwnershipsByUser(userId)
+
+    // 2. Sincronizar da Cloud (Importante para Online-First)
+    suspend fun syncUserApprovedOwnerships(userId: String) = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) return@withContext
+
+        try {
+            val snapshot = firestore.collection("ownerships")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("status", OwnershipStatus.APPROVED.name)
+                .get().await()
+
+            val list = snapshot.documents.mapNotNull { it.toOwnership() }
+
+            // Insere/Atualiza na cache (não apaga os pendentes, apenas insere estes)
+            ownershipDao.insertAll(list)
         } catch (e: Exception) {
             e.printStackTrace()
-            Result.failure(e)
         }
-    }
-
-    suspend fun fetchOwnerships() = withContext(Dispatchers.IO) {
-        try {
-            val snapshot = firestore.collection("ownerships").get().await()
-            val ownerships = snapshot.documents.mapNotNull { it.toOwnership() }
-
-            if (ownerships.isNotEmpty()) {
-                ownershipDao.insertAll(ownerships)
-            }
-        } catch (e: Exception) {
-            println("Error getting ownerships from firebase: ${e.message}")
-        }
-    }
-
-    suspend fun approveOwnershipRequest(ownershipId: Int) = withContext(Dispatchers.IO) {
-        try {
-            ownershipDao.updateOwnershipStatus(ownershipId, OwnershipStatus.APPROVED)
-
-            // Buscar firebaseUid do ownership
-            val ownership = ownershipDao.getOwnershipById(ownershipId)
-            val firebaseUid = ownership?.firebaseUid
-
-            if (firebaseUid != null) {
-                firestore.collection("ownerships")
-                    .document(firebaseUid)
-                    .update("status", OwnershipStatus.APPROVED.name)
-                    .await()
-            }
-        } catch (e: Exception) {
-            println("Error approving ownership request: ${e.message}")
-            throw e
-        }
-    }
-
-    suspend fun rejectOwnershipRequest(ownershipId: Int) = withContext(Dispatchers.IO) {
-        try {
-            ownershipDao.updateOwnershipStatus(ownershipId, OwnershipStatus.REJECTED)
-
-            val ownership = ownershipDao.getOwnershipById(ownershipId)
-            val firebaseUid = ownership?.firebaseUid
-
-            if (firebaseUid != null) {
-                firestore.collection("ownerships")
-                    .document(firebaseUid)
-                    .update("status", OwnershipStatus.REJECTED.name)
-                    .await()
-            }
-        } catch (e: Exception) {
-            println("Error rejecting ownership request: ${e.message}")
-            throw e
-        }
-    }
-
-    suspend fun updateOwnershipStatus(id: Int, status: OwnershipStatus) = withContext(Dispatchers.IO) {
-        try {
-            ownershipDao.updateOwnershipStatus(id, status)
-
-            val ownership = ownershipDao.getOwnershipById(id)
-            val firebaseUid = ownership?.firebaseUid
-
-            if (firebaseUid != null) {
-                firestore.collection("ownerships")
-                    .document(firebaseUid)
-                    .update("status", status.name)
-                    .await()
-            }
-        } catch (e: Exception) {
-            println("Error updating ownership status: ${e.message}")
-            throw e
-        }
-    }
-
-    suspend fun deleteOwnership(ownership: Ownership) = withContext(Dispatchers.IO) {
-        try {
-            ownershipDao.deleteOwnership(ownership)
-
-            val firebaseUid = ownership.firebaseUid
-            if (firebaseUid != null) {
-                firestore.collection("ownerships")
-                    .document(firebaseUid)
-                    .delete()
-                    .await()
-            }
-        } catch (e: Exception) {
-            println("Error deleting ownership: ${e.message}")
-            throw e
-        }
-    }
-
-    suspend fun syncPendingOwnerships() = withContext(Dispatchers.IO) {
-        try {
-            val pending = ownershipDao.getOwnershipsWithoutFirebaseUid()
-            pending.forEach { ownership ->
-                try {
-                    val data = hashMapOf(
-                        "id" to ownership.id,
-                        "userFirebaseUid" to ownership.userFirebaseUid,
-                        "animalFirebaseUid" to ownership.animalFirebaseUid,
-                        "shelterFirebaseUid" to ownership.shelterFirebaseUid,
-                        "ownerName" to ownership.ownerName,
-                        "status" to ownership.status.name,
-                        "createdAt" to ownership.createdAt
-                    )
-                    val docRef = firestore.collection("ownerships").add(data).await()
-                    ownershipDao.insertOwnership(ownership.copy(firebaseUid = docRef.id))
-                } catch (e: Exception) {
-                    println("Failed to sync ownership ${ownership.id}: ${e.message}")
-                }
-            }
-        } catch (e: Exception) {
-            println("Error syncing pending ownerships: ${e.message}")
-        }
-    }
-
-    private fun DocumentSnapshot.toOwnership(): Ownership? = try {
-        Ownership(
-            id = (getLong("id") ?: 0).toInt(),
-            firebaseUid = id,
-            userFirebaseUid = getString("userFirebaseUid") ?: "",
-            animalFirebaseUid = getString("animalFirebaseUid") ?: "",
-            shelterFirebaseUid = getString("shelterFirebaseUid") ?: "",
-            ownerName = getString("ownerName") ?: "",
-            accountNumber = "",
-            cvv = "",
-            cardNumber = "",
-            status = OwnershipStatus.valueOf(getString("status") ?: "PENDING"),
-            createdAt = getLong("createdAt") ?: System.currentTimeMillis()
-        )
-    } catch (e: Exception) {
-        println("Error converting ownership: ${e.message}")
-        null
     }
 }

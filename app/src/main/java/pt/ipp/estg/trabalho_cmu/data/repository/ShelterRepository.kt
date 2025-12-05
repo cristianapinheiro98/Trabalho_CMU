@@ -1,56 +1,48 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
-
+import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
+import pt.ipp.estg.trabalho_cmu.data.models.mappers.toShelter
 
 class ShelterRepository(
     private val shelterDao: ShelterDao
 ) {
     private val firestore = FirebaseProvider.firestore
-    // Online first then offline (Room)
-    fun getAllShelters(): LiveData<List<Shelter>> {
-        refreshSheltersFromFirebase()
-        return shelterDao.getAllShelters()
-    }
+    private val TAG = "ShelterRepository"
 
-    private fun refreshSheltersFromFirebase() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val snapshot = firestore.collection("shelters").get().await()
-                val shelters = snapshot.documents.mapNotNull { doc ->
-                    Shelter(
-                        firebaseUid = doc.id,
-                        name = doc.getString("name") ?: "",
-                        address = doc.getString("address") ?: "",
-                        phone = doc.getString("contact") ?: "",
-                        email = doc.getString("email") ?: "",
-                        password = ""
-                    )
-                }
-                shelterDao.insertShelters(shelters)
-            } catch (e: Exception) {
-            }
-        }
-    }
-
+    fun getAllShelters(): LiveData<List<Shelter>> = shelterDao.getAllShelters()
     suspend fun getAllSheltersList(): List<Shelter> = shelterDao.getAllSheltersList()
-    suspend fun getShelterById(id: Int): Shelter? = shelterDao.getShelterById(id)
+    suspend fun getShelterById(id: String) = shelterDao.getShelterById(id)
 
-    suspend fun getShelterByFirebaseUid(uid: String) = shelterDao.getShelterByFirebaseUid(uid)
-    suspend fun insertShelter(shelter: Shelter) = shelterDao.insertShelter(shelter)
-    suspend fun updateShelter(shelter: Shelter) = shelterDao.updateShelter(shelter)
-    suspend fun deleteShelter(shelter: Shelter) = shelterDao.deleteShelter(shelter)
+    // --- UPDATE (Firebase Only) ---
+    suspend fun updateShelter(shelter: Shelter) = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) throw Exception("Offline")
 
-    suspend fun deleteShelterById(id: Int) = shelterDao.deleteShelterById(id)
-    suspend fun searchSheltersByName(name: String): List<Shelter> =
-        shelterDao.searchSheltersByName("%$name%")
+        val data = mapOf(
+            "name" to shelter.name,
+            "address" to shelter.address,
+            "contact" to shelter.phone
+        )
+        firestore.collection("shelters").document(shelter.id).update(data).await()
+        // Não atualiza Room (espera sync)
+    }
+
+    // --- SYNC (Firebase -> Room) ---
+    suspend fun syncShelters() = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) return@withContext
+
+        try {
+            val snapshot = firestore.collection("shelters").get().await()
+            val shelters = snapshot.documents.mapNotNull { it.toShelter() }
+            shelterDao.refreshCache(shelters)
+            Log.d(TAG, "SyncShelters: ${shelters.size} recebidos")
+        } catch (e: Exception) { e.printStackTrace() }
+    }
 }

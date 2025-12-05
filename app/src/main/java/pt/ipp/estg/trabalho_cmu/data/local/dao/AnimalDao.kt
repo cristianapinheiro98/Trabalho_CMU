@@ -7,46 +7,19 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 
 @Dao
 interface AnimalDao {
+    // LEITURA
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY createdAt DESC")
     fun getAllAnimals(): LiveData<List<Animal>>
 
-
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
-    suspend fun getAnimalById(animalId: Int): Animal?
+    suspend fun getAnimalById(animalId: String): Animal?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAnimal(animal: Animal) : Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(animals: List<Animal>)
-
-    //No AppDatabase, quando se faz a seed, o callback corre fora de coroutine, por isso não se pode chamar funções suspend
-    //used in seed
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllSync(animals: List<Animal>)
-
-    @Delete
-    suspend fun deleteAnimal(animal: Animal)
-
-    @Query("DELETE FROM animals")
-    suspend fun clearAll()
-
-    @Query("UPDATE animals SET status = :status WHERE id = :animalId")
-    suspend fun updateAnimalStatus(animalId: Int, status: AnimalStatus)
-
-    suspend fun updateAnimalToOwned(animalId: Int) {
-        updateAnimalStatus(animalId, AnimalStatus.HASOWNED)
-    }
-
-    //filters
-
-    @Query("SELECT * FROM animals WHERE species = :species AND status = 'AVAILABLE'")
+    // FILTROS & PESQUISA
+    @Query("SELECT * FROM animals WHERE species = :species AND status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun filterBySpeciesLocal(species: String): List<Animal>
 
-    @Query("SELECT * FROM animals WHERE size = :size AND status = 'AVAILABLE'")
+    @Query("SELECT * FROM animals WHERE size = :size AND status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun filterBySizeLocal(size: String): List<Animal>
-
-   //ordering
 
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY name ASC")
     suspend fun sortByNameLocal(): List<Animal>
@@ -57,16 +30,29 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY birthDate ASC")
     suspend fun sortByAgeLocal(): List<Animal>
 
-    //search
-    @Query("SELECT * FROM animals WHERE name LIKE '%' || :query || '%' AND status = 'AVAILABLE'")
+    @Query("SELECT * FROM animals WHERE name LIKE '%' || :query || '%' AND status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun searchAnimalsLocal(query: String): List<Animal>
 
-    @Query("SELECT * FROM animals WHERE firebaseUid IS NULL")
-    suspend fun getAnimalsWithoutFirebaseUid(): List<Animal>
+    // ESCRITA (Cache)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(animal: Animal)
 
-    @Query("SELECT * FROM animals WHERE firebaseUid = :firebaseUid LIMIT 1")
-    suspend fun getAnimalByFirebaseUid(firebaseUid: String): Animal?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(animals: List<Animal>)
 
-    @Update
-    suspend fun updateAnimal(animal: Animal)
+    @Query("DELETE FROM animals")
+    suspend fun deleteAll()
+
+    // --- MÉTODOS EM FALTA ADICIONADOS ---
+
+    // 1. Atualizar status (usado ao aceitar adoção)
+    @Query("UPDATE animals SET status = :status WHERE id = :animalId")
+    suspend fun updateAnimalStatus(animalId: String, status: AnimalStatus)
+
+    // 2. Atualizar cache completa (Atomicamente)
+    @Transaction
+    suspend fun refreshCache(animals: List<Animal>) {
+        deleteAll()
+        insertAll(animals)
+    }
 }
