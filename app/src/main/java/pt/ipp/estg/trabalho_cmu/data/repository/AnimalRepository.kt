@@ -9,6 +9,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.mappers.toAnimal
 import pt.ipp.estg.trabalho_cmu.data.local.mappers.toFirebaseMap
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
@@ -25,8 +26,13 @@ class AnimalRepository(
     // --- LEITURA (Cache Room) ---
     // A UI observa isto. O sync atualiza o Room, e o Room notifica a UI.
     fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
+    suspend fun getAllAnimalsList(): List<Animal> = animalDao.getAllAnimalsList()
 
     suspend fun getAnimalById(animalId: String): Animal? = animalDao.getAnimalById(animalId)
+
+    suspend fun getAnimalsFromRoom(): List<Animal> {
+        return animalDao.getAllAnimalsList()
+    }
 
     // --- FILTROS LOCAIS ---
     suspend fun filterBySpecies(species: String) = animalDao.filterBySpeciesLocal(species)

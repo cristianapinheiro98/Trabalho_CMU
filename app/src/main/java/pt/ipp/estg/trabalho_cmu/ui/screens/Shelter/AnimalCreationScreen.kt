@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -50,6 +51,8 @@ fun AnimalCreationScreen(
             shelterMngViewModel.setShelterFirebaseUid(currentShelter!!.id)
         }
     }
+    Log.d("AnimalCreationScreen", "Shelter ID: ${currentShelter}")
+
 
     val form by shelterMngViewModel.animalForm.observeAsState(AnimalForm())
     val availableBreeds by shelterMngViewModel.availableBreeds.observeAsState(emptyList())

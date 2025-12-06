@@ -22,38 +22,51 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
     private val _uiState = MutableLiveData<AnimalUiState>(AnimalUiState.Initial)
     val uiState: LiveData<AnimalUiState> = _uiState
 
-    // LiveData do Room
-    val animals: LiveData<List<Animal>> = animalRepository.getAllAnimals()
-    val shelters: LiveData<List<Shelter>> = shelterRepository.getAllShelters()
-
     private val _filteredAnimals = MutableLiveData<List<Animal>>()
     val filteredAnimals: LiveData<List<Animal>> = _filteredAnimals
 
     private val _selectedAnimal = MutableLiveData<Animal?>()
     val selectedAnimal: LiveData<Animal?> = _selectedAnimal
 
-    init {
-        Log.d(TAG, "=== AnimalViewModel INIT ===")
-        viewModelScope.launch {
-            // 1º garantimos que os shelters já existem no Room
-            try {
-                Log.d(TAG, "A sincronizar shelters...")
-                shelterRepository.syncShelters()
-                Log.d(TAG, "Shelters sincronizados com sucesso")
-            } catch (e: Exception) {
-                Log.e(TAG, "Erro ao sincronizar shelters", e)
-            }
+    private val _animals = MutableLiveData<List<Animal>>()
+    val animals: LiveData<List<Animal>> = _animals
 
-            // 2º só depois sincronizamos animais
+    private val _shelters = MutableLiveData<List<Shelter>>()
+    val shelters: LiveData<List<Shelter>> = _shelters
+
+
+    init {
+        loadShelters()
+        loadAnimals()
+    }
+
+
+    private fun loadShelters() {
+        viewModelScope.launch {
             try {
-                Log.d(TAG, "A sincronizar animais...")
-                animalRepository.syncAnimals()
-                Log.d(TAG, "Animais sincronizados com sucesso")
+                shelterRepository.syncShelters()
+                _shelters.value = shelterRepository.getSheltersFromRoom()
             } catch (e: Exception) {
-                Log.e(TAG, "Erro ao sincronizar animais", e)
+                _shelters.value = shelterRepository.getAllSheltersList()
             }
         }
     }
+
+    private fun loadAnimals() {
+        viewModelScope.launch {
+            try {
+                // 1) Atualiza Room com Firebase
+                animalRepository.syncAnimals()
+
+                // 2) Lê da Room depois do sync
+                _animals.value = animalRepository.getAnimalsFromRoom()
+
+            } catch (e: Exception) {
+                // offline → fallback
+                _animals.value = animalRepository.getAllAnimalsList()
+            }
+        }
+}
 
     // ========== CREATE ANIMAL ==========
     fun createAnimal(animal: Animal) = viewModelScope.launch {
@@ -160,6 +173,12 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao selecionar animal", e)
             _selectedAnimal.value = null
+        }
+    }
+
+    fun refreshAnimals() {
+        viewModelScope.launch {
+            animalRepository.syncAnimals()
         }
     }
 

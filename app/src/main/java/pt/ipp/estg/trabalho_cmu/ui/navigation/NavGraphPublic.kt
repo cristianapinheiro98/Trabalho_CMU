@@ -18,6 +18,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.LoginScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +30,9 @@ fun NavGraphPublic(
 ) {
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
+
+    // GUEST → não há favoritos
+    val favoriteViewModel: FavoriteViewModel? = null
 
     NavHost(navController = navController, startDestination = "Home") {
 
@@ -59,24 +63,37 @@ fun NavGraphPublic(
             )
         }
 
-        // GUEST — animals' catalogue without favorite button
-        composable("AnimalsCatalogueGuest") {
+        // GUEST — catálogo de animais sem favoritos
+        /*composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = viewModel(), // Necessário instanciar mesmo que não use
-                userId = null, // Guest
+                favoriteViewModel = null,   // guest → null
+                userId = null,             // guest
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetailGuest/$animalId")
                 },
                 onNavigateBack = {
-                    navController.navigate("AnimalsCatalogue") {
-                        popUpTo("AnimalsCatalogue") { inclusive = true }
+                    // Voltar ao Home em vez de rota inexistente
+                    navController.navigate("Home") {
+                        popUpTo("Home") { inclusive = true }
                     }
                 }
             )
+        }*/
+        composable("AnimalsCatalogueGuest") {
+            AnimalListScreen(
+                animalViewModel = animalViewModel,
+                favoriteViewModel = null,   // << GUEST MODE
+                userId = null,
+                onAnimalClick = { id -> navController.navigate("AnimalDetailGuest/$id") },
+                onNavigateBack = { navController.navigate("Home") {
+                    popUpTo("Home") { inclusive = true }
+                } }
+            )
         }
 
-        // GUEST — animal detail page without adopt button
+
+        // GUEST — detalhes do animal sem botão de adoção
         composable(
             route = "AnimalDetailGuest/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })

@@ -51,7 +51,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         //migration example
-       /* private val MIGRATION_1_2 = object : Migration(1, 2) {
+       private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE users ADD COLUMN firebaseUid TEXT")
                 db.execSQL("ALTER TABLE shelters ADD COLUMN firebaseUid TEXT")
@@ -65,7 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX index_OwnershipRequests_animalId ON OwnershipRequests(animalId)")
                 db.execSQL("CREATE INDEX index_OwnershipRequests_shelterId ON OwnershipRequests(shelterId)")
             }
-        }*/
+        }
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {

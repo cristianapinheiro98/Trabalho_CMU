@@ -14,6 +14,7 @@ fun Favorite.toFirebaseMap(): Map<String, Any> {
 fun DocumentSnapshot.toFavorite(): Favorite? {
     return try {
         Favorite(
+            id = this.id,
             userId = getString("userId") ?: "",
             animalId = getString("animalId") ?: "",
             createdAt = getLong("createdAt") ?: System.currentTimeMillis()
