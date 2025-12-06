@@ -11,6 +11,9 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY createdAt DESC")
     fun getAllAnimals(): LiveData<List<Animal>>
 
+    @Query("SELECT * FROM animals")
+    suspend fun getAllAnimalsList(): List<Animal>
+
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
     suspend fun getAnimalById(animalId: String): Animal?
 

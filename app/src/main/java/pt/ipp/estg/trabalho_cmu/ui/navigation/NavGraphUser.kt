@@ -23,6 +23,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.UserViewModel
@@ -38,6 +39,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
+    val favoriteViewModel : FavoriteViewModel = viewModel ()
 
     NavHost(navController = navController, startDestination = "UserHome") {
         composable("UserHome") {
@@ -148,7 +150,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         composable("AnimalsCatalogue") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = viewModel(), // Usa o FavoriteViewModel
+                favoriteViewModel = favoriteViewModel, // Usa o FavoriteViewModel
                 userId = authViewModel.getCurrentUserFirebaseUid(),
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
@@ -180,7 +182,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         composable("Favorites") {
             FavoritesScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = viewModel(),
+                favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") }
             )

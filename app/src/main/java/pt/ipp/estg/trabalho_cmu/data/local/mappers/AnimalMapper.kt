@@ -42,7 +42,7 @@ fun DocumentSnapshot.toAnimal(): Animal? {
             description = getString("description") ?: "",
             shelterId = getString("shelterId") ?: "",
             // Converte String de volta para Enum
-            status = AnimalStatus.valueOf(getString("status") ?: "AVAILABLE"),
+            status = AnimalStatus.valueOf(getString("status")?.uppercase() ?: "AVAILABLE"),
             createdAt = getLong("createdAt") ?: System.currentTimeMillis()
         )
     } catch (e: Exception) {

@@ -45,4 +45,8 @@ class ShelterRepository(
             Log.d(TAG, "SyncShelters: ${shelters.size} recebidos")
         } catch (e: Exception) { e.printStackTrace() }
     }
+    suspend fun getSheltersFromRoom(): List<Shelter> {
+        return shelterDao.getAllSheltersList()
+    }
+
 }
