@@ -578,7 +578,7 @@ fun AnimalListContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(animals) { animal ->
+            items(animals,key = { it.id } ) { animal ->
                 val isFav = favorites.any { it.animalId == animal.id }
 
                 AnimalCard(

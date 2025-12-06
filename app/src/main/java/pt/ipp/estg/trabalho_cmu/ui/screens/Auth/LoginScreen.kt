@@ -22,9 +22,9 @@ import pt.ipp.estg.trabalho_cmu.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    authviewModel: AuthViewModel,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onNavigateBack: () -> Unit,
-    authviewModel: AuthViewModel = viewModel()
 ) {
     val isLoading by authviewModel.isLoading.observeAsState(false)
     val error by authviewModel.error.observeAsState()

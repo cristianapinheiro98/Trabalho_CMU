@@ -31,6 +31,7 @@ fun NavGraphPublic(
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
 
+
     // GUEST → não há favoritos
     val favoriteViewModel: FavoriteViewModel? = null
 
@@ -46,6 +47,7 @@ fun NavGraphPublic(
 
         composable("Login") {
             LoginScreen(
+                authviewModel = authViewModel,
                 onLoginSuccess = { isAdmin -> onLoginSuccess(isAdmin) },
                 onNavigateBack = { navController.popBackStack() }
             )
