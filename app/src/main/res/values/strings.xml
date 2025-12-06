@@ -80,7 +80,11 @@
     <string name="animal_size_label">Size:</string>
     <string name="animal_birthdate_label">BirthDate:</string>
     <string name="animal_description_label">Description:</string>
-    <string name="shelter_name_label">Shelter:</string>
+    <string name="shelter_name_label">Shelter Name:</string>
+    <string name="shelter_address_label">Shelter Address:</string>
+    <string name="shelter_email_label">Shelter Email:</string>
+    <string name="shelter_phone_label">Shelter Contact:</string>
+
     <string name="animal_age_label">Age:</string>
 
     <!-- Navigation -->
@@ -134,6 +138,7 @@
     <string name="sort_by_name">Sort by name</string>
     <string name="sort_by_age">Sort by age</string>
     <string name="no_animals_available">No animals available.</string>
+
 
     <!-- Animal Detail Screen -->
     <string name="loading_shelter">Loading…</string>
@@ -257,8 +262,10 @@
     <string name="required_fields_error">Please fill in all required fields.</string>
     <string name="session_restored">Session restores!</string>
     <string name="login_failed">Error doing login.</string>
-    <string name="register_failed">Error registing the account.</string>
+    <string name="register_failed">Error registering the account.</string>
     <string name="register_success">Account created successfully!</string>
+    <string name="login_success">Login successfully</string>
+    <string name="unknown_error"> Unknown Error</string>
 
 
     <!-- ActivityViewModel Messages -->
@@ -271,6 +278,10 @@
     <string name="error_animal_not_found_room">Error: Animal not found in local database.</string>
     <string name="success_ownership_submitted">Ownership request submitted successfully!</string>
     <string name="error_submit_ownership">Error submitting ownership request:</string>
+
+    <!-- AnimalViewModel Messages -->
+
+
 
 
 

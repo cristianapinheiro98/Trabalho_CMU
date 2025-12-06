@@ -69,7 +69,7 @@
     <string name="animal_size_label">Porte:</string>
     <string name="animal_birthdate_label">Data Nascimento:</string>
     <string name="animal_description_label">Descrição:</string>
-    <string name="shelter_name_label">Abrigo:</string>
+    <string name="shelter_name_label">Nome do Abrigo:</string>
     <string name="animal_age_label">Idade:</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
@@ -79,6 +79,9 @@
     <string name="account_type_label">Tipo de conta</string>
     <string name="user_label">Utilizador</string>
     <string name="shelter_label">Abrigo</string>
+    <string name="shelter_address_label">Morada do Abrigo:</string>
+    <string name="shelter_email_label"> Email do Abrigo:</string>
+    <string name="shelter_phone_label"> Contacto do Abrigo:</string>
 
 
     <!-- Navigation -->
@@ -249,6 +252,8 @@
     <string name="login_failed">Erro ao fazer login.</string>
     <string name="register_failed">Erro ao criar conta.</string>
     <string name="register_success">Conta criada com sucesso!</string>
+    <string name="login_success">Sessão iniciada</string>
+    <string name="unknown_error"> Erro desconhecido </string>
 
 
 
@@ -262,6 +267,8 @@
     <string name="error_animal_not_found_room">Erro: Animal não encontrado na base de dados local.</string>
     <string name="success_ownership_submitted">Pedido de ownership enviado com sucesso!</string>
     <string name="error_submit_ownership">Erro ao submeter pedido de ownership:</string>
+
+    <!-- AnimalViewModel Messages -->
 
 
 

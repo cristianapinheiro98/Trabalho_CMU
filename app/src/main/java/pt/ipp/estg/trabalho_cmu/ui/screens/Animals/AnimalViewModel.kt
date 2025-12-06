@@ -7,11 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 
 private const val TAG = "AnimalViewModel"
+
 
 class AnimalViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -81,7 +83,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
             }
             .onFailure { exception ->
                 Log.e(TAG, "Erro ao criar animal", exception)
-                _uiState.value = AnimalUiState.Error(exception.message ?: "Erro ao criar animal")
+                _uiState.value = AnimalUiState.Error(exception.message ?: R.string.error_loading_animal.toString())
             }
     }
 

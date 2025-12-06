@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -68,7 +69,7 @@ fun AnimalDetailScreen(
 
     AnimalDetailScreenContent(
         animal = animal!!,
-        shelter = shelter,
+        shelter = shelter!!,
         showAdoptButton = showAdoptButton,
         onAdoptClick = onAdoptClick,
         onNavigateBack = onNavigateBack
@@ -79,7 +80,7 @@ fun AnimalDetailScreen(
 @Composable
 private fun AnimalDetailScreenContent(
     animal: Animal,
-    shelter: Shelter?,
+    shelter: Shelter,
     showAdoptButton: Boolean,
     onAdoptClick: () -> Unit,
     onNavigateBack: () -> Unit
@@ -96,62 +97,25 @@ private fun AnimalDetailScreenContent(
             .statusBarsPadding()
     ) {
         // --- Image Gallery ---
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
-                .background(Color.Black)
-        ) {
-            Column {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(mainImage)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp),
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.cat_image),
-                    error = painterResource(R.drawable.cat_image)
-                )
+        ImageGallery(
+            mainImageUrl = mainImage,
+            thumbnails = imageGallery,
+            onThumbnailClick = {
+                if (it.isNotBlank()) mainImage = it },
+            onNavigateBack = onNavigateBack
+        )
 
-                // (Opcional) Aqui podias pôr uma lista horizontal de miniaturas se existissem várias fotos
-            }
-
-            // Botão de Voltar (canto superior direito)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-                    .align(Alignment.TopEnd),
-                horizontalArrangement = Arrangement.End // Alinha tudo à direita
-            ) {
-                IconButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(Color(0x55000000), RoundedCornerShape(50))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Voltar",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-        }
-
-        // --- Detalhes ---
         Column(modifier = Modifier.padding(20.dp)) {
+
+            // Animal name
             Text(
                 text = animal.name,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF3F51B5)
             )
+
+            // Species and size
             Text(
                 text = "${animal.species} • ${animal.size}",
                 fontSize = 16.sp,
@@ -162,32 +126,40 @@ private fun AnimalDetailScreenContent(
             Divider()
             Spacer(Modifier.height(12.dp))
 
-            // Informações
+            // Info table
             InfoLine(R.string.animal_breed_label, animal.breed)
+            InfoLine(R.string.animal_size_label, animal.size)
             InfoLine(R.string.animal_age_label, ageText)
-            InfoLine(R.string.shelter_name_label, shelter?.name ?: "Desconhecido")
+
+            // Shelter info
+            InfoLine(labelId = R.string.shelter_name_label, shelter.name)
+            InfoLine(labelId = R.string.shelter_name_label, shelter.address)
+            InfoLine(labelId = R.string.shelter_name_label, shelter.email)
+            InfoLine(labelId = R.string.shelter_name_label, shelter.phone)
 
             Spacer(Modifier.height(20.dp))
             Divider()
             Spacer(Modifier.height(20.dp))
 
-            // Descrição
+            // Description section
             Text(
                 text = stringResource(R.string.description_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF303F9F)
             )
+
             Text(
                 text = animal.description,
                 fontSize = 15.sp,
                 color = Color.DarkGray,
+                textAlign = TextAlign.Start,
                 modifier = Modifier.padding(top = 6.dp)
             )
 
             Spacer(Modifier.height(24.dp))
 
-            // Botão Adotar
+            // Adopt button
             if (showAdoptButton) {
                 Button(
                     onClick = onAdoptClick,
@@ -203,19 +175,93 @@ private fun AnimalDetailScreenContent(
     }
 }
 
-// Componente reutilizável para linhas de informação
+/**
+ * Image gallery displaying the main image and a row of thumbnails.
+ */
+@Composable
+fun ImageGallery(
+    mainImageUrl: String,
+    thumbnails: List<String>,
+    onThumbnailClick: (String) -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+            .background(Color.Black)
+    ) {
+        Column {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(mainImageUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = stringResource(R.string.main_image_description),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.cat_image),
+                error = painterResource(R.drawable.cat_image)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                thumbnails.filter { it.isNotBlank() }.forEach { url ->
+                    AsyncImage(
+                        model = url,
+                        contentDescription = stringResource(R.string.thumbnail_image_description),
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(horizontal = 4.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onThumbnailClick(url) },
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(R.drawable.cat_image),
+                        error = painterResource(R.drawable.cat_image)
+                    )
+                }
+            }
+        }
+
+        IconButton(
+            onClick = onNavigateBack,
+            modifier = Modifier
+                .padding(12.dp)
+                .size(36.dp)
+                .align(Alignment.TopEnd)
+                .background(Color(0x55000000), RoundedCornerShape(50))
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.go_back),
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+
+/**
+ * Small reusable component that prints a label + value in one row.
+ */
 @Composable
 fun InfoLine(labelId: Int, value: String) {
     Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp),
+        Modifier.fillMaxWidth().padding(vertical = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(stringResource(labelId), fontWeight = FontWeight.Medium, fontSize = 15.sp)
-        Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp) }
     }
-}
+
+
 
 // --- PREVIEWS ---
 

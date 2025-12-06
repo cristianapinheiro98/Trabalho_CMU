@@ -27,11 +27,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    // --- UI STATE (Principal) ---
+    // --- UI STATE  ---
     private val _uiState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
     val uiState: LiveData<AuthUiState> = _uiState
 
-    // --- UI STATES INDIVIDUAIS (Compatibilidade com os teus ecrãs) ---
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -57,7 +56,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _accountType = MutableLiveData<AccountType>(AccountType.NONE)
     val accountType: LiveData<AccountType> = _accountType
 
-    // --- FORM FIELDS (Two-way binding) ---
+    val ctx = getApplication<Application>()
+
+    // --- FORM FIELDS ---
     val name = MutableLiveData("")
     val address = MutableLiveData("")
     val phone = MutableLiveData("")
@@ -92,7 +93,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     user = loginResult.user,
                     shelter = loginResult.shelter,
                     accountType = loginResult.accountType,
-                    message = "Sessão iniciada" // Mensagem discreta
+                    message = ctx.getString(R.string.login_success)
                 )
             } else {
                 _uiState.value = AuthUiState.Idle
@@ -100,7 +101,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }.onFailure {
             _isLoading.value = false
             _uiState.value = AuthUiState.TokenExpired
-            // Não mostramos erro intrusivo no arranque, apenas pedimos login
         }
     }
 
@@ -110,14 +110,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val passwordValue = password.value?.trim().orEmpty()
         val ctx = getApplication<Application>()
 
-        // Validação de campos
+       //form fields validation
         if (!validateLoginFields(emailValue, passwordValue)) return@launch
 
-        // Login
         _isLoading.value = true
         _uiState.value = AuthUiState.Loading
 
-        // O repositório trata da verificação de rede
         authRepository.login(emailValue, passwordValue)
             .onSuccess { loginResult ->
                 _isLoading.value = false
@@ -135,7 +133,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun validateLoginFields(email: String, password: String): Boolean {
-        val ctx = getApplication<Application>()
         if (email.isBlank() || password.isBlank()) {
             _error.value = ctx.getString(R.string.empty_fields_error)
             return false
@@ -148,16 +145,13 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val basicFields = getBasicRegistrationFields()
         val accType = accountTypeChoice.value ?: AccountType.USER
 
-        // Validações
         if (!validateBasicFields(basicFields)) return@launch
         if (!validateCredentials(basicFields.email, basicFields.password, basicFields.contact)) return@launch
 
-        // Registo
         _isLoading.value = true
         _uiState.value = AuthUiState.Loading
         val ctx = getApplication<Application>()
 
-        // O repositório valida a rede
         try {
             val result = if (accType == AccountType.USER) {
                 authRepository.registerUser(
@@ -178,7 +172,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             result.onSuccess { loginRes ->
                 _isLoading.value = false
 
-                // Atualiza estado local (Login automático após registo)
                 updateAuthState(
                     user = loginRes.user,
                     shelter = loginRes.shelter,
@@ -199,7 +192,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             _isLoading.value = false
             _error.value = e.message
-            _uiState.value = AuthUiState.Error(e.message ?: "Erro desconhecido")
+            _uiState.value = AuthUiState.Error(e.message ?: R.string.unknown_error.toString())
         }
     }
 
@@ -237,7 +230,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = AuthUiState.Error(_error.value!!)
     }
 
-    // ================= VALIDAÇÕES (Mantidas do original) =================
+    // ================= VALIDATIONS =================
     private data class BasicRegistrationFields(
         val name: String, val address: String, val contact: String, val email: String, val password: String
     )
