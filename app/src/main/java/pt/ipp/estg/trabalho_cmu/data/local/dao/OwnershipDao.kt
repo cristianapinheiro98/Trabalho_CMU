@@ -7,8 +7,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 @Dao
 interface OwnershipDao {
-    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'PENDING' ORDER BY createdAt DESC")
-    fun getPendingOwnershipsByUser(userId: String): LiveData<List<Ownership>>
+
 
     @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId AND status = 'PENDING' ORDER BY createdAt DESC")
     fun getPendingOwnershipsByShelter(shelterId: String): LiveData<List<Ownership>>
@@ -42,6 +41,5 @@ interface OwnershipDao {
         insertAll(ownerships)
     }
 
-    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'APPROVED'")
-    suspend fun getApprovedOwnershipsByUser(userId: String): List<Ownership>
+
 }

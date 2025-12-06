@@ -20,7 +20,6 @@ class OwnershipRepository(
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
 
     // --- LEITURA ---
-    fun getPendingOwnershipsByUser(userId: String) = ownershipDao.getPendingOwnershipsByUser(userId)
     fun getPendingOwnershipsByShelter(shelterId: String) = ownershipDao.getPendingOwnershipsByShelter(shelterId)
 
     suspend fun getOwnershipById(id: String) = ownershipDao.getOwnershipById(id)
@@ -71,7 +70,7 @@ class OwnershipRepository(
     }
 
     // --- SYNC (Firebase -> Room) ---
-    suspend fun syncPendingOwnerships(shelterId: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun syncPendingOwnershipsByShelter(shelterId: String): Result<Unit> = withContext(Dispatchers.IO) {
         if (!NetworkUtils.isConnected()) return@withContext Result.failure(Exception("Offline"))
 
         try {
@@ -88,25 +87,5 @@ class OwnershipRepository(
         } catch (e: Exception) { Result.failure(e) }
     }
 
-    // 1. Buscar localmente
-    suspend fun getApprovedOwnershipsByUser(userId: String) = ownershipDao.getApprovedOwnershipsByUser(userId)
 
-    // 2. Sincronizar da Cloud (Importante para Online-First)
-    suspend fun syncUserApprovedOwnerships(userId: String) = withContext(Dispatchers.IO) {
-        if (!NetworkUtils.isConnected()) return@withContext
-
-        try {
-            val snapshot = firestore.collection("ownerships")
-                .whereEqualTo("userId", userId)
-                .whereEqualTo("status", OwnershipStatus.APPROVED.name)
-                .get().await()
-
-            val list = snapshot.documents.mapNotNull { it.toOwnership() }
-
-            // Insere/Atualiza na cache (não apaga os pendentes, apenas insere estes)
-            ownershipDao.insertAll(list)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 }

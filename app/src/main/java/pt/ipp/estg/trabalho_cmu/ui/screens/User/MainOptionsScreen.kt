@@ -3,52 +3,43 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.User
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalSelectionDialog
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainOptionsScreen(
     navController: NavController,
     hasAdoptedAnimal: Boolean,
-    userId: String,
     windowSize: WindowWidthSizeClass
 ) {
-    // Usamos apenas este ViewModel, ele gere o dashboard e a lista de animais do user
     val viewModel: MainOptionsViewModel = viewModel()
-
-    // Observar dados
-    val lastWalk by viewModel.lastWalk.observeAsState()
-    val medals by viewModel.medals.observeAsState(emptyList())
-    // Esta é a lista correta para o Dialog, vinda do MainOptionsViewModel
-    val myAnimals by viewModel.ownedAnimals.observeAsState(emptyList())
-
-    // Carregar dados ao entrar
-    LaunchedEffect(userId) {
-        viewModel.loadUserData(userId)
-    }
+    val lastWalk by viewModel.lastWalk.collectAsState()
+    val medals by viewModel.medals.collectAsState()
 
     var showAnimalDialog by remember { mutableStateOf(false) }
     var showScheduleDialog by remember { mutableStateOf(false) }
 
-    // Dialog para PASSEIO
     if (showAnimalDialog) {
         AnimalSelectionDialog(
-            animals = myAnimals, // Lista carregada pelo MainOptionsViewModel
             onDismiss = { showAnimalDialog = false },
             onAnimalSelected = { animal ->
                 showAnimalDialog = false
@@ -57,20 +48,16 @@ fun MainOptionsScreen(
         )
     }
 
-    // Dialog para AGENDAMENTO
     if (showScheduleDialog) {
         AnimalSelectionDialog(
-            animals = myAnimals, // Lista carregada pelo MainOptionsViewModel
             onDismiss = { showScheduleDialog = false },
             onAnimalSelected = { animal ->
                 showScheduleDialog = false
-                // Passa o animalId na rota. O ActivityViewModel vai usar isto no próximo ecrã.
                 navController.navigate("ActivityScheduling/${animal.id}")
             }
         )
     }
 
-    // UI Content
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,15 +76,17 @@ fun MainOptionsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (hasAdoptedAnimal) {
-            MedalsSection(medals)
+            MedalsSection()
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            lastWalk?.let { walk ->
-                LastWalkInfo(walk)
-                Spacer(modifier = Modifier.height(16.dp))
-                WalkDetailsCard(walk)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            LastWalkInfo()
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WalkDetailsCard()
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             MainActionButtons(
                 navController,
@@ -105,6 +94,7 @@ fun MainOptionsScreen(
                 onScheduleVisit = { showScheduleDialog = true },
                 windowSize = windowSize
             )
+
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -113,7 +103,7 @@ fun MainOptionsScreen(
 }
 
 @Composable
-fun MedalsSection(medals: List<Medal>) {
+fun MedalsSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -123,15 +113,33 @@ fun MedalsSection(medals: List<Medal>) {
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Coleção de Medalhas", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF9800))
+            Text(
+                text = "Coleção de Medalhas",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFF9800)
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                medals.take(4).forEach { medal ->
-                    Text(text = medal.icon, fontSize = 32.sp)
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                repeat(4) {
+                    Text(
+                        text = if (it < 2) "🥇" else "🥈",
+                        fontSize = 32.sp
+                    )
                 }
             }
+
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107))) {
+
+            Button(
+                onClick = { /* TODO */ },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107))
+            ) {
                 Text("Ver conquistas", color = Color.Black)
             }
         }
@@ -139,74 +147,195 @@ fun MedalsSection(medals: List<Medal>) {
 }
 
 @Composable
-fun LastWalkInfo(walk: WalkInfo) {
+fun LastWalkInfo() {
     Text(
-        text = "Olá! O teu último passeio com a ${walk.animalName} foi de ${walk.distance}",
+        text = "Olá Miguel! O teu último passeio com a Molly foi de 3km",
         fontSize = 14.sp,
         color = Color(0xFF555555)
     )
 }
 
 @Composable
-fun WalkDetailsCard(walk: WalkInfo) {
+fun WalkDetailsCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            WalkDetailRow("Duração:", walk.duration)
-            WalkDetailRow("Distância:", walk.totalDistance)
-            WalkDetailRow("Data:", walk.date)
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            WalkDetailRow("Duração:", "1 hora")
+            WalkDetailRow("Distância:", "5km")
+            WalkDetailRow("Data:", "19/10/2025")
         }
     }
 }
 
 @Composable
 fun WalkDetailRow(label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(text = label, fontWeight = FontWeight.Bold)
         Text(text = value)
     }
 }
 
 @Composable
-fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit, onScheduleVisit: () -> Unit, windowSize: WindowWidthSizeClass) {
-    // Mantém a lógica de layout responsivo que já tinhas
-    // ... (Copia o conteúdo do teu ficheiro original para aqui, é igual)
-    // Para poupar espaço, vou assumir o layout de smartphone aqui:
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ActionButton("Agendar Visita", Color(0xFF2196F3), Modifier.weight(1f), onScheduleVisit)
-            ActionButton("Iniciar Passeio", Color(0xFF4CAF50), Modifier.weight(1f), onStartWalk)
+fun MainActionButtons(
+    navController: NavController,
+    onStartWalk: () -> Unit,
+    onScheduleVisit: () -> Unit,
+    windowSize: WindowWidthSizeClass
+) {
+    when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            // SMARTPHONE: 2 colunas
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendar Visita",
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier.weight(1f),
+                        onClick = onScheduleVisit
+                    )
+                    ActionButton(
+                        text = "Iniciar Passeio",
+                        color = Color(0xFF4CAF50),
+                        modifier = Modifier.weight(1f),
+                        onClick = onStartWalk
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendamentos",
+                        color = Color(0xFFE57373),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("ActivitiesHistory") }
+                    )
+                    ActionButton(
+                        text = "Concluir Passeio",
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier.weight(1f),
+                        onClick = { /* TODO */ }
+                    )
+                }
+
+                ActionButton(
+                    text = "Histórico de Passeios",
+                    color = Color(0xFF26A69A),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate("WalkHistory") }
+                )
+            }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ActionButton("Agendamentos", Color(0xFFE57373), Modifier.weight(1f), onClick = { navController.navigate("ActivitiesHistory") })
-            ActionButton("Concluir Passeio", Color(0xFFFF9800), Modifier.weight(1f), onClick = { /* TODO */ })
+        else -> {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Agendar Visita",
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier.weight(1f),
+                        onClick = onScheduleVisit
+                    )
+                    ActionButton(
+                        text = "Iniciar Passeio",
+                        color = Color(0xFF4CAF50),
+                        modifier = Modifier.weight(1f),
+                        onClick = onStartWalk
+                    )
+                    ActionButton(
+                        text = "Agendamentos",
+                        color = Color(0xFFE57373),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("ActivitiesHistory") }
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ActionButton(
+                        text = "Concluir Passeio",
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier.weight(1f),
+                        onClick = { /* TODO */ }
+                    )
+                    ActionButton(
+                        text = "Histórico de Passeios",
+                        color = Color(0xFF26A69A),
+                        modifier = Modifier.weight(1f),
+                        onClick = { navController.navigate("WalkHistory") }
+                    )
+                }
+            }
         }
-        ActionButton("Histórico de Passeios", Color(0xFF26A69A), Modifier.fillMaxWidth(), onClick = { navController.navigate("WalkHistory") })
     }
 }
 
 @Composable
 fun CommonOptions(navController: NavController) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ActionButton("Visitar Comunidade SocialTails", Color(0xFF5C6BC0), Modifier.fillMaxWidth(), onClick = { navController.navigate("SocialTailsCommunity") })
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ActionButton(
+            text = "Visitar Comunidade SocialTails",
+            color = Color(0xFF5C6BC0),
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navController.navigate("SocialTailsCommunity") }
+        )
     }
 }
 
 @Composable
-fun ActionButton(text: String, color: Color, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = modifier.height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = color), shape = RoundedCornerShape(8.dp)) {
-        Text(text, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+fun ActionButton(
+    text: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.height(48.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
+
 
 @Preview
 @Composable
-private fun PreviewMainOptionsScreen() {
+private fun PreviewMainOptionsScreen(){
     MaterialTheme {
-        // Mock preview
-        MainOptionsScreen(navController = NavController(LocalContext.current), hasAdoptedAnimal = true, userId = "1", windowSize = WindowWidthSizeClass.Compact)
+        MainOptionsScreen(navController = NavController(LocalContext.current), hasAdoptedAnimal = true,  windowSize = WindowWidthSizeClass.Compact)
     }
 }

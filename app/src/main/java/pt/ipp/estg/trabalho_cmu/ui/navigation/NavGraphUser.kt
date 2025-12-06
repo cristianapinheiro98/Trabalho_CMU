@@ -2,7 +2,6 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -14,8 +13,8 @@ import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen

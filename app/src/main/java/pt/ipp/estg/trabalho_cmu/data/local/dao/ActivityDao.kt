@@ -6,46 +6,30 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 
 @Dao
 interface ActivityDao {
+
+
     @Query("""
-        SELECT * FROM activities
-        WHERE userId = :userId
-        AND deliveryDate >= :currentDate
+        SELECT * FROM activities 
+        WHERE userId = :userId 
+        AND deliveryDate >= :currentDate 
         ORDER BY pickupDate ASC
     """)
-    fun getUpcomingActivitiesByUser(userId: String, currentDate: String): LiveData<List<Activity>>
+    fun getUpcomingActivitiesByUser(userId: Int, currentDate: String): LiveData<List<Activity>>
 
-    @Query("SELECT * FROM activities WHERE userId = :userId ORDER BY pickupDate DESC")
-    fun getAllActivitiesByUser(userId: String): LiveData<List<Activity>>
-
-    @Query("SELECT * FROM activities WHERE id = :activityId LIMIT 1")
-    suspend fun getActivityById(activityId: String): Activity?
-
-    @Query("SELECT * FROM activities WHERE animalId = :animalId ORDER BY pickupDate ASC")
-    fun getActivitiesByAnimal(animalId: String): LiveData<List<Activity>>
+    @Query("SELECT * FROM activities WHERE id = :activityId")
+    suspend fun getActivityById(activityId: Int): Activity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(activity: Activity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(activities: List<Activity>)
+    suspend fun insertActivity(activity: Activity)
 
     @Update
-    suspend fun update(activity: Activity)
+    suspend fun updateActivity(activity: Activity)
 
     @Delete
-    suspend fun delete(activity: Activity)
-
-    @Query("DELETE FROM activities")
-    suspend fun deleteAll()
-
-    // --- MÉTODOS EM FALTA ADICIONADOS ---
+    suspend fun deleteActivity(activity: Activity)
 
     @Query("DELETE FROM activities WHERE userId = :userId")
-    suspend fun deleteAllByUser(userId: String)
+    suspend fun deleteAllActivitiesByUser(userId: Int)
 
-    @Transaction
-    suspend fun refreshCache(activities: List<Activity>) {
-        deleteAll()
-        insertAll(activities)
-    }
+
 }

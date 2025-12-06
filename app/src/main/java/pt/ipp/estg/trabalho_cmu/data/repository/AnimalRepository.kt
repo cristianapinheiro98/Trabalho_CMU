@@ -17,7 +17,6 @@ import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
 class AnimalRepository(
     private val animalDao: AnimalDao,
-    private val application: Application
 ) {
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
     private val TAG = "AnimalRepository"

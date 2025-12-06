@@ -28,80 +28,32 @@ import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
-    animalViewModel: AnimalViewModel,
-    favoriteViewModel: FavoriteViewModel,
-    userId: String,
-    onAnimalClick: (String) -> Unit = {}
+    viewModel: AnimalViewModel,
+    onAnimalClick: (Int) -> Unit = {}
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val favorites by viewModel.favorites.observeAsState(emptyList())
 
-    // Define o userId no FavoriteViewModel quando o ecrã é criado/atualizado
-    LaunchedEffect(userId) {
-        favoriteViewModel.setCurrentUser(userId)
-        favoriteViewModel.syncFavorites(userId)
-    }
-
-    // 1. Obter favoritos do user - agora observados diretamente do ViewModel
-    val favoritesList by favoriteViewModel.favorites.observeAsState(emptyList())
-
-    // 2. Obter todos os animais
-    val allAnimals by animalViewModel.animals.observeAsState(emptyList())
-
-    // 3. Relacionar favoritos com animais
-    val favoriteAnimals = remember(favoritesList, allAnimals) {
-        allAnimals.filter { animal ->
-            favoritesList.any { fav -> fav.animalId == animal.id }
-        }
-    }
-
-    // UI State de erros
-    val uiState by favoriteViewModel.uiState.observeAsState(FavoriteUiState.Initial)
-
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is FavoriteUiState.Error -> {
-                snackbarHostState.showSnackbar((uiState as FavoriteUiState.Error).message)
-                favoriteViewModel.resetState()
-            }
-            is FavoriteUiState.FavoriteRemoved -> {
-                snackbarHostState.showSnackbar("Removido dos favoritos")
-                favoriteViewModel.resetState()
-            }
-            else -> Unit
-        }
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-        FavoritesScreenContent(
-            favorites = favoriteAnimals,
-            onAnimalClick = onAnimalClick,
-            onRemoveFavorite = { animal ->
-                favoriteViewModel.removeFavorite(userId, animal.id)
-            },
-            modifier = Modifier.padding(paddingValues)
-        )
-    }
+    FavoritesScreenContent(
+        favorites = favorites,
+        onAnimalClick = onAnimalClick,
+        onToggleFavorite = { viewModel.toggleFavorite(it) }
+    )
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun FavoritesScreenContent(
     favorites: List<Animal>,
-    onAnimalClick: (String) -> Unit,
-    onRemoveFavorite: (Animal) -> Unit,
-    modifier: Modifier = Modifier
+    onAnimalClick: (Int) -> Unit,
+    onToggleFavorite: (Animal) -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
 
         Text(
-            text = "Meus Favoritos",
+            text = "Favoritos",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -136,10 +88,10 @@ private fun FavoritesScreenContent(
                 items(favorites) { animal ->
                     AnimalCard(
                         animal = animal,
-                        isFavorite = true, // Sempre true nesta lista
+                        isFavorite = true,
                         isLoggedIn = true,
                         onClick = { onAnimalClick(animal.id) },
-                        onToggleFavorite = { onRemoveFavorite(animal) }
+                        onToggleFavorite = { onToggleFavorite(animal) }
                     )
                 }
             }
@@ -152,17 +104,29 @@ private fun FavoritesScreenContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FavoritesScreenPreview() {
+
     val mockFavorites = listOf(
         Animal(
-            id = "mock-id-1",
+            id = "1",
             name = "Boby",
             breed = "Labrador",
             species = "Cão",
             size = "Médio",
             birthDate = dateStringToLong("2020-01-01"),
             imageUrls = listOf(""),
-            shelterId = "shelter-1",
+            shelterId = "shelterMock1",
             description = "Muito amigável!"
+        ),
+        Animal(
+            id = "2",
+            name = "Mia",
+            breed = "Siamês",
+            species = "Gato",
+            size = "Pequeno",
+            birthDate = dateStringToLong("2021-03-10"),
+            imageUrls = listOf(""),
+            shelterFirebaseUid = "shelterMock1",
+            description = "Adora mimos!"
         )
     )
 
@@ -170,7 +134,7 @@ private fun FavoritesScreenPreview() {
         FavoritesScreenContent(
             favorites = mockFavorites,
             onAnimalClick = {},
-            onRemoveFavorite = {}
+            onToggleFavorite = {}
         )
     }
 }

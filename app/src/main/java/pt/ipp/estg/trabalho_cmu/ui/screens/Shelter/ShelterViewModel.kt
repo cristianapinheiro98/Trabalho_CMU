@@ -42,19 +42,6 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // ========== SYNC SHELTERS ==========
-    // Esta função força a atualização dos dados da Internet para o Room
-    fun loadAllShelters() = viewModelScope.launch {
-        _uiState.value = ShelterUiState.Loading
-        try {
-            shelterRepository.syncShelters() // Online First Sync -> Atualiza o Room
-            _uiState.value = ShelterUiState.Success
-        } catch (e: Exception) {
-            _uiState.value = ShelterUiState.Error("Erro: ${e.message}")
-        }
-    }
-
-
     fun clearSelectedShelter() {
         _selectedShelter.value = null
     }

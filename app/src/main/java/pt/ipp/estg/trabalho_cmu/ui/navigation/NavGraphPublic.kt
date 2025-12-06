@@ -62,9 +62,8 @@ fun NavGraphPublic(
         // GUEST — animals' catalogue without favorite button
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
-                animalViewModel = animalViewModel,
-                favoriteViewModel = viewModel(), // Necessário instanciar mesmo que não use
-                userId = null, // Guest
+                viewModel = animalViewModel,
+                isLoggedIn = false, // Guest
                 onAnimalClick = { animalId ->
                     navController.navigate("AnimalDetailGuest/$animalId")
                 },

@@ -67,7 +67,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         _currentShelterId.value = shelterId
         viewModelScope.launch {
             try {
-                ownershipRepository.syncPendingOwnerships(shelterId)
+                ownershipRepository.syncPendingOwnershipsByShelter(shelterId)
             } catch (e: Exception) {
                 _error.value = "Erro sync: ${e.message}"
             }
