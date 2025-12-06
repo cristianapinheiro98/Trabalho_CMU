@@ -68,7 +68,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
                 _animals.value = animalRepository.getAllAnimalsList()
             }
         }
-}
+    }
 
     // ========== CREATE ANIMAL ==========
     fun createAnimal(animal: Animal) = viewModelScope.launch {
