@@ -133,8 +133,10 @@
     <string name="filter_medium_size">Porte Médio</string>
     <string name="filter_large_size">Porte Grande</string>
     <string name="filter_clear">Limpar filtros</string>
-    <string name="sort_by_name">Ordenar por nome</string>
-    <string name="sort_by_age">Ordenar por idade</string>
+    <string name="sort_by_name_asc">Ordenar por nome (A-Z)</string>
+    <string name="sort_by_name_desc">Odenar por nome (Z-A)</string>
+    <string name="sort_by_age_asc">Ordenar por idade (mais novos)</string>
+    <string name="sort_by_age_desc">Ordenar por idade (mais velhos)</string>
     <string name="no_animals_available">Sem animais disponíveis.</string>
 
     <!-- Animal Detail Screen -->

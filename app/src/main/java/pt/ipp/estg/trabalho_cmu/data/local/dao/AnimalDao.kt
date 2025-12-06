@@ -11,7 +11,7 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY createdAt DESC")
     fun getAllAnimals(): LiveData<List<Animal>>
 
-    @Query("SELECT * FROM animals")
+    @Query("SELECT * FROM animals  WHERE status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun getAllAnimalsList(): List<Animal>
 
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
@@ -25,13 +25,20 @@ interface AnimalDao {
     suspend fun filterBySizeLocal(size: String): List<Animal>
 
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY name ASC")
-    suspend fun sortByNameLocal(): List<Animal>
+    suspend fun sortByNameAscLocal(): List<Animal>
+
+    @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY name DESC")
+    suspend fun sortByNameDescLocal(): List<Animal>
+
 
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun sortByDateLocal(): List<Animal>
 
     @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY birthDate ASC")
-    suspend fun sortByAgeLocal(): List<Animal>
+    suspend fun sortByAgeAscLocal(): List<Animal>
+
+    @Query("SELECT * FROM animals WHERE status = 'AVAILABLE' ORDER BY birthDate DESC")
+    suspend fun sortByAgeDescLocal(): List<Animal>
 
     @Query("SELECT * FROM animals WHERE name LIKE '%' || :query || '%' AND status = 'AVAILABLE' ORDER BY createdAt DESC")
     suspend fun searchAnimalsLocal(query: String): List<Animal>

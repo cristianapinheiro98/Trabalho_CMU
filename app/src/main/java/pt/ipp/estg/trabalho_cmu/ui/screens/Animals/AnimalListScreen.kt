@@ -57,7 +57,9 @@ fun AnimalListScreen(
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
-        ) { CircularProgressIndicator() }
+        ) {
+            Text(stringResource(R.string.no_animals_available))
+        }
         return
     }
 
@@ -69,8 +71,10 @@ fun AnimalListScreen(
         onSearch = { animalViewModel.searchAnimals(it) },
         onFilterSpecies = { animalViewModel.filterBySpecies(it) },
         onFilterSize = { animalViewModel.filterBySize(it) },
-        onSortName = { animalViewModel.sortByName() },
-        onSortAge = { animalViewModel.sortByAge() },
+        onSortNameAsc = { animalViewModel.sortByNameAsc() },
+        onSortNameDesc = { animalViewModel.sortByNameDesc() },
+        onSortAgeAsc = { animalViewModel.sortByAgeAsc() },
+        onSortAgeDesc = { animalViewModel.sortByAgeDesc() },
         onClearFilters = { animalViewModel.clearFilters() },
         onNavigateBack = onNavigateBack,
         onToggleFavorite = { animal ->
@@ -92,8 +96,10 @@ fun AnimalListContent(
     onSearch: (String) -> Unit,
     onFilterSpecies: (String) -> Unit,
     onFilterSize: (String) -> Unit,
-    onSortName: () -> Unit,
-    onSortAge: () -> Unit,
+    onSortNameAsc: () -> Unit,
+    onSortNameDesc: () -> Unit,
+    onSortAgeAsc: () -> Unit,
+    onSortAgeDesc: () -> Unit,
     onClearFilters: () -> Unit,
     onNavigateBack: () -> Unit,
     onToggleFavorite: (Animal) -> Unit
@@ -175,12 +181,20 @@ fun AnimalListContent(
                                 onDismissRequest = { sortMenu = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_name)) },
-                                    onClick = { onSortName(); sortMenu = false }
+                                    text = { Text(stringResource(R.string.sort_by_name_asc)) },
+                                    onClick = { onSortNameAsc(); sortMenu = false }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_age)) },
-                                    onClick = { onSortAge(); sortMenu = false }
+                                    text = { Text(stringResource(R.string.sort_by_name_desc)) },
+                                    onClick = { onSortNameDesc(); sortMenu = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_age_asc)) },
+                                    onClick = { onSortAgeAsc(); sortMenu = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_age_desc)) },
+                                    onClick = { onSortAgeDesc(); sortMenu = false }
                                 )
                             }
                         }
@@ -194,16 +208,6 @@ fun AnimalListContent(
         // -----------------------------------------
         //         ANIMALS LIST
         // -----------------------------------------
-        // Empty state
-        if (animals.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(stringResource(R.string.no_animals_available))
-            }
-            return
-        }
         //Grid of Animals
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -266,8 +270,10 @@ fun AnimalListScreenPreviewLoggedIn() {
             onSearch = {},
             onFilterSpecies = {},
             onFilterSize = {},
-            onSortName = {},
-            onSortAge = {},
+            onSortNameAsc = {},
+            onSortNameDesc = {},
+            onSortAgeAsc = {},
+            onSortAgeDesc = {},
             onClearFilters = {},
             onNavigateBack = {},
             onToggleFavorite = {}
@@ -289,8 +295,10 @@ fun AnimalListScreenPreviewGuest() {
             onSearch = {},
             onFilterSpecies = {},
             onFilterSize = {},
-            onSortName = {},
-            onSortAge = {},
+            onSortNameAsc = {},
+            onSortNameDesc = {},
+            onSortAgeAsc = {},
+            onSortAgeDesc = {},
             onClearFilters = {},
             onNavigateBack = {},
             onToggleFavorite = {}

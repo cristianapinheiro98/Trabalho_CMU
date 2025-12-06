@@ -135,8 +135,10 @@
     <string name="filter_medium_size">Medium size</string>
     <string name="filter_large_size">Large size</string>
     <string name="filter_clear">Clear filters</string>
-    <string name="sort_by_name">Sort by name</string>
-    <string name="sort_by_age">Sort by age</string>
+    <string name="sort_by_name_asc">Sort by name (A-Z)</string>
+    <string name="sort_by_name_desc">Sort by name (Z-A)</string>
+    <string name="sort_by_age_asc">Sort by age (newest first)</string>
+    <string name="sort_by_age_desc">Sort by age (oldest first)</string>
     <string name="no_animals_available">No animals available.</string>
 
 

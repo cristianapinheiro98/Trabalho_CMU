@@ -37,9 +37,12 @@ class AnimalRepository(
     // --- FILTROS LOCAIS ---
     suspend fun filterBySpecies(species: String) = animalDao.filterBySpeciesLocal(species)
     suspend fun filterBySize(size: String) = animalDao.filterBySizeLocal(size)
-    suspend fun sortByName() = animalDao.sortByNameLocal()
-    suspend fun sortByAge() = animalDao.sortByAgeLocal()
-    suspend fun sortByDate() = animalDao.sortByDateLocal()
+    suspend fun sortByNameAsc() = animalDao.sortByNameAscLocal()
+    suspend fun sortByNameDesc() = animalDao.sortByNameDescLocal()
+    suspend fun sortByAgeAsc() = animalDao.sortByAgeAscLocal()
+
+    suspend fun sortByAgeDesc() = animalDao.sortByAgeDescLocal()
+
     suspend fun searchAnimals(query: String) = animalDao.searchAnimalsLocal(query)
 
     // --- ESCRITA (Apenas Firebase) ---
@@ -52,6 +55,7 @@ class AnimalRepository(
             // 1. Enviar para Firebase
             val docRef = firestore.collection("animals").add(animal.toFirebaseMap()).await()
             val savedAnimal = animal.copy(id = docRef.id)
+
 
             // NOTA: Não inserimos no Room manualmente.
             // O ViewModel deve chamar syncAnimals() após o sucesso para atualizar a lista.

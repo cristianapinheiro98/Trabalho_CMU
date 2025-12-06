@@ -112,10 +112,10 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun sortByName() = viewModelScope.launch {
+    fun sortByNameAsc() = viewModelScope.launch {
         Log.d(TAG, "sortByName")
         try {
-            val result = animalRepository.sortByName()
+            val result = animalRepository.sortByNameAsc()
             _filteredAnimals.value = result
             Log.d(TAG, "Ordenados por nome: ${result.size} animais")
         } catch (e: Exception) {
@@ -124,10 +124,22 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun sortByAge() = viewModelScope.launch {
+    fun sortByNameDesc() = viewModelScope.launch {
+        Log.d(TAG, "sortByName")
+        try {
+            val result = animalRepository.sortByNameDesc()
+            _filteredAnimals.value = result
+            Log.d(TAG, "Ordenados por nome: ${result.size} animais")
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao ordenar por nome", e)
+            _filteredAnimals.value = emptyList()
+        }
+    }
+
+    fun sortByAgeAsc() = viewModelScope.launch {
         Log.d(TAG, "sortByAge")
         try {
-            val result = animalRepository.sortByAge()
+            val result = animalRepository.sortByAgeAsc()
             _filteredAnimals.value = result
             Log.d(TAG, "Ordenados por idade: ${result.size} animais")
         } catch (e: Exception) {
@@ -136,17 +148,18 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun sortByDate() = viewModelScope.launch {
-        Log.d(TAG, "sortByDate")
+    fun sortByAgeDesc() = viewModelScope.launch {
+        Log.d(TAG, "sortByAge")
         try {
-            val result = animalRepository.sortByDate()
+            val result = animalRepository.sortByAgeDesc()
             _filteredAnimals.value = result
-            Log.d(TAG, "Ordenados por data: ${result.size} animais")
+            Log.d(TAG, "Ordenados por idade: ${result.size} animais")
         } catch (e: Exception) {
-            Log.e(TAG, "Erro ao ordenar por data", e)
+            Log.e(TAG, "Erro ao ordenar por idade", e)
             _filteredAnimals.value = emptyList()
         }
     }
+
 
     fun searchAnimals(query: String) = viewModelScope.launch {
         Log.d(TAG, "searchAnimals: '$query'")

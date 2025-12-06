@@ -4,18 +4,17 @@ import com.google.firebase.firestore.DocumentSnapshot
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
+import pt.ipp.estg.trabalho_cmu.utils.longToDateString
 
 // --- Escrita: Room Entity -> Firebase Map ---
 fun Animal.toFirebaseMap(): Map<String, Any> {
-    val dateStr = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-        .format(java.util.Date(birthDate))
 
     return mapOf(
         "name" to name,
         "breed" to breed,
         "species" to species,
         "size" to size,
-        "birthDate" to dateStr,
+        "birthDate" to longToDateString(birthDate),
         "imageUrls" to imageUrls, // O Firebase aceita listas nativamente
         "description" to description,
         "shelterId" to shelterId,
