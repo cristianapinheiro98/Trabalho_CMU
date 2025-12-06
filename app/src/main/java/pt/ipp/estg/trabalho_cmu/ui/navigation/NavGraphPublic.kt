@@ -63,25 +63,6 @@ fun NavGraphPublic(
             )
         }
 
-        // GUEST — catálogo de animais sem favoritos
-        /*composable("AnimalsCatalogueGuest") {
-            AnimalListScreen(
-                viewModel = animalViewModel,
-                isLoggedIn = false, // Guest
-                animalViewModel = animalViewModel,
-                favoriteViewModel = null,   // guest → null
-                userId = null,             // guest
-                onAnimalClick = { animalId ->
-                    navController.navigate("AnimalDetailGuest/$animalId")
-                },
-                onNavigateBack = {
-                    // Voltar ao Home em vez de rota inexistente
-                    navController.navigate("Home") {
-                        popUpTo("Home") { inclusive = true }
-                    }
-                }
-            )
-        }*/
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,

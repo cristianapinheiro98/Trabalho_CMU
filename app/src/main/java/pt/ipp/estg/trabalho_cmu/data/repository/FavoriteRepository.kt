@@ -16,8 +16,7 @@ import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
 
 class FavoriteRepository(
-    private val favoriteDao: FavoriteDao,
-    private val application: Application
+    private val favoriteDao: FavoriteDao
 ) {
 
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore

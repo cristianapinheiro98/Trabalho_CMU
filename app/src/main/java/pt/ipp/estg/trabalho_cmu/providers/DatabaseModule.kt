@@ -37,29 +37,25 @@ object DatabaseModule {
 
     fun provideAnimalRepository(application: Application): AnimalRepository {
         return AnimalRepository(
-            animalDao = provideAnimalDao(application),
-            application = application
+            animalDao = provideAnimalDao(application)
         )
     }
 
     fun provideOwnershipRepository(application: Application): OwnershipRepository {
         return OwnershipRepository(
-            ownershipDao = provideOwnershipDao(application),
-            application = application
+            ownershipDao = provideOwnershipDao(application)
         )
     }
 
     fun provideActivityRepository(application: Application): ActivityRepository {
         return ActivityRepository(
-            activityDao = provideActivityDao(application),
-            application = application
+            activityDao = provideActivityDao(application)
         )
     }
 
     fun provideFavoriteRepository(application: Application): FavoriteRepository {
         return FavoriteRepository(
-            favoriteDao = provideFavoriteDao(application),
-            application = application
+            favoriteDao = provideFavoriteDao(application)
         )
     }
 

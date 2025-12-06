@@ -37,7 +37,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
     // DEFINIR USER ATUAL
     // ==============================
 
-    fun setCurrentUser(userId: String?) {
+    fun setCurrentUser(userId: String) {
         if (_currentUserId.value != userId) {
             _currentUserId.value = userId
         }

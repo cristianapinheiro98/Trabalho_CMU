@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun WalkScreen(
-    animalId: Int,
+    animalId: String,
     animalName: String,
     navController: NavController
 ) {
@@ -119,7 +119,7 @@ fun WalkInfoRow(label: String, value: String) {
 @Composable
 private fun WalkScreenPreview() {
     MaterialTheme {
-        WalkScreen(animalId = 1, animalName = "Molly", navController = NavController(LocalContext.current))
+        WalkScreen(animalId = "1", animalName = "Molly", navController = NavController(LocalContext.current))
 
     }
 }

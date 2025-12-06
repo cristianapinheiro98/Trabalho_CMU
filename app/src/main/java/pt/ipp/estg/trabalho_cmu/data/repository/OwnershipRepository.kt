@@ -14,8 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.mappers.toOwnership
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 
 class OwnershipRepository(
-    private val ownershipDao: OwnershipDao,
-    private val application: Application
+    private val ownershipDao: OwnershipDao
 ) {
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
 

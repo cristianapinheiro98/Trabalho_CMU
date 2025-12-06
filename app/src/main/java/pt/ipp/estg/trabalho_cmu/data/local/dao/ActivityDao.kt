@@ -14,7 +14,7 @@ interface ActivityDao {
         AND deliveryDate >= :currentDate 
         ORDER BY pickupDate ASC
     """)
-    fun getUpcomingActivitiesByUser(userId: Int, currentDate: String): LiveData<List<Activity>>
+    fun getUpcomingActivitiesByUser(userId: String, currentDate: String): LiveData<List<Activity>>
 
     @Query("SELECT * FROM activities WHERE id = :activityId")
     suspend fun getActivityById(activityId: Int): Activity?

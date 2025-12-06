@@ -9,7 +9,7 @@ import java.util.*
 class ActivityRepository(private val activityDao: ActivityDao) {
 
 
-    fun getUpcomingActivitiesByUser(userId: Int): LiveData<List<Activity>> {
+    fun getUpcomingActivitiesByUser(userId: String): LiveData<List<Activity>> {
         val currentDate = getCurrentDateString()
         return activityDao.getUpcomingActivitiesByUser(userId, currentDate)
     }

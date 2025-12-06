@@ -12,6 +12,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 import pt.ipp.estg.trabalho_cmu.data.repository.ActivityRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
+import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 
 /**
  * Data class to combine Activity with its Animal and Shelter information
@@ -43,7 +44,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
         database.shelterDao()
     )
 
-    private val _userId = MutableLiveData<Int>()
+    private val _userId = MutableLiveData<String>()
 
     val activitiesWithDetails: LiveData<List<ActivityWithAnimalAndShelter>> =
         _userId.switchMap { userId ->
@@ -51,7 +52,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 liveData {
                     val enriched = activityList.mapNotNull { act ->
                         val animal = animalRepository.getAnimalById(act.animalId)
-                        val shelter = animal?.let { shelterRepository.getShelterByFirebaseUid(it.shelterFirebaseUid) }
+                        val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
                         if (animal != null && shelter != null)
                             ActivityWithAnimalAndShelter(act, animal, shelter)
                         else null
@@ -105,7 +106,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 val animal = animalRepository.getAnimalById(animalId)
                 _animal.value = animal
 
-                val shelter = animal?.let { shelterRepository.getShelterById(it.shelterFirebaseUid) }
+                val shelter = animal?.let { shelterRepository.getShelterById(it.shelterId) }
                 _shelter.value = shelter
 
                 _error.value = null
@@ -117,7 +118,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                     _shelter.value = getMockShelter()
                 } else {
                     _animal.value = animalData
-                    animalData.shelterFirebaseUid?.let { shelterFirebaseUid ->
+                    animalData.shelterId?.let { shelterFirebaseUid ->
                         val shelterData = shelterRepository.getShelterById(shelterFirebaseUid)
                         _shelter.value = shelterData
                     }
@@ -131,43 +132,43 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     }
 
     // Auxiliary mock functions
-    private fun getMockAnimal(animalId: Int): Animal {
+    private fun getMockAnimal(animalId: String): Animal {
         return when (animalId) {
-            1 -> Animal(
-                id = 1,
+            "1" -> Animal(
+                id = "1",
                 name = "Molly",
                 breed = "Golden Retriever",
                 species = "Dog",
                 size = "Large",
-                birthDate = "2020-01-01",
+                birthDate = dateStringToLong("2020-01-01"),
                 imageUrls = listOf(),
-                shelterFirebaseUid = "1",
+                shelterId = "1",
                 status = AnimalStatus.AVAILABLE,
                 createdAt = System.currentTimeMillis(),
                 description = "cãozinho fofo"
             )
-            2 -> Animal(
-                id = 2,
+            "2" -> Animal(
+                id = "2",
                 name = "Max",
                 breed = "Labrador",
                 species = "Dog",
                 size = "Medium",
-                birthDate = "2021-03-15",
+                birthDate = dateStringToLong("2021-03-15"),
                 imageUrls = listOf(),
-                shelterFirebaseUid = "1",
+                shelterId = "1",
                 status = AnimalStatus.AVAILABLE,
                 createdAt = System.currentTimeMillis(),
                 description = "cãozinho fofo"
             )
-            3 -> Animal(
-                id = 3,
+            "3" -> Animal(
+                id = "3",
                 name = "Luna",
                 breed = "Siamese",
                 species = "Cat",
                 size = "Small",
-                birthDate = "2022-06-10",
+                birthDate = dateStringToLong("2022-06-10"),
                 imageUrls = listOf(),
-                shelterFirebaseUid = "1",
+                shelterId = "1",
                 status = AnimalStatus.AVAILABLE,
                 createdAt = System.currentTimeMillis(),
                 description = "cãozinho fofo"
@@ -178,9 +179,9 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 breed = "Desconhecido",
                 species = "Dog",
                 size = "Medium",
-                birthDate = "2020-01-01",
+                birthDate = dateStringToLong("2020-01-01"),
                 imageUrls = listOf(),
-                shelterFirebaseUid = "1",
+                shelterId = "1",
                 status = AnimalStatus.AVAILABLE,
                 createdAt = System.currentTimeMillis(),
                 description = "cãozinho fofo"
@@ -190,18 +191,16 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
     private fun getMockShelter(): Shelter {
         return Shelter(
-            id = 1,
-            firebaseUid = "1",
+            id = "1",
             name = "Abrigo de Felgueiras",
             address = "Rua da Saúde, 1234 Santa Marta",
             phone = "253 000 000",
-            email = "abrigo@example.com",
-            password = ""
+            email = "abrigo@example.com"
         )
     }
     // ====== /END MOCK ========
 
-    fun loadActivitiesForUser(userId: Int) {
+    fun loadActivitiesForUser(userId: String) {
         _userId.value = userId
     }
 

@@ -68,22 +68,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
 }
 
-    // ========== CREATE ANIMAL ==========
-    fun createAnimal(animal: Animal) = viewModelScope.launch {
-        Log.d(TAG, "createAnimal: ${animal.id}")
-        _uiState.value = AnimalUiState.Loading
 
-        animalRepository.createAnimal(animal)
-            .onSuccess {
-                Log.d(TAG, "Animal criado com sucesso, a ressincronizar...")
-                animalRepository.syncAnimals()
-                _uiState.value = AnimalUiState.AnimalCreated(it)
-            }
-            .onFailure { exception ->
-                Log.e(TAG, "Erro ao criar animal", exception)
-                _uiState.value = AnimalUiState.Error(exception.message ?: "Erro ao criar animal")
-            }
-    }
 
     // ========== FILTERS & SEARCH (Cache Room) ==========
     fun filterBySpecies(species: String) = viewModelScope.launch {
@@ -176,19 +161,4 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun refreshAnimals() {
-        viewModelScope.launch {
-            animalRepository.syncAnimals()
-        }
-    }
-
-    fun selectAnimal(animal: Animal) {
-        Log.d(TAG, "selectAnimal by object: ${animal.id}")
-        _selectedAnimal.value = animal
-    }
-
-    fun clearSelectedAnimal() {
-        Log.d(TAG, "clearSelectedAnimal")
-        _selectedAnimal.value = null
-    }
 }

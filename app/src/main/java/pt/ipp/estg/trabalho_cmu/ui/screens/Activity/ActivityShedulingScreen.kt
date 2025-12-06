@@ -123,6 +123,7 @@ fun ActivitySchedulingScreen(
                         if (selectedDates.isNotEmpty()) {
                             val sorted = selectedDates.sorted()
                             val activity = Activity(
+                                id = "",
                                 userId = userId,
                                 animalId = animalId,
                                 pickupDate = sorted.first(),

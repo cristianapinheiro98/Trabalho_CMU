@@ -13,14 +13,14 @@ import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitySchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
@@ -46,7 +46,6 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             MainOptionsScreen(
                 navController = navController,
                 hasAdoptedAnimal = true,
-                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
                 windowSize = windowSize
             )
         }
@@ -150,7 +149,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         composable("AnimalsCatalogue") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = favoriteViewModel, // Usa o FavoriteViewModel
+                favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid(),
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
@@ -181,9 +180,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         // ========== FAVORITES ==========
         composable("Favorites") {
             FavoritesScreen(
-                animalViewModel = animalViewModel,
-                favoriteViewModel = favoriteViewModel,
-                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
+                viewModel = animalViewModel,
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") }
             )
         }

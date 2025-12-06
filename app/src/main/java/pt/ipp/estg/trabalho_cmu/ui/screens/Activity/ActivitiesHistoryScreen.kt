@@ -25,6 +25,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.MapLocationButton
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDateTimeCard
+import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 
 /**
@@ -32,7 +33,7 @@ import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
  */
 @Composable
 fun ActivitiesHistoryScreen(
-    userId: Int,
+    userId: String,
     modifier: Modifier = Modifier
 ) {
     val activityViewModel: ActivityViewModel = viewModel()
@@ -185,64 +186,60 @@ private fun ActivitiesHistoryContentPreview() {
         val mockActivities = listOf(
             ActivityWithAnimalAndShelter(
                 activity = Activity(
-                    id = 1,
-                    userId = 1,
-                    animalId = 1,
+                    id = "1",
+                    userId = "1",
+                    animalId = "1",
                     pickupDate = "10/11/2025",
                     pickupTime = "09:00",
                     deliveryDate = "12/11/2025",
                     deliveryTime = "18:00"
                 ),
                 animal = Animal(
-                    id = 0,
-                    shelterFirebaseUid = "0",
+                    id = "0",
+                    shelterId = "0",
                     name = "Mariana",
                     breed = "Golden Retriever",
-                    birthDate = "14/05/2020",
+                    birthDate = dateStringToLong("14/05/2020"),
                     size = "medium",
                     species = "dog",
                     imageUrls = listOf(""),
                     description = "Muito dócil"
                 ),
                 shelter = Shelter(
-                    id = 0,
-                    firebaseUid = "0",
+                    id = "0",
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
                     phone = "253 000 000",
-                    email = "abrigo_felgueiras@gmail.com",
-                    password = ""
+                    email = "abrigo_felgueiras@gmail.com"
                 )
             ),
             ActivityWithAnimalAndShelter(
                 activity = Activity(
-                    id = 2,
-                    userId = 1,
-                    animalId = 2,
+                    id = "2",
+                    userId = "1",
+                    animalId = "2",
                     pickupDate = "15/11/2025",
                     pickupTime = "10:00",
                     deliveryDate = "17/11/2025",
                     deliveryTime = "17:00"
                 ),
                 animal = Animal(
-                    id = 0,
-                    shelterFirebaseUid = "0",
+                    id = "0",
+                    shelterId = "0",
                     name = "Max",
                     breed = "Labrador",
-                    birthDate = "20/03/2021",
+                    birthDate = dateStringToLong("20/03/2021"),
                     size = "large",
                     species = "dog",
                     imageUrls = listOf("cat_image"),
                     description = "Muito dócil"
                 ),
                 shelter = Shelter(
-                    id = 0,
-                    firebaseUid = "0",
+                    id = "0",
                     name = "Abrigo de Felgueiras",
                     address = "Rua da Saúde, 1234 Santa Marta de Farto",
                     phone = "253 000 000",
-                    email = "abrigo_felgueiras@gmail.com",
-                    password = ""
+                    email = "abrigo_felgueiras@gmail.com"
                 )
             )
         )

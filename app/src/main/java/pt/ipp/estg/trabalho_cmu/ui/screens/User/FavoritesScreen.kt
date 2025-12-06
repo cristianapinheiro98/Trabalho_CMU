@@ -29,9 +29,9 @@ import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 @Composable
 fun FavoritesScreen(
     viewModel: AnimalViewModel,
-    onAnimalClick: (Int) -> Unit = {}
+    onAnimalClick: (String) -> Unit = {}
 ) {
-    val favorites by viewModel.favorites.observeAsState(emptyList())
+   /* val favorites by viewModel.favorites.observeAsState(emptyList())
 
     FavoritesScreenContent(
         favorites = favorites,
@@ -96,10 +96,10 @@ private fun FavoritesScreenContent(
                 }
             }
         }
-    }
+    }*/
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+/*@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -125,7 +125,7 @@ private fun FavoritesScreenPreview() {
             size = "Pequeno",
             birthDate = dateStringToLong("2021-03-10"),
             imageUrls = listOf(""),
-            shelterFirebaseUid = "shelterMock1",
+            shelterId = "shelterMock1",
             description = "Adora mimos!"
         )
     )
@@ -137,4 +137,4 @@ private fun FavoritesScreenPreview() {
             onToggleFavorite = {}
         )
     }
-}
+}*/
