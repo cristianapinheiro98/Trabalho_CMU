@@ -47,7 +47,6 @@ class FavoriteRepository(
                 if (!NetworkUtils.isConnected()) {
                     return@withContext Result.failure(Exception("Offline. Não é possível adicionar favorito."))
                 }
-
                 // Enviar para Firebase
                 val docRef = firestore.collection("favorites")
                     .add(favorite.toFirebaseMap()).await()
@@ -56,6 +55,7 @@ class FavoriteRepository(
 
                 // Cache Local
                 favoriteDao.insertFavorite(savedFavorite)
+
 
                 Result.success(savedFavorite)
 

@@ -23,14 +23,18 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
     // ------------------------------
     // USER ID ATUAL
     // ------------------------------
-    private val _currentUserId = MutableLiveData<String>()
-    val currentUserId: LiveData<String> = _currentUserId
+    private val _currentUserId = MutableLiveData<String?>()
+    val currentUserId: LiveData<String?> = _currentUserId
 
     // ------------------------------
     // LISTA DE FAVORITOS (LiveData do Room)
     // ------------------------------
     val favorites: LiveData<List<Favorite>> = _currentUserId.switchMap { userId ->
-        favoriteRepository.getFavoritesByUserLive(userId)
+        if (userId.isNullOrEmpty()) {
+            MutableLiveData(emptyList())
+        } else {
+            favoriteRepository.getFavoritesByUserLive(userId)
+        }
     }
 
     // ==============================
@@ -69,6 +73,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
                 animalId = animalId
             )
             favoriteRepository.addFavorite(userId, favorite)
+            favoriteRepository.syncFavorites(userId)
             _uiState.value = FavoriteUiState.FavoriteAdded(favorite)
         } catch (e: Exception) {
             _uiState.value = FavoriteUiState.Error("Erro ao adicionar favorito.")

@@ -422,7 +422,6 @@ fun AnimalListScreen(
     // Apenas users têm favoritos
     val favorites by (favoriteViewModel?.favorites?.observeAsState(emptyList())
         ?: mutableStateOf(emptyList()))
-
     val listToShow = if (filteredAnimals.isNotEmpty()) filteredAnimals else animals
 
     // ================================
@@ -452,10 +451,19 @@ fun AnimalListScreen(
         onClearFilters = { animalViewModel.clearFilters() },
         onNavigateBack = onNavigateBack,
         onToggleFavorite = { animal ->
+            Log.d("FAV_DEBUG", "Clique no coração do animal ${animal.id}, userId=$userId, vm=${favoriteViewModel != null}")
             if (userId != null && favoriteViewModel != null) {
                 val isFav = favorites.any { it.animalId == animal.id }
-                if (isFav) favoriteViewModel.removeFavorite(userId, animal.id)
-                else favoriteViewModel.addFavorite(userId, animal.id)
+                if (isFav) {
+                    favoriteViewModel.removeFavorite(userId, animal.id)
+
+                } else{
+                    favoriteViewModel.addFavorite(userId, animal.id)
+                    favoriteViewModel.syncFavorites(userId)
+                }
+                favoriteViewModel.syncFavorites(userId)
+            }else{
+                Log.d("FAV_DEBUG", "Não executou toggle: userId ou favoriteViewModel null")
             }
         }
     )
