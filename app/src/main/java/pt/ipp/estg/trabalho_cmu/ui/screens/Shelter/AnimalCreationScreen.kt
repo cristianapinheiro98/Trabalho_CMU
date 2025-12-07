@@ -34,6 +34,16 @@ import pt.ipp.estg.trabalho_cmu.data.repository.CloudinaryRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.CloudinaryRepository.uploadImageToFirebase
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
+
+/**
+ * Main screen used by shelters to create new animals.
+ *
+ * Responsibilities:
+ * - Observes animal creation form state from ShelterMngViewModel
+ * - Loads available breeds, handles image selection and upload
+ * - Displays success or error dialogs
+ * - Resets state and navigates back when an animal is successfully created
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCreationScreen(
@@ -45,7 +55,6 @@ fun AnimalCreationScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // Set Shelter ID
     LaunchedEffect(currentShelter) {
         if (currentShelter != null) {
             shelterMngViewModel.setShelterFirebaseUid(currentShelter!!.id)
@@ -60,12 +69,10 @@ fun AnimalCreationScreen(
     val isLoadingBreeds by shelterMngViewModel.isLoadingBreeds.observeAsState(false)
     val isUploadingImages by shelterMngViewModel.isUploadingImages.observeAsState(false)
 
-    // Estados de UI
     val uiState by shelterMngViewModel.uiState.observeAsState(ShelterMngUiState.Initial)
     val message by shelterMngViewModel.message.observeAsState()
     val error by shelterMngViewModel.error.observeAsState()
 
-    // Navegar de volta se criado com sucesso
     LaunchedEffect(uiState) {
         if (uiState is ShelterMngUiState.AnimalCreated) {
             shelterMngViewModel.resetState()
@@ -85,7 +92,6 @@ fun AnimalCreationScreen(
                 if (url != null) {
                     shelterMngViewModel.addImageUrl(url)
                 } else {
-                    // Se quiseres podes setar uma mensagem de erro no ViewModel
                     shelterMngViewModel.setUploadingImages(false)
                 }
 
@@ -116,6 +122,15 @@ fun AnimalCreationScreen(
     )
 }
 
+/**
+ * UI content for the animal creation form.
+ *
+ * Handles:
+ * - Form inputs (name, species, breed, size, birthdate, description)
+ * - Breed dropdown populated dynamically
+ * - Image selection previews
+ * - Success/error dialogs
+ */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

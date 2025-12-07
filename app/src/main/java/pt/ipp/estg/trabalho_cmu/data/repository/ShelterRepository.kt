@@ -11,40 +11,56 @@ import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toShelter
 
+/**
+ * Repository responsible for working with shelter data coming from:
+ *  - Local Room database (offline cache)
+ *  - Firebase Firestore (remote source)
+ *
+ * Main responsibilities:
+ *  - Retrieve shelter lists or individual shelters from Room
+ *  - Update shelter information in Firestore
+ *  - Synchronize all shelters from Firestore into Room
+ *  - Provide LiveData streams for UI observation
+ *
+ * This repository ensures:
+ *  - Firestore operations only run when online
+ *  - Local fallback when offline
+ */
 class ShelterRepository(
     private val shelterDao: ShelterDao
 ) {
     private val firestore = FirebaseProvider.firestore
     private val TAG = "ShelterRepository"
 
+    /** Returns a LiveData stream of all shelters stored locally. */
     fun getAllShelters(): LiveData<List<Shelter>> = shelterDao.getAllShelters()
+
+    /** Retrieves all shelters from Room as a list. */
     suspend fun getAllSheltersList(): List<Shelter> = shelterDao.getAllSheltersList()
+
+    /** Retrieves a single shelter by its ID from Room. */
     suspend fun getShelterById(id: String) = shelterDao.getShelterById(id)
 
-    // --- UPDATE (Firebase Only) ---
-    suspend fun updateShelter(shelter: Shelter) = withContext(Dispatchers.IO) {
-        if (!NetworkUtils.isConnected()) throw Exception("Offline")
-
-        val data = mapOf(
-            "name" to shelter.name,
-            "address" to shelter.address,
-            "contact" to shelter.phone
-        )
-        firestore.collection("shelters").document(shelter.id).update(data).await()
-        // Não atualiza Room (espera sync)
-    }
-
-    // --- SYNC (Firebase -> Room) ---
+    /**
+     * Synchronizes all shelters from Firestore and replaces the local cache.
+     *
+     * If offline, the function stops silently.
+     */
     suspend fun syncShelters() = withContext(Dispatchers.IO) {
         if (!NetworkUtils.isConnected()) return@withContext
 
         try {
             val snapshot = firestore.collection("shelters").get().await()
             val shelters = snapshot.documents.mapNotNull { it.toShelter() }
+
             shelterDao.refreshCache(shelters)
             Log.d(TAG, "SyncShelters: ${shelters.size} recebidos")
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
+
+    /** Returns all shelters from Room (non-LiveData version). */
     suspend fun getSheltersFromRoom(): List<Shelter> {
         return shelterDao.getAllSheltersList()
     }

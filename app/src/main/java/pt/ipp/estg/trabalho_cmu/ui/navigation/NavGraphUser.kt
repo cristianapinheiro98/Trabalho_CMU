@@ -13,8 +13,8 @@ import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitySchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
@@ -31,6 +31,21 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
+
+/**
+ * Navigation graph for regular logged-in users.
+ *
+ * Contains:
+ * - Home options
+ * - Preferences
+ * - Veterinarians
+ * - Adoption workflow
+ * - Activities scheduling
+ * - SocialTails community
+ * - Catalog and detail screens
+ * - Favorites
+ * - Walk and history screens
+ */
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

@@ -18,6 +18,12 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 import java.util.Date
 
+/**
+ * Card displaying the pickup and delivery dates and times for an activity.
+ *
+ * Each element (pickup date, pickup time, delivery date, delivery time)
+ * is presented using localized stringResource() labels.
+ */
 @Composable
 fun ActivityDateTimeCard(
     pickupDate: String,

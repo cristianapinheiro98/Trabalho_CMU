@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
-
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.CatBreedsResponse
 import pt.ipp.estg.trabalho_cmu.data.remote.dtos.breeds.DogBreedsResponse
@@ -9,13 +8,29 @@ import retrofit2.Callback
 import retrofit2.Response
 import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
 
-
+/**
+ * Repository responsible for retrieving dog and cat breeds from remote APIs,
+ * and optionally translating their descriptions to Portuguese.
+ *
+ * Main responsibilities:
+ * - Fetch dog breeds from Dog API
+ * - Fetch cat breeds from Cat API
+ * - Convert remote DTOs into unified Breed models
+ * - Translate descriptions through TranslationRepository
+ * - Provide UI callbacks through onSuccess / onError lambdas
+ *
+ * All user-visible errors have been converted into string resource
+ * identifiers (R.string.*) for localization.
+ */
 class BreedRepository {
 
     private val dogApi = RetrofitInstance.dogApi
     private val catApi = RetrofitInstance.catApi
     private val translationRepo = TranslationRepository()
 
+    /**
+     * Fetches all dog breeds and forwards results through callbacks.
+     */
     fun getDogBreeds(
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
@@ -37,16 +52,19 @@ class BreedRepository {
                     translateBreeds(breeds, onSuccess, onError)
 
                 } else {
-                    onError("Erro a carregar raças: ${response.code()}")
+                    onError("R.string.error_loading_breeds")
                 }
             }
 
             override fun onFailure(call: Call<List<DogBreedsResponse>>, t: Throwable) {
-                onError("Erro de conexão: ${t.message}")
+                onError("R.string.error_connection")
             }
         })
     }
 
+    /**
+     * Fetches all cat breeds and forwards results through callbacks.
+     */
     fun getCatBreeds(
         onSuccess: (List<Breed>) -> Unit,
         onError: (String) -> Unit
@@ -68,18 +86,18 @@ class BreedRepository {
                     translateBreeds(breeds, onSuccess, onError)
 
                 } else {
-                    onError("Erro ao carregar raças: ${response.code()}")
+                    onError("R.string.error_loading_breeds")
                 }
             }
 
             override fun onFailure(call: Call<List<CatBreedsResponse>>, t: Throwable) {
-                onError("Erro de conexão: ${t.message}")
+                onError("R.string.error_connection")
             }
         })
     }
 
     /**
-     * Breeds based on species
+     * Gets breeds based on species (dog/cat).
      */
     fun getBreedsBySpecies(
         species: String,
@@ -89,10 +107,15 @@ class BreedRepository {
         when (species.lowercase()) {
             "cão", "cao", "dog" -> getDogBreeds(onSuccess, onError)
             "gato", "cat" -> getCatBreeds(onSuccess, onError)
-            else -> onError("Espécie não suportada: $species")
+            else -> onError("R.string.error_species_not_supported")
         }
     }
 
+    /**
+     * Translates breed descriptions to Portuguese using TranslationRepository.
+     *
+     * If translation fails, the original description is kept.
+     */
     private fun translateBreeds(
         breeds: List<Breed>,
         onSuccess: (List<Breed>) -> Unit,
@@ -110,22 +133,14 @@ class BreedRepository {
             translationRepo.translateToPortuguese(
                 text = breed.description ?: "",
                 onSuccess = { translated ->
-                    translatedBreeds.add(
-                        breed.copy(description = translated)
-                    )
-
+                    translatedBreeds.add(breed.copy(description = translated))
                     pending--
-                    if (pending == 0) {
-                        onSuccess(translatedBreeds.sortedBy { it.name })
-                    }
+                    if (pending == 0) onSuccess(translatedBreeds.sortedBy { it.name })
                 },
-                onError = { _ ->
-                    // fallback to keep original description
+                onError = {
                     translatedBreeds.add(breed)
                     pending--
-                    if (pending == 0) {
-                        onSuccess(translatedBreeds.sortedBy { it.name })
-                    }
+                    if (pending == 0) onSuccess(translatedBreeds.sortedBy { it.name })
                 }
             )
         }

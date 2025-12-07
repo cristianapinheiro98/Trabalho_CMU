@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
+package pt.ipp.estg.trabalho_cmu.ui.screens.Activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,6 +25,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDateTimeCard
 import pt.ipp.estg.trabalho_cmu.ui.components.MapLocationButton
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivityUiState
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 

@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
+package pt.ipp.estg.trabalho_cmu.ui.screens.Activity
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,6 +11,8 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivityUiState
+
 data class ActivityWithAnimalAndShelter(
     val activity: Activity,
     val animal: Animal,

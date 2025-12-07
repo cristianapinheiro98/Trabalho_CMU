@@ -20,6 +20,19 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
 
+/**
+ * Navigation graph for the public (guest) section of the app.
+ *
+ * Includes:
+ * - Home
+ * - Login
+ * - Register
+ * - Guest animal catalogue
+ * - Guest animal details
+ *
+ * Handles transitions before authentication.
+ */
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,23 +78,6 @@ fun NavGraphPublic(
             )
         }
 
-        // GUEST — catálogo de animais sem favoritos
-        /*composable("AnimalsCatalogueGuest") {
-            AnimalListScreen(
-                animalViewModel = animalViewModel,
-                favoriteViewModel = null,   // guest → null
-                userId = null,             // guest
-                onAnimalClick = { animalId ->
-                    navController.navigate("AnimalDetailGuest/$animalId")
-                },
-                onNavigateBack = {
-                    // Voltar ao Home em vez de rota inexistente
-                    navController.navigate("Home") {
-                        popUpTo("Home") { inclusive = true }
-                    }
-                }
-            )
-        }*/
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
@@ -107,7 +103,12 @@ fun NavGraphPublic(
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
                 showAdoptButton = false,
-                onAdoptClick = {}
+                onAdoptClick = {},
+                onNavigateBack = {
+                    navController.navigate("AnimalsCatalogue") {
+                        popUpTo("AnimalsCatalogue") { inclusive = true }
+                    }
+                }
             )
         }
     }

@@ -14,12 +14,20 @@ import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 
 private const val TAG = "AnimalViewModel"
 
-
+/**
+ * ViewModel responsible for:
+ * - Loading animals and shelters from Room or Firebase
+ * - Synchronizing data when online
+ * - Filtering, sorting and searching animals
+ * - Creating animals and exposing UI state changes
+ *
+ * This ViewModel extends AndroidViewModel so the Application context
+ * can be accessed if needed (e.g., for string resources inside repositories).
+ */
 class AnimalViewModel(application: Application) : AndroidViewModel(application) {
 
     private val animalRepository = DatabaseModule.provideAnimalRepository(application)
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
-
 
     private val _uiState = MutableLiveData<AnimalUiState>(AnimalUiState.Initial)
     val uiState: LiveData<AnimalUiState> = _uiState
@@ -42,7 +50,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         loadAnimals()
     }
 
-
+    /** Loads shelters from Firebase if online, otherwise from Room. */
     private fun loadShelters() {
         viewModelScope.launch {
             try {
@@ -54,23 +62,23 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    /** Loads animals using an online-then-local strategy. */
     private fun loadAnimals() {
         viewModelScope.launch {
             try {
-                // 1) Atualiza Room com Firebase
-                animalRepository.syncAnimals()
-
-                // 2) Lê da Room depois do sync
+                animalRepository.syncAnimals() // update Room
                 _animals.value = animalRepository.getAnimalsFromRoom()
-
             } catch (e: Exception) {
-                // offline → fallback
                 _animals.value = animalRepository.getAllAnimalsList()
             }
         }
     }
 
-    // ========== CREATE ANIMAL ==========
+    // ================= CREATE ANIMAL =================
+
+    /**
+     * Creates an animal in Firebase and then resynchronizes local data.
+     */
     fun createAnimal(animal: Animal) = viewModelScope.launch {
         Log.d(TAG, "createAnimal: ${animal.id}")
         _uiState.value = AnimalUiState.Loading
@@ -83,127 +91,93 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
             }
             .onFailure { exception ->
                 Log.e(TAG, "Erro ao criar animal", exception)
-                _uiState.value = AnimalUiState.Error(exception.message ?: R.string.error_loading_animal.toString())
+                _uiState.value = AnimalUiState.Error(
+                    exception.message ?: "R.string.error_creating_animal"
+                )
             }
     }
 
-    // ========== FILTERS & SEARCH (Cache Room) ==========
+    // ================= FILTER & SORT =================
+
     fun filterBySpecies(species: String) = viewModelScope.launch {
-        Log.d(TAG, "filterBySpecies: $species")
         try {
-            val result = animalRepository.filterBySpecies(species)
-            _filteredAnimals.value = result
-            Log.d(TAG, "Filtrados por espécie: ${result.size} animais")
+            _filteredAnimals.value = animalRepository.filterBySpecies(species)
         } catch (e: Exception) {
-            Log.e(TAG, "Erro ao filtrar por espécie", e)
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun filterBySize(size: String) = viewModelScope.launch {
-        Log.d(TAG, "filterBySize: $size")
         try {
-            val result = animalRepository.filterBySize(size)
-            _filteredAnimals.value = result
-            Log.d(TAG, "Filtrados por tamanho: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao filtrar por tamanho", e)
+            _filteredAnimals.value = animalRepository.filterBySize(size)
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun sortByNameAsc() = viewModelScope.launch {
-        Log.d(TAG, "sortByName")
         try {
-            val result = animalRepository.sortByNameAsc()
-            _filteredAnimals.value = result
-            Log.d(TAG, "Ordenados por nome: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao ordenar por nome", e)
+            _filteredAnimals.value = animalRepository.sortByNameAsc()
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun sortByNameDesc() = viewModelScope.launch {
-        Log.d(TAG, "sortByName")
         try {
-            val result = animalRepository.sortByNameDesc()
-            _filteredAnimals.value = result
-            Log.d(TAG, "Ordenados por nome: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao ordenar por nome", e)
+            _filteredAnimals.value = animalRepository.sortByNameDesc()
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun sortByAgeAsc() = viewModelScope.launch {
-        Log.d(TAG, "sortByAge")
         try {
-            val result = animalRepository.sortByAgeAsc()
-            _filteredAnimals.value = result
-            Log.d(TAG, "Ordenados por idade: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao ordenar por idade", e)
+            _filteredAnimals.value = animalRepository.sortByAgeAsc()
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun sortByAgeDesc() = viewModelScope.launch {
-        Log.d(TAG, "sortByAge")
         try {
-            val result = animalRepository.sortByAgeDesc()
-            _filteredAnimals.value = result
-            Log.d(TAG, "Ordenados por idade: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao ordenar por idade", e)
+            _filteredAnimals.value = animalRepository.sortByAgeDesc()
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
-
     fun searchAnimals(query: String) = viewModelScope.launch {
-        Log.d(TAG, "searchAnimals: '$query'")
         try {
-            val result = animalRepository.searchAnimals(query)
-            _filteredAnimals.value = result
-            Log.d(TAG, "Pesquisa retornou: ${result.size} animais")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro na pesquisa", e)
+            _filteredAnimals.value = animalRepository.searchAnimals(query)
+        } catch (_: Exception) {
             _filteredAnimals.value = emptyList()
         }
     }
 
     fun clearFilters() {
-        Log.d(TAG, "clearFilters")
         _filteredAnimals.value = emptyList()
     }
 
-    // ========== SELECT ANIMAL ==========
+    // ================= SELECT ANIMAL =================
+
     fun selectAnimal(animalId: String) = viewModelScope.launch {
-        Log.d(TAG, "selectAnimal by id: $animalId")
         try {
-            val animal = animalRepository.getAnimalById(animalId)
-            _selectedAnimal.value = animal
-            Log.d(TAG, "Animal selecionado: ${animal?.name}")
-        } catch (e: Exception) {
-            Log.e(TAG, "Erro ao selecionar animal", e)
+            _selectedAnimal.value = animalRepository.getAnimalById(animalId)
+        } catch (_: Exception) {
             _selectedAnimal.value = null
         }
     }
 
     fun refreshAnimals() {
-        viewModelScope.launch {
-            animalRepository.syncAnimals()
-        }
+        viewModelScope.launch { animalRepository.syncAnimals() }
     }
 
     fun selectAnimal(animal: Animal) {
-        Log.d(TAG, "selectAnimal by object: ${animal.id}")
         _selectedAnimal.value = animal
     }
 
     fun clearSelectedAnimal() {
-        Log.d(TAG, "clearSelectedAnimal")
         _selectedAnimal.value = null
     }
 }

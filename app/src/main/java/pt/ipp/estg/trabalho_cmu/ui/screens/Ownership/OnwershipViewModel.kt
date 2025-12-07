@@ -15,22 +15,18 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     private val ownershipRepository = DatabaseModule.provideOwnershipRepository(application)
     private val animalRepository = DatabaseModule.provideAnimalRepository(application)
 
-    // --- UI STATE ---
     private val _uiState = MutableLiveData<OwnershipUiState>(OwnershipUiState.Initial)
     val uiState: LiveData<OwnershipUiState> = _uiState
 
-    // --- DADOS DO ANIMAL (Necessário para saber o Shelter ID) ---
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
-    // --- CARREGAR ANIMAL ---
     fun loadAnimal(animalId: String) = viewModelScope.launch {
         // Não metemos loading aqui para não bloquear o ecrã todo se for rápido
         val animalData = animalRepository.getAnimalById(animalId)
         _animal.value = animalData
     }
 
-    // --- SUBMETER PEDIDO ---
     fun submitOwnership(ownership: Ownership) = viewModelScope.launch {
         _uiState.value = OwnershipUiState.Loading
 
@@ -44,7 +40,6 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
             }
     }
 
-    // --- RESET ---
     fun resetState() {
         _uiState.value = OwnershipUiState.Initial
     }

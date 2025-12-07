@@ -13,6 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Displays the chosen start and end dates for an activity.
+ *
+ * This component appears only if at least one of the dates
+ * (start or end) has been selected.
+ */
 @Composable
 fun ActivityDatesChosen(
     selectedDates: Set<String>,

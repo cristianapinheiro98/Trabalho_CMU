@@ -3,7 +3,10 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Shelter
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 
 /**
- * Estados para gestão de abrigos (admin)
+ * Represents the different UI states for actions performed by shelters:
+ *
+ * - Creating animals
+ * - Approving/rejecting requests
  */
 sealed class ShelterMngUiState {
     object Initial : ShelterMngUiState()

@@ -6,9 +6,10 @@ import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
 import pt.ipp.estg.trabalho_cmu.data.repository.*
 
 /**
- * DatabaseModule - Dependency Injection Provider
+ * Centralized dependency provider for Room DAOs and repositories.
  *
- * Fornece instâncias de DAOs e Repositories para a aplicação
+ * Updated to support repositories that require Application context
+ * for localized error strings and Firebase operations.
  */
 object DatabaseModule {
 
@@ -27,32 +28,32 @@ object DatabaseModule {
     fun provideFavoriteDao(context: Context) = provideDatabase(context).favoriteDao()
 
     // ========== REPOSITORIES ==========
+
     fun provideAuthRepository(application: Application): AuthRepository {
         return AuthRepository(
+            appContext = application,
             userDao = provideUserDao(application),
-            shelterDao = provideShelterDao(application),
-            application = application
+            shelterDao = provideShelterDao(application)
         )
     }
 
     fun provideAnimalRepository(application: Application): AnimalRepository {
         return AnimalRepository(
-            animalDao = provideAnimalDao(application),
-            application = application
+            appContext = application,
+            animalDao = provideAnimalDao(application)
         )
     }
 
     fun provideOwnershipRepository(application: Application): OwnershipRepository {
         return OwnershipRepository(
-            ownershipDao = provideOwnershipDao(application),
-            application = application
+            appContext = application,
+            ownershipDao = provideOwnershipDao(application)
         )
     }
 
     fun provideActivityRepository(application: Application): ActivityRepository {
         return ActivityRepository(
-            activityDao = provideActivityDao(application),
-            application = application
+            activityDao = provideActivityDao(application)
         )
     }
 
@@ -63,9 +64,9 @@ object DatabaseModule {
         )
     }
 
-
     fun provideUserRepository(application: Application): UserRepository {
         return UserRepository(
+            appContext = application,
             userDao = provideUserDao(application)
         )
     }

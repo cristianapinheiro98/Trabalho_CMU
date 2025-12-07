@@ -15,6 +15,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.ipp.estg.trabalho_cmu.R
 
+
+/**
+ * Displays two time input fields side-by-side:
+ * - Pickup time
+ * - Delivery time
+ *
+ * Both fields:
+ * - Accept numeric input only
+ * - Automatically format the string into "HH:MM"
+ * - Use localized label strings
+ *
+ * @param pickupTime Current pickup time value
+ * @param deliveryTime Current delivery time value
+ * @param onPickupTimeChange Callback when pickup time changes
+ * @param onDeliveryTimeChange Callback when delivery time changes
+ */
 @Composable
 fun TimeInputFields(
     pickupTime: String,
@@ -54,7 +70,18 @@ fun TimeInputFields(
     }
 }
 
-// Função utilitária
+
+/**
+ * Formats a time input into HH:MM while the user types.
+ *
+ * Accepted formats:
+ * - "1" → "1"
+ * - "12" → "12"
+ * - "123" → "12:3"
+ * - "1234" → "12:34"
+ *
+ * Non-numeric characters are automatically removed.
+ */
 fun formatTimeInput(newText: String): String {
     if (newText.isEmpty()) return newText
 

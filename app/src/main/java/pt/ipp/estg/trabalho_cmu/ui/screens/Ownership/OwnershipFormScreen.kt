@@ -61,17 +61,15 @@ fun OwnershipFormScreen(
             CircularProgressIndicator(color = Color(0xFF2C8B7E))
         }
     } else {
-        // Mostrar Formulário
         OwnershipFormContent(
             isLoading = uiState is OwnershipUiState.Loading,
             snackbarHostState = snackbarHostState,
             onSubmit = { formName, formAccount, formCvv, formCard ->
                 val ownership = Ownership(
-                    id = "", // O Firebase gera o ID
+                    id = "",
                     userId = userFirebaseUid,
                     animalId = animalFirebaseUid,
-                    shelterId = animal!!.shelterId, // Vem do animal carregado
-                    ownerName = formName
+                    shelterId = animal!!.shelterId
                 )
                 viewModel.submitOwnership(ownership)
             },

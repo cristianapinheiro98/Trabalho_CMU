@@ -1,5 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
-
+package pt.ipp.estg.trabalho_cmu.ui.screens.Activity
 
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 

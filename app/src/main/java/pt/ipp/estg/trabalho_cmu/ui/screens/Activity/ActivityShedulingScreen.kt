@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
+package pt.ipp.estg.trabalho_cmu.ui.screens.Activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,6 +24,7 @@ import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
+import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivityUiState
 
 @Composable
 fun ActivitySchedulingScreen(
@@ -108,7 +109,6 @@ fun ActivitySchedulingScreen(
     }
 }
 
-// O Content Composable e Preview mantêm-se iguais (UI pura)
 @Composable
 private fun ActivitySchedulingContent(
     animalName: String,

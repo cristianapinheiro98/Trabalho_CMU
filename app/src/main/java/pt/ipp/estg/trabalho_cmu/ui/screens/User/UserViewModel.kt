@@ -13,7 +13,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     private val userRepository = DatabaseModule.provideUserRepository(application)
 
-    // --- MUDANÇA: StateFlow -> LiveData ---
     private val _uiState = MutableLiveData<UserUiState>(UserUiState.Initial)
     val uiState: LiveData<UserUiState> = _uiState
 

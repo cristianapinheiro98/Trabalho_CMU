@@ -6,7 +6,13 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 import pt.ipp.estg.trabalho_cmu.utils.longToDateString
 
-// --- Escrita: Room Entity -> Firebase Map ---
+/**
+ * Converts a local Animal entity into a Firebase-compatible map.
+ *
+ * This is used when uploading or syncing animal data to Firestore.
+ *
+ * @return Map<String, Any> representing the fields stored in Firebase.
+ */
 fun Animal.toFirebaseMap(): Map<String, Any> {
 
     return mapOf(
@@ -15,32 +21,37 @@ fun Animal.toFirebaseMap(): Map<String, Any> {
         "species" to species,
         "size" to size,
         "birthDate" to longToDateString(birthDate),
-        "imageUrls" to imageUrls, // O Firebase aceita listas nativamente
+        "imageUrls" to imageUrls,
         "description" to description,
         "shelterId" to shelterId,
-        "status" to status.name, // Guarda o Enum como String
+        "status" to status.name,
         "createdAt" to createdAt
     )
 }
 
-// --- Leitura: Firebase Document -> Room Entity ---
+/**
+ * Converts a Firestore DocumentSnapshot into a local Animal entity.
+ *
+ * This is used when downloading or syncing animal data from Firestore.
+ *
+ * @receiver DocumentSnapshot received from Firestore
+ * @return Animal? object, or null if parsing fails
+ */
 fun DocumentSnapshot.toAnimal(): Animal? {
     return try {
         val dateStr = getString("birthDate") ?: ""
         val birthDateLong = dateStringToLong(dateStr)
 
         Animal(
-            id = this.id, // O ID vem do nome do documento no Firebase
+            id = this.id,
             name = getString("name") ?: "",
             breed = getString("breed") ?: "",
             species = getString("species") ?: "",
             size = getString("size") ?: "",
             birthDate = birthDateLong,
-            // Cast seguro para lista de strings
             imageUrls = (get("imageUrls") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
             description = getString("description") ?: "",
             shelterId = getString("shelterId") ?: "",
-            // Converte String de volta para Enum
             status = AnimalStatus.valueOf(getString("status")?.uppercase() ?: "AVAILABLE"),
             createdAt = getLong("createdAt") ?: System.currentTimeMillis()
         )

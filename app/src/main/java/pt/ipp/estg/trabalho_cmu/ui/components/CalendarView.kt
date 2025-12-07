@@ -19,6 +19,16 @@ import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.*
 
+
+/**
+ * Interactive calendar component that allows selecting multiple dates.
+ *
+ * Features:
+ * - Displays the month header
+ * - Shows weekday initials using localized strings
+ * - Highlights selected dates
+ * - Calls onDateSelected() when the user toggles a day
+ */
 @Composable
 fun CalendarView(
     selectedDates: Set<String>,

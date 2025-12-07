@@ -31,6 +31,16 @@ import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 
 private const val TAG = "AnimalListScreen"
 
+/**
+ * Screen that displays a list of animals. Provides:
+ *
+ * - A search bar for filtering animals by name
+ * - A loading indicator while data is fetched
+ * - Automatic UI updates based on ViewModel state
+ *
+ * @param animalViewModel ViewModel used to fetch and observe animal data.
+ * @param onAnimalClick Callback triggered when an animal card is tapped.
+ */
 @SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,9 +215,6 @@ fun AnimalListContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // -----------------------------------------
-        //         ANIMALS LIST
-        // -----------------------------------------
         //Grid of Animals
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),

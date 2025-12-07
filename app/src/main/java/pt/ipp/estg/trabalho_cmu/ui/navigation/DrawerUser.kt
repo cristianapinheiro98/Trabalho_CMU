@@ -31,6 +31,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pt.ipp.estg.trabalho_cmu.R
 
+
+/**
+ * Drawer UI component used for non-admin logged-in users.
+ *
+ * Displays:
+ * - Close button
+ * - Navigation options with icon + label
+ *
+ * Navigation behavior is passed through callbacks.
+ */
 data class DrawerOption(@StringRes val label: Int, val icon: ImageVector, val route: String)
 
 fun getUserDrawerOptions() = listOf(

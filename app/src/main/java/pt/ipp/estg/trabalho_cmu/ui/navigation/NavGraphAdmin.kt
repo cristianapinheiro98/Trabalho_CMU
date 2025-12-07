@@ -12,6 +12,17 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AnimalCreationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AdoptionRequestScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
+/**
+ * Navigation graph for admin users.
+ *
+ * Includes routes:
+ * - AdminHome
+ * - AnimalCreation
+ * - AdoptionRequest
+ *
+ * Provides admin-specific navigation flows.
+ */
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraphAdmin(

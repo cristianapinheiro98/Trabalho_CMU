@@ -17,8 +17,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.mappers.toActivity
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 
 class ActivityRepository(
-    private val activityDao: ActivityDao,
-    private val application: Application
+    private val activityDao: ActivityDao
 ) {
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
     private val TAG = "ActivityRepository"

@@ -6,59 +6,90 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 
+/**
+ * ViewModel responsible for:
+ * - Loading shelters from the repository
+ * - Selecting a shelter by ID
+ * - Managing UI state for shelter-related screens
+ *
+ * Uses AndroidViewModel so that Application context can be accessed
+ * for retrieving localized string resources.
+ */
 class ShelterViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val appContext = getApplication<Application>()
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
-    // --- UI STATE (LiveData) ---
     private val _uiState = MutableLiveData<ShelterUiState>(ShelterUiState.Initial)
     val uiState: LiveData<ShelterUiState> = _uiState
 
-    // LiveData do Room (Fonte de verdade da lista)
-    // A UI deve observar esta variável para ver a lista de abrigos
+    /** Live list of shelters observed from Room */
     val shelters: LiveData<List<Shelter>> = shelterRepository.getAllShelters()
 
     private val _selectedShelter = MutableLiveData<Shelter?>()
     val selectedShelter: LiveData<Shelter?> = _selectedShelter
 
-    // ========== LOAD SHELTER BY ID ==========
+    /**
+     * Loads a shelter by ID from the local database.
+     * If found → updates selectedShelter and UI state.
+     * If not found → emits an Error state with a localized message.
+     */
     fun loadShelterById(shelterId: String) = viewModelScope.launch {
         _uiState.value = ShelterUiState.Loading
+
         try {
             val shelter = shelterRepository.getShelterById(shelterId)
+
             if (shelter != null) {
                 _selectedShelter.value = shelter
                 _uiState.value = ShelterUiState.Success
             } else {
-                _uiState.value = ShelterUiState.Error("Abrigo não encontrado")
                 _selectedShelter.value = null
+                _uiState.value = ShelterUiState.Error(
+                    appContext.getString(R.string.error_shelter_not_found)
+                )
             }
+
         } catch (e: Exception) {
-            _uiState.value = ShelterUiState.Error("Erro: ${e.message}")
             _selectedShelter.value = null
+            _uiState.value = ShelterUiState.Error(
+                appContext.getString(R.string.error_loading_shelter) + " ${e.message}"
+            )
         }
     }
 
-    // ========== SYNC SHELTERS ==========
-    // Esta função força a atualização dos dados da Internet para o Room
+    /**
+     * Synchronizes shelter data with Firebase, updating the Room cache.
+     * If the sync fails, emits an Error state with a localized message.
+     */
     fun loadAllShelters() = viewModelScope.launch {
         _uiState.value = ShelterUiState.Loading
+
         try {
-            shelterRepository.syncShelters() // Online First Sync -> Atualiza o Room
+            shelterRepository.syncShelters()
             _uiState.value = ShelterUiState.Success
+
         } catch (e: Exception) {
-            _uiState.value = ShelterUiState.Error("Erro: ${e.message}")
+            _uiState.value = ShelterUiState.Error(
+                appContext.getString(R.string.error_sync_shelters) + " ${e.message}"
+            )
         }
     }
 
-
+    /**
+     * Clears the currently selected shelter.
+     */
     fun clearSelectedShelter() {
         _selectedShelter.value = null
     }
 
+    /**
+     * Resets the UI state back to Initial.
+     */
     fun resetState() {
         _uiState.value = ShelterUiState.Initial
     }

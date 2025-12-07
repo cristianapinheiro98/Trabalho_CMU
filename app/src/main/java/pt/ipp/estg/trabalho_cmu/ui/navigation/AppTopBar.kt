@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.*
@@ -24,6 +22,15 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.components.NotificationDropdown
 
+/**
+ * Top app bar displayed across the application.
+ *
+ * Features:
+ * - Shows app logo and title
+ * - Displays menu icon for non-admin logged users
+ * - Displays notifications and logout buttons when logged in
+ * - Displays veterinarian icon only for admin users
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
@@ -37,7 +44,6 @@ fun AppTopBar(
     onVeterinariansClick: () -> Unit
 ) {
 
-
     val showMenuIcon = isLoggedIn && !isAdmin
 
     TopAppBar(
@@ -45,7 +51,7 @@ fun AppTopBar(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_collar),
-                    contentDescription = "Tailwagger logo",
+                    contentDescription = stringResource(R.string.app_logo_description),
                     modifier = Modifier
                         .size(42.dp)
                         .padding(end = 8.dp)
@@ -59,20 +65,20 @@ fun AppTopBar(
             }
         },
         navigationIcon = {
-            when {
-                showMenuIcon -> {
-                    IconButton(onClick = onMenuClick) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = stringResource(R.string.open_menu),
-                            tint = Color(0xFF37474F)
-                        )
-                    }
+            if (showMenuIcon) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(R.string.open_menu),
+                        tint = Color(0xFF37474F)
+                    )
                 }
             }
         },
         actions = {
             if (isLoggedIn) {
+
+                // Admin-only button
                 if (isAdmin) {
                     IconButton(onClick = onVeterinariansClick) {
                         Icon(
@@ -83,6 +89,7 @@ fun AppTopBar(
                     }
                 }
 
+                // User-only notifications
                 if (!isAdmin) {
                     IconButton(onClick = onNotificationsClick) {
                         Icon(
@@ -93,13 +100,14 @@ fun AppTopBar(
                     }
                 }
 
-                // Mock
+                // Mock dropdown
                 NotificationDropdown()
 
+                // Logout button
                 IconButton(onClick = onLogoutClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
-                        contentDescription =stringResource(R.string.logout),
+                        contentDescription = stringResource(R.string.logout),
                         tint = Color(0xFF37474F)
                     )
                 }

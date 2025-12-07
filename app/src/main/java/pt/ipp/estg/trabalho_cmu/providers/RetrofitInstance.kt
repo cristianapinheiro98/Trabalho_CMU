@@ -9,6 +9,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+/**
+ * Centralized configuration of Retrofit clients used across the app.
+ *
+ * This module provides:
+ *  - Dog API client
+ *  - Cat API client
+ *  - Translation API client
+ *  - Local backend client
+ *  - Google Places API client
+ *
+ * Shared features:
+ *  - a common OkHttpClient with logging and timeouts
+ *  - Gson converter
+ *  - clean separation of base URLs per service
+ *
+ * No UI-facing error strings are defined in this file.
+ */
+
 object RetrofitInstance {
     private const val DOG_API_BASE_URL =  "https://api.thedogapi.com/v1/"
     private const val CAT_API_BASE_URL = "https://api.thecatapi.com/v1/"

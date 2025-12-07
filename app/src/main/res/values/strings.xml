@@ -3,6 +3,8 @@
     <string name="app_name">Tailwagger</string>
     <string name="language_pt">Portuguese</string>
     <string name="language_en">English</string>
+    <string name="app_logo_description">Tailwagger logo</string>
+
 
     <!-- Terms and Conditions Screen -->
     <string name="terms_title">Important Information and Contractual Terms:</string>
@@ -42,6 +44,7 @@
     <string name="visit_schedule_button">Let\'s schedule!</string>
     <string name="select_at_least_one_date">Select at least one date</string>
     <string name="activity_scheduled_success">Activity scheduled successfully!</string>
+    <string name="image_animal_description">Animal Image</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Active Appointments</string>
@@ -147,6 +150,10 @@
     <string name="unknown_shelter">Unknown</string>
     <string name="description_title">Description</string>
     <string name="adopt_button">Adopt</string>
+    <string name="age_years">anos</string>
+    <string name="age_not_available">N/A</string>
+
+
 
     <!-- Image Gallery -->
     <string name="main_image_description">Main Image</string>
@@ -259,6 +266,7 @@
     <string name="success_shelter_added">Shelter added successfully!</string>
     <string name="success_shelter_updated">Shelter updated successfully!</string>
     <string name="success_shelter_removed">Shelter removed successfully!</string>
+    <string name="error_sync_shelters">Failed to sync shelters.</string>
 
     <!-- AuthViewModel Messages -->
     <string name="required_fields_error">Please fill in all required fields.</string>
@@ -283,7 +291,69 @@
 
     <!-- AnimalViewModel Messages -->
 
+    <!-- AnimalRepository Messages -->
+    <string name="error_offline_create_animal">Offline. Unable to create animal. You need to be online to continue this operation.</string>
+    <string name="error_offline">Network connection is offline, you need to be online to continue this operation.</string>
+    <string name="error_create_animal">Error creating animal.</string>
+    <string name="error_update_status">Error updating animal status.</string>
+    <string name="error_sync_animals">Error syncing animals.</string>
 
+    <!-- AuthRepository Messages -->
+    <string name="error_register_requires_internet">Registration requires an internet connection.</string>
+    <string name="error_uid">UID error.</string>
+    <string name="error_login_requires_internet">Login requires an internet connection.</string>
+    <string name="error_uid_not_found">UID not found.</string>
+    <string name="error_account_not_found">Account not found.</string>
+
+    <!-- UserRepository Messages -->
+    <string name="error_update_user">Error updating user.</string>
+
+
+    <!-- BreedRepository Messages -->
+    <string name="error_loading_breeds">Error loading breeds.</string>
+    <string name="error_connection">Connection error.</string>
+    <string name="error_species_not_supported">Species not supported.</string>
+
+    <!-- OwnerRepository Messages -->
+    <string name="error_duplicate_request">Duplicate request.</string>
+
+    <!-- TranslationRepository Messages -->
+    <string name="error_translation_failed">Translation error.</string>
+    <string name="error_network">Network error.</string>
+
+
+    <!-- ================= ANIMAL CARD ================= -->
+    <string name="unknown_age">?</string>
+    <string name="years_old_label">years</string>
+    <string name="favorite_icon_description">Favorite</string>
+
+    <!-- ================= ANIMAL SELECTION DIALOG ================= -->
+    <string name="choose_animal_title">Choose your animal</string>
+
+    <!-- ================= CALENDAR ================= -->
+    <string name="weekday_initial_sunday">S</string>
+    <string name="weekday_initial_monday">M</string>
+    <string name="weekday_initial_tuesday">T</string>
+    <string name="weekday_initial_wednesday">W</string>
+    <string name="weekday_initial_thursday">T</string>
+    <string name="weekday_initial_friday">F</string>
+    <string name="weekday_initial_saturday">S</string>
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_empty">No notifications</string>
+
+    <string name="notif_new_adoption_request">New adoption request</string>
+    <string name="notif_pending_request">Pending request</string>
+    <string name="notif_request_approved">Request approved!</string>
+    <string name="notif_new_animal_available">New animal available</string>
+    <string name="notif_request_rejected">Request rejected</string>
+    <string name="notif_new_animals">New animals</string>
+    <string name="notif_activity_reminder">Activity reminder</string>
+
+    <!-- ================= PHONE BUTTON ================= -->
+    <string name="call_button_label">Call</string>
+    <string name="phone_icon_description">Phone</string>
 
 
 

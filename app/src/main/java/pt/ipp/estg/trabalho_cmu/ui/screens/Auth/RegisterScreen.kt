@@ -17,6 +17,21 @@ import androidx.compose.ui.unit.dp
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 
+/**
+ * Register screen responsible for collecting user or shelter information
+ * and submitting it to the AuthViewModel.
+ *
+ * This screen dynamically adapts depending on the selected account type:
+ * - USER → registers a normal user
+ * - SHELTER → registers a shelter with identical base fields
+ *
+ * The screen contains:
+ * - A top app bar
+ * - Input fields (name, address, phone, email, password)
+ * - Account type selector
+ * - Register button
+ * - Automatic display of errors or success messages
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(

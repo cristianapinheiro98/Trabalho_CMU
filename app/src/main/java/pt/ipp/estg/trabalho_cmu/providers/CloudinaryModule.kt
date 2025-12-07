@@ -3,6 +3,16 @@ package pt.ipp.estg.trabalho_cmu.providers
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
 
+/**
+ * Provides a configured Cloudinary instance for image uploads.
+ *
+ * The module initializes the Cloudinary client using the project's
+ * cloud name, API key, and API secret.
+ *
+ * This object acts as a singleton provider and does not produce
+ * UI-visible messages or require any error handling at this level.
+ */
+
 object CloudinaryModule {
 
     private const val CLOUD_NAME = "dykreewmy"
