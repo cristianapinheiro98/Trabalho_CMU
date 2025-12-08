@@ -50,11 +50,11 @@ class MainOptionsViewModel(application: Application) : AndroidViewModel(applicat
 
         ownershipRepository.syncUserApprovedOwnerships(userId)
 
-        val myOwnerships = ownershipRepository.getApprovedOwnershipsByUser(userId)
+        val userOwnerships = ownershipRepository.getApprovedOwnershipsByUser(userId)
 
         val animalsList = mutableListOf<Animal>()
 
-        for (own in myOwnerships) {
+        for (own in userOwnerships) {
             val animal = animalRepository.getAnimalById(own.animalId)
             if (animal != null) {
                 animalsList.add(animal)

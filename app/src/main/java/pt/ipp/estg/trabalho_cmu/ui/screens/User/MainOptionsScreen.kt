@@ -35,7 +35,7 @@ fun MainOptionsScreen(
     val lastWalk by viewModel.lastWalk.observeAsState()
     val medals by viewModel.medals.observeAsState(emptyList())
     // Esta é a lista correta para o Dialog, vinda do MainOptionsViewModel
-    val myAnimals by viewModel.ownedAnimals.observeAsState(emptyList())
+    val userAnimals by viewModel.ownedAnimals.observeAsState(emptyList())
 
     // Carregar dados ao entrar
     LaunchedEffect(userId) {
@@ -48,7 +48,7 @@ fun MainOptionsScreen(
     // Dialog para PASSEIO
     if (showAnimalDialog) {
         AnimalSelectionDialog(
-            animals = myAnimals, // Lista carregada pelo MainOptionsViewModel
+            animals = userAnimals, // Lista carregada pelo MainOptionsViewModel
             onDismiss = { showAnimalDialog = false },
             onAnimalSelected = { animal ->
                 showAnimalDialog = false
@@ -60,7 +60,7 @@ fun MainOptionsScreen(
     // Dialog para AGENDAMENTO
     if (showScheduleDialog) {
         AnimalSelectionDialog(
-            animals = myAnimals, // Lista carregada pelo MainOptionsViewModel
+            animals = userAnimals, // Lista carregada pelo MainOptionsViewModel
             onDismiss = { showScheduleDialog = false },
             onAnimalSelected = { animal ->
                 showScheduleDialog = false
