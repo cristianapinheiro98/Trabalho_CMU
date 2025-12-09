@@ -413,6 +413,13 @@ fun AnimalListScreen(
     onNavigateBack: () -> Unit
 ) {
 
+    LaunchedEffect(userId) {
+        if (userId != null && favoriteViewModel != null) {
+            Log.d(TAG, "Definindo userId no FavoriteViewModel: $userId")
+            favoriteViewModel.setCurrentUser(userId)
+            favoriteViewModel.syncFavorites(userId)
+        }
+    }
     // ================================
     //        OBSERVAR OS DADOS
     // ================================
@@ -459,9 +466,9 @@ fun AnimalListScreen(
 
                 } else{
                     favoriteViewModel.addFavorite(userId, animal.id)
-                    favoriteViewModel.syncFavorites(userId)
+
                 }
-                favoriteViewModel.syncFavorites(userId)
+
             }else{
                 Log.d("FAV_DEBUG", "Não executou toggle: userId ou favoriteViewModel null")
             }
