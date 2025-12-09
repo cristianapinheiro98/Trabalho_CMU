@@ -27,7 +27,7 @@
     <string name="ownership_account_number">Account number:</string>
     <string name="ownership_owner_name">Account holder name:</string>
     <string name="ownership_cvv">CVV:</string>
-    <string name="ownership_card_passport">Citizen Card / Passport:</string>
+    <string name="ownership_citizen_card">Citizen Card:</string>
 
     <!-- Ownership Confirmation Screen -->
     <string name="confirmation_title">Thank You, %1$s!</string>
@@ -200,7 +200,7 @@
     <string name="no_pending_requests">No pending requests</string>
 
     <!-- Pedido Card Labels -->
-    <string name="request_label">Request</string>
+    <string name="request_label">Onwership Request</string>
     <string name="approve_request_description">Approve request</string>
     <string name="reject_request_description">Reject request</string>
     <string name="animal_label">Animal:</string>
@@ -253,7 +253,15 @@
     <string name="error_approve_request">Error approving request:</string>
     <string name="error_reject_request">Error rejecting request:</string>
     <string name="error_save_animal">Error saving animal:</string>
-
+    <string name="error_generic">An error has occurred.</string>
+    <string name="error_no_shelter_logged">Error: No shelter is logged in.</string>
+    <string name="error_request_not_found">Request not found.</string>
+    <string name="user_unknown">Unknown user...</string>
+    <string name="user_email_unknown">...</string>
+    <string name="animal_not_found">Animal not found.</string>
+    <string name="request_approved">Request approved!</string>
+    <string name="request_rejected">Request rejected.</string>
+    <string name="error_invalid_date">Invalid date.</string>
 
     <!-- Error and success messages coming from ShelterViewModel -->
     <string name="error_shelter_not_found">Shelter not found</string>
@@ -290,9 +298,9 @@
     <string name="error_submit_ownership">Error submitting ownership request:</string>
 
     <!-- AnimalViewModel Messages -->
+    <string name="error_creating_animal"> Error creating animal. </string>
 
     <!-- AnimalRepository Messages -->
-    <string name="error_offline_create_animal">Offline. Unable to create animal. You need to be online to continue this operation.</string>
     <string name="error_offline">Network connection is offline, you need to be online to continue this operation.</string>
     <string name="error_create_animal">Error creating animal.</string>
     <string name="error_update_status">Error updating animal status.</string>
@@ -306,7 +314,11 @@
     <string name="error_account_not_found">Account not found.</string>
 
     <!-- UserRepository Messages -->
-    <string name="error_update_user">Error updating user.</string>
+    <string name="error_update_user">Could not update user data.</string>
+    <string name="error_convert_user">Failed to convert user data.</string>
+    <string name="error_user_not_found">User not found on the server.</string>
+    <string name="error_sync_user_generic">Error syncing user data.</string>
+    <string name="error_sync_users">Error syncing the users list.</string>
 
 
     <!-- BreedRepository Messages -->
@@ -315,7 +327,7 @@
     <string name="error_species_not_supported">Species not supported.</string>
 
     <!-- OwnerRepository Messages -->
-    <string name="error_duplicate_request">Duplicate request.</string>
+    <string name="error_duplicate_request">You already have a request for this animal.</string>
 
     <!-- TranslationRepository Messages -->
     <string name="error_translation_failed">Translation error.</string>

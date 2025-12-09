@@ -60,9 +60,5 @@ class ShelterRepository(
         }
     }
 
-    /** Returns all shelters from Room (non-LiveData version). */
-    suspend fun getSheltersFromRoom(): List<Shelter> {
-        return shelterDao.getAllSheltersList()
-    }
 
 }

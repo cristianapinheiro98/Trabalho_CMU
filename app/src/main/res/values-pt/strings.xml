@@ -16,7 +16,7 @@
     <string name="ownership_account_number">Número de conta:</string>
     <string name="ownership_owner_name">Nome do titular da conta:</string>
     <string name="ownership_cvv">CVV:</string>
-    <string name="ownership_card_passport">Cartão cidadão/ Passaporte:</string>
+    <string name="ownership_citizen_card">Cartão cidadão:</string>
 
     <!-- Ownership Confirmation Screen -->
     <string name="confirmation_title">Obrigado, %1$s!</string>
@@ -185,7 +185,7 @@
     <string name="no_pending_requests">Sem pedidos pendentes</string>
 
     <!-- Request Card Labels -->
-    <string name="request_label">Pedido</string>
+    <string name="request_label">Pedido de Adoção</string>
     <string name="approve_request_description">Aprovar pedido</string>
     <string name="reject_request_description">Rejeitar pedido</string>
     <string name="animal_label">Animal:</string>
@@ -238,6 +238,16 @@
     <string name="error_approve_request">Erro ao aprovar pedido:</string>
     <string name="error_reject_request">Erro ao rejeitar pedido:</string>
     <string name="error_save_animal">Erro ao salvar o animal:</string>
+    <string name="error_generic">Ocorreu um erro.</string>
+    <string name="error_no_shelter_logged">Erro: Sem abrigo logado.</string>
+    <string name="error_request_not_found">Pedido não encontrado.</string>
+    <string name="user_unknown">Utilizador desconhecido...</string>
+    <string name="user_email_unknown">...</string>
+    <string name="animal_not_found">Animal não encontrado.</string>
+    <string name="request_approved">Pedido aprovado!</string>
+    <string name="request_rejected">Pedido rejeitado.</string>
+    <string name="error_invalid_date">Data inválida.</string>
+
 
 
     <!-- Error and success messages coming from ShelterViewModel -->
@@ -277,6 +287,7 @@
     <string name="error_submit_ownership">Erro ao submeter pedido de ownership:</string>
 
     <!-- AnimalViewModel Messages -->
+    <string name="error_creating_animal"> Erro ao criar animal. </string>
 
     <!-- AnimalRepository Messages -->
 .    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
@@ -293,6 +304,11 @@
 
     <!-- UserRepository Messages -->
     <string name="error_update_user">Falha ao atualizar utilizador.</string>
+    <string name="error_convert_user">Erro ao converter os dados do utilizador.</string>
+    <string name="error_user_not_found">Utilizador não encontrado no servidor.</string>
+    <string name="error_sync_user_generic">Erro ao sincronizar dados do utilizador.</string>
+    <string name="error_sync_users">Erro ao sincronizar a lista de utilizadores.</string>
+
 
     <!-- BreedRepository Messages -->
     <string name="error_loading_breeds">Erro ao carregar raças.</string>
@@ -300,7 +316,7 @@
     <string name="error_species_not_supported">Espécie não suportada.</string>
 
     <!-- OwnerRepository Messages -->
-    <string name="error_duplicate_request">Pedido duplicado.</string>
+    <string name="error_duplicate_request">Já tem um pedido para este animal.</string>
 
     <!-- TranslationRepository Messages -->
     <string name="error_translation_failed">Erro ao traduzir.</string>

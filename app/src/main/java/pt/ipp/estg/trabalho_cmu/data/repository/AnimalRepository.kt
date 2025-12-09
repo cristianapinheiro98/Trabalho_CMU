@@ -34,17 +34,12 @@ class AnimalRepository(
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
     private val TAG = "AnimalRepository"
 
-    /** Live list of all available animals. */
-    fun getAllAnimals(): LiveData<List<Animal>> = animalDao.getAllAnimals()
-
     /** Returns all animals stored locally. */
     suspend fun getAllAnimalsList(): List<Animal> = animalDao.getAllAnimalsList()
 
     /** Retrieve an animal by ID. */
     suspend fun getAnimalById(animalId: String): Animal? = animalDao.getAnimalById(animalId)
 
-    /** Returns all animals stored in Room. */
-    suspend fun getAnimalsFromRoom(): List<Animal> = animalDao.getAllAnimalsList()
 
     /** Filtering and sorting (Room-based). */
     suspend fun filterBySpecies(species: String) = animalDao.filterBySpeciesLocal(species)
@@ -67,7 +62,7 @@ class AnimalRepository(
             try {
 
                 if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline_create_animal)
+                    val msg = appContext.getString(R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 
@@ -86,29 +81,6 @@ class AnimalRepository(
             }
         }
 
-    /**
-     * Updates an animal's status to HASOWNED after an adoption is approved.
-     */
-    suspend fun changeAnimalStatusToOwned(animalId: String): Result<Unit> =
-        withContext(Dispatchers.IO) {
-            try {
-                if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline)
-                    return@withContext Result.failure(Exception(msg))
-                }
-
-                firestore.collection("animals")
-                    .document(animalId)
-                    .update("status", AnimalStatus.HASOWNED.name)
-                    .await()
-
-                Result.success(Unit)
-
-            } catch (e: Exception) {
-                val msg = appContext.getString(R.string.error_update_status)
-                Result.failure(Exception(msg))
-            }
-        }
 
     /**
      * Syncs all AVAILABLE animals from Firebase → Room.

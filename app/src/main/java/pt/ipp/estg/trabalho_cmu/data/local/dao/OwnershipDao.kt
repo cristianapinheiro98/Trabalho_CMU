@@ -25,6 +25,13 @@ interface OwnershipDao {
     fun getPendingOwnershipsByShelter(shelterId: String): LiveData<List<Ownership>>
 
     /**
+     * Returns a pending ownership requests list for a specific shelter.
+     * Used for sync by a shelter.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId AND status = 'PENDING' ORDER BY createdAt DESC")
+    suspend fun getPendingOwnershipsByShelterList(shelterId: String): List<Ownership>
+
+    /**
      * Retrieves a single ownership request by ID.
      */
     @Query("SELECT * FROM OwnershipRequests WHERE id = :id LIMIT 1")
@@ -34,7 +41,7 @@ interface OwnershipDao {
      * Checks if a user already has a pending or approved request for a specific animal.
      * Prevents duplicate requests.
      */
-    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND animalId = :animalId AND status IN ('PENDING', 'APPROVED') LIMIT 1")
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND animalId = :animalId AND status IN ('PENDING') LIMIT 1")
     suspend fun getExistingRequest(userId: String, animalId: String): Ownership?
 
     /**

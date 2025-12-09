@@ -44,6 +44,9 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
     private val _shelters = MutableLiveData<List<Shelter>>()
     val shelters: LiveData<List<Shelter>> = _shelters
 
+    val ctx = getApplication<Application>()
+
+
 
     init {
         loadShelters()
@@ -55,7 +58,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 shelterRepository.syncShelters()
-                _shelters.value = shelterRepository.getSheltersFromRoom()
+                _shelters.value = shelterRepository.getAllSheltersList()
             } catch (e: Exception) {
                 _shelters.value = shelterRepository.getAllSheltersList()
             }
@@ -67,7 +70,7 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 animalRepository.syncAnimals() // update Room
-                _animals.value = animalRepository.getAnimalsFromRoom()
+                _animals.value = animalRepository.getAllAnimalsList()
             } catch (e: Exception) {
                 _animals.value = animalRepository.getAllAnimalsList()
             }
@@ -80,19 +83,16 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
      * Creates an animal in Firebase and then resynchronizes local data.
      */
     fun createAnimal(animal: Animal) = viewModelScope.launch {
-        Log.d(TAG, "createAnimal: ${animal.id}")
         _uiState.value = AnimalUiState.Loading
 
         animalRepository.createAnimal(animal)
             .onSuccess {
-                Log.d(TAG, "Animal criado com sucesso, a ressincronizar...")
                 animalRepository.syncAnimals()
                 _uiState.value = AnimalUiState.AnimalCreated(it)
             }
             .onFailure { exception ->
-                Log.e(TAG, "Erro ao criar animal", exception)
                 _uiState.value = AnimalUiState.Error(
-                    exception.message ?: "R.string.error_creating_animal"
+                    exception.message ?: ctx.getString(R.string.error_creating_animal)
                 )
             }
     }

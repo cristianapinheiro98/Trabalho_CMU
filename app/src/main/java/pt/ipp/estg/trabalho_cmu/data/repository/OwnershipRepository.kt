@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -52,13 +53,20 @@ class OwnershipRepository(
     suspend fun createOwnership(ownership: Ownership): Result<Ownership> =
         withContext(Dispatchers.IO) {
             try {
+                // 1. Verificar Internet
                 if (!NetworkUtils.isConnected()) {
                     val msg = appContext.getString(R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 
-                // Prevent duplicate requests
-                if (ownershipDao.getExistingRequest(ownership.userId, ownership.animalId) != null) {
+                val duplicateQuery = firestore.collection("ownerships")
+                    .whereEqualTo("userId", ownership.userId)
+                    .whereEqualTo("animalId", ownership.animalId)
+                    .whereIn("status", listOf(OwnershipStatus.PENDING.name, OwnershipStatus.APPROVED.name))
+                    .get()
+                    .await()
+
+                if (!duplicateQuery.isEmpty) {
                     val msg = appContext.getString(R.string.error_duplicate_request)
                     return@withContext Result.failure(Exception(msg))
                 }
@@ -67,7 +75,9 @@ class OwnershipRepository(
                     .add(ownership.toFirebaseMap())
                     .await()
 
+
                 val savedOwnership = ownership.copy(id = docRef.id)
+
                 Result.success(savedOwnership)
 
             } catch (e: Exception) {
@@ -139,25 +149,52 @@ class OwnershipRepository(
      *
      * Replaces local Room cache.
      */
+    // Em OwnershipRepository.kt
+
     suspend fun syncPendingOwnerships(shelterId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             if (!NetworkUtils.isConnected()) {
-                val msg = appContext.getString(R.string.error_offline)
-                return@withContext Result.failure(Exception(msg))
+                return@withContext Result.failure(Exception("Sem internet"))
             }
 
             try {
+                Log.d("DEBUG_SYNC", "1. A iniciar Sync para o Shelter ID: '$shelterId'")
+
+                // A Query ao Firebase
                 val snapshot = firestore.collection("ownerships")
                     .whereEqualTo("shelterId", shelterId)
                     .whereEqualTo("status", OwnershipStatus.PENDING.name)
-                    .get().await()
+                    .get()
+                    .await()
 
-                val list = snapshot.documents.mapNotNull { it.toOwnership() }
-                ownershipDao.refreshCache(list)
+                Log.d("DEBUG_SYNC", "2. Documentos encontrados no Firebase: ${snapshot.size()}")
+
+                if (snapshot.isEmpty) {
+                    // Se entrar aqui, o problema é na Query (ID errado ou Status errado no Firebase)
+                    Log.w("DEBUG_SYNC", "AVISO: Nenhum pedido encontrado. Verifica se o shelterId no Firebase é EXATAMENTE '$shelterId' e se o status é 'PENDING'.")
+                }
+
+                val list = snapshot.documents.mapNotNull { doc ->
+                    val item = doc.toOwnership()
+                    if (item == null) {
+                        // Se entrar aqui, o problema é no Mapper (nomes dos campos ou Enum)
+                        Log.e("DEBUG_SYNC", "ERRO DE MAPPER: O documento '${doc.id}' falhou a conversão. Dados: ${doc.data}")
+                    } else {
+                        Log.d("DEBUG_SYNC", "Sucesso ao converter: ${item.id} - User: ${item.userId}")
+                    }
+                    item
+                }
+
+                Log.d("DEBUG_SYNC", "3. A inserir ${list.size} pedidos na BD Local (Room)...")
+                ownershipDao.insertAll(list)
+
+                // Verificação final
+                Log.d("DEBUG_SYNC", "4. Sync concluído.")
 
                 Result.success(Unit)
 
             } catch (e: Exception) {
+                Log.e("DEBUG_SYNC", "ERRO FATAL NO SYNC", e)
                 Result.failure(e)
             }
         }
@@ -187,4 +224,8 @@ class OwnershipRepository(
                 e.printStackTrace()
             }
         }
+
+    suspend fun getPendingOwnershipsByShelterList(shelterId: String): List<Ownership> {
+        return ownershipDao.getPendingOwnershipsByShelterList(shelterId)
+    }
 }

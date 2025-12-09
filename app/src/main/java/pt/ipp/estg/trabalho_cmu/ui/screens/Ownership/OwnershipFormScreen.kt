@@ -18,29 +18,45 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
-import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
+/**
+ * Screen responsible for handling the UI and user interaction when creating an
+ * ownership (adoption) request for a specific animal. This composable screen:
+ *
+ * - Loads the target animal using the provided animal Firebase UID
+ * - Observes UI state changes from the OwnershipViewModel
+ * - Displays a form for collecting payment/account information
+ * - Creates an Ownership entity and submits it to the ViewModel
+ * - Shows loading indicators and snackbar messages for feedback
+ *
+ * Behavior:
+ * - When the animal data is being loaded, a loading indicator is displayed
+ * - When the ownership request is successfully created, a callback is triggered
+ * - When an error occurs, a snackbar message is shown
+ *
+ * @param userFirebaseUid The Firebase UID of the user making the request
+ * @param animalFirebaseUid The Firebase UID of the animal being adopted
+ * @param onSubmitSuccess Callback executed after a successful ownership creation
+ * @param modifier Optional UI modifier for layout customization
+ */
 @Composable
 fun OwnershipFormScreen(
     userFirebaseUid: String,
-    animalFirebaseUid: String, // ID String
+    animalFirebaseUid: String,
     onSubmitSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: OwnershipViewModel = viewModel()
 
-    // Observar Estados
     val uiState by viewModel.uiState.observeAsState(OwnershipUiState.Initial)
     val animal by viewModel.animal.observeAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Carregar dados do animal para obter o shelterId
     LaunchedEffect(animalFirebaseUid) {
         viewModel.loadAnimal(animalFirebaseUid)
     }
 
-    // Reagir a mudanças de estado (Sucesso ou Erro)
     LaunchedEffect(uiState) {
         when(val state = uiState) {
             is OwnershipUiState.OwnershipCreated -> {
@@ -55,7 +71,6 @@ fun OwnershipFormScreen(
         }
     }
 
-    // Verifica se temos o animal carregado (precisamos do shelterId)
     if (animal == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = Color(0xFF2C8B7E))
@@ -78,16 +93,30 @@ fun OwnershipFormScreen(
     }
 }
 
+/**
+ * Internal UI component that renders the ownership form fields and handles
+ * validation logic for:
+ *  - Account number
+ *  - Owner name
+ *  - CVV
+ *  - Citizen card number
+ *
+ * It manages loading states, input restrictions, form validation, and submission.
+ *
+ * @param isLoading Indicates whether the submission process is ongoing
+ * @param snackbarHostState Snackbar host used to display form errors
+ * @param onSubmit Callback triggered when the form is valid and submitted
+ * @param modifier Modifier for layout adjustments
+ */
 @Composable
 private fun OwnershipFormContent(
     isLoading: Boolean,
     snackbarHostState: SnackbarHostState,
-    onSubmit: (String, String, String, String) -> Unit, // Name, Account, CVV, Card
+    onSubmit: (String, String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
 
-    // Form States
     var ownerName by remember { mutableStateOf("") }
     var accountNumber by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
@@ -186,7 +215,7 @@ private fun OwnershipFormContent(
                                 val filtered = it.filter { ch -> ch.isDigit() }
                                 if (filtered.length <= maxCardDigits) cardNumber = filtered
                             },
-                            label = stringResource(R.string.ownership_card_passport),
+                            label = stringResource(R.string.ownership_citizen_card),
                             enabled = !isLoading,
                             placeholder = "12345678"
                         )
@@ -232,6 +261,24 @@ private fun OwnershipFormContent(
     }
 }
 
+/**
+ * Custom text field wrapper used inside the ownership form.
+ * It provides:
+ * - A label
+ * - Optional placeholder
+ * - Optional leading and trailing icons
+ * - Input validation rules (handled outside)
+ *
+ * This component ensures visual consistency across the entire form UI.
+ *
+ * @param value Current text value of the field
+ * @param onValueChange Callback triggered when input changes
+ * @param label The label displayed above the field
+ * @param enabled Whether the field is interactive
+ * @param placeholder Optional placeholder text
+ * @param leadingIcon Optional leading icon composable
+ * @param trailingIcon Optional trailing icon composable
+ */
 @Composable
 private fun OwnershipTextField(
     value: String,
