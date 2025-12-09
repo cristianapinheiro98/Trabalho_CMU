@@ -105,8 +105,8 @@ fun NavGraphPublic(
                 showAdoptButton = false,
                 onAdoptClick = {},
                 onNavigateBack = {
-                    navController.navigate("AnimalsCatalogue") {
-                        popUpTo("AnimalsCatalogue") { inclusive = true }
+                    navController.navigate("AnimalsCatalogueGuest") {
+                        popUpTo("AnimalsCatalogueGuest") { inclusive = true }
                     }
                 }
             )

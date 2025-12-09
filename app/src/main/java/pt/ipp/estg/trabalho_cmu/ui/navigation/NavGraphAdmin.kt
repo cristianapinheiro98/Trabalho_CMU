@@ -11,6 +11,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterHomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AnimalCreationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.AdoptionRequestScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
 
 /**
  * Navigation graph for admin users.
@@ -47,6 +48,10 @@ fun NavGraphAdmin(
             AdoptionRequestScreen (
                 authViewModel = authViewModel,
                 onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable("Veterinarians") {
+            VeterinariansScreen()
         }
     }
 }
