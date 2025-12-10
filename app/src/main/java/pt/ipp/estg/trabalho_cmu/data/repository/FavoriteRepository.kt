@@ -44,10 +44,12 @@ class FavoriteRepository(
     suspend fun addFavorite(userId: String, favorite: Favorite): Result<Favorite> =
         withContext(Dispatchers.IO) {
             try {
+                val tempFavorite = favorite.copy(id = "temp_${System.currentTimeMillis()}")
+                favoriteDao.insertFavorite(tempFavorite)
+
                 if (!NetworkUtils.isConnected()) {
                     return@withContext Result.failure(Exception("Offline. Não é possível adicionar favorito."))
                 }
-
                 // Enviar para Firebase
                 val docRef = firestore.collection("favorites")
                     .add(favorite.toFirebaseMap()).await()
@@ -56,6 +58,7 @@ class FavoriteRepository(
 
                 // Cache Local
                 favoriteDao.insertFavorite(savedFavorite)
+
 
                 Result.success(savedFavorite)
 
@@ -73,6 +76,8 @@ class FavoriteRepository(
     suspend fun removeFavorite(userId: String, animalId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
+                favoriteDao.removeFavorite(userId, animalId)
+
                 if (!NetworkUtils.isConnected()) {
                     return@withContext Result.failure(Exception("Offline. Não é possível remover favorito."))
                 }
