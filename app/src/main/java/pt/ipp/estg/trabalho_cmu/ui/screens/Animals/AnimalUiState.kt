@@ -13,5 +13,5 @@ sealed class AnimalUiState {
     object Loading : AnimalUiState()
     data class AnimalCreated(val animal: Animal) : AnimalUiState()
     data class Error(val message: String) : AnimalUiState()
-    object Success : AnimalUiState()  // Útil para operações futuras
+    object Success : AnimalUiState()
 }

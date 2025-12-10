@@ -19,9 +19,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.User.UserViewModel
 
@@ -42,6 +44,16 @@ fun OwnershipConfirmationScreen(
     onBackToHome: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUserId = authViewModel.getCurrentUserFirebaseUid()
+
+    // Load the logged-in user
+    LaunchedEffect(currentUserId) {
+        if (currentUserId != null) {
+            userViewModel.loadUserById(currentUserId)
+        }
+    }
 
     LaunchedEffect(animalId) {
         animalViewModel.selectAnimal(animalId)
@@ -97,7 +109,7 @@ fun OwnershipConfirmationScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.confirmation_title),
+                    text = stringResource(R.string.confirmation_title, userName),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2C2C2C),

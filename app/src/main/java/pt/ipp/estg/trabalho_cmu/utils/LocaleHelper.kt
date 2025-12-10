@@ -23,13 +23,14 @@ import java.util.*
 
 object LocaleHelper {
 
-    fun setLocale(context: Context, language: String): Context {
+    fun setLocale(base: Context, language: String): Context {
         val locale = Locale(language)
         Locale.setDefault(locale)
 
-        val config = Configuration()
+        val config = base.resources.configuration
         config.setLocale(locale)
 
-        return context.createConfigurationContext(config)
+        return base.createConfigurationContext(config)
     }
 }
+
