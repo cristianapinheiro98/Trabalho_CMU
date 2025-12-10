@@ -18,6 +18,22 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Screen responsible for displaying the application's Terms and Conditions to the user.
+ * It presents:
+ *  - A scrollable text block containing the terms
+ *  - A checkbox that users must tick to confirm their acceptance
+ *  - A "Continue" button enabled only when the checkbox is selected
+ *  - A "Back" button to navigate to the previous screen
+ *
+ * Behavior:
+ * - If the user tries to continue without accepting the terms, a snackbar warning appears.
+ * - Once accepted, the `onAccept` callback is triggered.
+ *
+ * @param onAccept Callback executed when the user accepts the terms and proceeds
+ * @param modifier Optional Modifier for layout customization
+ * @param onNavigateBack Callback executed when the “Back” button is pressed
+ */
 @Composable
 fun TermsAndConditionsScreen(
     onAccept: () -> Unit,

@@ -26,6 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Displays a community achievement card with:
+ * - A map background image
+ * - A descriptive text
+ * - A trophy emoji rendered in gold
+ *
+ * Used in community or gamification sections to highlight progress.
+ */
 @Composable
 fun CommunityCard(
     activityText: String,
@@ -44,7 +52,6 @@ fun CommunityCard(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Imagem do mapa
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

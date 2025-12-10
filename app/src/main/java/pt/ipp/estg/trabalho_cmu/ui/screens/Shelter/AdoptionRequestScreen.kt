@@ -22,12 +22,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
-import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
+
 /**
- * Screen that displays all pending adoption requests for a shelter
- * and allows approving or rejecting each one.
+ * Screen responsible for displaying and managing adoption (ownership) requests submitted
+ * by users to a specific shelter. It allows shelter administrators to:
+ *
+ *  - View all pending requests
+ *  - Approve or reject each request
+ *  - Receive feedback via dialogs when a request is processed
+ *
+ * The screen automatically loads adoption requests for the currently authenticated shelter.
+ *
+ * Behavior:
+ * - Shows a loading indicator while data is being fetched
+ * - Displays an empty state message when there are no pending requests
+ * - Shows a list of request cards when requests exist
+ * - Approval/rejection updates local and remote data through the ViewModel
+ *
+ * @param onNavigateBack Callback triggered when the back button is pressed
+ * @param authViewModel ViewModel holding current authenticated shelter information
+ * @param shelterMngViewModel ViewModel responsible for managing requests and shelter actions
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,25 +53,20 @@ fun AdoptionRequestScreen(
     shelterMngViewModel: ShelterMngViewModel = viewModel()
 ) {
     val currentShelter by authViewModel.currentShelter.observeAsState()
-    val accountType by authViewModel.accountType.observeAsState()
 
-    LaunchedEffect(accountType) {
-        when (accountType) {
-            AccountType.SHELTER -> {
-                currentShelter?.let { shelter ->
-                    println("[AdoptionRequest] Shelter: ${shelter.name}, Firebase UID: ${shelter.firebaseUid}")
-                    shelterMngViewModel.setShelterFirebaseUid(shelter.firebaseUid)
-                }
-            }
-            else -> {
-                println("Only Shelters can view adoption requests")
-            }
+    // Carregar ID do abrigo
+    LaunchedEffect(currentShelter) {
+        currentShelter?.let {
+            shelterMngViewModel.setShelterFirebaseUid(it.id)
         }
     }
 
     val requests by shelterMngViewModel.requests.observeAsState(emptyList())
     val message by shelterMngViewModel.message.observeAsState()
     val error by shelterMngViewModel.error.observeAsState()
+    val uiState by shelterMngViewModel.uiState.observeAsState(ShelterMngUiState.Initial)
+
+    val isLoading = uiState is ShelterMngUiState.Loading
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -77,57 +88,57 @@ fun AdoptionRequestScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (requests.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_pending_requests),
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 40.dp)
-                )
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            if (isLoading) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
             } else {
-                requests.forEach { request ->
-                    PedidoCard(
-                        request = request,
-                        onApprove = { shelterMngViewModel.approveRequest(request) },
-                        onReject = { shelterMngViewModel.rejectRequest(request) }
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (requests.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.no_pending_requests),
+                            color = Color.Gray,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(top = 40.dp)
+                        )
+                    } else {
+                        requests.forEach { request ->
+                            OwnershipRequestCard(
+                                request = request,
+                                onApprove = { shelterMngViewModel.approveRequest(request) },
+                                onReject = { shelterMngViewModel.rejectRequest(request) }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Success dialog
+    // Dialogs
     message?.let {
         AlertDialog(
             onDismissRequest = { shelterMngViewModel.clearMessage() },
             confirmButton = {
-                TextButton(onClick = { shelterMngViewModel.clearMessage() }) {
-                    Text(stringResource(R.string.dialog_ok_button))
-                }
+                TextButton(onClick = { shelterMngViewModel.clearMessage() }) { Text("OK") }
             },
-            title = { Text(stringResource(R.string.dialog_warning_title)) },
+            title = { Text("Sucesso") },
             text = { Text(it) }
         )
     }
 
-    // Error dialog
     error?.let {
         AlertDialog(
             onDismissRequest = { shelterMngViewModel.clearError() },
             confirmButton = {
-                TextButton(onClick = { shelterMngViewModel.clearError() }) {
-                    Text(stringResource(R.string.dialog_ok_button))
-                }
+                TextButton(onClick = { shelterMngViewModel.clearError() }) { Text("OK") }
             },
-            title = { Text(stringResource(R.string.dialog_error_title)) },
+            title = { Text("Erro") },
             text = { Text(it) }
         )
     }
@@ -137,59 +148,73 @@ fun AdoptionRequestScreen(
  * Card showing the details of one adoption request and buttons to approve/reject it.
  */
 @Composable
-fun PedidoCard(
+fun OwnershipRequestCard(
     request: AdoptionRequest,
     onApprove: () -> Unit,
     onReject: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(R.string.request_label),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            color = Color(0xFF455A64)
-        )
-
-        Row {
-            IconButton(onClick = onApprove) {
-                Icon(
-                    imageVector = Icons.Outlined.Check,
-                    contentDescription = stringResource(R.string.approve_request_description),
-                    tint = Color(0xFF388E3C)
-                )
-            }
-            IconButton(onClick = onReject) {
-                Icon(
-                    imageVector = Icons.Outlined.Close,
-                    contentDescription = stringResource(R.string.reject_request_description),
-                    tint = Color(0xFFD32F2F)
-                )
-            }
-        }
-    }
-
-    Spacer(modifier = Modifier.height(8.dp))
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(request.nome, fontWeight = FontWeight.Bold)
-            Text(request.email)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(stringResource(R.string.animal_label) + " " + request.animal)
-            Text(stringResource(R.string.id_label) + " " + request.id)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.request_label),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Row {
+                    IconButton(onClick = onReject) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = stringResource(R.string.reject_request_description),
+                            tint = Color(0xFFD32F2F)
+                        )
+                    }
+                    IconButton(onClick = onApprove) {
+                        Icon(
+                            imageVector = Icons.Outlined.Check,
+                            contentDescription = stringResource(R.string.approve_request_description),
+                            tint = Color(0xFF388E3C)
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            Text(
+                text = request.nome,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = request.email,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(R.string.animal_label),
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = request.animal)
+            }
         }
     }
 }
@@ -205,7 +230,7 @@ fun AdoptionRequestPreview() {
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             requests.forEach {
-                PedidoCard(request = it, onApprove = {}, onReject = {})
+                OwnershipRequestCard(request = it, onApprove = {}, onReject = {})
             }
         }
     }

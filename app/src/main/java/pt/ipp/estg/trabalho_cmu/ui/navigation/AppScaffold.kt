@@ -17,6 +17,20 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
 
+/**
+ * Main application scaffold responsible for:
+ * - Building the top-level UI structure
+ * - Handling drawer navigation for logged-in users
+ * - Routing between public, admin and user navigation graphs
+ *
+ * Behavior:
+ * - Shows a navigation drawer only for logged-in non-admin users
+ * - TopBar changes automatically based on login status and roles
+ * - Navigation content switches depending on:
+ *      • Guest mode
+ *      • Admin mode
+ *      • Regular user mode
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +84,8 @@ fun AppScaffold(
                     onNavigateBack = { navController.popBackStack() },
                     onLogoutClick = onLogoutAndNavigate,
                     onNotificationsClick = { navController.navigate("Notifications") },
-                    onVeterinariansClick = { navController.navigate("Veterinarians") }
+                    onVeterinariansClick = { navController.navigate("Veterinarians") },
+                    onAdminHomeClick = { navController.navigate("AdminHome") }
                 )
             },
             containerColor = MaterialTheme.colorScheme.background

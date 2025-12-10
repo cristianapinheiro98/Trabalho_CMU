@@ -34,47 +34,48 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 
 /**
- * Wrapper composable that loads both animal and shelter information
- * based on the provided animal ID. Displays loading state when necessary
- * and forwards data to the content composable.
+ * High-level animal detail screen responsible for:
+ * - Loading the selected animal and shelter data
+ * - Waiting until both are available
+ * - Displaying a loading indicator when necessary
+ *
+ * Delegates UI rendering to [AnimalDetailScreenContent].
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalDetailScreen(
     shelterViewModel: ShelterViewModel,
     animalViewModel: AnimalViewModel,
-    animalId: Int,
+    animalId: String,
     showAdoptButton: Boolean,
     onAdoptClick: () -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
     val animal by animalViewModel.selectedAnimal.observeAsState()
     val shelter by shelterViewModel.selectedShelter.observeAsState()
-    val isLoadingShelter by shelterViewModel.isLoading.observeAsState(false)
 
-    // Load the selected animal when screen is opened
     LaunchedEffect(animalId) {
         animalViewModel.selectAnimal(animalId)
     }
 
-    // Load shelter once animal data is available
     LaunchedEffect(animal) {
-        animal?.let { shelterViewModel.loadShelterByFirebaseUid(it.shelterFirebaseUid) }
+        animal?.let { shelterViewModel.loadShelterById(it.shelterId) }
     }
 
-    if (animal == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
+    if (animal == null || shelter == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
         return
     }
 
     AnimalDetailScreenContent(
         animal = animal!!,
-        shelter = shelter,
-        isLoadingShelter = isLoadingShelter,
+        shelter = shelter!!,
         showAdoptButton = showAdoptButton,
         onAdoptClick = onAdoptClick,
         onNavigateBack = onNavigateBack
@@ -82,19 +83,18 @@ fun AnimalDetailScreen(
 }
 
 /**
- * Main detail page content section:
+ * Displays the full content of the animal detail screen:
  * - Image gallery
- * - Animal characteristics
- * - Shelter info
- * - Description
- * - Adopt button (optional)
+ * - Animal attributes (breed, size, age)
+ * - Shelter details
+ * - Description section
+ * - Adoption button
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun AnimalDetailScreenContent(
     animal: Animal,
-    shelter: Shelter?,
-    isLoadingShelter: Boolean,
+    shelter: Shelter,
     showAdoptButton: Boolean,
     onAdoptClick: () -> Unit,
     onNavigateBack: () -> Unit
@@ -102,7 +102,9 @@ private fun AnimalDetailScreenContent(
     val imageGallery = animal.imageUrls.ifEmpty { listOf("") }
     var mainImage by remember { mutableStateOf(imageGallery.first()) }
 
-    val ageText = calculateAge(animal.birthDate)?.let { "$it anos" } ?: "N/A"
+    val age = calculateAge(animal.birthDate)
+    val ageText = age?.let { "$it ${stringResource(R.string.age_years)}" }
+        ?: stringResource(R.string.age_not_available)
 
     Column(
         modifier = Modifier
@@ -111,19 +113,15 @@ private fun AnimalDetailScreenContent(
             .verticalScroll(rememberScrollState())
             .statusBarsPadding()
     ) {
-
         ImageGallery(
             mainImageUrl = mainImage,
             thumbnails = imageGallery,
-            onThumbnailClick = {
-                if (it.isNotBlank()) mainImage = it
-            },
+            onThumbnailClick = { if (it.isNotBlank()) mainImage = it },
             onNavigateBack = onNavigateBack
         )
 
         Column(modifier = Modifier.padding(20.dp)) {
 
-            // Animal name
             Text(
                 text = animal.name,
                 fontSize = 28.sp,
@@ -131,7 +129,6 @@ private fun AnimalDetailScreenContent(
                 color = Color(0xFF3F51B5)
             )
 
-            // Species and size
             Text(
                 text = "${animal.species} • ${animal.size}",
                 fontSize = 16.sp,
@@ -142,26 +139,19 @@ private fun AnimalDetailScreenContent(
             Divider()
             Spacer(Modifier.height(12.dp))
 
-            // Info table
+            // Info fields
             InfoLine(R.string.animal_breed_label, animal.breed)
-            InfoLine(R.string.animal_size_label, animal.size)
             InfoLine(R.string.animal_age_label, ageText)
 
-            // Shelter info
-            InfoLine(
-                labelId = R.string.shelter_name_label,
-                value = when {
-                    isLoadingShelter -> stringResource(R.string.loading_shelter)
-                    shelter != null -> shelter.name
-                    else -> stringResource(R.string.unknown_shelter)
-                }
-            )
+            InfoLine(R.string.shelter_name_label, shelter.name)
+            InfoLine(R.string.shelter_address_label, shelter.address)
+            InfoLine(R.string.shelter_email_label, shelter.email)
+            InfoLine(R.string.shelter_phone_label, shelter.phone)
 
             Spacer(Modifier.height(20.dp))
             Divider()
             Spacer(Modifier.height(20.dp))
 
-            // Description section
             Text(
                 text = stringResource(R.string.description_title),
                 fontSize = 20.sp,
@@ -179,7 +169,6 @@ private fun AnimalDetailScreenContent(
 
             Spacer(Modifier.height(24.dp))
 
-            // Adopt button
             if (showAdoptButton) {
                 Button(
                     onClick = onAdoptClick,
@@ -196,10 +185,13 @@ private fun AnimalDetailScreenContent(
 }
 
 /**
- * Image gallery displaying the main image and a row of thumbnails.
+ * Reusable image gallery for the detail screen:
+ * - Displays a main large image
+ * - Shows a row of thumbnails
+ * - Provides a back button overlay
  */
 @Composable
-private fun ImageGallery(
+fun ImageGallery(
     mainImageUrl: String,
     thumbnails: List<String>,
     onThumbnailClick: (String) -> Unit,
@@ -211,7 +203,6 @@ private fun ImageGallery(
             .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
             .background(Color.Black)
     ) {
-
         Column {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -223,8 +214,8 @@ private fun ImageGallery(
                     .fillMaxWidth()
                     .height(280.dp),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.cat_image),
-                error = painterResource(R.drawable.cat_image)
+                placeholder = painterResource(R.drawable.no_image_found),
+                error = painterResource(R.drawable.no_image_found)
             )
 
             Row(
@@ -269,90 +260,18 @@ private fun ImageGallery(
 }
 
 /**
- * Small reusable component that prints a label + value in one row.
+ * Simple row composed of a label and a value.
+ * Used to display animal and shelter attributes.
  */
 @Composable
 fun InfoLine(labelId: Int, value: String) {
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 3.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(stringResource(labelId), fontWeight = FontWeight.Medium, fontSize = 15.sp)
         Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-    }
-}
-
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PreviewAnimalDetailScreen() {
-
-    val mockAnimal = Animal(
-        id = 1,
-        name = "Leia",
-        breed = "Europeu Comum",
-        species = "Gato",
-        size = "Pequeno",
-        birthDate = "2019-01-01",
-        description = "Muito meiga, adora colo e mantinhas!",
-        imageUrls = listOf(
-            "https://placekitten.com/400/300",
-            "https://placekitten.com/350/280",
-            "https://placekitten.com/360/240"
-        ),
-        shelterFirebaseUid = "1"
-    )
-
-    val mockShelter = Shelter(
-        id = 1,
-        firebaseUid = "1",
-        name = "Abrigo Porto",
-        address = "Rua dos Animais 123",
-        phone = "912345678",
-        email = "",
-        password = ""
-    )
-
-    MaterialTheme {
-        AnimalDetailScreenContent(
-            animal = mockAnimal,
-            shelter = mockShelter,
-            isLoadingShelter = false,
-            showAdoptButton = true,
-            onAdoptClick = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PreviewAnimalDetailWithoutAuth() {
-
-    val mockAnimal = Animal(
-        id = 1,
-        name = "Leia",
-        breed = "Europeu Comum",
-        species = "Gato",
-        size = "Pequeno",
-        birthDate = "2019-01-01",
-        description = "Muito meiga, adora colo e mantinhas!",
-        imageUrls = listOf(""),
-        shelterFirebaseUid = "1"
-    )
-
-    MaterialTheme {
-        AnimalDetailScreenContent(
-            animal = mockAnimal,
-            shelter = null,
-            isLoadingShelter = false,
-            showAdoptButton = false,
-            onAdoptClick = {},
-            onNavigateBack = {}
-        )
     }
 }

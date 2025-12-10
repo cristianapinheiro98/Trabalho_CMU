@@ -10,24 +10,30 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 
+/**
+ * Displays an animal card with image, name, calculated age and favorite button (if user logged in).
+ *
+ * @param animal Animal entity containing basic fields.
+ * @param isFavorite Whether the animal is currently marked as favorite.
+ * @param isLoggedIn Determines whether the favorite icon is allowed to appear.
+ * @param onClick Called when the card is tapped.
+ * @param onFavoriteClick Called when the favorite icon is tapped.
+ */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalCard(
     animal: Animal,
@@ -58,8 +64,8 @@ fun AnimalCard(
                 AsyncImage(
                     model = mainImageUrl,
                     contentDescription = animal.name,
-                    placeholder = painterResource(R.drawable.cat_image),
-                    error = painterResource(R.drawable.cat_image),
+                    placeholder = painterResource(R.drawable.no_image_found),
+                    error = painterResource(R.drawable.no_image_found),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
@@ -75,7 +81,7 @@ fun AnimalCard(
                     ) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Favorito",
+                            contentDescription = stringResource(R.string.favorite_icon_description),
                             tint = if (isFavorite) Color.Red else Color.White
                         )
                     }
@@ -93,7 +99,10 @@ fun AnimalCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${age ?: "?"} anos",
+                    text = if (age == null)
+                        stringResource(R.string.unknown_age)
+                    else
+                        "$age ${stringResource(R.string.years_old_label)}",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -103,19 +112,11 @@ fun AnimalCard(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun calculateAge(birthDate: String?): Int? {
-    if (birthDate.isNullOrBlank()) return null
+fun calculateAge(birthDateMillis: Long): Int {
+    val birthDate = java.time.Instant.ofEpochMilli(birthDateMillis)
+        .atZone(java.time.ZoneId.systemDefault())
+        .toLocalDate()
+    val today = java.time.LocalDate.now()
 
-    return try {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val dateOfBirth = LocalDate.parse(birthDate, formatter)
-        val today = LocalDate.now()
-
-        Period.between(dateOfBirth, today).years
-    } catch (e: DateTimeParseException) {
-        null
-    }
+    return java.time.Period.between(birthDate, today).years
 }
-
-
-

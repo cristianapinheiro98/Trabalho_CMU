@@ -2,6 +2,7 @@
     <string name="app_name">Tailwagger</string>
     <string name="language_pt">Português</string>
     <string name="language_en">Inglês</string>
+    <string name="app_logo_description">Logótipo da Tailwagger</string>
 
     <!-- Terms and Conditions Screen -->
     <string name="terms_title">Informações Importantes e Termos Contratuais:</string>
@@ -15,7 +16,7 @@
     <string name="ownership_account_number">Número de conta:</string>
     <string name="ownership_owner_name">Nome do titular da conta:</string>
     <string name="ownership_cvv">CVV:</string>
-    <string name="ownership_card_passport">Cartão cidadão/ Passaporte:</string>
+    <string name="ownership_citizen_card">Cartão cidadão:</string>
 
     <!-- Ownership Confirmation Screen -->
     <string name="confirmation_title">Obrigado, %1$s!</string>
@@ -32,6 +33,7 @@
     <string name="visit_schedule_button">Vamos agendar!</string>
     <string name="select_at_least_one_date">Selecione pelo menos uma data</string>
     <string name="activity_scheduled_success">Atividade agendada com sucesso!</string>
+    <string name="image_animal_description">Imagem do Anima</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Agendamentos Ativos</string>
@@ -69,7 +71,7 @@
     <string name="animal_size_label">Porte:</string>
     <string name="animal_birthdate_label">Data Nascimento:</string>
     <string name="animal_description_label">Descrição:</string>
-    <string name="shelter_name_label">Abrigo:</string>
+    <string name="shelter_name_label">Nome do Abrigo:</string>
     <string name="animal_age_label">Idade:</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
@@ -79,6 +81,9 @@
     <string name="account_type_label">Tipo de conta</string>
     <string name="user_label">Utilizador</string>
     <string name="shelter_label">Abrigo</string>
+    <string name="shelter_address_label">Morada do Abrigo:</string>
+    <string name="shelter_email_label"> Email do Abrigo:</string>
+    <string name="shelter_phone_label"> Contacto do Abrigo:</string>
 
 
     <!-- Navigation -->
@@ -93,6 +98,8 @@
     <string name="favorites">Animais Favoritos</string>
     <string name="community">Comunidade SocialTails</string>
     <string name="preferences">Preferências</string>
+    <string name="admin_home">Página Principal do Admin</string>
+
 
     <!-- Buttons -->
     <string name="cancel_button">Cancelar</string>
@@ -130,8 +137,10 @@
     <string name="filter_medium_size">Porte Médio</string>
     <string name="filter_large_size">Porte Grande</string>
     <string name="filter_clear">Limpar filtros</string>
-    <string name="sort_by_name">Ordenar por nome</string>
-    <string name="sort_by_age">Ordenar por idade</string>
+    <string name="sort_by_name_asc">Ordenar por nome (A-Z)</string>
+    <string name="sort_by_name_desc">Odenar por nome (Z-A)</string>
+    <string name="sort_by_age_asc">Ordenar por idade (mais novos)</string>
+    <string name="sort_by_age_desc">Ordenar por idade (mais velhos)</string>
     <string name="no_animals_available">Sem animais disponíveis.</string>
 
     <!-- Animal Detail Screen -->
@@ -139,6 +148,18 @@
     <string name="unknown_shelter">Desconhecido</string>
     <string name="description_title">Descrição</string>
     <string name="adopt_button">Adotar</string>
+    <string name="age_years">anos</string>
+    <string name="age_not_available">N/A</string>
+
+    <!-- Preferences Screen -->
+    <string name="notifications_label">Notificações</string>
+    <string name="language_label">Idioma da aplicação</string>
+    <string name="edit_profile_label">Editar Dados Pessoais</string>
+    <string name="language_changed_title">Idioma alterado com sucesso!</string>
+    <string name="language_changed_message">A aplicação irá atualizar para aplicar o novo idioma.</string>
+    <string name="go_back_home">Voltar ao menu inicial</string>
+
+
 
     <!-- Image Gallery -->
     <string name="main_image_description">Imagem Principal</string>
@@ -175,7 +196,7 @@
     <string name="no_pending_requests">Sem pedidos pendentes</string>
 
     <!-- Request Card Labels -->
-    <string name="request_label">Pedido</string>
+    <string name="request_label">Pedido de Adoção</string>
     <string name="approve_request_description">Aprovar pedido</string>
     <string name="reject_request_description">Rejeitar pedido</string>
     <string name="animal_label">Animal:</string>
@@ -228,6 +249,16 @@
     <string name="error_approve_request">Erro ao aprovar pedido:</string>
     <string name="error_reject_request">Erro ao rejeitar pedido:</string>
     <string name="error_save_animal">Erro ao salvar o animal:</string>
+    <string name="error_generic">Ocorreu um erro.</string>
+    <string name="error_no_shelter_logged">Erro: Sem abrigo logado.</string>
+    <string name="error_request_not_found">Pedido não encontrado.</string>
+    <string name="user_unknown">Utilizador desconhecido...</string>
+    <string name="user_email_unknown">...</string>
+    <string name="animal_not_found">Animal não encontrado.</string>
+    <string name="request_approved">Pedido aprovado!</string>
+    <string name="request_rejected">Pedido rejeitado.</string>
+    <string name="error_invalid_date">Data inválida.</string>
+
 
 
     <!-- Error and success messages coming from ShelterViewModel -->
@@ -241,10 +272,19 @@
     <string name="success_shelter_added">Shelter added successfully!</string>
     <string name="success_shelter_updated">Shelter updated successfully!</string>
     <string name="success_shelter_removed">Shelter removed successfully!</string>
+    <string name="error_sync_shelters">Erro ao sincronizar abrigos.</string>
 
 
     <!-- AuthViewModel Messages -->
     <string name="required_fields_error">Preenche todos os campos obrigatórios.</string>
+    <string name="session_restored">Sessão recuperada!</string>
+    <string name="login_failed">Erro ao fazer login.</string>
+    <string name="register_failed">Erro ao criar conta.</string>
+    <string name="register_success">Conta criada com sucesso!</string>
+    <string name="login_success">Sessão iniciada</string>
+    <string name="unknown_error"> Erro desconhecido </string>
+
+
 
     <!-- ActivityViewModel Messages -->
     <string name="error_loading_animal_shelter">Erro ao carregar dados do animal e abrigo:</string>
@@ -256,6 +296,88 @@
     <string name="error_animal_not_found_room">Erro: Animal não encontrado na base de dados local.</string>
     <string name="success_ownership_submitted">Pedido de ownership enviado com sucesso!</string>
     <string name="error_submit_ownership">Erro ao submeter pedido de ownership:</string>
+
+    <!-- AnimalViewModel Messages -->
+    <string name="error_creating_animal"> Erro ao criar animal. </string>
+
+    <!-- AnimalRepository Messages -->
+.    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
+    <string name="error_create_animal">Erro ao criar animal.</string>
+    <string name="error_update_status">Erro ao atualizar estado do animal.</string>
+    <string name="error_sync_animals">Erro ao sincronizar animais.</string>
+
+    <!-- AuthRepository Messages -->
+    <string name="error_register_requires_internet">Registo requer conexão à internet.</string>
+    <string name="error_uid">Erro UID.</string>
+    <string name="error_login_requires_internet">Login requer conexão à internet.</string>
+    <string name="error_uid_not_found">UID não encontrado.</string>
+    <string name="error_account_not_found">Conta não encontrada.</string>
+
+    <!-- UserRepository Messages -->
+    <string name="error_update_user">Falha ao atualizar utilizador.</string>
+    <string name="error_convert_user">Erro ao converter os dados do utilizador.</string>
+    <string name="error_user_not_found">Utilizador não encontrado no servidor.</string>
+    <string name="error_sync_user_generic">Erro ao sincronizar dados do utilizador.</string>
+    <string name="error_sync_users">Erro ao sincronizar a lista de utilizadores.</string>
+
+
+    <!-- BreedRepository Messages -->
+    <string name="error_loading_breeds">Erro ao carregar raças.</string>
+    <string name="error_connection">Erro de conexão.</string>
+    <string name="error_species_not_supported">Espécie não suportada.</string>
+
+    <!-- OwnerRepository Messages -->
+    <string name="error_duplicate_request">Já tem um pedido para este animal.</string>
+
+    <!-- TranslationRepository Messages -->
+    <string name="error_translation_failed">Erro ao traduzir.</string>
+    <string name="error_network">Erro de rede.</string>
+
+    <!-- FavoriteRepository Messages -->
+    <string name="error_favorite_add">Erro ao adicionar favorito.</string>
+    <string name="error_favorite_remove">Erro ao remover favorito.</string>
+    <string name="error_favorite_sync">Erro ao sincronizar favoritos.</string>
+"
+
+
+    <!-- ================= ANIMAL CARD ================= -->
+    <string name="unknown_age">?</string>
+    <string name="years_old_label">anos</string>
+    <string name="favorite_icon_description">Favorito</string>
+
+    <!-- ================= ANIMAL SELECTION DIALOG ================= -->
+    <string name="choose_animal_title">Escolhe o teu animal</string>
+
+
+    <!-- ================= CALENDAR ================= -->
+    <string name="weekday_initial_sunday">D</string>
+    <string name="weekday_initial_monday">S</string>
+    <string name="weekday_initial_tuesday">T</string>
+    <string name="weekday_initial_wednesday">Q</string>
+    <string name="weekday_initial_thursday">Q</string>
+    <string name="weekday_initial_friday">S</string>
+    <string name="weekday_initial_saturday">S</string>
+
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <string name="notifications_title">Notificações</string>
+    <string name="notifications_empty">Sem notificações</string>
+
+    <string name="notif_new_adoption_request">Novo pedido de adoção</string>
+    <string name="notif_pending_request">Pedido pendente</string>
+    <string name="notif_request_approved">Pedido aprovado!</string>
+    <string name="notif_new_animal_available">Novo animal disponível</string>
+    <string name="notif_request_rejected">Pedido rejeitado</string>
+    <string name="notif_new_animals">Novos animais</string>
+    <string name="notif_activity_reminder">Lembrete de atividade</string>
+
+    <!-- ================= PHONE BUTTON ================= -->
+    <string name="call_button_label">Ligar</string>
+    <string name="phone_icon_description">Telefone</string>
+
+
+
+
 
 
 

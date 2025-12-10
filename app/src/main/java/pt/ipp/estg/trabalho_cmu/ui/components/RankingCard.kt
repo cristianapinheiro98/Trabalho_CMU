@@ -19,6 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.RankingData
 
+/**
+ * Displays a ranking card used in the SocialTails community leaderboard.
+ *
+ * The card shows:
+ * - A gold trophy emoji
+ * - The user's ranking position and name
+ * - The total distance walked (in km)
+ *
+ * @param rank A RankingData object containing position, name, distance and trophy color.
+ */
 @Composable
 fun RankingCard(rank: RankingData) {
     Card(
@@ -33,7 +43,6 @@ fun RankingCard(rank: RankingData) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Ícone do Troféu (emoji)
             Text(
                 text = "🏆",
                 fontSize = 24.sp,
@@ -42,7 +51,6 @@ fun RankingCard(rank: RankingData) {
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Detalhes do ranking
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "${rank.position}º ${rank.name}",

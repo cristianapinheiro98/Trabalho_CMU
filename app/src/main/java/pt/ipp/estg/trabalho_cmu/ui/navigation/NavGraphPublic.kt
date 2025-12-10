@@ -1,6 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.navigation
 
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,9 +14,24 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.LoginScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
+
+/**
+ * Navigation graph for the public (guest) section of the app.
+ *
+ * Includes:
+ * - Home
+ * - Login
+ * - Register
+ * - Guest animal catalogue
+ * - Guest animal details
+ *
+ * Handles transitions before authentication.
+ */
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +43,10 @@ fun NavGraphPublic(
 ) {
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
+
+
+    // GUEST → não há favoritos
+    val favoriteViewModel: FavoriteViewModel? = null
 
     NavHost(navController = navController, startDestination = "Home") {
 
@@ -42,6 +60,7 @@ fun NavGraphPublic(
 
         composable("Login") {
             LoginScreen(
+                authviewModel = authViewModel,
                 onLoginSuccess = { isAdmin -> onLoginSuccess(isAdmin) },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -59,36 +78,37 @@ fun NavGraphPublic(
             )
         }
 
-        // GUEST — animals' catalogue without favorite button
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
-                viewModel = animalViewModel,
-                isLoggedIn = false,
-                onAnimalClick = { animalId ->
-                    navController.navigate("AnimalDetailGuest/$animalId")
-                },
-                onNavigateBack = {
-                    navController.navigate("AnimalsCatalogue") {
-                        popUpTo("AnimalsCatalogue") { inclusive = true }
-                    }
-                }
+                animalViewModel = animalViewModel,
+                favoriteViewModel = null,   // << GUEST MODE
+                userId = null,
+                onAnimalClick = { id -> navController.navigate("AnimalDetailGuest/$id") },
+                onNavigateBack = { navController.navigate("Home") {
+                    popUpTo("Home") { inclusive = true }
+                } }
             )
         }
 
-        // GUEST — animal detail page without adopt button
+
+        // GUEST — detalhes do animal sem botão de adoção
         composable(
             route = "AnimalDetailGuest/{animalId}",
-            arguments = listOf(navArgument("animalId") { type = NavType.IntType })
+            arguments = listOf(navArgument("animalId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 0
+            val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
 
             AnimalDetailScreen(
                 animalId = animalId,
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
-                showAdoptButton = false, // Guest cannot adopt
-                onAdoptClick = {}
+                showAdoptButton = false,
+                onAdoptClick = {},
+                onNavigateBack = {
+                    navController.navigate("AnimalsCatalogueGuest") {
+                        popUpTo("AnimalsCatalogueGuest") { inclusive = true }
+                    }
+                }
             )
         }
     }

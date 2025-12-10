@@ -6,35 +6,80 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 
 /**
- * DAO for accessing and managing ownership requests.
- * LiveData automatically notifies observers when data changes.
+ * DAO responsible for handling all ownership/adoption requests stored locally.
+ * Supports querying by user, by shelter, inserting, updating, and cache refresh.
  */
 @Dao
 interface OwnershipDao {
-    @Query("SELECT * FROM OwnershipRequests WHERE userFirebaseUid = :userFirebaseUid AND status = 'PENDING' ORDER BY createdAt DESC")
-    fun getOwnershipsByUser(userFirebaseUid: String): LiveData<List<Ownership>>
 
-    @Query("SELECT * FROM OwnershipRequests WHERE shelterFirebaseUid = :shelterFirebaseUid AND status = 'PENDING' ORDER BY createdAt DESC")
-    fun getOwnershipsByShelter(shelterFirebaseUid: String): LiveData<List<Ownership>>
+    /**
+     * Returns pending ownership requests made by a specific user.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'PENDING' ORDER BY createdAt DESC")
+    fun getPendingOwnershipsByUser(userId: String): LiveData<List<Ownership>>
 
+    /**
+     * Returns pending ownership requests received by a shelter.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId AND status = 'PENDING' ORDER BY createdAt DESC")
+    fun getPendingOwnershipsByShelter(shelterId: String): LiveData<List<Ownership>>
+
+    /**
+     * Returns a pending ownership requests list for a specific shelter.
+     * Used for sync by a shelter.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE shelterId = :shelterId AND status = 'PENDING' ORDER BY createdAt DESC")
+    suspend fun getPendingOwnershipsByShelterList(shelterId: String): List<Ownership>
+
+    /**
+     * Retrieves a single ownership request by ID.
+     */
     @Query("SELECT * FROM OwnershipRequests WHERE id = :id LIMIT 1")
-    suspend fun getOwnershipById(id: Int): Ownership?
+    suspend fun getOwnershipById(id: String): Ownership?
 
-    @Query("SELECT * FROM OwnershipRequests WHERE firebaseUid IS NULL")
-    suspend fun getOwnershipsWithoutFirebaseUid(): List<Ownership>
+    /**
+     * Checks if a user already has a pending or approved request for a specific animal.
+     * Prevents duplicate requests.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND animalId = :animalId AND status IN ('PENDING') LIMIT 1")
+    suspend fun getExistingRequest(userId: String, animalId: String): Ownership?
 
-    @Query("SELECT * FROM OwnershipRequests WHERE userFirebaseUid = :userFirebaseUid AND animalFirebaseUid = :animalFirebaseUid AND status IN ('PENDING', 'APPROVED') LIMIT 1")
-    suspend fun getExistingRequest(userFirebaseUid: String, animalFirebaseUid: String): Ownership?
-
-    @Query("UPDATE OwnershipRequests SET status = :status WHERE id = :id")
-    suspend fun updateOwnershipStatus(id: Int, status: OwnershipStatus)
-
+    /**
+     * Inserts or replaces a single ownership request.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOwnership(ownership: Ownership) : Long
+    suspend fun insert(ownership: Ownership)
 
+    /**
+     * Inserts or replaces multiple ownership requests.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(ownerships: List<Ownership>)
 
-    @Delete
-    suspend fun deleteOwnership(ownership: Ownership)
+    /**
+     * Deletes all ownership records.
+     */
+    @Query("DELETE FROM OwnershipRequests")
+    suspend fun deleteAll()
+
+    /**
+     * Updates the status of a specific ownership request.
+     */
+    @Query("UPDATE OwnershipRequests SET status = :status WHERE id = :id")
+    suspend fun updateOwnershipStatus(id: String, status: OwnershipStatus)
+
+    /**
+     * Completely refreshes the ownership cache (delete all + insert all).
+     */
+    @Transaction
+    suspend fun refreshCache(ownerships: List<Ownership>) {
+        deleteAll()
+        insertAll(ownerships)
+    }
+
+    /**
+     * Retrieves all approved ownerships for a specific user.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'APPROVED'")
+    suspend fun getApprovedOwnershipsByUser(userId: String): List<Ownership>
 }

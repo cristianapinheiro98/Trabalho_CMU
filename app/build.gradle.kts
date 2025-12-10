@@ -132,4 +132,7 @@ dependencies {
 
     // Parsing JSON from Places API
     implementation("com.google.code.gson:gson:2.13.2")
+
+    //Cloudinary
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
 }

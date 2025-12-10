@@ -14,7 +14,20 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
-//@AndroidEntryPoint
+/**
+ * Main entry point of the Pet Adoption App.
+ *
+ * Responsibilities:
+ * - Applies the user's selected language before the activity is created,
+ *   overriding `attachBaseContext()` to inject the updated locale.
+ * - Initializes Jetpack Compose and sets the root composable of the app.
+ * - Computes the window size class (Compact, Medium, Expanded) to enable
+ *   responsive UI behavior.
+ *
+ * This activity is the foundation of all screens in the application, ensuring
+ * that localization is applied globally and consistently.
+ */
+
 class MainActivity : ComponentActivity() {
     override fun attachBaseContext(newBase: Context) {
         val lang = LanguagePreferences.getLanguage(newBase)
@@ -24,7 +37,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
 
         setContent {
             val windowSize = calculateWindowSizeClass(this)

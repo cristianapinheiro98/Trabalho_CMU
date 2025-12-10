@@ -16,6 +16,15 @@ import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
 
+/**
+ * Home screen shown to shelters after login.
+ *
+ * Displays:
+ * - Personalized welcome message
+ * - Actions for registering animals
+ * - Viewing adoption requests
+ */
+
 @Composable
 fun ShelterHomeScreen(
     authViewModel: AuthViewModel,

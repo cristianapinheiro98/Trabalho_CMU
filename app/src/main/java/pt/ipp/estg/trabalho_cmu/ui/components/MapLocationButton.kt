@@ -15,6 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Button used to show or navigate to a specific map location.
+ * Displays a red Location icon and a localized text label.
+ */
 @Composable
 fun MapLocationButton(
     onClick: () -> Unit,

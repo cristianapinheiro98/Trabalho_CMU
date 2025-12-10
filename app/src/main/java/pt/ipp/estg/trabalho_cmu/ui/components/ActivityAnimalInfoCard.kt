@@ -21,6 +21,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import pt.ipp.estg.trabalho_cmu.R
 
+/**
+ * Card component displaying basic information about an animal involved in an activity:
+ * - Animal image
+ * - Animal name
+ * - Shelter name
+ * - Optional shelter contact
+ * - Shelter address
+ *
+ * If the imageUrl is null or fails to load, a fallback placeholder image is used.
+ */
+
 @Composable
 fun ActivityAnimalInfoCard(
     animalName: String,
@@ -43,7 +54,7 @@ fun ActivityAnimalInfoCard(
                 .data(imageUrl)
                 .crossfade(true)
                 .build(),
-            contentDescription = "Imagem do Animal",
+            contentDescription = stringResource(R.string.image_animal_description),
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape)

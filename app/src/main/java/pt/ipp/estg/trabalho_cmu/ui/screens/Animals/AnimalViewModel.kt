@@ -1,134 +1,229 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Animals
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.data.local.AppDatabase
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
+import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
+
+private const val TAG = "AnimalViewModel"
 
 /**
- * ViewModel responsible for all animal-related operations:
- * - Fetching animals (from Room and Firebase)
- * - Managing filters (species, size, age, name)
- * - Searching
- * - Sorting
- * - Selecting animals for detail screen
- * - Handling favorites
+ * ViewModel responsible for:
+ * - Loading animals and shelters from Room or Firebase
+ * - Synchronizing data when online
+ * - Filtering, sorting and searching animals
+ * - Creating animals and exposing UI state changes
  *
- * This ViewModel exposes immutable LiveData to the UI layer and interacts
- * with the AnimalRepository which handles data persistence and synchronization.
+ * This ViewModel extends AndroidViewModel so the Application context
+ * can be accessed if needed (e.g., for string resources inside repositories).
  */
 class AnimalViewModel(application: Application) : AndroidViewModel(application) {
 
-    /** Repository providing access to Room DAO and Firebase synchronization */
-    private val repository: AnimalRepository by lazy {
-        val db = AppDatabase.getDatabase(application)
-        AnimalRepository(db.animalDao())
-    }
+    /**
+     * Repository handling animal data (Room + Firebase).
+     */
+    private val animalRepository = DatabaseModule.provideAnimalRepository(application)
 
-    /** Live list of all animals stored locally */
-    val animals: LiveData<List<Animal>> = repository.getAllAnimals()
+    /**
+     * Repository handling shelter data (Room + Firebase).
+     */
+    private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
-    /** Filtered list based on UI interactions (search, filters, sorting) */
-    private val _animalsFiltered = MutableLiveData<List<Animal>>(emptyList())
-    val animalsFiltered: LiveData<List<Animal>> = _animalsFiltered
 
-    /** Selected animal for the details page */
+    /**
+     * Backing field for the animal-related UI state.
+     */
+    private val _uiState = MutableLiveData<AnimalUiState>(AnimalUiState.Initial)
+
+    /**
+     * Public observable UI state used by the UI to react to operations.
+     */
+    val uiState: LiveData<AnimalUiState> = _uiState
+
+    /**
+     * Backing field for the current filtered list of animals.
+     * This holds the result of filter/sort/search operations.
+     */
+    private val _filteredAnimals = MutableLiveData<List<Animal>>()
+
+    /**
+     * Public observable filtered animals list.
+     */
+    val filteredAnimals: LiveData<List<Animal>> = _filteredAnimals
+
+    /**
+     * Backing field for the currently selected animal.
+     */
     private val _selectedAnimal = MutableLiveData<Animal?>()
+
+    /**
+     * Public observable selected animal to be displayed in detail screens.
+     */
     val selectedAnimal: LiveData<Animal?> = _selectedAnimal
 
-    /** List of favorite animals (local only, no Firebase sync) */
-    private val _favorites = MutableLiveData<List<Animal>>(emptyList())
-    val favorites: LiveData<List<Animal>> = _favorites
-
-    /** Loading & error states (useful for UI feedback) */
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
+    /**
+     * Backing field for the full list of animals.
+     */
+    private val _animals = MutableLiveData<List<Animal>>()
 
     /**
-     * Initializes Firebase listener and loads latest data on ViewModel creation.
+     * Public observable full list of animals loaded into memory.
      */
+    val animals: LiveData<List<Animal>> = _animals
+
+    /**
+     * Backing field for the full list of shelters.
+     */
+    private val _shelters = MutableLiveData<List<Shelter>>()
+
+    /**
+     * Public observable list of shelters, used for UI and mapping.
+     */
+    val shelters: LiveData<List<Shelter>> = _shelters
+
+    /**
+     * Application context shortcut, useful for accessing string resources.
+     */
+    val ctx = getApplication<Application>()
+
+
+
     init {
-        repository.startFirebaseListener()
-        refreshFromFirebase()
+        loadShelters()
+        loadAnimals()
     }
+
+    /** Loads shelters from Firebase if online, otherwise from Room. */
+    private fun loadShelters() {
+        viewModelScope.launch {
+            try {
+                shelterRepository.syncShelters()
+                _shelters.value = shelterRepository.getAllSheltersList()
+            } catch (e: Exception) {
+                _shelters.value = shelterRepository.getAllSheltersList()
+            }
+        }
+    }
+
+    /** Loads animals using an online-then-local strategy. */
+    private fun loadAnimals() {
+        viewModelScope.launch {
+            try {
+                animalRepository.syncAnimals() // update Room
+                _animals.value = animalRepository.getAllAnimalsList()
+            } catch (e: Exception) {
+                _animals.value = animalRepository.getAllAnimalsList()
+            }
+        }
+    }
+
 
     /**
-     * Manually refreshes local data by pulling latest values from Firebase.
+     * Creates an animal in Firebase and then resynchronizes local data.
      */
-    fun refreshFromFirebase() = viewModelScope.launch {
-        _isLoading.value = true
-        try {
-            repository.fetchAnimals()
-        } catch (e: Exception) {
-            _error.value = e.message
-        } finally {
-            _isLoading.value = false
-        }
+    fun createAnimal(animal: Animal) = viewModelScope.launch {
+        _uiState.value = AnimalUiState.Loading
+
+        animalRepository.createAnimal(animal)
+            .onSuccess {
+                animalRepository.syncAnimals()
+                _uiState.value = AnimalUiState.AnimalCreated(it)
+            }
+            .onFailure { exception ->
+                _uiState.value = AnimalUiState.Error(
+                    exception.message ?: ctx.getString(R.string.error_creating_animal)
+                )
+            }
     }
 
-    // ------------------ Filtering, Sorting and Search -------------------
+    // ================= FILTER & SORT =================
 
-    /** Filters animals by species (Dog, Cat...) */
     fun filterBySpecies(species: String) = viewModelScope.launch {
-        _animalsFiltered.value = repository.filterBySpecies(species)
-    }
-
-    /** Filters animals by size (Small, Medium, Large) */
-    fun filterBySize(size: String) = viewModelScope.launch {
-        _animalsFiltered.value = repository.filterBySize(size)
-    }
-
-    /** Sorts animals alphabetically */
-    fun sortByName() = viewModelScope.launch {
-        _animalsFiltered.value = repository.sortByName()
-    }
-
-    /** Sorts animals by age */
-    fun sortByAge() = viewModelScope.launch {
-        _animalsFiltered.value = repository.sortByAge()
-    }
-
-    /** Clears filters and resets list back to full list */
-    fun clearFilters() {
-        _animalsFiltered.value = emptyList()
-    }
-
-    /** Performs case-insensitive search by name */
-    fun searchByName(text: String) = viewModelScope.launch {
-        val baseList = animals.value ?: emptyList()
-        _animalsFiltered.value = baseList.filter {
-            it.name.contains(text, ignoreCase = true)
+        try {
+            _filteredAnimals.value = animalRepository.filterBySpecies(species)
+        } catch (e: Exception) {
+            _filteredAnimals.value = emptyList()
         }
     }
 
-    // ------------------ Details Screen -------------------
-
-    /** Loads selected animal by ID for details page */
-    fun selectAnimal(id: Int) = viewModelScope.launch {
-        _selectedAnimal.value = repository.getAnimalById(id)
+    fun filterBySize(size: String) = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.filterBySize(size)
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
     }
 
-    // ------------------ Favorites -------------------
-
-    /** Adds or removes animal from favorites list */
-    fun toggleFavorite(animal: Animal) {
-        val list = _favorites.value ?: emptyList()
-        _favorites.value =
-            if (list.any { it.id == animal.id })
-                list.filterNot { it.id == animal.id }
-            else
-                list + animal
+    fun sortByNameAsc() = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.sortByNameAsc()
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
     }
 
-    /** Clears any stored errors */
-    fun clearError() { _error.value = null }
+    fun sortByNameDesc() = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.sortByNameDesc()
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
+    }
+
+    fun sortByAgeAsc() = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.sortByAgeAsc()
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
+    }
+
+    fun sortByAgeDesc() = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.sortByAgeDesc()
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
+    }
+
+    fun searchAnimals(query: String) = viewModelScope.launch {
+        try {
+            _filteredAnimals.value = animalRepository.searchAnimals(query)
+        } catch (_: Exception) {
+            _filteredAnimals.value = emptyList()
+        }
+    }
+
+    fun clearFilters() {
+        _filteredAnimals.value = emptyList()
+    }
+
+    // ================= SELECT ANIMAL =================
+
+    fun selectAnimal(animalId: String) = viewModelScope.launch {
+        try {
+            _selectedAnimal.value = animalRepository.getAnimalById(animalId)
+        } catch (_: Exception) {
+            _selectedAnimal.value = null
+        }
+    }
+
+    fun refreshAnimals() {
+        viewModelScope.launch { animalRepository.syncAnimals() }
+    }
+
+    fun selectAnimal(animal: Animal) {
+        _selectedAnimal.value = animal
+    }
+
+    fun clearSelectedAnimal() {
+        _selectedAnimal.value = null
+    }
 }
