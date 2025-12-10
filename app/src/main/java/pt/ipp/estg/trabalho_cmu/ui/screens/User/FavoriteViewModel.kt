@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
+import pt.ipp.estg.trabalho_cmu.R
 
 /**
  * ViewModel responsible for managing favorites-related UI logic.
@@ -44,6 +45,13 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
      * Exposes the current user ID as LiveData for observation.
      */
     val currentUserId: LiveData<String?> = _currentUserId
+
+
+    /**
+     * Application context shortcut, useful for accessing string resources.
+     */
+    val ctx = getApplication<Application>()
+
 
     /**
      * Reactive list of favorites for the current user.
@@ -88,7 +96,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.syncFavorites(userId)
             _uiState.value = FavoriteUiState.Initial
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error("Erro a sincronizar favoritos.")
+            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_sync))
         }
     }
 
@@ -120,7 +128,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.syncFavorites(userId)
             _uiState.value = FavoriteUiState.FavoriteAdded(favorite)
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error("Erro ao adicionar favorito.")
+            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_add))
         }
     }
 
@@ -144,7 +152,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.removeFavorite(userId, animalId)
             _uiState.value = FavoriteUiState.FavoriteRemoved
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error("Erro ao remover favorito.")
+            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_remove))
         }
     }
 

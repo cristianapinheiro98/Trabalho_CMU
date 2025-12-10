@@ -156,6 +156,16 @@
     <string name="age_not_available">N/A</string>
 
 
+    <!-- Preferences Screen -->
+    <string name="notifications_label">Notifications</string>
+    <string name="language_label">App Language</string>
+    <string name="edit_profile_label">Edit Personal Data</string>
+    <string name="language_changed_title">Language changed successfully!</string>
+    <string name="language_changed_message">The application will refresh to apply the new language.</string>
+    <string name="go_back_home">Return to Main Menu</string>
+
+
+
 
     <!-- Image Gallery -->
     <string name="main_image_description">Main Image</string>
@@ -334,6 +344,11 @@
     <!-- TranslationRepository Messages -->
     <string name="error_translation_failed">Translation error.</string>
     <string name="error_network">Network error.</string>
+
+    <!-- FavoriteRepository Messages -->
+    <string name="error_favorite_add">Error adding favorite.</string>
+    <string name="error_favorite_remove">Error removing favorite.</string>
+    <string name="error_favorite_sync">Error syncing favorites.</string>
 
 
     <!-- ================= ANIMAL CARD ================= -->

@@ -151,6 +151,15 @@
     <string name="age_years">anos</string>
     <string name="age_not_available">N/A</string>
 
+    <!-- Preferences Screen -->
+    <string name="notifications_label">Notificações</string>
+    <string name="language_label">Idioma da aplicação</string>
+    <string name="edit_profile_label">Editar Dados Pessoais</string>
+    <string name="language_changed_title">Idioma alterado com sucesso!</string>
+    <string name="language_changed_message">A aplicação irá atualizar para aplicar o novo idioma.</string>
+    <string name="go_back_home">Voltar ao menu inicial</string>
+
+
 
     <!-- Image Gallery -->
     <string name="main_image_description">Imagem Principal</string>
@@ -323,6 +332,12 @@
     <!-- TranslationRepository Messages -->
     <string name="error_translation_failed">Erro ao traduzir.</string>
     <string name="error_network">Erro de rede.</string>
+
+    <!-- FavoriteRepository Messages -->
+    <string name="error_favorite_add">Erro ao adicionar favorito.</string>
+    <string name="error_favorite_remove">Erro ao remover favorito.</string>
+    <string name="error_favorite_sync">Erro ao sincronizar favoritos.</string>
+"
 
 
     <!-- ================= ANIMAL CARD ================= -->

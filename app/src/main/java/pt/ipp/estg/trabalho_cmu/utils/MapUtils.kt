@@ -5,6 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 
+/**
+ * Opens Google Maps pointing to a specific address.
+ *
+ * This function builds a geo URI query for the supplied address and attempts
+ * to launch the Google Maps application directly. If Google Maps is not
+ * installed, a small Toast message is displayed informing the user.
+ *
+ * @param context The calling context used to start the intent.
+ * @param address The human-readable address to search in Google Maps.
+ */
+
 fun openGoogleMaps(context: Context, address: String) {
     val encodedAddress = Uri.encode(address)
     val uri = Uri.parse("geo:0,0?q=$encodedAddress")

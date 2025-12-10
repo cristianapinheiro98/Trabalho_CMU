@@ -101,13 +101,13 @@ fun AppTopBar(
 
                 // User-only notifications
                 if (!isAdmin) {
-                    IconButton(onClick = onNotificationsClick) {
+                    /*IconButton(onClick = onNotificationsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
                             contentDescription = stringResource(R.string.notifications),
                             tint = Color(0xFF37474F)
                         )
-                    }
+                    }*/
 
                     // Mock dropdown
                     NotificationDropdown()

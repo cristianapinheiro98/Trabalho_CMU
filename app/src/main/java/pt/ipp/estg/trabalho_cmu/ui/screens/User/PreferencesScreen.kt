@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.User
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,27 +18,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
+import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
 @Composable
 fun PreferencesScreen(
     userViewModel: UserViewModel = viewModel(),
-    userId: String // Recebe ID do user logado
+    userId: String
 ) {
-    // Observar dados do user via LiveData
-    val user by userViewModel.user.observeAsState()
+    val context = LocalContext.current
+    val activity = context as? Activity
 
-    // Carregar dados ao entrar
+    var selectedLanguage by remember {
+        mutableStateOf(
+            if (LanguagePreferences.getLanguage(context) == "pt") "PT" else "EN"
+        )
+    }
+
     LaunchedEffect(userId) {
         userViewModel.loadUserById(userId)
     }
 
+    val user by userViewModel.user.observeAsState()
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var selectedLanguage by remember { mutableStateOf("PT") }
+    var showLanguageChangedDialog by remember { mutableStateOf(false) }
+    var dialogContext by remember { mutableStateOf(context) }
+
+
+
 
     Column(
         modifier = Modifier
@@ -47,7 +63,7 @@ fun PreferencesScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // --- Notificações ---
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -58,34 +74,74 @@ fun PreferencesScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Notificações:", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color(0xFF2C3E50))
-                Switch(checked = notificationsEnabled, onCheckedChange = { notificationsEnabled = it })
+                Text(
+                    stringResource(R.string.notifications_label),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF2C3E50)
+                )
+                Switch(
+                    checked = notificationsEnabled,
+                    onCheckedChange = { notificationsEnabled = it }
+                )
             }
         }
 
-        // --- Idioma ---
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Idioma da APP:", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color(0xFF2C3E50))
+
+                Text(
+                    stringResource(R.string.language_label),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF2C3E50)
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = selectedLanguage == "PT", onClick = { selectedLanguage = "PT" })
+                        RadioButton(
+                            selected = selectedLanguage == "PT",
+                            onClick = {
+                                selectedLanguage = "PT"
+                                val newContext = LocaleHelper.setLocale(context, "pt")
+                                LanguagePreferences.saveLanguage(context, "pt")
+                                dialogContext = newContext
+                                showLanguageChangedDialog = true
+                            }
+                        )
+
                         Text("PT")
                     }
+
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = selectedLanguage == "EN", onClick = { selectedLanguage = "EN" })
+                        RadioButton(
+                            selected = selectedLanguage == "EN",
+                            onClick = {
+                                selectedLanguage = "EN"
+                                val newContext = LocaleHelper.setLocale(context, "en")
+                                LanguagePreferences.saveLanguage(context, "en")
+                                dialogContext = newContext
+                                showLanguageChangedDialog = true
+                            }
+                        )
+
                         Text("EN")
                     }
                 }
             }
         }
 
-        // --- Dados Pessoais (Do Room/Firebase) ---
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -95,6 +151,7 @@ fun PreferencesScreen(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+
                 if (user != null) {
                     UserInfoRow(Icons.Outlined.Person, user!!.name)
                     UserInfoRow(Icons.Outlined.Home, user!!.address)
@@ -107,23 +164,57 @@ fun PreferencesScreen(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 OutlinedButton(
-                    onClick = { /* TODO: Navegar para edição */ },
+                    onClick = { /* TODO: editar dados */ },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Editar Dados Pessoais")
+                    Text(stringResource(R.string.edit_profile_label))
                 }
             }
         }
     }
+
+    if (showLanguageChangedDialog) {
+        val title = dialogContext.getString(R.string.language_changed_title)
+        val message = dialogContext.getString(R.string.language_changed_message)
+        val confirm = dialogContext.getString(R.string.go_back_home)
+
+        AlertDialog(
+            onDismissRequest = { showLanguageChangedDialog = false },
+            title = { Text(title) },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLanguageChangedDialog = false
+                    activity?.recreate()
+                }) {
+                    Text(confirm)
+                }
+            }
+        )
+    }
+
+
 }
 
 @Composable
 fun UserInfoRow(icon: ImageVector, text: String) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-        Icon(imageVector = icon, contentDescription = null, tint = Color(0xFF2C3E50), modifier = Modifier.size(24.dp))
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color(0xFF2C3E50),
+            modifier = Modifier.size(24.dp)
+        )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = text, fontSize = 14.sp, color = Color(0xFF555555))
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            color = Color(0xFF555555)
+        )
     }
 }
 
