@@ -84,7 +84,8 @@ fun AppScaffold(
                     onNavigateBack = { navController.popBackStack() },
                     onLogoutClick = onLogoutAndNavigate,
                     onNotificationsClick = { navController.navigate("Notifications") },
-                    onVeterinariansClick = { navController.navigate("Veterinarians") }
+                    onVeterinariansClick = { navController.navigate("Veterinarians") },
+                    onAdminHomeClick = { navController.navigate("AdminHome") }
                 )
             },
             containerColor = MaterialTheme.colorScheme.background

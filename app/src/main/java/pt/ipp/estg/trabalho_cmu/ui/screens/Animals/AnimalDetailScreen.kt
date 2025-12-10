@@ -141,7 +141,6 @@ private fun AnimalDetailScreenContent(
 
             // Info fields
             InfoLine(R.string.animal_breed_label, animal.breed)
-            InfoLine(R.string.animal_size_label, animal.size)
             InfoLine(R.string.animal_age_label, ageText)
 
             InfoLine(R.string.shelter_name_label, shelter.name)

@@ -97,7 +97,7 @@ class AnimalRepository(
 
             val animals = snapshot.documents.mapNotNull { it.toAnimal() }
 
-            animalDao.refreshCache(animals)
+            animalDao.insertAll(animals)
 
             Log.d(TAG, "SyncAnimals: ${animals.size} received")
 

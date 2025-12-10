@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.*
@@ -41,7 +42,8 @@ fun AppTopBar(
     onNavigateBack: () -> Unit,
     onLogoutClick: () -> Unit,
     onNotificationsClick: () -> Unit,
-    onVeterinariansClick: () -> Unit
+    onVeterinariansClick: () -> Unit,
+    onAdminHomeClick: () -> Unit
 ) {
 
     val showMenuIcon = isLoggedIn && !isAdmin
@@ -80,6 +82,14 @@ fun AppTopBar(
 
                 // Admin-only button
                 if (isAdmin) {
+                    IconButton(onClick = onAdminHomeClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Home,
+                            contentDescription = stringResource(R.string.admin_home),
+                            tint = Color(0xFF37474F)
+                        )
+                    }
+
                     IconButton(onClick = onVeterinariansClick) {
                         Icon(
                             imageVector = Icons.Outlined.Vaccines,
@@ -98,10 +108,12 @@ fun AppTopBar(
                             tint = Color(0xFF37474F)
                         )
                     }
+
+                    // Mock dropdown
+                    NotificationDropdown()
                 }
 
-                // Mock dropdown
-                NotificationDropdown()
+
 
                 // Logout button
                 IconButton(onClick = onLogoutClick) {

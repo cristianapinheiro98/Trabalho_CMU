@@ -97,7 +97,7 @@ fun OwnershipConfirmationScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.confirmation_title, userName),
+                    text = stringResource(R.string.confirmation_title),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2C2C2C),

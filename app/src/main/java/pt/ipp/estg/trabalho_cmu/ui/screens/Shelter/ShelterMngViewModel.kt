@@ -186,21 +186,18 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private suspend fun syncAllData(shelterId: String) {
         try {
-            // 1️⃣ USERS PRIMEIRO!
             userRepository.syncUsers()
-            Log.d(TAG, "✓ Users sincronizados")
+            Log.d(TAG, "Users sincronizados")
 
-            // 2️⃣ ANIMALS
             animalRepository.syncAnimals()
-            Log.d(TAG, "✓ Animals sincronizados")
+            Log.d(TAG, "Animals sincronizados")
 
-            // 3️⃣ OWNERSHIPS POR ÚLTIMO
             ownershipRepository.syncPendingOwnerships(shelterId)
-            Log.d(TAG, "✓ Ownerships sincronizados")
+            Log.d(TAG, "Ownerships sincronizados")
 
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao sincronizar dados", e)
-            throw e  // Re-lança para o caller tratar
+            throw e
         }
     }
 
@@ -293,9 +290,8 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                         _message.value = ctx.getString(R.string.request_approved)
                         val shelterId = _currentShelterId.value
                         if (shelterId != null) {
-                            syncAllData(shelterId)  // Users → Animals → Ownerships
+                            syncAllData(shelterId)
 
-                            // Recarrega a lista atualizada
                             val updatedOwnerships =
                                 ownershipRepository.getPendingOwnershipsByShelterList(shelterId)
                             _requests.value = convertList(updatedOwnerships)

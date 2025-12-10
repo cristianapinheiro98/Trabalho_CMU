@@ -102,6 +102,8 @@
     <string name="favorites">Favourite Animals</string>
     <string name="community">SocialTails Community</string>
     <string name="preferences">Preferences</string>
+    <string name="admin_home">Admin Home</string>
+
 
     <!-- Buttons -->
     <string name="cancel_button">Cancel</string>
@@ -150,7 +152,7 @@
     <string name="unknown_shelter">Unknown</string>
     <string name="description_title">Description</string>
     <string name="adopt_button">Adopt</string>
-    <string name="age_years">anos</string>
+    <string name="age_years">years</string>
     <string name="age_not_available">N/A</string>
 
 

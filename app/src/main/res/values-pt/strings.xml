@@ -98,6 +98,8 @@
     <string name="favorites">Animais Favoritos</string>
     <string name="community">Comunidade SocialTails</string>
     <string name="preferences">Preferências</string>
+    <string name="admin_home">Página Principal do Admin</string>
+
 
     <!-- Buttons -->
     <string name="cancel_button">Cancelar</string>

@@ -53,7 +53,7 @@ class ShelterRepository(
             val snapshot = firestore.collection("shelters").get().await()
             val shelters = snapshot.documents.mapNotNull { it.toShelter() }
 
-            shelterDao.refreshCache(shelters)
+            shelterDao.insertAll(shelters)
             Log.d(TAG, "SyncShelters: ${shelters.size} recebidos")
         } catch (e: Exception) {
             e.printStackTrace()
