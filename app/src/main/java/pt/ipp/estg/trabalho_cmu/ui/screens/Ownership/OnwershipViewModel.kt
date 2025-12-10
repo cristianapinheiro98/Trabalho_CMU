@@ -51,6 +51,9 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
     private val _animal = MutableLiveData<Animal?>()
     val animal: LiveData<Animal?> = _animal
 
+    /**
+     * Application context shortcut, useful for accessing string resources.
+     */
     val ctx = getApplication<Application>()
 
     /**

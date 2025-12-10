@@ -52,26 +52,21 @@ fun FavoritesScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Define o userId no FavoriteViewModel quando o ecrã é criado/atualizado
     LaunchedEffect(userId) {
         favoriteViewModel.setCurrentUser(userId)
         favoriteViewModel.syncFavorites(userId)
     }
 
-    // 1. Obter favoritos do user - agora observados diretamente do ViewModel
     val favoritesList by favoriteViewModel.favorites.observeAsState(emptyList())
 
-    // 2. Obter todos os animais
     val allAnimals by animalViewModel.animals.observeAsState(emptyList())
 
-    // 3. Relacionar favoritos com animais
     val favoriteAnimals = remember(favoritesList, allAnimals) {
         allAnimals.filter { animal ->
             favoritesList.any { fav -> fav.animalId == animal.id }
         }
     }
 
-    // UI State de erros
     val uiState by favoriteViewModel.uiState.observeAsState(FavoriteUiState.Initial)
 
     LaunchedEffect(uiState) {
@@ -102,7 +97,18 @@ fun FavoritesScreen(
     }
 }
 
-
+/**
+ * Content composable for the Favorites screen.
+ *
+ * Displays either:
+ * - A message when there are no favorites, or
+ * - A grid of favorite animals using [AnimalCard] components.
+ *
+ * @param favorites List of Animal entities that the user has favorited.
+ * @param onAnimalClick Callback when an animal card is clicked.
+ * @param onRemoveFavorite Callback when the favorite toggle is used to remove an animal.
+ * @param modifier Modifier applied to the root layout.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun FavoritesScreenContent(

@@ -41,10 +41,6 @@ import java.time.LocalDate
  */
 class ShelterMngViewModel(application: Application) : AndroidViewModel(application) {
 
-    //-------------------------------------------------------------------------
-    // Repositories
-    //-------------------------------------------------------------------------
-
     /**
      * Handles adoption/ownership request logic, including sync and request updates.
      */
@@ -66,9 +62,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val breedRepository = BreedRepository()
 
 
-    //-------------------------------------------------------------------------
-    // UI STATE
-    //-------------------------------------------------------------------------
 
     /**
      * Defines the current state of the shelter management UI.
@@ -99,11 +92,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
 
-
-    //-------------------------------------------------------------------------
-    // FORM DATA
-    //-------------------------------------------------------------------------
-
     /**
      * Contains all input fields required to create a new animal.
      * The form updates reactively based on user input.
@@ -111,10 +99,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _animalForm = MutableLiveData(AnimalForm())
     val animalForm: LiveData<AnimalForm> = _animalForm
 
-
-    //-------------------------------------------------------------------------
-    // BREEDS
-    //-------------------------------------------------------------------------
 
     /**
      * List of breeds dynamically loaded depending on chosen species.
@@ -128,10 +112,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     private val _isLoadingBreeds = MutableLiveData(false)
     val isLoadingBreeds: LiveData<Boolean> = _isLoadingBreeds
 
-
-    //-------------------------------------------------------------------------
-    // IMAGE HANDLING
-    //-------------------------------------------------------------------------
 
     /**
      * Stores URL references to images uploaded for the animal listing.
@@ -167,9 +147,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     fun clearImages() { _selectedImages.value = emptyList() }
 
 
-    //-------------------------------------------------------------------------
-    // ADOPTION REQUESTS
-    //-------------------------------------------------------------------------
 
     /**
      * Stores pending adoption requests for the logged-in shelter.
@@ -268,10 +245,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 
-    //-------------------------------------------------------------------------
-    // APPROVE / REJECT REQUESTS
-    //-------------------------------------------------------------------------
-
     /**
      * Approves a pending adoption request.
      * Updates the animal state and triggers UI success feedback.
@@ -342,10 +315,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 
-    //-------------------------------------------------------------------------
-    // BREED LOADING + FORM HANDLING
-    //-------------------------------------------------------------------------
-
     /**
      * Loads available breeds for the selected species.
      */
@@ -384,10 +353,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 
-    //-------------------------------------------------------------------------
-    // DATE VALIDATION
-    //-------------------------------------------------------------------------
-
     /**
      * Validates a birth date string in format dd/MM/yyyy.
      *
@@ -421,10 +386,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-
-    //-------------------------------------------------------------------------
-    // SAVE ANIMAL
-    //-------------------------------------------------------------------------
 
     /**
      * Validates all animal form fields and attempts to create a new animal.
@@ -499,10 +460,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-
-    //-------------------------------------------------------------------------
-    // UTILITY
-    //-------------------------------------------------------------------------
 
     /** Clears last shown message */
     fun clearMessage() { _message.value = null }

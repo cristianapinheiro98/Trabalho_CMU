@@ -21,16 +21,37 @@ import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
  */
 class ShelterViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Application context used mainly for accessing string resources.
+     */
     private val appContext = getApplication<Application>()
+
+    /**
+     * Repository that provides shelter data from Room and Firebase.
+     */
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
+    /**
+     * Backing field for the current shelter UI state.
+     */
     private val _uiState = MutableLiveData<ShelterUiState>(ShelterUiState.Initial)
+
+    /**
+     * Public observable UI state for shelter-related operations.
+     */
     val uiState: LiveData<ShelterUiState> = _uiState
 
     /** Live list of shelters observed from Room */
     val shelters: LiveData<List<Shelter>> = shelterRepository.getAllShelters()
 
+    /**
+     * Backing field for the currently selected shelter, if any.
+     */
     private val _selectedShelter = MutableLiveData<Shelter?>()
+
+    /**
+     * Public observable currently selected shelter.
+     */
     val selectedShelter: LiveData<Shelter?> = _selectedShelter
 
     /**

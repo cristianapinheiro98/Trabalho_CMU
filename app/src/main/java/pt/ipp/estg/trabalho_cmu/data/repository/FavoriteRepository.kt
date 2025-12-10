@@ -16,7 +16,17 @@ import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
-
+/**
+ * Repository responsible for managing Favorite data across
+ * local persistence (Room) and remote backend (Firebase Firestore).
+ *
+ * Provides an offline-first approach:
+ * - Writes temporary favorites locally before remote sync
+ * - Synchronizes Firestore favorites into the local database
+ *
+ * @property appContext Application context used for string resources.
+ * @property favoriteDao DAO used to access the local favorites table.
+ */
 class FavoriteRepository(
     private val appContext: Context,
     private val favoriteDao: FavoriteDao
@@ -25,18 +35,53 @@ class FavoriteRepository(
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
     private val TAG = "FavoriteRepository"
 
-
+    /**
+     * Returns a LiveData list of favorites for the given user.
+     *
+     * This method observes local Room data, which can be kept in sync
+     * with Firestore using [syncFavorites].
+     *
+     * @param userId ID of the user whose favorites will be observed.
+     * @return LiveData emitting the list of Favorite entities.
+     */
     fun getFavoritesByUserLive(userId: String): LiveData<List<Favorite>> =
         favoriteDao.getFavoritesByUserLive(userId)
 
+    /**
+     * Returns the list of favorites for the given user as a suspend function.
+     *
+     * This is a one-shot query, not observable, reading directly from Room.
+     *
+     * @param userId ID of the user whose favorites will be loaded.
+     * @return List of Favorite entities for that user.
+     */
     suspend fun getFavoritesByUser(userId: String): List<Favorite> =
         favoriteDao.getFavoritesByUser(userId)
 
+    /**
+     * Checks whether a specific animal is marked as favorite for a user.
+     *
+     * @param userId ID of the user.
+     * @param animalId ID of the animal.
+     * @return true if a matching Favorite exists, false otherwise.
+     */
     suspend fun isFavorite(userId: String, animalId: String): Boolean =
         favoriteDao.getFavorite(userId, animalId) != null
 
 
-
+    /**
+     * Adds a favorite for the given user, synchronizing Room and Firestore.
+     *
+     * Flow:
+     * 1. Inserts a temporary Favorite locally with a generated temp ID.
+     * 2. If offline, returns a failure Result and keeps the temp record.
+     * 3. If online, creates the document in Firestore.
+     * 4. Inserts the Favorite again locally with the Firestore document ID.
+     *
+     * @param userId ID of the user adding the favorite (used for filtering).
+     * @param favorite Favorite entity to be added (ID will be replaced by Firestore ID).
+     * @return Result containing the saved Favorite with a valid Firestore ID on success.
+     */
     suspend fun addFavorite(userId: String, favorite: Favorite): Result<Favorite> =
         withContext(Dispatchers.IO) {
             try {
@@ -65,7 +110,20 @@ class FavoriteRepository(
             }
         }
 
-
+    /**
+     * Removes a favorite relation between a user and an animal,
+     * both locally and in Firestore.
+     *
+     * Flow:
+     * 1. Remove the favorite from the local Room database.
+     * 2. If offline, return a failure Result (local removal already happened).
+     * 3. If online, query Firestore for matching documents and delete them.
+     * 4. Ensure local data is clean by removing the favorite again by user/animal.
+     *
+     * @param userId ID of the user who owns the favorite.
+     * @param animalId ID of the animal to be unfavorited.
+     * @return Result<Unit> indicating success or failure.
+     */
     suspend fun removeFavorite(userId: String, animalId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
@@ -95,7 +153,17 @@ class FavoriteRepository(
         }
 
 
-
+    /**
+     * Synchronizes favorites for the given user from Firestore into Room.
+     *
+     * This method:
+     * - Skips sync when there is no internet connection.
+     * - Fetches all favorites from Firestore for the user.
+     * - Converts documents to Favorite entities.
+     * - Replaces the local list of favorites using a transactional DAO operation.
+     *
+     * @param userId ID of the user whose favorites will be synchronized.
+     */
     suspend fun syncFavorites(userId: String) =
         withContext(Dispatchers.IO) {
             if (!NetworkUtils.isConnected()) return@withContext

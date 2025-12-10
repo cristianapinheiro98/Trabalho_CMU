@@ -27,6 +27,10 @@ import android.util.Log
  */
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Authentication repository that encapsulates all auth-related
+     * data sources (Firebase Auth, Room DAOs for User and Shelter).
+     */
     private val authRepository: AuthRepository by lazy {
         val db = AppDatabase.getDatabase(application)
         AuthRepository(
@@ -37,38 +41,101 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    // ===================== UI STATE =====================
+    /**
+     * Backing field representing the current authentication UI state.
+     */
     private val _uiState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
+
+    /**
+     * Public observable auth UI state for the UI layer.
+     */
     val uiState: LiveData<AuthUiState> = _uiState
 
+    /**
+     * Backing field indicating whether an auth-related operation is in progress.
+     */
     private val _isLoading = MutableLiveData(false)
+
+    /**
+     * Public observable loading flag for showing/hiding progress indicators.
+     */
     val isLoading: LiveData<Boolean> = _isLoading
 
+    /**
+     * Backing field for the latest error message, if any.
+     */
     private val _error = MutableLiveData<String?>()
+    /**
+     * Public observable error message, used by the UI to show feedback.
+     */
     val error: LiveData<String?> = _error
 
+    /**
+     * Backing field for transient informational messages (e.g. success).
+     */
     private val _message = MutableLiveData<String?>()
+    /**
+     * Public observable message, typically shown as a snackbar or toast.
+     */
     val message: LiveData<String?> = _message
 
-    // ===================== AUTH STATE =====================
+    /**
+     * Backing field indicating whether a user is currently authenticated.
+     */
     private val _isAuthenticated = MutableLiveData(false)
+    /**
+     * Public observable flag for authentication status.
+     */
     val isAuthenticated: LiveData<Boolean> = _isAuthenticated
 
+    /**
+     * Backing field indicating whether the last registration attempt was successful.
+     */
     private val _isRegistered = MutableLiveData(false)
+
+    /**
+     * Public observable flag to detect when registration has completed successfully.
+     */
     val isRegistered: LiveData<Boolean> = _isRegistered
 
+    /**
+     * Backing field holding the currently logged-in user, if any.
+     */
     private val _currentUser = MutableLiveData<User?>()
+    /**
+     * Public observable current user.
+     */
     val currentUser: LiveData<User?> = _currentUser
 
+    /**
+     * Backing field holding the currently logged-in shelter, if any.
+     */
     private val _currentShelter = MutableLiveData<Shelter?>()
+
+
+    /**
+     * Public observable current shelter.
+     */
     val currentShelter: LiveData<Shelter?> = _currentShelter
 
+    /**
+     * Backing field representing the current account type (USER, SHELTER, NONE).
+     */
     private val _accountType = MutableLiveData<AccountType>(AccountType.NONE)
+
+    /**
+     * Public observable account type of the current session.
+     */
     val accountType: LiveData<AccountType> = _accountType
 
+    /**
+     * Application context shortcut, useful for accessing string resources.
+     */
     private val ctx = getApplication<Application>()
 
-    // ===================== FORM FIELDS =====================
+    /**
+     * LiveData representing the form fields.
+     */
     val name = MutableLiveData("")
     val address = MutableLiveData("")
     val phone = MutableLiveData("")
@@ -80,11 +147,20 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         checkSession()
     }
 
+    /**
+     * Returns the Firebase UID of the currently authenticated user, if any.
+     */
     fun getCurrentUserFirebaseUid(): String? = authRepository.getCurrentUserId()
+
+
+    /**
+     * Returns true if the current account type corresponds to a shelter
+     * (i.e., admin-like behavior in the app).
+     */
 
     fun isAdmin(): Boolean = _accountType.value == AccountType.SHELTER
 
-    // ===================== CHECK SESSION =====================
+
     /**
      * Tries to restore the user session.
      * If valid, updates UI state with LoginResult.
@@ -112,7 +188,13 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ===================== LOGIN =====================
+    /**
+     * Attempts to authenticate a user with the current email and password
+     * values stored in [email] and [password].
+     *
+     * Validates fields before calling the repository.
+     * Updates UI state and error/message LiveData accordingly.
+     */
     fun login() = viewModelScope.launch {
         val emailValue = email.value?.trim().orEmpty()
         val passwordValue = password.value?.trim().orEmpty()
@@ -138,6 +220,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
+    /**
+     * Validates the login fields (email and password).
+     *
+     * @return true if both fields are valid, false otherwise.
+     */
     private fun validateLoginFields(email: String, password: String): Boolean {
         if (email.isBlank() || password.isBlank()) {
             _error.value = ctx.getString(R.string.empty_fields_error)
@@ -146,7 +233,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    // ===================== REGISTER =====================
+    /**
+     * Registers a new account (user or shelter) using the current form fields.
+     *
+     * Performs:
+     * - Basic field validation
+     * - Credential validation (email format, password strength, phone)
+     * - Calls the appropriate repository register method based on account type
+     * - Updates auth state and UI state on success or failure
+     */
     fun register() = viewModelScope.launch {
         val fields = getBasicRegistrationFields()
         val type = accountTypeChoice.value ?: AccountType.USER
@@ -202,7 +297,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ===================== UPDATE AUTH STATE =====================
+
+    /**
+     * Updates the ViewModel's internal authentication state and emits
+     * a [AuthUiState.Success] result with the given [LoginResult] data.
+     */
     private fun updateAuthState(
         user: User? = null,
         shelter: Shelter? = null,
@@ -224,6 +323,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
+    /**
+     * Handles login failures by setting an appropriate error message
+     * and resetting authentication-related LiveData.
+     */
     private fun handleLoginFailure(exception: Throwable) {
         val errorMsg = ctx.getString(R.string.login_failure_message) + " ${exception.message}"
         _error.value = errorMsg
@@ -233,7 +336,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = AuthUiState.Error(errorMsg)
     }
 
-    // ===================== VALIDATIONS =====================
+
+    /**
+     * Helper data class that groups basic registration fields.
+     */
     private data class BasicRegistrationFields(
         val name: String,
         val address: String,
@@ -242,6 +348,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val password: String
     )
 
+
+    /**
+     * Reads and trims the current registration fields into a [BasicRegistrationFields] instance.
+     */
     private fun getBasicRegistrationFields() =
         BasicRegistrationFields(
             name.value!!.trim(),
@@ -251,6 +361,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             password.value!!.trim()
         )
 
+
+    /**
+     * Validates that all basic registration fields are non-empty.
+     */
     private fun validateBasicFields(f: BasicRegistrationFields): Boolean {
         if (f.name.isBlank() || f.address.isBlank() || f.contact.isBlank()
             || f.email.isBlank() || f.password.isBlank()
@@ -261,6 +375,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
+
+    /**
+     * Validates the email, password and phone according to app rules.
+     *
+     * @return true if all credentials are valid, false otherwise.
+     */
     private fun validateCredentials(email: String, password: String, phone: String): Boolean {
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -284,7 +404,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    // ===================== LOGOUT =====================
+    /**
+     * Logs out the current user:
+     * - Clears repository session
+     * - Resets auth-related LiveData
+     * - Clears form fields
+     */
     fun logout() {
         authRepository.logout()
         _isAuthenticated.value = false
@@ -295,6 +420,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         clearFields()
     }
 
+
+    /**
+     * Clears all registration/login form fields and resets account type to USER.
+     */
     fun clearFields() {
         name.value = ""
         address.value = ""
@@ -304,7 +433,22 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         accountTypeChoice.value = AccountType.USER
     }
 
+
+    /**
+     * Clears the current informational message.
+     */
     fun clearMessage() { _message.value = null }
+
+
+    /**
+     * Clears the current error message.
+     */
     fun clearError() { _error.value = null }
+
+
+    /**
+     * Resets the registration flag to false so that the UI can
+     * react only once to a successful registration.
+     */
     fun resetRegistration() { _isRegistered.value = false }
 }

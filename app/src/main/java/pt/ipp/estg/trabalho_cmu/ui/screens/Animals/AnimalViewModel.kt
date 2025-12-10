@@ -26,24 +26,71 @@ private const val TAG = "AnimalViewModel"
  */
 class AnimalViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Repository handling animal data (Room + Firebase).
+     */
     private val animalRepository = DatabaseModule.provideAnimalRepository(application)
+
+    /**
+     * Repository handling shelter data (Room + Firebase).
+     */
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
+
+    /**
+     * Backing field for the animal-related UI state.
+     */
     private val _uiState = MutableLiveData<AnimalUiState>(AnimalUiState.Initial)
+
+    /**
+     * Public observable UI state used by the UI to react to operations.
+     */
     val uiState: LiveData<AnimalUiState> = _uiState
 
+    /**
+     * Backing field for the current filtered list of animals.
+     * This holds the result of filter/sort/search operations.
+     */
     private val _filteredAnimals = MutableLiveData<List<Animal>>()
+
+    /**
+     * Public observable filtered animals list.
+     */
     val filteredAnimals: LiveData<List<Animal>> = _filteredAnimals
 
+    /**
+     * Backing field for the currently selected animal.
+     */
     private val _selectedAnimal = MutableLiveData<Animal?>()
+
+    /**
+     * Public observable selected animal to be displayed in detail screens.
+     */
     val selectedAnimal: LiveData<Animal?> = _selectedAnimal
 
+    /**
+     * Backing field for the full list of animals.
+     */
     private val _animals = MutableLiveData<List<Animal>>()
+
+    /**
+     * Public observable full list of animals loaded into memory.
+     */
     val animals: LiveData<List<Animal>> = _animals
 
+    /**
+     * Backing field for the full list of shelters.
+     */
     private val _shelters = MutableLiveData<List<Shelter>>()
+
+    /**
+     * Public observable list of shelters, used for UI and mapping.
+     */
     val shelters: LiveData<List<Shelter>> = _shelters
 
+    /**
+     * Application context shortcut, useful for accessing string resources.
+     */
     val ctx = getApplication<Application>()
 
 
@@ -77,7 +124,6 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // ================= CREATE ANIMAL =================
 
     /**
      * Creates an animal in Firebase and then resynchronizes local data.
