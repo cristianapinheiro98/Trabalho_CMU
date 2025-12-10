@@ -23,6 +23,23 @@ import pt.ipp.estg.trabalho_cmu.ui.components.AnimalCard
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 
+/**
+ * UI screen displaying the list of animals favorited by the current user.
+ *
+ * Responsibilities:
+ * - Sync favorites from Firebase upon entering the screen
+ * - Observe favorites LiveData and update UI reactively
+ * - Join favorite entries with the list of all animals
+ * - Display favorites in a grid layout (AnimalCard components)
+ * - Handle removal of favorites using the ViewModel
+ * - Show snackbars for errors and confirmation messages
+ *
+ * Parameters:
+ * @param animalViewModel Provides the list of all animals
+ * @param favoriteViewModel Handles favorite operations and state
+ * @param userId ID of the user whose favorites are shown
+ * @param onAnimalClick Callback when an animal card is tapped
+ */
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)

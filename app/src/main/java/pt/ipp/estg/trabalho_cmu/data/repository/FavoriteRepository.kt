@@ -2,12 +2,14 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 
 import pt.ipp.estg.trabalho_cmu.data.local.dao.FavoriteDao
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFavorite
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
@@ -16,16 +18,13 @@ import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 
 
 class FavoriteRepository(
-    private val favoriteDao: FavoriteDao,
-    private val application: Application
+    private val appContext: Context,
+    private val favoriteDao: FavoriteDao
 ) {
 
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
     private val TAG = "FavoriteRepository"
 
-    // ============================
-    // 🔹 LER FAVORITOS (Room)
-    // ============================
 
     fun getFavoritesByUserLive(userId: String): LiveData<List<Favorite>> =
         favoriteDao.getFavoritesByUserLive(userId)
@@ -37,9 +36,6 @@ class FavoriteRepository(
         favoriteDao.getFavorite(userId, animalId) != null
 
 
-    // ============================
-    // 🔹 ADICIONAR FAVORITO
-    // ============================
 
     suspend fun addFavorite(userId: String, favorite: Favorite): Result<Favorite> =
         withContext(Dispatchers.IO) {
@@ -48,15 +44,16 @@ class FavoriteRepository(
                 favoriteDao.insertFavorite(tempFavorite)
 
                 if (!NetworkUtils.isConnected()) {
-                    return@withContext Result.failure(Exception("Offline. Não é possível adicionar favorito."))
+                    val msg = appContext.getString(R.string.error_offline)
+                    return@withContext Result.failure(Exception(msg))
                 }
-                // Enviar para Firebase
+
                 val docRef = firestore.collection("favorites")
                     .add(favorite.toFirebaseMap()).await()
 
                 val savedFavorite = favorite.copy(id = docRef.id)
 
-                // Cache Local
+
                 favoriteDao.insertFavorite(savedFavorite)
 
 
@@ -69,20 +66,16 @@ class FavoriteRepository(
         }
 
 
-    // ============================
-    // 🔹 REMOVER FAVORITO
-    // ============================
-
     suspend fun removeFavorite(userId: String, animalId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
                 favoriteDao.removeFavorite(userId, animalId)
 
                 if (!NetworkUtils.isConnected()) {
-                    return@withContext Result.failure(Exception("Offline. Não é possível remover favorito."))
+                    val msg = appContext.getString(R.string.error_offline)
+                    return@withContext Result.failure(Exception(msg))
                 }
 
-                // Remover do Firebase
                 val snapshot = firestore.collection("favorites")
                     .whereEqualTo("userId", userId)
                     .whereEqualTo("animalId", animalId)
@@ -102,9 +95,6 @@ class FavoriteRepository(
         }
 
 
-    // ============================
-    // 🔹 SINCRONIZAÇÃO ROOM <-> FIREBASE
-    // ============================
 
     suspend fun syncFavorites(userId: String) =
         withContext(Dispatchers.IO) {
@@ -117,7 +107,6 @@ class FavoriteRepository(
 
                 val favorites = snapshot.documents.mapNotNull { it.toFavorite() }
 
-                // Atualiza a cache local
                 favoriteDao.refreshFavoritesForUser(userId, favorites)
 
                 Log.d(TAG, "SyncFavorites: ${favorites.size} favoritos sincronizados")

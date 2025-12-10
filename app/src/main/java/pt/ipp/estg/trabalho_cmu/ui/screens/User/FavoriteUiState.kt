@@ -3,8 +3,18 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.User
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 
 /**
- * Estados possíveis para operações relacionadas com Favoritos.
- * Ficheiro isolado.
+ * Represents all possible UI states for Favorite-related operations.
+ *
+ * Used by FavoriteViewModel to communicate loading, success,
+ * and error states to the UI layer.
+ *
+ * States:
+ * - Initial: No operation running
+ * - Loading: Operation in progress
+ * - Success: Generic success
+ * - FavoriteAdded: Favorite successfully added
+ * - FavoriteRemoved: Favorite successfully removed
+ * - Error: An error occurred with a user-readable message
  */
 sealed class FavoriteUiState {
     object Initial : FavoriteUiState()

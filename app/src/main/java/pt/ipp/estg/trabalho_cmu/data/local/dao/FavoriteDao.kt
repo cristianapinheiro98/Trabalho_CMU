@@ -29,7 +29,6 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorites WHERE userId = :userId")
     suspend fun getFavoritesByUser(userId: String): List<Favorite>
 
-    // Atualiza a cache local
     @Query("DELETE FROM favorites WHERE userId = :userId")
     suspend fun deleteAllFavoritesForUser(userId: String)
 

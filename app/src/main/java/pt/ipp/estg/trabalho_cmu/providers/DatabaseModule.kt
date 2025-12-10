@@ -59,8 +59,8 @@ object DatabaseModule {
 
     fun provideFavoriteRepository(application: Application): FavoriteRepository {
         return FavoriteRepository(
-            favoriteDao = provideFavoriteDao(application),
-            application = application
+            appContext = application,
+            favoriteDao = provideFavoriteDao(application)
         )
     }
 

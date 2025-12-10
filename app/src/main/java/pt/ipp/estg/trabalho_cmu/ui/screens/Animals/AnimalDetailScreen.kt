@@ -214,8 +214,8 @@ fun ImageGallery(
                     .fillMaxWidth()
                     .height(280.dp),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.cat_image),
-                error = painterResource(R.drawable.cat_image)
+                placeholder = painterResource(R.drawable.no_image_found),
+                error = painterResource(R.drawable.no_image_found)
             )
 
             Row(

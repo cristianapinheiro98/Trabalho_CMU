@@ -53,6 +53,13 @@ fun AnimalListScreen(
     onNavigateBack: () -> Unit
 ) {
 
+    LaunchedEffect(userId) {
+        if (userId != null && favoriteViewModel != null) {
+            Log.d(TAG, "Definindo userId no FavoriteViewModel: $userId")
+            favoriteViewModel.setCurrentUser(userId)
+            favoriteViewModel.syncFavorites(userId)
+        }
+    }
 
     val animals by animalViewModel.animals.observeAsState(emptyList())
     val filteredAnimals by animalViewModel.filteredAnimals.observeAsState(emptyList())
@@ -88,10 +95,19 @@ fun AnimalListScreen(
         onClearFilters = { animalViewModel.clearFilters() },
         onNavigateBack = onNavigateBack,
         onToggleFavorite = { animal ->
+            Log.d("FAV_DEBUG", "Clique no coração do animal ${animal.id}, userId=$userId, vm=${favoriteViewModel != null}")
             if (userId != null && favoriteViewModel != null) {
                 val isFav = favorites.any { it.animalId == animal.id }
-                if (isFav) favoriteViewModel.removeFavorite(userId, animal.id)
-                else favoriteViewModel.addFavorite(userId, animal.id)
+                if (isFav) {
+                    favoriteViewModel.removeFavorite(userId, animal.id)
+
+                } else{
+                    favoriteViewModel.addFavorite(userId, animal.id)
+
+                }
+
+            }else{
+                Log.d("FAV_DEBUG", "Não executou toggle: userId ou favoriteViewModel null")
             }
         }
     )
