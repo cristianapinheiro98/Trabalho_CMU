@@ -15,6 +15,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.mappers.toFirebaseMap
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AnimalStatus
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * Repository responsible for managing animal-related data.
@@ -62,7 +63,7 @@ class AnimalRepository(
             try {
 
                 if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline)
+                    val msg = StringHelper.getString(appContext, R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 
@@ -75,7 +76,7 @@ class AnimalRepository(
                 Result.success(savedAnimal)
 
             } catch (e: Exception) {
-                val msg = appContext.getString(R.string.error_create_animal)
+                val msg = StringHelper.getString(appContext, R.string.error_create_animal)
                 Log.e(TAG, msg, e)
                 Result.failure(Exception(msg))
             }
@@ -102,7 +103,7 @@ class AnimalRepository(
             Log.d(TAG, "SyncAnimals: ${animals.size} received")
 
         } catch (e: Exception) {
-            val msg = appContext.getString(R.string.error_sync_animals)
+            val msg = StringHelper.getString(appContext, R.string.error_sync_animals)
             Log.e(TAG, msg, e)
         }
     }

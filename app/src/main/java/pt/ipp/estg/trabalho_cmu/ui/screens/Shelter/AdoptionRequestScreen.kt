@@ -127,7 +127,7 @@ fun AdoptionRequestScreen(
             confirmButton = {
                 TextButton(onClick = { shelterMngViewModel.clearMessage() }) { Text("OK") }
             },
-            title = { Text("Sucesso") },
+            title = { Text(stringResource(R.string.success_in_request)) },
             text = { Text(it) }
         )
     }
@@ -138,7 +138,7 @@ fun AdoptionRequestScreen(
             confirmButton = {
                 TextButton(onClick = { shelterMngViewModel.clearError() }) { Text("OK") }
             },
-            title = { Text("Erro") },
+            title = { Text(stringResource(R.string.error_in_request)) },
             text = { Text(it) }
         )
     }

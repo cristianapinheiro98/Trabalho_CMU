@@ -45,19 +45,19 @@ class BreedRepository {
                         Breed(
                             id = dog.id.toString(),
                             name = dog.name,
-                            description = dog.bredFor ?: dog.temperament ?: dog.origin ?: "Raça de cão"
+                            description = dog.bredFor ?: dog.temperament ?: dog.origin ?: ""
                         )
                     } ?: emptyList()
 
                     translateBreeds(breeds, onSuccess, onError)
 
                 } else {
-                    onError("R.string.error_loading_breeds")
+                    onError("Error loading breeds")
                 }
             }
 
             override fun onFailure(call: Call<List<DogBreedsResponse>>, t: Throwable) {
-                onError("R.string.error_connection")
+                onError("Error loading breeds")
             }
         })
     }
@@ -79,19 +79,19 @@ class BreedRepository {
                         Breed(
                             id = cat.id,
                             name = cat.name,
-                            description = cat.description ?: "Raça de gato"
+                            description = cat.description ?: ""
                         )
                     } ?: emptyList()
 
                     translateBreeds(breeds, onSuccess, onError)
 
                 } else {
-                    onError("R.string.error_loading_breeds")
+                    onError("Error loading breeds")
                 }
             }
 
             override fun onFailure(call: Call<List<CatBreedsResponse>>, t: Throwable) {
-                onError("R.string.error_connection")
+                onError("Error loading breeds")
             }
         })
     }
@@ -107,7 +107,7 @@ class BreedRepository {
         when (species.lowercase()) {
             "cão", "cao", "dog" -> getDogBreeds(onSuccess, onError)
             "gato", "cat" -> getCatBreeds(onSuccess, onError)
-            else -> onError("R.string.error_species_not_supported")
+            else -> onError("Species not supported")
         }
     }
 

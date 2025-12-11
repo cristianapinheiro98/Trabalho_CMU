@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.LoginResult
 import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 import pt.ipp.estg.trabalho_cmu.data.repository.AuthRepository
 import android.util.Log
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * ViewModel responsible for handling:
@@ -179,7 +180,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     user = loginResult.user,
                     shelter = loginResult.shelter,
                     accountType = loginResult.accountType,
-                    message = ctx.getString(R.string.login_success)
+                    message = StringHelper.getString(ctx, R.string.login_success)
                 )
             } else _uiState.value = AuthUiState.Idle
         }.onFailure {
@@ -211,7 +212,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     user = loginResult.user,
                     shelter = loginResult.shelter,
                     accountType = loginResult.accountType,
-                    message = ctx.getString(R.string.login_success_message)
+                    message = StringHelper.getString(ctx, R.string.login_success_message)
                 )
             }
             .onFailure { ex ->
@@ -227,7 +228,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
      */
     private fun validateLoginFields(email: String, password: String): Boolean {
         if (email.isBlank() || password.isBlank()) {
-            _error.value = ctx.getString(R.string.empty_fields_error)
+            _error.value = StringHelper.getString(ctx, R.string.empty_fields_error)
             return false
         }
         return true
@@ -279,21 +280,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     accountType = loginRes.accountType,
                     message =
                         if (loginRes.accountType == AccountType.USER)
-                            ctx.getString(R.string.register_success_message)
-                        else ctx.getString(R.string.shelter_register_success)
+                            StringHelper.getString(ctx, R.string.register_success_message)
+                        else StringHelper.getString(ctx, R.string.shelter_register_success)
                 )
                 _isRegistered.value = true
 
             }.onFailure { e ->
                 _isLoading.value = false
-                _error.value = ctx.getString(R.string.register_failure_message) + " ${e.message}"
+                _error.value = StringHelper.getString(ctx, R.string.register_failure_message) + " ${e.message}"
                 _uiState.value = AuthUiState.Error(_error.value!!)
             }
 
         } catch (e: Exception) {
             _isLoading.value = false
-            _error.value = ctx.getString(R.string.unknown_error)
-            _uiState.value = AuthUiState.Error(ctx.getString(R.string.unknown_error))
+            _error.value = StringHelper.getString(ctx, R.string.unknown_error)
+            _uiState.value = AuthUiState.Error(StringHelper.getString(ctx,R.string.unknown_error))
         }
     }
 
@@ -328,7 +329,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
      * and resetting authentication-related LiveData.
      */
     private fun handleLoginFailure(exception: Throwable) {
-        val errorMsg = ctx.getString(R.string.login_failure_message) + " ${exception.message}"
+        val errorMsg = StringHelper.getString(ctx, R.string.login_failure_message) + " ${exception.message}"
         _error.value = errorMsg
         _isAuthenticated.value = false
         _currentUser.value = null
@@ -369,7 +370,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         if (f.name.isBlank() || f.address.isBlank() || f.contact.isBlank()
             || f.email.isBlank() || f.password.isBlank()
         ) {
-            _error.value = ctx.getString(R.string.required_fields_error)
+            _error.value = StringHelper.getString(ctx, R.string.required_fields_error)
             return false
         }
         return true
@@ -384,20 +385,20 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private fun validateCredentials(email: String, password: String, phone: String): Boolean {
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _error.value = ctx.getString(R.string.invalid_email_error)
+            _error.value = StringHelper.getString(ctx, R.string.invalid_email_error)
             return false
         }
 
         val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!?.*()-_])[A-Za-z\\d@#\$%^&+=!?.*()-_]{6,}$")
         if (!regex.matches(password)) {
-            _error.value = ctx.getString(R.string.invalid_password_error)
+            _error.value = StringHelper.getString(ctx, R.string.invalid_password_error)
             return false
         }
 
         if (phone.length != 9 || phone.any { !it.isDigit() }
             || !(phone.startsWith("9") || phone.startsWith("2"))
         ) {
-            _error.value = ctx.getString(R.string.invalid_phone_error)
+            _error.value = StringHelper.getString(ctx, R.string.invalid_phone_error)
             return false
         }
 

@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.repository.*
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
 import java.time.LocalDate
 
@@ -238,9 +239,9 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
         return AdoptionRequest(
             id = ownership.id,
-            nome = user?.name ?: ctx.getString(R.string.user_unknown),
-            email = user?.email ?: ctx.getString(R.string.user_email_unknown),
-            animal = animal?.name ?: ctx.getString(R.string.animal_not_found)
+            nome = user?.name ?: StringHelper.getString(ctx, R.string.user_unknown),
+            email = user?.email ?: StringHelper.getString(ctx, R.string.user_email_unknown),
+            animal = animal?.name ?: StringHelper.getString(ctx, R.string.animal_not_found)
         )
     }
 
@@ -260,7 +261,7 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 ownershipRepository.approveOwnershipRequest(request.id, ownership.animalId)
                     .onSuccess {
                         _uiState.value = ShelterMngUiState.RequestApproved
-                        _message.value = ctx.getString(R.string.request_approved)
+                        _message.value = StringHelper.getString( ctx, R.string.request_approved)
                         val shelterId = _currentShelterId.value
                         if (shelterId != null) {
                             syncAllData(shelterId)
@@ -271,15 +272,15 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                         }
                     }
                     .onFailure {
-                        _uiState.value = ShelterMngUiState.Error(it.message ?: "Erro")
+                        _uiState.value = ShelterMngUiState.Error(it.message ?: "Error")
                         _error.value = it.message
                     }
             } else {
-                _error.value = ctx.getString(R.string.error_request_not_found)
+                _error.value = StringHelper.getString(ctx, R.string.error_request_not_found)
             }
 
         } catch (e: Exception) {
-            _error.value = ctx.getString(R.string.error_generic)
+            _error.value = StringHelper.getString(ctx, R.string.error_generic)
         } finally {
             _isLoading.value = false
         }
@@ -295,19 +296,19 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         ownershipRepository.rejectOwnershipRequest(request.id)
             .onSuccess {
                 _uiState.value = ShelterMngUiState.RequestRejected
-                _message.value = ctx.getString(R.string.request_rejected)
+                _message.value = StringHelper.getString(ctx, R.string.request_rejected)
                 val shelterId = _currentShelterId.value
                 if (shelterId != null) {
-                    syncAllData(shelterId)  // Users → Animals → Ownerships
+                    syncAllData(shelterId)
 
-                    // Recarrega a lista atualizada
+
                     val updatedOwnerships =
                         ownershipRepository.getPendingOwnershipsByShelterList(shelterId)
                     _requests.value = convertList(updatedOwnerships)
                 }
             }
             .onFailure {
-                _uiState.value = ShelterMngUiState.Error(it.message ?: ctx.getString(R.string.error_generic))
+                _uiState.value = ShelterMngUiState.Error(it.message ?: StringHelper.getString(ctx, R.string.error_generic))
                 _error.value = it.message
             }
 
@@ -360,29 +361,28 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
      */
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateBirthDate(birthDate: String): String? {
-        val ctx = getApplication<Application>()
 
-        if (birthDate.isBlank()) return ctx.getString(R.string.error_birthdate_required)
+        if (birthDate.isBlank()) return StringHelper.getString(ctx, R.string.error_birthdate_required)
 
         val parts = birthDate.split("/")
-        if (parts.size != 3) return ctx.getString(R.string.error_birthdate_format)
+        if (parts.size != 3) return StringHelper.getString(ctx, R.string.error_birthdate_format)
 
         val day = parts[0].toIntOrNull()
         val month = parts[1].toIntOrNull()
         val year = parts[2].toIntOrNull()
 
-        if (day !in 1..31) return ctx.getString(R.string.error_invalid_day)
-        if (month !in 1..12) return ctx.getString(R.string.error_invalid_month)
+        if (day !in 1..31) return StringHelper.getString(ctx, R.string.error_invalid_day)
+        if (month !in 1..12) return StringHelper.getString(ctx, R.string.error_invalid_month)
         if (day == null || month == null || year == null)
-            return ctx.getString(R.string.error_invalid_date_numbers)
+            return StringHelper.getString(ctx, R.string.error_invalid_date_numbers)
 
         return try {
             val parsed = LocalDate.of(year, month, day)
             if (parsed.isAfter(LocalDate.now()))
-                ctx.getString(R.string.error_future_date)
+                StringHelper.getString(ctx, R.string.error_future_date)
             else null
         } catch (e: Exception) {
-            ctx.getString(R.string.error_invalid_date)
+            StringHelper.getString(ctx, R.string.error_invalid_date)
         }
     }
 
@@ -401,21 +401,20 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
     fun saveAnimal() {
         val form = _animalForm.value ?: return
         val shelterId = _currentShelterId.value
-            ?: run { _error.value = ctx.getString(R.string.error_no_shelter_logged); return }
+            ?: run { _error.value = StringHelper.getString(ctx, R.string.error_no_shelter_logged); return }
 
-        val ctx = getApplication<Application>()
 
-        if (form.name.isBlank()) { _error.value = ctx.getString(R.string.error_name_required); return }
-        if (form.breed.isBlank()) { _error.value = ctx.getString(R.string.error_breed_required); return }
-        if (form.size.isBlank()) { _error.value = ctx.getString(R.string.error_size_required); return }
-        if (form.species.isBlank()) { _error.value = ctx.getString(R.string.error_species_required); return }
+        if (form.name.isBlank()) { _error.value = StringHelper.getString(ctx, R.string.error_name_required); return }
+        if (form.breed.isBlank()) { _error.value = StringHelper.getString(ctx, R.string.error_breed_required); return }
+        if (form.size.isBlank()) { _error.value = StringHelper.getString(ctx, R.string.error_size_required); return }
+        if (form.species.isBlank()) { _error.value = StringHelper.getString(ctx, R.string.error_species_required); return }
 
         val birthError = validateBirthDate(form.birthDate)
         if (birthError != null) { _error.value = birthError; return }
 
         val images = _selectedImages.value ?: emptyList()
         if (images.isEmpty()) {
-            _error.value = ctx.getString(R.string.error_add_image)
+            _error.value = StringHelper.getString(ctx, R.string.error_add_image)
             return
         }
 
@@ -444,16 +443,16 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                         _uiState.value = ShelterMngUiState.AnimalCreated(it)
                         _animalForm.value = AnimalForm()
                         clearImages()
-                        _message.value = ctx.getString(R.string.success_animal_created)
+                        _message.value = StringHelper.getString(ctx,R.string.success_animal_created)
                     }
                     .onFailure { e ->
                         _uiState.value = ShelterMngUiState.Error(e.message ?: ctx.getString(R.string.error_generic))
                         _error.value =
-                            ctx.getString(R.string.error_save_animal) + " ${e.message}"
+                            StringHelper.getString(ctx, R.string.error_save_animal) + " ${e.message}"
                     }
 
             } catch (e: Exception) {
-                _error.value = ctx.getString(R.string.error_save_animal) + " ${e.message}"
+                _error.value = StringHelper.getString(ctx, R.string.error_save_animal) + " ${e.message}"
             } finally {
                 _isLoading.value = false
             }

@@ -125,24 +125,6 @@ class AnimalViewModel(application: Application) : AndroidViewModel(application) 
     }
 
 
-    /**
-     * Creates an animal in Firebase and then resynchronizes local data.
-     */
-    fun createAnimal(animal: Animal) = viewModelScope.launch {
-        _uiState.value = AnimalUiState.Loading
-
-        animalRepository.createAnimal(animal)
-            .onSuccess {
-                animalRepository.syncAnimals()
-                _uiState.value = AnimalUiState.AnimalCreated(it)
-            }
-            .onFailure { exception ->
-                _uiState.value = AnimalUiState.Error(
-                    exception.message ?: ctx.getString(R.string.error_creating_animal)
-                )
-            }
-    }
-
     // ================= FILTER & SORT =================
 
     fun filterBySpecies(species: String) = viewModelScope.launch {

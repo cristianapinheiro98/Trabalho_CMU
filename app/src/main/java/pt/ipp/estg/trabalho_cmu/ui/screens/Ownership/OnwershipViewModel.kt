@@ -10,6 +10,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Ownership
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * ViewModel responsible for handling the creation of ownership (adoption) requests
@@ -84,7 +85,7 @@ class OwnershipViewModel(application: Application) : AndroidViewModel(applicatio
             }
             .onFailure { exception ->
                 _uiState.value = OwnershipUiState.Error(
-                    exception.message ?: ctx.getString(R.string.error_submit_ownership)
+                    exception.message ?: StringHelper.getString(ctx, R.string.error_submit_ownership)
                 )
             }
     }
