@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
+import pt.ipp.estg.trabalho_cmu.ui.theme.Trabalho_CMUTheme
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
 /**
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSize = calculateWindowSizeClass(this)
 
-            MaterialTheme {
+            Trabalho_CMUTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {

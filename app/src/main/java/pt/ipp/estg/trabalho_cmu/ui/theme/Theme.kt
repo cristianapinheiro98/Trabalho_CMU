@@ -1,12 +1,5 @@
 package pt.ipp.estg.trabalho_cmu.ui.theme
 
-import pt.ipp.estg.trabalho_cmu.ui.theme.*
-import pt.ipp.estg.trabalho_cmu.ui.theme.Purple80
-import pt.ipp.estg.trabalho_cmu.ui.theme.PurpleGrey80
-import pt.ipp.estg.trabalho_cmu.ui.theme.Pink80
-import pt.ipp.estg.trabalho_cmu.ui.theme.Purple40
-import pt.ipp.estg.trabalho_cmu.ui.theme.PurpleGrey40
-import pt.ipp.estg.trabalho_cmu.ui.theme.Pink40
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +8,13 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pt.ipp.estg.trabalho_cmu.sensors.LightSensorManager
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -27,30 +26,55 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
+/**
+ * Main theme composable for the SeePaw app with automatic light-based theme switching.
+ *
+ * Features:
+ * - Automatically switches between light and dark themes based on ambient light sensor
+ * - Falls back to system theme if sensor is unavailable
+ * - Dynamic color support for Android 12+
+ *
+ * How it works:
+ * - Light sensor measures ambient light in lux
+ * - Below 100 lux: Dark theme (dim environment)
+ * - Above 100 lux: Light theme (bright environment)
+ *
+ * No user configuration needed - works automatically!
+ *
+ * @param dynamicColor Enable Material You dynamic colors on Android 12+
+ * @param content The composable content to apply the theme to
+ */
 @Composable
 fun Trabalho_CMUTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    val context = LocalContext.current
+    val systemDark = isSystemInDarkTheme()
+
+    val lightSensorManager = remember { LightSensorManager(context) }
+
+    // Observe LiveData inside Compose
+    val darkThemeFromSensor by lightSensorManager.shouldUseDarkTheme
+        .observeAsState(initial = systemDark)
+
+    DisposableEffect(Unit) {
+        if (lightSensorManager.isSensorAvailable) {
+            lightSensorManager.startListening()
         }
+        onDispose { lightSensorManager.stopListening() }
+    }
+
+    val darkTheme = if (lightSensorManager.isSensorAvailable) {
+        darkThemeFromSensor
+    } else systemDark
+
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            if (darkTheme) dynamicDarkColorScheme(context)
+            else dynamicLightColorScheme(context)
 
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
