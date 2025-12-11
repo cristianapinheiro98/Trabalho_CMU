@@ -165,8 +165,9 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         composable("AnimalsCatalogue") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = favoriteViewModel, // Usa o FavoriteViewModel
+                favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid(),
+                windowSize = windowSize,
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -184,6 +185,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
                 showAdoptButton = isLoggedIn,
+                windowSize = windowSize,
                 onAdoptClick = { navController.navigate("TermsAndConditions/$animalId") },
                 onNavigateBack = {
                     navController.navigate("AnimalsCatalogue") {

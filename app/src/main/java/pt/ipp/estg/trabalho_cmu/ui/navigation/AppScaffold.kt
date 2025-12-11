@@ -96,13 +96,15 @@ fun AppScaffold(
                         NavGraphPublic(
                             navController = navController,
                             authViewModel = authViewModel,
+                            windowSize = windowSize,
                             onLoginSuccess = onLoginSuccess
                         )
                     }
                     isAdmin -> {
                         NavGraphAdmin(
                             navController = navController,
-                            authViewModel = authViewModel
+                            authViewModel = authViewModel,
+                            windowSize = windowSize,
                         )
                     }
                     else -> {

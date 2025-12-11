@@ -54,7 +54,6 @@ fun AdoptionRequestScreen(
 ) {
     val currentShelter by authViewModel.currentShelter.observeAsState()
 
-    // Carregar ID do abrigo
     LaunchedEffect(currentShelter) {
         currentShelter?.let {
             shelterMngViewModel.setShelterFirebaseUid(it.id)

@@ -2,16 +2,20 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 
@@ -25,6 +29,7 @@ fun LoginScreen(
     authviewModel: AuthViewModel,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onNavigateBack: () -> Unit,
+    windowSize: WindowWidthSizeClass
 ) {
     val isLoading by authviewModel.isLoading.observeAsState(false)
     val error by authviewModel.error.observeAsState()
@@ -47,6 +52,7 @@ fun LoginScreen(
         isLoading = isLoading,
         error = error,
         message = message,
+        windowSize = windowSize,
         onEmailChange = { authviewModel.email.value = it },
         onPasswordChange = { authviewModel.password.value = it },
         onLoginClick = { authviewModel.login() },
@@ -64,6 +70,7 @@ private fun LoginScreenContent(
     isLoading: Boolean,
     error: String?,
     message: String?,
+    windowSize: WindowWidthSizeClass,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
@@ -71,6 +78,7 @@ private fun LoginScreenContent(
     onClearError: () -> Unit,
     onClearMessage: () -> Unit
 ) {
+    val isExpanded = windowSize == WindowWidthSizeClass.Expanded
 
     Scaffold(
         topBar = {
@@ -88,49 +96,49 @@ private fun LoginScreenContent(
         }
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 32.dp, vertical = 16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = onEmailChange,
-                label = { Text(stringResource(R.string.email_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (isExpanded) {
+                // --- TABLET LAYOUT (SPLIT VIEW) ---
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(48.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.login_title),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
 
-            Spacer(Modifier.height(16.dp))
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        LoginInputs(email, password, isLoading, onEmailChange, onPasswordChange, onLoginClick)
+                    }
+                }
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = onPasswordChange,
-                label = { Text(stringResource(R.string.password_label)) },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(24.dp))
-
-            Button(
-                onClick = onLoginClick,
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(22.dp)
-                    )
-                } else {
-                    Text(stringResource(R.string.login_button))
+            } else {
+                // --- PHONE LAYOUT ---
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 32.dp, vertical = 16.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LoginInputs(email, password, isLoading, onEmailChange, onPasswordChange, onLoginClick)
                 }
             }
         }
@@ -165,6 +173,54 @@ private fun LoginScreenContent(
     }
 }
 
+/*Helper function to fill login inputs*/
+@Composable
+private fun LoginInputs(
+    email: String,
+    password: String,
+    isLoading: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit
+) {
+    OutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        label = { Text(stringResource(R.string.email_label)) },
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(Modifier.height(16.dp))
+
+    OutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        label = { Text(stringResource(R.string.password_label)) },
+        visualTransformation = PasswordVisualTransformation(),
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(Modifier.height(24.dp))
+
+    Button(
+        onClick = onLoginClick,
+        enabled = !isLoading,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(22.dp)
+            )
+        } else {
+            Text(stringResource(R.string.login_button))
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun LoginPreview() {
@@ -180,7 +236,8 @@ private fun LoginPreview() {
             onLoginClick = {},
             onNavigateBack = {},
             onClearError = {},
-            onClearMessage = {}
+            onClearMessage = {},
+            windowSize = androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Compact
         )
     }
 }
