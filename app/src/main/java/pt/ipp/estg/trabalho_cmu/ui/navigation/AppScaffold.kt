@@ -102,7 +102,8 @@ fun AppScaffold(
                     isAdmin -> {
                         NavGraphAdmin(
                             navController = navController,
-                            authViewModel = authViewModel
+                            authViewModel = authViewModel,
+                            windowSize = windowSize
                         )
                     }
                     else -> {

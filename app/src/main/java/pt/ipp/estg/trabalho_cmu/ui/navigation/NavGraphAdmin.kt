@@ -2,6 +2,8 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,11 +30,13 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
 @Composable
 fun NavGraphAdmin(
     navController: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    windowSize: WindowWidthSizeClass
 ) {
     NavHost(navController = navController, startDestination = "AdminHome") {
         composable("AdminHome") {
             ShelterHomeScreen(
+                windowSize = windowSize,
                 authViewModel = authViewModel,
                 onRegisterClick = { navController.navigate("AnimalCreation") },
                 onRequestsClick = { navController.navigate("AdoptionRequest") }

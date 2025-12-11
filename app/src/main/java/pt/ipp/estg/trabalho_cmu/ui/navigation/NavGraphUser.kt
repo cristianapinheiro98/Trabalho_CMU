@@ -67,7 +67,8 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         }
 
         composable("Preferences") {
-            PreferencesScreen(userId = authViewModel.getCurrentUserFirebaseUid() ?: "")
+            PreferencesScreen(userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
+                windowSize= windowSize)
         }
 
         composable("Veterinarians") {
@@ -199,7 +200,8 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
                 animalViewModel = animalViewModel,
                 favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
-                onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") }
+                onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId")} ,
+                windowSize= windowSize
             )
         }
 
