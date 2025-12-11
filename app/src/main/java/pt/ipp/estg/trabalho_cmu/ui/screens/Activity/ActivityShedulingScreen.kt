@@ -14,17 +14,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
-import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivityUiState
 
 @Composable
 fun ActivitySchedulingScreen(
@@ -33,44 +30,38 @@ fun ActivitySchedulingScreen(
     onScheduleSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activityViewModel: ActivityViewModel = viewModel()
+    val viewModel: ActivitySchedulingViewModel = viewModel()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
-    var selectedDates by remember { mutableStateOf<Set<String>>(emptySet()) }
-    var pickupTime by remember { mutableStateOf("09:00") }
-    var deliveryTime by remember { mutableStateOf("18:00") }
+    // Observe UIState
+    val uiState by viewModel.uiState.observeAsState(ActivitySchedulingUiState.Initial)
 
-    // Observar estados
-    val uiState by activityViewModel.uiState.observeAsState(ActivityUiState.Initial)
-    val animal by activityViewModel.animal.observeAsState()
-    val shelter by activityViewModel.shelter.observeAsState()
+    // Obtain strings outside of the launched effect
+    val successMessage = stringResource(R.string.activity_scheduled_success)
+    val offlineMessage = stringResource(R.string.error_offline_scheduling)
 
-    // Sync ViewModel times
-    LaunchedEffect(pickupTime) { activityViewModel.pickupTime.value = pickupTime }
-    LaunchedEffect(deliveryTime) { activityViewModel.deliveryTime.value = deliveryTime }
-
+    // Load data
     LaunchedEffect(animalId) {
-        activityViewModel.loadAnimalAndShelter(animalId)
+        viewModel.loadSchedulingData(animalId, userId)
     }
 
+    // Handle state changes
     LaunchedEffect(uiState) {
-        when(val state = uiState) {
-            is ActivityUiState.ActivityScheduled -> {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Atividade agendada com sucesso!")
-                    activityViewModel.resetActivityScheduled()
-                    onScheduleSuccess()
-                }
+        when (val state = uiState) {
+            is ActivitySchedulingUiState.SchedulingSuccess -> {
+                snackbarHostState.showSnackbar(successMessage)
+                onScheduleSuccess()
             }
-            is ActivityUiState.Error -> {
+            is ActivitySchedulingUiState.Error -> {
                 snackbarHostState.showSnackbar(state.message)
+            }
+            is ActivitySchedulingUiState.Offline -> {
+                snackbarHostState.showSnackbar(offlineMessage)
             }
             else -> {}
         }
     }
-
-    val isLoading = uiState is ActivityUiState.Loading
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -81,29 +72,29 @@ fun ActivitySchedulingScreen(
                 .background(Brush.verticalGradient(listOf(Color(0xFFE8F5F3), Color(0xFFF8FFFE))))
                 .padding(paddingValues)
         ) {
-            if (animal == null || shelter == null) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color(0xFF2C8B7E)
-                )
-            } else {
-                ActivitySchedulingContent(
-                    animalName = animal!!.name,
-                    shelterName = shelter!!.name,
-                    shelterAddress = shelter!!.address,
-                    shelterContact = shelter!!.phone,
-                    imageUrl = animal!!.imageUrls.firstOrNull(),
-                    selectedDates = selectedDates,
-                    onDatesChanged = { selectedDates = it },
-                    pickupTime = pickupTime,
-                    onPickupTimeChange = { pickupTime = it },
-                    deliveryTime = deliveryTime,
-                    onDeliveryTimeChange = { deliveryTime = it },
-                    isLoading = isLoading,
-                    onScheduleClick = {
-                        activityViewModel.scheduleActivity(userId, animalId, selectedDates.toList())
-                    }
-                )
+            when (val state = uiState) {
+                is ActivitySchedulingUiState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = Color(0xFF2C8B7E)
+                    )
+                }
+                is ActivitySchedulingUiState.Success -> {
+                    ActivitySchedulingContent(
+                        animal = state.animal,
+                        shelter = state.shelter,
+                        selectedDates = state.selectedDates,
+                        onDatesChanged = { viewModel.onDatesSelected(it) },
+                        pickupTime = state.pickupTime,
+                        onPickupTimeChange = { viewModel.onPickupTimeChanged(it) },
+                        deliveryTime = state.deliveryTime,
+                        onDeliveryTimeChange = { viewModel.onDeliveryTimeChanged(it) },
+                        validationError = state.validationError,
+                        onScheduleClick = { viewModel.scheduleActivity(userId) },
+                        onClearError = { viewModel.clearError() }
+                    )
+                }
+                else -> {}
             }
         }
     }
@@ -111,22 +102,27 @@ fun ActivitySchedulingScreen(
 
 @Composable
 private fun ActivitySchedulingContent(
-    animalName: String,
-    shelterName: String,
-    shelterAddress: String,
-    shelterContact: String,
-    imageUrl: String?,
+    animal: pt.ipp.estg.trabalho_cmu.data.local.entities.Animal,
+    shelter: pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter,
     selectedDates: Set<String>,
     onDatesChanged: (Set<String>) -> Unit,
     pickupTime: String,
     onPickupTimeChange: (String) -> Unit,
     deliveryTime: String,
     onDeliveryTimeChange: (String) -> Unit,
-    isLoading: Boolean,
+    validationError: ValidationError?,
     onScheduleClick: () -> Unit,
+    onClearError: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
+    // Show validation errors
+    LaunchedEffect(validationError) {
+        validationError?.let {
+            // Handle validation errors if needed
+        }
+    }
 
     Column(
         modifier = modifier
@@ -137,8 +133,10 @@ private fun ActivitySchedulingContent(
     ) {
         Text(
             text = stringResource(id = R.string.visit_title),
-            fontSize = 22.sp, fontWeight = FontWeight.Bold,
-            color = Color(0xFF2C8B7E), modifier = Modifier.padding(bottom = 16.dp)
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF2C8B7E),
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Card(
@@ -147,34 +145,73 @@ private fun ActivitySchedulingContent(
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Column(Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                ActivityAnimalInfoCard(animalName, shelterName, shelterContact, shelterAddress, imageUrl)
+            Column(
+                Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ActivityAnimalInfoCard(
+                    animal.name,
+                    shelter.name,
+                    shelter.phone,
+                    shelter.address,
+                    animal.imageUrls.firstOrNull()
+                )
+
                 Spacer(Modifier.height(20.dp))
+
+                // Show shelter hours if available
+                if (shelter.openingTime != null && shelter.closingTime != null) {
+                    Text(
+                        text = stringResource(R.string.shelter_hours_info, shelter.openingTime!!, shelter.closingTime!!),
+                        fontSize = 14.sp,
+                        color = Color(0xFF757575)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                }
+
                 CalendarView(selectedDates, onDatesChanged)
+
                 Spacer(Modifier.height(20.dp))
+
                 ActivityDatesChosen(selectedDates)
+
                 Spacer(Modifier.height(16.dp))
+
                 TimeInputFields(pickupTime, deliveryTime, onPickupTimeChange, onDeliveryTimeChange)
+
                 Spacer(Modifier.height(20.dp))
+
+                // Show validation error
+                validationError?.let { error ->
+                    Text(
+                        text = when (error) {
+                            ValidationError.TimeOutsideOpeningHours -> stringResource(R.string.error_time_outside_hours)
+                            ValidationError.DateConflict -> stringResource(R.string.error_date_conflict)
+                            ValidationError.LessThan24Hours -> stringResource(R.string.error_less_than_24h)
+                            ValidationError.ActiveActivityExists -> stringResource(R.string.error_active_activity_exists)
+                            ValidationError.NoDateSelected -> stringResource(R.string.error_no_date_selected)
+                        },
+                        color = Color.Red,
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.height(12.dp))
+                }
 
                 Button(
                     onClick = onScheduleClick,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
-                    enabled = !isLoading && selectedDates.isNotEmpty(),
+                    enabled = selectedDates.isNotEmpty() && validationError == null,
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C8B7E))
                 ) {
-                    if (isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
-                    else Text(stringResource(R.string.visit_schedule_button), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.visit_schedule_button),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
         Spacer(Modifier.height(32.dp))
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSchedulingContent() {
-    ActivitySchedulingContent("Mariana", "Abrigo Felgueiras", "Rua X", "911", "", emptySet(), {}, "09:00", {}, "18:00", {}, false, {})
 }

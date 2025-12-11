@@ -9,12 +9,17 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
  * Used when syncing shelter information to Firestore.
  */
 fun Shelter.toFirebaseMap(): Map<String, Any> {
-    return mapOf(
+    val map = mutableMapOf(
         "name" to name,
         "address" to address,
         "contact" to phone,
         "email" to email
     )
+
+    openingTime?.let { map["openingTime"] = it }
+    closingTime?.let { map["closingTime"] = it }
+
+    return map
 }
 
 /**
@@ -29,7 +34,9 @@ fun DocumentSnapshot.toShelter(): Shelter? {
             name = getString("name") ?: "",
             address = getString("address") ?: "",
             phone = getString("contact") ?: "",
-            email = getString("email") ?: ""
+            email = getString("email") ?: "",
+            openingTime = getString("openingTime"),
+            closingTime = getString("closingTime")
         )
     } catch (e: Exception) {
         e.printStackTrace()

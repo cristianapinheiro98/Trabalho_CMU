@@ -34,6 +34,13 @@
     <string name="select_at_least_one_date">Selecione pelo menos uma data</string>
     <string name="activity_scheduled_success">Atividade agendada com sucesso!</string>
     <string name="image_animal_description">Imagem do Anima</string>
+    <string name="error_offline_scheduling">Necessita de conexão à internet para agendar atividades</string>
+    <string name="error_time_outside_hours">Horário selecionado está fora do horário de abertura do abrigo</string>
+    <string name="error_date_conflict">As datas selecionadas conflituam com uma atividade existente</string>
+    <string name="error_less_than_24h">Atividades devem ser agendadas com pelo menos 24 horas de antecedência</string>
+    <string name="error_active_activity_exists">Já existe uma atividade ativa para este animal</string>
+    <string name="error_no_date_selected">Por favor selecione pelo menos uma data</string>
+    <string name="shelter_hours_info">Horário do abrigo: %1$s - %2$s</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Agendamentos Ativos</string>
@@ -46,6 +53,13 @@
     <string name="delivery_time">Hora de Entrega</string>
     <string name="view_location">Ver localização no Google Maps</string>
     <string name="no_activities_scheduled">Sem atividades agendadas</string>
+    <string name="activities_history_title">Histórico de Atividades</string>
+    <string name="ongoing_activities">Atividades em Curso</string>
+    <string name="upcoming_activities">Próximas Atividades</string>
+    <string name="past_activities">Atividades Passadas</string>
+    <string name="offline_warning">A mostrar dados em cache - pode não ver atividades recentes</string>
+    <string name="delete_activity_confirm">Tem certeza que deseja cancelar esta atividade?</string>
+    <string name="activity_deleted_success">Atividade cancelada com sucesso</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>
@@ -301,7 +315,7 @@
     <string name="error_creating_animal"> Erro ao criar animal. </string>
 
     <!-- AnimalRepository Messages -->
-.    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
+    .    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
     <string name="error_create_animal">Erro ao criar animal.</string>
     <string name="error_update_status">Erro ao atualizar estado do animal.</string>
     <string name="error_sync_animals">Erro ao sincronizar animais.</string>
@@ -337,7 +351,7 @@
     <string name="error_favorite_add">Erro ao adicionar favorito.</string>
     <string name="error_favorite_remove">Erro ao remover favorito.</string>
     <string name="error_favorite_sync">Erro ao sincronizar favoritos.</string>
-"
+    "
 
 
     <!-- ================= ANIMAL CARD ================= -->
@@ -374,11 +388,4 @@
     <!-- ================= PHONE BUTTON ================= -->
     <string name="call_button_label">Ligar</string>
     <string name="phone_icon_description">Telefone</string>
-
-
-
-
-
-
-
 </resources>

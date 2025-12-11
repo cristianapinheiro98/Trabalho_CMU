@@ -45,6 +45,13 @@
     <string name="select_at_least_one_date">Select at least one date</string>
     <string name="activity_scheduled_success">Activity scheduled successfully!</string>
     <string name="image_animal_description">Animal Image</string>
+    <string name="error_offline_scheduling">You need an internet connection to schedule activities</string>
+    <string name="error_time_outside_hours">Selected time is outside shelter opening hours</string>
+    <string name="error_date_conflict">Selected dates conflict with an existing activity</string>
+    <string name="error_less_than_24h">Activities must be scheduled at least 24 hours in advance</string>
+    <string name="error_active_activity_exists">There is already an active activity for this animal</string>
+    <string name="error_no_date_selected">Please select at least one date</string>
+    <string name="shelter_hours_info">Shelter hours: %1$s - %2$s</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Active Appointments</string>
@@ -57,6 +64,13 @@
     <string name="delivery_time">Return Time</string>
     <string name="view_location">View location on Google Maps</string>
     <string name="no_activities_scheduled">No activities scheduled</string>
+    <string name="activities_history_title">Activities History</string>
+    <string name="ongoing_activities">Ongoing Activities</string>
+    <string name="upcoming_activities">Upcoming Activities</string>
+    <string name="past_activities">Past Activities</string>
+    <string name="offline_warning">Showing cached data - you may not see recent activities</string>
+    <string name="delete_activity_confirm">Are you sure you want to cancel this activity?</string>
+    <string name="activity_deleted_success">Activity cancelled successfully</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>

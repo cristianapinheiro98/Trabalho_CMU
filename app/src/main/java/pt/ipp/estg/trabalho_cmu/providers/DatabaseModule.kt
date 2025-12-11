@@ -40,7 +40,8 @@ object DatabaseModule {
     fun provideAnimalRepository(application: Application): AnimalRepository {
         return AnimalRepository(
             appContext = application,
-            animalDao = provideAnimalDao(application)
+            animalDao = provideAnimalDao(application),
+            ownershipDao = provideOwnershipDao(application)
         )
     }
 
@@ -73,7 +74,8 @@ object DatabaseModule {
 
     fun provideShelterRepository(application: Application): ShelterRepository {
         return ShelterRepository(
-            shelterDao = provideShelterDao(application)
+            shelterDao = provideShelterDao(application),
+            animalDao = provideAnimalDao(application)
         )
     }
 

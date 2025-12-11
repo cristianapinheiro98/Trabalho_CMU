@@ -15,6 +15,8 @@ import androidx.room.PrimaryKey
  * @property address Physical address of the shelter.
  * @property phone Contact phone number.
  * @property email Official email address.
+ * @property openingTime Opening time in HH:mm format (e.g., "09:00"). Can be null if not set.
+ * @property closingTime Closing time in HH:mm format (e.g., "18:00"). Can be null if not set.
  */
 @Entity(tableName = "shelters")
 data class Shelter(
@@ -23,5 +25,7 @@ data class Shelter(
     val name: String,
     val address: String,
     val phone: String,
-    val email: String
+    val email: String,
+    val openingTime: String? = null,
+    val closingTime: String? = null
 )

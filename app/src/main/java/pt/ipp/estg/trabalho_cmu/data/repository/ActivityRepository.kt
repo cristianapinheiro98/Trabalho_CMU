@@ -27,7 +27,16 @@ class ActivityRepository(
         return activityDao.getUpcomingActivitiesByUser(userId, currentDate)
     }
     fun getAllActivitiesByUser(userId: String) = activityDao.getAllActivitiesByUser(userId)
-    fun getActivitiesByAnimal(animalId: String) = activityDao.getActivitiesByAnimal(animalId)
+    /**
+     * Gets all activities for a specific animal.
+     *
+     * @param animalId The ID of the animal
+     * @return LiveData of activities list
+     */
+    fun getActivitiesByAnimal(animalId: String): LiveData<List<Activity>> {
+        return activityDao.getActivitiesByAnimal(animalId)
+    }
+
     suspend fun getActivityById(id: String) = activityDao.getActivityById(id)
 
     suspend fun createActivity(activity: Activity): Result<Activity> = withContext(Dispatchers.IO) {
@@ -64,4 +73,17 @@ class ActivityRepository(
             activityDao.insertAll(activities)
         } catch (e: Exception) { Log.e(TAG, "Sync Error", e) }
     }
+
+    /**
+     * Gets all active activities for a specific animal.
+     * Active activities are those with deliveryDate >= currentDate.
+     *
+     * @param animalId The ID of the animal
+     * @param currentDate Current date in "dd/MM/yyyy" format
+     * @return List of active activities for the animal
+     */
+    suspend fun getActiveActivitiesByAnimal(animalId: String, currentDate: String): List<Activity> {
+        return activityDao.getActiveActivitiesByAnimal(animalId, currentDate)
+    }
+
 }

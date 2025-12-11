@@ -41,6 +41,12 @@ android {
         compose = true
         buildConfig = true
     }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 dependencies {
@@ -57,7 +63,7 @@ dependencies {
     implementation(libs.androidx.compose.material3) // Material design
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation(libs.androidx.adapters)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
@@ -88,16 +94,16 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.3.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.3.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.10.0")
 
     // Room
-    implementation("androidx.room:room-runtime:2.8.3")
-    implementation("androidx.room:room-ktx:2.8.3")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
     kapt("androidx.room:room-compiler:2.8.3")
 
     // LiveData
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation("androidx.compose.runtime:runtime-livedata")
 
     // Coil (Load images)
@@ -108,7 +114,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
     // Google Maps Compose
-    implementation("com.google.maps.android:maps-compose:6.12.1")
+    implementation("com.google.maps.android:maps-compose:6.12.2")
     implementation("com.google.android.gms:play-services-maps:19.2.0")
 
     // Coroutines
@@ -116,10 +122,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     // ViewModel Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
 
     // Runtime Compose
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
 
     // Accompanist (Permissions helper)
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
@@ -128,11 +134,11 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.4.0")
 
     // Google Places API
-    implementation("com.google.android.libraries.places:places:5.0.0")
+    implementation("com.google.android.libraries.places:places:5.1.1")
 
     // Parsing JSON from Places API
     implementation("com.google.code.gson:gson:2.13.2")
 
     //Cloudinary
-    implementation("com.cloudinary:cloudinary-android:2.3.1")
+    implementation("com.cloudinary:cloudinary-android:3.1.2")
 }

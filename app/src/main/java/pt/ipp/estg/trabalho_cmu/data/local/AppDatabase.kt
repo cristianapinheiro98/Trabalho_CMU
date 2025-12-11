@@ -39,7 +39,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
         Veterinarian::class,
         Favorite::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

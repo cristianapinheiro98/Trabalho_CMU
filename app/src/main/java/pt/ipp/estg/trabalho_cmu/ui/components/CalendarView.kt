@@ -7,7 +7,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +39,8 @@ fun CalendarView(
     modifier: Modifier = Modifier
 ) {
     val currentCalendar = remember { Calendar.getInstance() }
+    var startDate by remember { mutableStateOf<String?>(null) }
+    var endDate by remember { mutableStateOf<String?>(null) }
     val year = currentCalendar.get(Calendar.YEAR)
     val month = currentCalendar.get(Calendar.MONTH)
 
@@ -44,6 +49,22 @@ fun CalendarView(
         set(Calendar.YEAR, year)
         set(Calendar.MONTH, month)
         set(Calendar.DAY_OF_MONTH, 1)
+    }
+
+    fun fillDateRange(start: String, end: String): Set<String> {
+        val dates = mutableSetOf<String>()
+        val startParts = start.split("/")
+        val endParts = end.split("/")
+
+        val startDay = startParts[0].toInt()
+        val endDay = endParts[0].toInt()
+        val month = startParts[1].toInt()
+        val year = startParts[2].toInt()
+
+        for (day in startDay..endDay) {
+            dates.add("$day/$month/$year")
+        }
+        return dates
     }
 
     val daysInMonth = firstDayCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -115,12 +136,35 @@ fun CalendarView(
                                     if (isSelected) Color(0xFF2C8B7E) else Color.Transparent
                                 )
                                 .clickable {
-                                    val newDates = if (isSelected) {
-                                        selectedDates - dateString
-                                    } else {
-                                        selectedDates + dateString
+                                    when {
+                                        startDate == null -> {
+                                            startDate = dateString
+                                            endDate = null
+                                            onDatesChanged(emptySet())
+                                        }
+
+                                        endDate == null -> {
+                                            val startDay = startDate!!.split("/")[0].toInt()
+                                            val clickedDay = currentDay
+
+                                            if (clickedDay >= startDay) {
+                                                endDate = dateString
+                                                val range = fillDateRange(startDate!!, dateString)
+                                                onDatesChanged(range)
+                                            } else {
+                                                endDate = startDate
+                                                startDate = dateString
+                                                val range = fillDateRange(dateString, endDate!!)
+                                                onDatesChanged(range)
+                                            }
+                                        }
+
+                                        else -> {
+                                            startDate = dateString
+                                            endDate = null
+                                            onDatesChanged(emptySet())
+                                        }
                                     }
-                                    onDatesChanged(newDates)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
