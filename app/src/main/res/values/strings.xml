@@ -210,6 +210,8 @@
     <!-- Adoption Request Screen -->
     <string name="adoption_requests_title">Adoption Requests</string>
     <string name="no_pending_requests">No pending requests</string>
+    <string name="success_in_request">Success</string>
+    <string name="error_in_request">Error</string>
 
     <!-- Pedido Card Labels -->
     <string name="request_label">Onwership Request</string>

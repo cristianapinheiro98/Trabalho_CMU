@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * ViewModel responsible for:
@@ -71,14 +72,14 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
             } else {
                 _selectedShelter.value = null
                 _uiState.value = ShelterUiState.Error(
-                    appContext.getString(R.string.error_shelter_not_found)
+                    StringHelper.getString(appContext, R.string.error_shelter_not_found)
                 )
             }
 
         } catch (e: Exception) {
             _selectedShelter.value = null
             _uiState.value = ShelterUiState.Error(
-                appContext.getString(R.string.error_loading_shelter) + " ${e.message}"
+                StringHelper.getString(appContext, R.string.error_loading_shelter) + " ${e.message}"
             )
         }
     }
@@ -96,7 +97,7 @@ class ShelterViewModel(application: Application) : AndroidViewModel(application)
 
         } catch (e: Exception) {
             _uiState.value = ShelterUiState.Error(
-                appContext.getString(R.string.error_sync_shelters) + " ${e.message}"
+                StringHelper.getString(appContext, R.string.error_sync_shelters) + " ${e.message}"
             )
         }
     }

@@ -49,12 +49,12 @@ class TranslationRepository {
                     val translated = response.body()?.translatedText ?: text
                     onSuccess(translated)
                 } else {
-                    onError("R.string.error_translation_failed")
+                    onError("Translation failed")
                 }
             }
 
             override fun onFailure(call: Call<TranslationResponse>, t: Throwable) {
-                onError("R.string.error_network")
+                onError("Error network")
             }
         })
     }

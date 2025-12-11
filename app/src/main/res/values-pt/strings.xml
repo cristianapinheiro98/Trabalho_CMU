@@ -194,6 +194,8 @@
     <string name="adoption_requests_title">Pedidos de Adoção</string>
     <string name="back_button_description">Voltar</string>
     <string name="no_pending_requests">Sem pedidos pendentes</string>
+    <string name="success_in_request">Sucesso</string>
+    <string name="error_in_request">Erro</string>
 
     <!-- Request Card Labels -->
     <string name="request_label">Pedido de Adoção</string>
