@@ -13,6 +13,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.AdoptionRequest
 import pt.ipp.estg.trabalho_cmu.data.models.AnimalForm
 import pt.ipp.estg.trabalho_cmu.data.models.Breed
 import pt.ipp.estg.trabalho_cmu.data.repository.*
+import pt.ipp.estg.trabalho_cmu.notifications.NotificationManager
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
@@ -260,6 +261,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             if (ownership != null) {
                 ownershipRepository.approveOwnershipRequest(request.id, ownership.animalId)
                     .onSuccess {
+                        NotificationManager.notifyOwnershipAccepted(
+                            context = ctx,
+                            animalName = request.animal,
+                            animalId = ownership.animalId
+                        )
                         _uiState.value = ShelterMngUiState.RequestApproved
                         _message.value = StringHelper.getString( ctx, R.string.request_approved)
                         val shelterId = _currentShelterId.value
@@ -295,6 +301,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
         ownershipRepository.rejectOwnershipRequest(request.id)
             .onSuccess {
+                NotificationManager.notifyOwnershipRejected(
+                    context = ctx,
+                    animalName = request.animal
+                )
                 _uiState.value = ShelterMngUiState.RequestRejected
                 _message.value = StringHelper.getString(ctx, R.string.request_rejected)
                 val shelterId = _currentShelterId.value
@@ -440,6 +450,11 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
                 animalRepository.createAnimal(animal)
                     .onSuccess {
                         animalRepository.syncAnimals()
+                        NotificationManager.notifyNewAnimal(
+                            context = ctx,
+                            animalName = animal.name,
+                            animalId = animal.id
+                        )
                         _uiState.value = ShelterMngUiState.AnimalCreated(it)
                         _animalForm.value = AnimalForm()
                         clearImages()

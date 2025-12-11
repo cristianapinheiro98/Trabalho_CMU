@@ -373,6 +373,25 @@
     <string name="notif_new_animals">Novos animais</string>
     <string name="notif_activity_reminder">Lembrete de atividade</string>
 
+    <!-- Notification Channels -->
+    <string name="notification_channel_animals">Novos Animais</string>
+    <string name="notification_channel_animals_description">Notificações quando novos animais são adicionados</string>
+    <string name="notification_channel_ownership">Adoção</string>
+    <string name="notification_channel_ownership_description">Atualizações sobre pedidos de adoção</string>
+    <string name="notification_new_animal_title">Novo Animal Disponível!</string>
+    <string name="notification_new_animal_message">%s está à procura de um lar</string>
+    <string name="notification_new_animal_big_text">%s acabou de chegar ao abrigo e está à procura de uma família amorosa. Toca para conhecê-lo(a)!</string>
+    <string name="notification_ownership_accepted_title">Pedido de Adoção Aceite!</string>
+    <string name="notification_ownership_accepted_message">O teu pedido para adotar %s foi aceite</string>
+    <string name="notification_ownership_accepted_big_text">Parabéns! O teu pedido para adotar %s foi aceite.</string>
+    <string name="notification_ownership_rejected_title">Pedido de Adoção Não Aceite</string>
+    <string name="notification_ownership_rejected_message">O pedido para adotar %s não foi aceite</string>
+    <string name="notification_ownership_rejected_message_with_reason">O pedido para adotar %s não foi aceite.</string>
+    <string name="notification_permission_title">Ativar Notificações</string>
+    <string name="notification_permission_message">Ativa as notificações para receberes atualizações sobre novos animais e os teus pedidos de adoção.</string>
+    <string name="notification_permission_button">Ativar</string>
+    <string name="notification_permission_skip">Mais Tarde</string>
+
     <!-- ================= PHONE BUTTON ================= -->
     <string name="call_button_label">Ligar</string>
     <string name="phone_icon_description">Telefone</string>

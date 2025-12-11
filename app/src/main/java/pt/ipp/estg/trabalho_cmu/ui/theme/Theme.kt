@@ -58,7 +58,7 @@ fun Trabalho_CMUTheme(
 
     // Observe LiveData inside Compose
     val darkThemeFromSensor by lightSensorManager.shouldUseDarkTheme
-        .observeAsState(initial = systemDark)
+        .observeAsState(initial = false)
 
     DisposableEffect(Unit) {
         if (lightSensorManager.isSensorAvailable) {
@@ -69,7 +69,7 @@ fun Trabalho_CMUTheme(
 
     val darkTheme = if (lightSensorManager.isSensorAvailable) {
         darkThemeFromSensor
-    } else systemDark
+    } else false
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->

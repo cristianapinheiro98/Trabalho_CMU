@@ -382,6 +382,26 @@
     <string name="notif_new_animals">New animals</string>
     <string name="notif_activity_reminder">Activity reminder</string>
 
+    <!-- Notification Channels -->
+    <string name="notification_channel_animals">New Animals</string>
+    <string name="notification_channel_animals_description">Notifications when new animals are added</string>
+    <string name="notification_channel_ownership">Adoption</string>
+    <string name="notification_channel_ownership_description">Updates about adoption requests</string>
+    <string name="notification_new_animal_title"> New Animal Available!</string>
+    <string name="notification_new_animal_message">%s is looking for a home</string>
+    <string name="notification_new_animal_big_text">%s just arrived at the shelter and is looking for a loving family. Tap to meet them!</string>
+    <string name="notification_ownership_accepted_title"> Adoption Request Accepted!</string>
+    <string name="notification_ownership_accepted_message">Your request to adopt %s has been accepted</string>
+    <string name="notification_ownership_accepted_big_text">Congratulations! Your request to adopt %s has been accepted.</string>
+    <string name="notification_ownership_rejected_title">Adoption Request Not Accepted</string>
+    <string name="notification_ownership_rejected_message">The request to adopt %s was not accepted</string>
+    <string name="notification_ownership_rejected_message_with_reason">The request to adopt %s was not accepted. Reason: %s</string>
+    <string name="notification_permission_title">Enable Notifications</string>
+    <string name="notification_permission_message">Enable notifications to receive updates about new animals and your adoption requests.</string>
+    <string name="notification_permission_button">Enable</string>
+    <string name="notification_permission_skip">Later</string>
+
+
     <!-- ================= PHONE BUTTON ================= -->
     <string name="call_button_label">Call</string>
     <string name="phone_icon_description">Phone</string>

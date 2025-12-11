@@ -30,7 +30,10 @@ fun PetAdoptionApp(windowSize: WindowWidthSizeClass) {
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
 
-    MaterialTheme {
+    MaterialTheme (colorScheme = MaterialTheme.colorScheme,
+        typography = MaterialTheme.typography,
+        shapes = MaterialTheme.shapes
+    ){
         AppScaffold(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,
