@@ -398,6 +398,23 @@
     <string name="call_button_label">Call</string>
     <string name="phone_icon_description">Phone</string>
 
+    <!-- ================= ACTIVITY SUCCESS DIALOG ================= -->
+    <string name="activity_success_title">Activity Scheduled!</string>
+    <string name="activity_success_message">You scheduled 1 activity with %1$s from %2$s to %3$s</string>
+    <string name="view_activities_button">View Activities</string>
 
+    <!-- ================= VETERINARIANS SCREEN ================= -->
+    <string name="veterinarians_title">Veterinary Centers Near You</string>
+    <string name="location_permission_title">We need your location</string>
+    <string name="location_permission_message">To show veterinarians near you</string>
+    <string name="allow_location_button">Allow Location</string>
+    <string name="gps_disabled_title">📍 GPS Disabled</string>
+    <string name="gps_disabled_message">To find veterinarians near you,\nenable GPS in settings</string>
+    <string name="open_settings_button">Open Settings</string>
+    <string name="veterinarians_unavailable">Veterinary centers unavailable</string>
+    <string name="gps_disabled_cache_warning">GPS disabled. Showing previous results.</string>
+    <string name="no_veterinarians_found">No veterinarians found</string>
+    <string name="try_expanding_search">Try expanding the search area</string>
+    <string name="try_again_button">Try Again</string>
 
 </resources>

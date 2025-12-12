@@ -7,13 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
-import pt.ipp.estg.trabalho_cmu.data.repository.ActivityRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
-import pt.ipp.estg.trabalho_cmu.data.repository.ShelterRepository
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * ViewModel for Activities History Screen.
@@ -51,6 +46,7 @@ class ActivitiesHistoryViewModel(application: Application) : AndroidViewModel(ap
 
             try {
                 if (isOnline) {
+                    animalRepository.syncUserOwnedAnimals(userId)
                     activityRepository.syncActivities(userId)
                 }
 

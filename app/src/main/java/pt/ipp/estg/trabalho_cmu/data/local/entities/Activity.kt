@@ -28,7 +28,7 @@ import androidx.room.PrimaryKey
 )
 data class Activity(
     @PrimaryKey
-    val id: String, // Firebase document ID - usado diretamente como PK
+    val id: String,
 
     val userId: String, // Foreign Key -> User.id
     val animalId: String, // Foreign Key -> Animal.id

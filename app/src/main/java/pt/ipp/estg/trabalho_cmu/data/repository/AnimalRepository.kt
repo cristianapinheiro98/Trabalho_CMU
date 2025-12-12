@@ -125,8 +125,14 @@ class AnimalRepository(
         if (!NetworkUtils.isConnected()) return@withContext
 
         try {
-            val ownerships = ownershipDao.getApprovedOwnershipsByUser(userId)
-            val animalIds = ownerships.map { it.animalId }
+            val ownershipSnapshot = firestore.collection("ownerships")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("status", "APPROVED")
+                .get().await()
+
+            val animalIds = ownershipSnapshot.documents.mapNotNull {
+                it.getString("animalId")
+            }
 
             if (animalIds.isEmpty()) {
                 Log.d(TAG, "SyncUserOwnedAnimals: No owned animals found for user $userId")
@@ -152,6 +158,7 @@ class AnimalRepository(
         }
     }
 
+
     /**
      * Retrieves multiple animals by their IDs from the local Room database.
      *
@@ -160,4 +167,33 @@ class AnimalRepository(
      */
     suspend fun getAnimalsByIds(animalIds: List<String>): List<Animal> =
         animalDao.getAnimalsByIds(animalIds)
+
+    /**
+     * Syncs a specific animal from Firebase to Room.
+     * Useful when you need to ensure a single animal exists locally.
+     */
+    suspend fun syncSpecificAnimal(animalId: String): Result<Animal> = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) {
+            return@withContext Result.failure(Exception("Offline"))
+        }
+
+        try {
+            val snapshot = firestore.collection("animals")
+                .document(animalId)
+                .get()
+                .await()
+
+            val animal = snapshot.toAnimal()
+            if (animal != null) {
+                animalDao.insert(animal)
+                Log.d(TAG, "SyncSpecificAnimal: Animal $animalId synced successfully")
+                Result.success(animal)
+            } else {
+                Result.failure(Exception("Animal not found in Firebase"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error syncing specific animal $animalId", e)
+            Result.failure(e)
+        }
+    }
 }

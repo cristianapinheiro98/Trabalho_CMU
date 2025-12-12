@@ -39,8 +39,8 @@ class MainOptionsViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private suspend fun loadUserAnimals(userId: String) {
-        ownershipRepository.syncUserApprovedOwnerships(userId)
         animalRepository.syncUserOwnedAnimals(userId)
+        ownershipRepository.syncUserApprovedOwnerships(userId)
 
         val userOwnerships = ownershipRepository.getApprovedOwnershipsByUser(userId)
 

@@ -28,16 +28,14 @@ fun MainOptionsScreen(
     userId: String,
     windowSize: WindowWidthSizeClass
 ) {
-    // Usamos apenas este ViewModel, ele gere o dashboard e a lista de animais do user
     val viewModel: MainOptionsViewModel = viewModel()
 
-    // Observar dados
+    // Observe data
     val lastWalk by viewModel.lastWalk.observeAsState()
     val medals by viewModel.medals.observeAsState(emptyList())
-    // Esta é a lista correta para o Dialog, vinda do MainOptionsViewModel
     val userAnimals by viewModel.ownedAnimals.observeAsState(emptyList())
+    val uiState by viewModel.uiState.observeAsState(MainOptionsUiState.Initial)
 
-    // Carregar dados ao entrar
     LaunchedEffect(userId) {
         viewModel.loadUserData(userId)
     }
@@ -45,10 +43,10 @@ fun MainOptionsScreen(
     var showAnimalDialog by remember { mutableStateOf(false) }
     var showScheduleDialog by remember { mutableStateOf(false) }
 
-    // Dialog para PASSEIO
     if (showAnimalDialog) {
         AnimalSelectionDialog(
-            animals = userAnimals, // Lista carregada pelo MainOptionsViewModel
+            animals = userAnimals,
+            isLoading = uiState is MainOptionsUiState.Loading,
             onDismiss = { showAnimalDialog = false },
             onAnimalSelected = { animal ->
                 showAnimalDialog = false
@@ -57,14 +55,13 @@ fun MainOptionsScreen(
         )
     }
 
-    // Dialog para AGENDAMENTO
     if (showScheduleDialog) {
         AnimalSelectionDialog(
-            animals = userAnimals, // Lista carregada pelo MainOptionsViewModel
+            animals = userAnimals,
+            isLoading = uiState is MainOptionsUiState.Loading,
             onDismiss = { showScheduleDialog = false },
             onAnimalSelected = { animal ->
                 showScheduleDialog = false
-                // Passa o animalId na rota. O ActivityViewModel vai usar isto no próximo ecrã.
                 navController.navigate("ActivityScheduling/${animal.id}")
             }
         )
@@ -172,9 +169,6 @@ fun WalkDetailRow(label: String, value: String) {
 
 @Composable
 fun MainActionButtons(navController: NavController, onStartWalk: () -> Unit, onScheduleVisit: () -> Unit, windowSize: WindowWidthSizeClass) {
-    // Mantém a lógica de layout responsivo que já tinhas
-    // ... (Copia o conteúdo do teu ficheiro original para aqui, é igual)
-    // Para poupar espaço, vou assumir o layout de smartphone aqui:
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ActionButton("Agendar Visita", Color(0xFF2196F3), Modifier.weight(1f), onScheduleVisit)

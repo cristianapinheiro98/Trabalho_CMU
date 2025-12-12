@@ -33,6 +33,8 @@ sealed class ActivitySchedulingUiState {
      * @property shelter The shelter where the animal is located.
      * @property bookedDates List of dates already booked for this animal (format: "dd/MM/yyyy").
      * @property selectedDates Set of dates selected by the user for the new activity.
+     * @property startDate The first date clicked by the user (format: "dd/MM/yyyy").
+     * @property endDate The second date clicked by the user (format: "dd/MM/yyyy").
      * @property pickupTime Time when the user will pick up the animal (format: "HH:mm").
      * @property deliveryTime Time when the user will return the animal (format: "HH:mm").
      * @property validationError Any validation error that occurred.
@@ -42,6 +44,8 @@ sealed class ActivitySchedulingUiState {
         val shelter: Shelter,
         val bookedDates: List<String>,
         val selectedDates: Set<String> = emptySet(),
+        val startDate: String? = null,
+        val endDate: String? = null,
         val pickupTime: String = "09:00",
         val deliveryTime: String = "18:00",
         val validationError: ValidationError? = null
@@ -57,8 +61,16 @@ sealed class ActivitySchedulingUiState {
     /**
      * Success state after scheduling an activity.
      * Triggers navigation back to the previous screen.
+     *
+     * @property animalName Name of the animal.
+     * @property startDate Start date (format: "dd/MM/yyyy").
+     * @property endDate End date (format: "dd/MM/yyyy").
      */
-    object SchedulingSuccess : ActivitySchedulingUiState()
+    data class SchedulingSuccess(
+        val animalName: String,
+        val startDate: String,
+        val endDate: String
+    ) : ActivitySchedulingUiState()
 }
 
 /**

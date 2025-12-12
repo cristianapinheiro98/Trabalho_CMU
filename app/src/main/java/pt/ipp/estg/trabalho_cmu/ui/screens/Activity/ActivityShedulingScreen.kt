@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
+import pt.ipp.estg.trabalho_cmu.ui.components.ActivitySuccessDialog
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
 
@@ -31,14 +32,17 @@ fun ActivitySchedulingScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: ActivitySchedulingViewModel = viewModel()
+
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+
+    // State for showing success dialog
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var successDialogData by remember { mutableStateOf<Triple<String, String, String>?>(null) }
 
     // Observe UIState
     val uiState by viewModel.uiState.observeAsState(ActivitySchedulingUiState.Initial)
 
     // Obtain strings outside of the launched effect
-    val successMessage = stringResource(R.string.activity_scheduled_success)
     val offlineMessage = stringResource(R.string.error_offline_scheduling)
 
     // Load data
@@ -50,8 +54,8 @@ fun ActivitySchedulingScreen(
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is ActivitySchedulingUiState.SchedulingSuccess -> {
-                snackbarHostState.showSnackbar(successMessage)
-                onScheduleSuccess()
+                successDialogData = Triple(state.animalName, state.startDate, state.endDate)
+                showSuccessDialog = true
             }
             is ActivitySchedulingUiState.Error -> {
                 snackbarHostState.showSnackbar(state.message)
@@ -61,6 +65,18 @@ fun ActivitySchedulingScreen(
             }
             else -> {}
         }
+    }
+
+    if (showSuccessDialog && successDialogData != null) {
+        ActivitySuccessDialog(
+            animalName = successDialogData!!.first,
+            startDate = successDialogData!!.second,
+            endDate = successDialogData!!.third,
+            onDismiss = {
+                showSuccessDialog = false
+                onScheduleSuccess()
+            }
+        )
     }
 
     Scaffold(
@@ -84,14 +100,15 @@ fun ActivitySchedulingScreen(
                         animal = state.animal,
                         shelter = state.shelter,
                         selectedDates = state.selectedDates,
-                        onDatesChanged = { viewModel.onDatesSelected(it) },
+                        onDateClicked = { viewModel.onDateClicked(it) },
                         pickupTime = state.pickupTime,
                         onPickupTimeChange = { viewModel.onPickupTimeChanged(it) },
                         deliveryTime = state.deliveryTime,
                         onDeliveryTimeChange = { viewModel.onDeliveryTimeChanged(it) },
                         validationError = state.validationError,
                         onScheduleClick = { viewModel.scheduleActivity(userId) },
-                        onClearError = { viewModel.clearError() }
+                        onClearError = { viewModel.clearError() },
+                        bookedDates = state.bookedDates
                     )
                 }
                 else -> {}
@@ -105,7 +122,7 @@ private fun ActivitySchedulingContent(
     animal: pt.ipp.estg.trabalho_cmu.data.local.entities.Animal,
     shelter: pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter,
     selectedDates: Set<String>,
-    onDatesChanged: (Set<String>) -> Unit,
+    onDateClicked: (String) -> Unit,
     pickupTime: String,
     onPickupTimeChange: (String) -> Unit,
     deliveryTime: String,
@@ -113,6 +130,7 @@ private fun ActivitySchedulingContent(
     validationError: ValidationError?,
     onScheduleClick: () -> Unit,
     onClearError: () -> Unit,
+    bookedDates: List<String> = emptyList(),
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -169,7 +187,11 @@ private fun ActivitySchedulingContent(
                     Spacer(Modifier.height(12.dp))
                 }
 
-                CalendarView(selectedDates, onDatesChanged)
+                CalendarView(
+                    selectedDates = selectedDates,
+                    onDateClicked = onDateClicked,
+                    bookedDates = bookedDates
+                )
 
                 Spacer(Modifier.height(20.dp))
 

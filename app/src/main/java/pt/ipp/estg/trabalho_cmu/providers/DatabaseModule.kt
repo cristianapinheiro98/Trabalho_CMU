@@ -54,7 +54,8 @@ object DatabaseModule {
 
     fun provideActivityRepository(application: Application): ActivityRepository {
         return ActivityRepository(
-            activityDao = provideActivityDao(application)
+            activityDao = provideActivityDao(application),
+            animalDao = provideAnimalDao(application)
         )
     }
 

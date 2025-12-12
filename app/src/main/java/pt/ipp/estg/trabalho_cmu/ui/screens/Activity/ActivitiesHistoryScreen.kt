@@ -35,11 +35,11 @@ fun ActivitiesHistoryScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    // Observar UIState
+    // Observe UIState
     val uiState by viewModel.uiState.observeAsState(ActivitiesHistoryUiState.Initial)
 
-    // Carregar dados ao iniciar
-    LaunchedEffect(userId) {
+    // Load data starting screen
+    LaunchedEffect(Unit) {
         viewModel.loadActivities(userId)
     }
 
@@ -138,7 +138,6 @@ private fun ActivitiesHistoryContent(
     val context = LocalContext.current
     val today = Date()
 
-    // Categorizar atividades
     val (ongoing, upcoming, past) = categorizeActivities(activities, today)
 
     Column(

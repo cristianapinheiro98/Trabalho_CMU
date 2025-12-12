@@ -53,7 +53,6 @@ class OwnershipRepository(
     suspend fun createOwnership(ownership: Ownership): Result<Ownership> =
         withContext(Dispatchers.IO) {
             try {
-                // 1. Verificar Internet
                 if (!NetworkUtils.isConnected()) {
                     val msg = appContext.getString(R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))

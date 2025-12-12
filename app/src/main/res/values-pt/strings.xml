@@ -388,4 +388,23 @@
     <!-- ================= PHONE BUTTON ================= -->
     <string name="call_button_label">Ligar</string>
     <string name="phone_icon_description">Telefone</string>
+
+    <!-- ================= ACTIVITY SUCCESS DIALOG ================= -->
+    <string name="activity_success_title">Atividade Marcada!</string>
+    <string name="activity_success_message">Marcaste 1 atividade com o(a) %1$s entre o dia %2$s e %3$s</string>
+    <string name="view_activities_button">Ver Agendamentos</string>
+
+    <!-- ================= VETERINARIANS SCREEN ================= -->
+    <string name="veterinarians_title">Centros Veterinários perto de ti</string>
+    <string name="location_permission_title">Precisamos da tua localização</string>
+    <string name="location_permission_message">Para mostrar veterinários perto de ti</string>
+    <string name="allow_location_button">Permitir Localização</string>
+    <string name="gps_disabled_title">📍 GPS Desligado</string>
+    <string name="gps_disabled_message">Para encontrar veterinários perto de ti,\nliga o GPS nas definições</string>
+    <string name="open_settings_button">Abrir Definições</string>
+    <string name="veterinarians_unavailable">Centros veterinários indisponíveis</string>
+    <string name="gps_disabled_cache_warning">GPS desligado. A mostrar resultados anteriores.</string>
+    <string name="no_veterinarians_found">Nenhum veterinário encontrado</string>
+    <string name="try_expanding_search">Tenta alargar a área de pesquisa</string>
+    <string name="try_again_button">Tentar novamente</string>
 </resources>

@@ -20,8 +20,6 @@ import java.util.*
  * - Syncing approved ownerships
  * - Validating scheduling constraints
  * - Creating new activities
- *
- * Follows MVVM pattern with a single LiveData<UiState> as the source of truth.
  */
 class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,6 +27,7 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
     private val animalRepository = DatabaseModule.provideAnimalRepository(application)
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
     private val ownershipRepository = DatabaseModule.provideOwnershipRepository(application)
+    private val userRepository = DatabaseModule.provideUserRepository(application)
 
     private val _uiState = MutableLiveData<ActivitySchedulingUiState>(ActivitySchedulingUiState.Initial)
     val uiState: LiveData<ActivitySchedulingUiState> = _uiState
@@ -42,7 +41,8 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
      * 3. Sync owned animals
      * 4. Load animal and shelter
      * 5. Sync shelter data
-     * 6. Load booked dates for the animal
+     * 6. Sync activities for this specific animal
+     * 7. Load booked dates for the animal
      *
      * @param animalId The ID of the animal to schedule an activity for.
      * @param userId The ID of the current user.
@@ -57,37 +57,51 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
             }
 
             try {
+                // Sync user
+                val userSyncResult = userRepository.syncSpecificUser(userId)
+                userSyncResult.onFailure { error ->
+                    _uiState.value = ActivitySchedulingUiState.Error("Failed to sync user: ${error.message}")
+                    return@launch
+                }
+
+                // Sync ownerships and owned animals
                 ownershipRepository.syncUserApprovedOwnerships(userId)
                 animalRepository.syncUserOwnedAnimals(userId)
 
-                val animal = animalRepository.getAnimalById(animalId)
-                if (animal == null) {
+                // Sync specific animal
+                val animalSyncResult = animalRepository.syncSpecificAnimal(animalId)
+                animalSyncResult.onFailure { error ->
                     _uiState.value = ActivitySchedulingUiState.Error("Animal not found")
                     return@launch
                 }
 
-                shelterRepository.syncSheltersByAnimalIds(listOf(animalId))
+                val animal = animalRepository.getAnimalById(animalId)
+                if (animal == null) {
+                    _uiState.value = ActivitySchedulingUiState.Error("Animal not found in local DB")
+                    return@launch
+                }
 
+                // Sync shelter
+                shelterRepository.syncSheltersByAnimalIds(listOf(animalId))
                 val shelter = shelterRepository.getShelterById(animal.shelterId)
                 if (shelter == null) {
                     _uiState.value = ActivitySchedulingUiState.Error("Shelter not found")
                     return@launch
                 }
 
-                activityRepository.syncActivities(userId)
+                val bookedDates = activityRepository.getBookedDatesFromFirebase(animalId)
 
-                activityRepository.getActivitiesByAnimal(animalId).observeForever { activities ->
-                    val bookedDates = extractBookedDates(activities)
+                _uiState.value = ActivitySchedulingUiState.Success(
+                    animal = animal,
+                    shelter = shelter,
+                    bookedDates = bookedDates,
+                    selectedDates = emptySet(),
+                    startDate = null,
+                    endDate = null,
+                    pickupTime = shelter.openingTime ?: "09:00",
+                    deliveryTime = shelter.closingTime ?: "18:00"
+                )
 
-                    _uiState.value = ActivitySchedulingUiState.Success(
-                        animal = animal,
-                        shelter = shelter,
-                        bookedDates = bookedDates,
-                        selectedDates = emptySet(),
-                        pickupTime = shelter.openingTime ?: "09:00",
-                        deliveryTime = shelter.closingTime ?: "18:00"
-                    )
-                }
             } catch (e: Exception) {
                 _uiState.value = ActivitySchedulingUiState.Error(e.message ?: "Unknown error")
             }
@@ -95,7 +109,114 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
     }
 
     /**
+     * Handles date clicks in the calendar.
+     * Implements the date range selection logic with validation against booked dates.
+     *
+     * @param date The clicked date in "dd/MM/yyyy" format.
+     */
+    fun onDateClicked(date: String) {
+        val currentState = _uiState.value
+        if (currentState !is ActivitySchedulingUiState.Success) return
+
+        // Se a data está booked, ignorar
+        if (date in currentState.bookedDates) return
+
+        when {
+            currentState.startDate == null -> {
+                // Primeiro clique - define start date
+                _uiState.value = currentState.copy(
+                    startDate = date,
+                    endDate = null,
+                    selectedDates = emptySet(),
+                    validationError = null
+                )
+            }
+            currentState.endDate == null -> {
+                // Segundo clique - tentar criar range
+                val range = fillDateRangeIfValid(
+                    currentState.startDate!!,
+                    date,
+                    currentState.bookedDates
+                )
+
+                if (range != null) {
+                    // Range válido - definir end date e selected dates
+                    _uiState.value = currentState.copy(
+                        endDate = date,
+                        selectedDates = range,
+                        validationError = null
+                    )
+                } else {
+                    // Range inválido (tem datas booked no meio) - recomeçar
+                    _uiState.value = currentState.copy(
+                        startDate = date,
+                        endDate = null,
+                        selectedDates = emptySet(),
+                        validationError = ValidationError.DateConflict
+                    )
+                }
+            }
+            else -> {
+                // Terceiro clique - recomeçar seleção
+                _uiState.value = currentState.copy(
+                    startDate = date,
+                    endDate = null,
+                    selectedDates = emptySet(),
+                    validationError = null
+                )
+            }
+        }
+    }
+
+    /**
+     * Fills date range between start and end, validating that no booked dates exist in between.
+     *
+     * @param start Start date in "dd/MM/yyyy" format.
+     * @param end End date in "dd/MM/yyyy" format.
+     * @param bookedDates List of dates already booked.
+     * @return Set of dates in the range if valid, null if there are booked dates in the range.
+     */
+    private fun fillDateRangeIfValid(
+        start: String,
+        end: String,
+        bookedDates: List<String>
+    ): Set<String>? {
+        val dates = mutableSetOf<String>()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        val startDate = sdf.parse(start) ?: return null
+        val endDate = sdf.parse(end) ?: return null
+
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+
+        val endCalendar = Calendar.getInstance()
+        endCalendar.time = endDate
+
+        // Se end < start, trocar
+        if (endCalendar.before(calendar)) {
+            return fillDateRangeIfValid(end, start, bookedDates)
+        }
+
+        // Gerar todas as datas no range
+        while (!calendar.after(endCalendar)) {
+            val dateStr = sdf.format(calendar.time)
+
+            // Se encontrar uma data booked, range é inválido
+            if (dateStr in bookedDates) {
+                return null
+            }
+
+            dates.add(dateStr)
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        return dates
+    }
+
+    /**
      * Updates the selected dates in the UI state.
+     * (Kept for backwards compatibility, but now date selection is handled by onDateClicked)
      *
      * @param dates Set of selected dates in "dd/MM/yyyy" format.
      */
@@ -165,7 +286,11 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
 
             result.fold(
                 onSuccess = {
-                    _uiState.value = ActivitySchedulingUiState.SchedulingSuccess
+                    _uiState.value = ActivitySchedulingUiState.SchedulingSuccess(
+                        animalName = state.animal.name,
+                        startDate = sortedDates.first(),
+                        endDate = sortedDates.last()
+                    )
                 },
                 onFailure = { e ->
                     _uiState.value = ActivitySchedulingUiState.Error(e.message ?: "Scheduling failed")
@@ -252,6 +377,8 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
         }
+
+        android.util.Log.d("BookedDates", "Extracted booked dates: $dates")
         return dates
     }
 
@@ -286,9 +413,4 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return sdf.parse(this) ?: Date()
     }
-
-//    private fun LocalDate.toDDMMYYYY(): String {
-//        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-//        return this.format(formatter)
-//    }
 }
