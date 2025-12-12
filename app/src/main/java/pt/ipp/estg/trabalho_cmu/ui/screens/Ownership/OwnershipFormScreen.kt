@@ -45,7 +45,7 @@ fun OwnershipFormScreen(
     userFirebaseUid: String,
     animalFirebaseUid: String,
     onSubmitSuccess: () -> Unit,
-    windowSize: WindowWidthSizeClass,
+    windowSize: WindowWidthSizeClass, // Mantemos o parâmetro para não partir quem chama, mas não é critico agora
     modifier: Modifier = Modifier
 ) {
     val viewModel: OwnershipViewModel = viewModel()
@@ -79,7 +79,6 @@ fun OwnershipFormScreen(
         }
     } else {
         OwnershipFormContent(
-            windowSize = windowSize,
             isLoading = uiState is OwnershipUiState.Loading,
             snackbarHostState = snackbarHostState,
             onSubmit = { formName, formAccount, formCvv, formCard ->
@@ -93,6 +92,83 @@ fun OwnershipFormScreen(
             },
             modifier = modifier
         )
+    }
+}
+
+@Composable
+private fun OwnershipFormContent(
+    isLoading: Boolean,
+    snackbarHostState: SnackbarHostState,
+    onSubmit: (String, String, String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val scrollState = rememberScrollState()
+
+    var ownerName by remember { mutableStateOf("") }
+    var accountNumber by remember { mutableStateOf("") }
+    var cvv by remember { mutableStateOf("") }
+    var cardNumber by remember { mutableStateOf("") }
+
+    val maxAccountDigits = 21
+    val maxCardDigits = 8
+
+    val isFormValid = accountNumber.isNotBlank() &&
+            accountNumber.length <= maxAccountDigits &&
+            ownerName.isNotBlank() &&
+            cvv.length == 3 &&
+            cardNumber.isNotBlank() &&
+            cardNumber.length <= maxCardDigits
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OwnershipHeader(modifier = Modifier.padding(bottom = 16.dp))
+
+                OwnershipFormCard(
+                    accountNumber = accountNumber,
+                    ownerName = ownerName,
+                    cvv = cvv,
+                    cardNumber = cardNumber,
+                    isLoading = isLoading,
+                    onAccountChange = {
+                        val filtered = it.filter { ch -> ch.isDigit() }
+                        if (filtered.length <= maxAccountDigits) accountNumber = filtered
+                    },
+                    onNameChange = { ownerName = it },
+                    onCvvChange = {
+                        if (it.length <= 3 && it.all { char -> char.isDigit() }) cvv = it
+                    },
+                    onCardChange = {
+                        val filtered = it.filter { ch -> ch.isDigit() }
+                        if (filtered.length <= maxCardDigits) cardNumber = filtered
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                OwnershipSubmitButton(
+                    isLoading = isLoading,
+                    isFormValid = isFormValid,
+                    onClick = { onSubmit(ownerName, accountNumber, cvv, cardNumber) }
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+        }
     }
 }
 
