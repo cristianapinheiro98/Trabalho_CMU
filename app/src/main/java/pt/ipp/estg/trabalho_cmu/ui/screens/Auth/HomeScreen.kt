@@ -34,7 +34,6 @@ fun HomeScreen(
             .padding(32.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Chamamos a função auxiliar para tratar dos botões e do layout
         HomeButtonsLayout(
             isExpanded = isExpanded,
             onLoginClick = onLoginClick,

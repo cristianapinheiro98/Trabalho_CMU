@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(null)
+        super.onCreate(savedInstanceState)
 
         setContent {
             val windowSize = calculateWindowSizeClass(this)

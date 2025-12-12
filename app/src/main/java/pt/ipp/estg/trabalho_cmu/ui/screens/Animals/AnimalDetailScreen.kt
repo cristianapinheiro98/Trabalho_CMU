@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,6 +38,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
+import androidx.compose.foundation.lazy.items
 
 /**
  * High-level animal detail screen responsible for:
@@ -112,16 +115,15 @@ private fun AnimalDetailScreenContent(
     val ageText = age?.let { "$it ${stringResource(R.string.age_years)}" }
         ?: stringResource(R.string.age_not_available)
 
-    // if it is a tablet (Expanded), use Row.
+    // if it is a tablet (expanded), use Row (side by side)
     if (isExpanded) {
-        // LAYOUT TABLET (Lado a Lado)
         Row(modifier = Modifier.fillMaxSize().background(Color(0xFFF9F9F9)).statusBarsPadding()) {
             Box(modifier = Modifier.weight(0.4f).fillMaxHeight()) {
                 ImageGallery(
                     mainImageUrl = mainImage,
                     thumbnails = imageGallery,
                     onThumbnailClick = { if (it.isNotBlank()) mainImage = it },
-                    onNavigateBack = onNavigateBack // Botão de voltar fica na imagem
+                    onNavigateBack = onNavigateBack
                 )
             }
 
@@ -135,7 +137,7 @@ private fun AnimalDetailScreenContent(
             }
         }
     } else {
-        //If it is phone (Compact), use Column.
+        //If it is phone (compact), use column.
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -234,24 +236,29 @@ fun ImageGallery(
                 error = painterResource(R.drawable.no_image_found)
             )
 
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                thumbnails.filter { it.isNotBlank() }.forEach { url ->
+                items(thumbnails.filter { it.isNotBlank() }) { url ->
                     AsyncImage(
                         model = url,
                         contentDescription = stringResource(R.string.thumbnail_image_description),
                         modifier = Modifier
-                            .size(60.dp)
-                            .padding(horizontal = 4.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .size(70.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .then(
+                                if (url == mainImageUrl)
+                                    Modifier.border(2.dp, Color(0xFF3F51B5), RoundedCornerShape(12.dp))
+                                else Modifier
+                            )
                             .clickable { onThumbnailClick(url) },
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.cat_image),
-                        error = painterResource(R.drawable.cat_image)
+                        placeholder = painterResource(R.drawable.no_image_found),
+                        error = painterResource(R.drawable.no_image_found)
                     )
                 }
             }
@@ -260,8 +267,8 @@ fun ImageGallery(
         IconButton(
             onClick = onNavigateBack,
             modifier = Modifier
-                .padding(12.dp)
-                .size(36.dp)
+                .padding(16.dp)
+                .size(40.dp)
                 .align(Alignment.TopEnd)
                 .background(Color(0x55000000), RoundedCornerShape(50))
         ) {

@@ -1,6 +1,8 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.Auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -79,6 +81,7 @@ private fun LoginScreenContent(
     onClearMessage: () -> Unit
 ) {
     val isExpanded = windowSize == WindowWidthSizeClass.Expanded
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -125,7 +128,21 @@ private fun LoginScreenContent(
                     }
 
                     Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        LoginInputs(email, password, isLoading, onEmailChange, onPasswordChange, onLoginClick)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(scrollState),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LoginInputs(
+                                email,
+                                password,
+                                isLoading,
+                                onEmailChange,
+                                onPasswordChange,
+                                onLoginClick
+                            )
+                        }
                     }
                 }
 
@@ -173,7 +190,7 @@ private fun LoginScreenContent(
     }
 }
 
-/*Helper function to fill login inputs*/
+/* Helper function to fill login inputs*/
 @Composable
 private fun LoginInputs(
     email: String,
@@ -183,40 +200,45 @@ private fun LoginInputs(
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit
 ) {
-    OutlinedTextField(
-        value = email,
-        onValueChange = onEmailChange,
-        label = { Text(stringResource(R.string.email_label)) },
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    Spacer(Modifier.height(16.dp))
-
-    OutlinedTextField(
-        value = password,
-        onValueChange = onPasswordChange,
-        label = { Text(stringResource(R.string.password_label)) },
-        visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    Spacer(Modifier.height(24.dp))
-
-    Button(
-        onClick = onLoginClick,
-        enabled = !isLoading,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.onPrimary,
-                strokeWidth = 2.dp,
-                modifier = Modifier.size(22.dp)
-            )
-        } else {
-            Text(stringResource(R.string.login_button))
+        OutlinedTextField(
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text(stringResource(R.string.email_label)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = onPasswordChange,
+            label = { Text(stringResource(R.string.password_label)) },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        Button(
+            onClick = onLoginClick,
+            enabled = !isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(22.dp)
+                )
+            } else {
+                Text(stringResource(R.string.login_button))
+            }
         }
     }
 }

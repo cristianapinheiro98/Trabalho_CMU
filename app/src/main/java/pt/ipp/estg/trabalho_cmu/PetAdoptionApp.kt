@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import pt.ipp.estg.trabalho_cmu.ui.navigation.AppScaffold
 
@@ -27,8 +28,8 @@ import pt.ipp.estg.trabalho_cmu.ui.navigation.AppScaffold
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PetAdoptionApp(windowSize: WindowWidthSizeClass) {
-    var isLoggedIn by remember { mutableStateOf(false) }
-    var isAdmin by remember { mutableStateOf(false) }
+    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    var isAdmin by rememberSaveable { mutableStateOf(false) }
 
     MaterialTheme (colorScheme = MaterialTheme.colorScheme,
         typography = MaterialTheme.typography,
