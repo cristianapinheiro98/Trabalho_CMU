@@ -44,12 +44,14 @@ fun NavGraphAdmin(
         }
         composable("AnimalCreation") {
             AnimalCreationScreen(
+                windowSize = windowSize,
                 onNavigateBack = { navController.popBackStack() },
                 authViewModel = authViewModel
             )
         }
         composable("AdoptionRequest") {
             AdoptionRequestScreen (
+                windowSize= windowSize,
                 authViewModel = authViewModel,
                 onNavigateBack = { navController.popBackStack() })
         }
