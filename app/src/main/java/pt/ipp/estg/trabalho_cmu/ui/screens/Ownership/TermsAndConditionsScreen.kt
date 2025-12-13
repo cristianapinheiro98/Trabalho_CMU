@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,12 +39,14 @@ import pt.ipp.estg.trabalho_cmu.R
 fun TermsAndConditionsScreen(
     onAccept: () -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    windowSize: WindowWidthSizeClass
 ) {
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val warningMessage = stringResource(R.string.terms_warning_message)
+    var termsAccepted by remember { mutableStateOf(false) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -54,128 +57,205 @@ fun TermsAndConditionsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-                    .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.terms_title),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2C2C2C),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 2.dp
+            if (windowSize == WindowWidthSizeClass.Compact) {
+                // --- VERTICAL LAYOUT (Phone) ---
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    TermsHeader()
+
+                    TermsContent()
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    TermsControlSection(
+                        termsAccepted = termsAccepted,
+                        onCheckedChange = { termsAccepted = it },
+                        onContinueClick = {
+                            if (termsAccepted) {
+                                onAccept()
+                            } else {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(warningMessage)
+                                }
+                            }
+                        },
+                        onBackClick = onNavigateBack
                     )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            } else {
+                // --- HORIZONTAL LAYOUT HORIZONTAL (Tablet) ---
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .verticalScroll(scrollState)
                     ) {
-                        Text(
-                            text = stringResource(R.string.terms_content),
-                            fontSize = 14.sp,
-                            color = Color(0xFF2C2C2C),
-                            lineHeight = 20.sp
+                        TermsHeader(textAlign = TextAlign.Start)
+                        TermsContent()
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        TermsControlSection(
+                            termsAccepted = termsAccepted,
+                            onCheckedChange = { termsAccepted = it },
+                            onContinueClick = {
+                                if (termsAccepted) {
+                                    onAccept()
+                                } else {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(warningMessage)
+                                    }
+                                }
+                            },
+                            onBackClick = onNavigateBack
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                var termsAccepted by remember { mutableStateOf(false) }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = termsAccepted,
-                        onCheckedChange = { termsAccepted = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color(0xFF4A4A4A),
-                            uncheckedColor = Color(0xFF9E9E9E),
-                            checkmarkColor = Color.White
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.terms_accept_checkbox),
-                        fontSize = 16.sp,
-                        color = Color(0xFF2C2C2C),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = {
-                        if (termsAccepted) {
-                            onAccept()
-                        } else {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = warningMessage,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4A4A4A),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.continue_button),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFF4A4A4A)
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.back_button),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
             }
+        }
+    }
+}
+
+/**
+ * Helper method to construct the terms header.
+ */
+@Composable
+private fun TermsHeader(
+    textAlign: TextAlign = TextAlign.Center,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = stringResource(R.string.terms_title),
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF2C2C2C),
+        textAlign = textAlign,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    )
+}
+
+
+/**
+ * Helper method to construct the terms content.
+ */
+@Composable
+private fun TermsContent(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                text = stringResource(R.string.terms_content),
+                fontSize = 14.sp,
+                color = Color(0xFF2C2C2C),
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Justify
+            )
+        }
+    }
+}
+
+/**
+ * Helper method to construct the terms control section and continue button.
+ */
+@Composable
+private fun TermsControlSection(
+    termsAccepted: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onContinueClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = termsAccepted,
+                onCheckedChange = onCheckedChange,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Color(0xFF4A4A4A),
+                    uncheckedColor = Color(0xFF9E9E9E),
+                    checkmarkColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.terms_accept_checkbox),
+                fontSize = 16.sp,
+                color = Color(0xFF2C2C2C),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onContinueClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4A4A4A),
+                contentColor = Color.White
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.continue_button),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color(0xFF4A4A4A)
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.back_button),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -185,7 +265,8 @@ fun TermsAndConditionsScreen(
 @Composable
 fun TermsAndConditionsPreview() {
     TermsAndConditionsScreen(
-        onAccept = { }
+        onAccept = { },
+        windowSize = WindowWidthSizeClass.Compact
     )
 }
 

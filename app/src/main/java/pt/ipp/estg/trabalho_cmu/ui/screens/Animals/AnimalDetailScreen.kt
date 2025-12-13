@@ -4,14 +4,17 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -35,6 +38,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.calculateAge
 import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
 import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
+import androidx.compose.foundation.lazy.items
 
 /**
  * High-level animal detail screen responsible for:
@@ -51,6 +55,7 @@ fun AnimalDetailScreen(
     animalViewModel: AnimalViewModel,
     animalId: String,
     showAdoptButton: Boolean,
+    windowSize: WindowWidthSizeClass,
     onAdoptClick: () -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
@@ -73,10 +78,13 @@ fun AnimalDetailScreen(
         return
     }
 
+
+
     AnimalDetailScreenContent(
         animal = animal!!,
         shelter = shelter!!,
         showAdoptButton = showAdoptButton,
+        isExpanded = windowSize == WindowWidthSizeClass.Expanded,
         onAdoptClick = onAdoptClick,
         onNavigateBack = onNavigateBack
     )
@@ -96,6 +104,7 @@ private fun AnimalDetailScreenContent(
     animal: Animal,
     shelter: Shelter,
     showAdoptButton: Boolean,
+    isExpanded: Boolean,
     onAdoptClick: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -106,79 +115,88 @@ private fun AnimalDetailScreenContent(
     val ageText = age?.let { "$it ${stringResource(R.string.age_years)}" }
         ?: stringResource(R.string.age_not_available)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF9F9F9))
-            .verticalScroll(rememberScrollState())
-            .statusBarsPadding()
-    ) {
-        ImageGallery(
-            mainImageUrl = mainImage,
-            thumbnails = imageGallery,
-            onThumbnailClick = { if (it.isNotBlank()) mainImage = it },
-            onNavigateBack = onNavigateBack
-        )
+    // if it is a tablet (expanded), use Row (side by side)
+    if (isExpanded) {
+        Row(modifier = Modifier.fillMaxSize().background(Color(0xFFF9F9F9)).statusBarsPadding()) {
+            Box(modifier = Modifier.weight(0.4f).fillMaxHeight()) {
+                ImageGallery(
+                    mainImageUrl = mainImage,
+                    thumbnails = imageGallery,
+                    onThumbnailClick = { if (it.isNotBlank()) mainImage = it },
+                    onNavigateBack = onNavigateBack
+                )
+            }
 
-        Column(modifier = Modifier.padding(20.dp)) {
-
-            Text(
-                text = animal.name,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF3F51B5)
+            Column(
+                modifier = Modifier
+                    .weight(0.6f)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                AnimalInfoContent(animal, shelter, showAdoptButton, onAdoptClick)
+            }
+        }
+    } else {
+        //If it is phone (compact), use column.
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF9F9F9))
+                .verticalScroll(rememberScrollState())
+                .statusBarsPadding()
+        ) {
+            ImageGallery(
+                mainImageUrl = mainImage,
+                thumbnails = imageGallery,
+                onThumbnailClick = { if (it.isNotBlank()) mainImage = it },
+                onNavigateBack = onNavigateBack
             )
 
-            Text(
-                text = "${animal.species} • ${animal.size}",
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
+            AnimalInfoContent(animal, shelter, showAdoptButton, onAdoptClick)
+        }
+    }
+}
 
-            Spacer(Modifier.height(12.dp))
-            Divider()
-            Spacer(Modifier.height(12.dp))
+/**
+ * Reusable animal info content for the detail screen.
+ */
+@Composable
+fun AnimalInfoContent(
+    animal: Animal,
+    shelter: Shelter,
+    showAdoptButton: Boolean,
+    onAdoptClick: () -> Unit
+) {
+    val age = calculateAge(animal.birthDate)
+    val ageText = age?.let { "$it ${stringResource(R.string.age_years)}" } ?: stringResource(R.string.age_not_available)
 
-            // Info fields
-            InfoLine(R.string.animal_breed_label, animal.breed)
-            InfoLine(R.string.animal_age_label, ageText)
+    Column(modifier = Modifier.padding(20.dp)) {
+        Text(text = animal.name, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3F51B5))
+        Text(text = "${animal.species} • ${animal.size}", fontSize = 16.sp, color = Color.Gray)
 
-            InfoLine(R.string.shelter_name_label, shelter.name)
-            InfoLine(R.string.shelter_address_label, shelter.address)
-            InfoLine(R.string.shelter_email_label, shelter.email)
-            InfoLine(R.string.shelter_phone_label, shelter.phone)
+        Spacer(Modifier.height(12.dp)); Divider(); Spacer(Modifier.height(12.dp))
 
-            Spacer(Modifier.height(20.dp))
-            Divider()
-            Spacer(Modifier.height(20.dp))
+        InfoLine(R.string.animal_breed_label, animal.breed)
+        InfoLine(R.string.animal_age_label, ageText)
+        InfoLine(R.string.shelter_name_label, shelter.name)
+        InfoLine(R.string.shelter_address_label, shelter.address)
+        InfoLine(R.string.shelter_email_label, shelter.email)
+        InfoLine(R.string.shelter_phone_label, shelter.phone)
 
-            Text(
-                text = stringResource(R.string.description_title),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF303F9F)
-            )
+        Spacer(Modifier.height(20.dp)); Divider(); Spacer(Modifier.height(20.dp))
 
-            Text(
-                text = animal.description,
-                fontSize = 15.sp,
-                color = Color.DarkGray,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.padding(top = 6.dp)
-            )
+        Text(text = stringResource(R.string.description_title), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF303F9F))
+        Text(text = animal.description, fontSize = 15.sp, color = Color.DarkGray, textAlign = TextAlign.Start, modifier = Modifier.padding(top = 6.dp))
 
-            Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
-            if (showAdoptButton) {
-                Button(
-                    onClick = onAdoptClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text(stringResource(R.string.adopt_button), fontSize = 18.sp)
-                }
+        if (showAdoptButton) {
+            Button(
+                onClick = onAdoptClick,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(stringResource(R.string.adopt_button), fontSize = 18.sp)
             }
         }
     }
@@ -218,24 +236,29 @@ fun ImageGallery(
                 error = painterResource(R.drawable.no_image_found)
             )
 
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                thumbnails.filter { it.isNotBlank() }.forEach { url ->
+                items(thumbnails.filter { it.isNotBlank() }) { url ->
                     AsyncImage(
                         model = url,
                         contentDescription = stringResource(R.string.thumbnail_image_description),
                         modifier = Modifier
-                            .size(60.dp)
-                            .padding(horizontal = 4.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .size(70.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .then(
+                                if (url == mainImageUrl)
+                                    Modifier.border(2.dp, Color(0xFF3F51B5), RoundedCornerShape(12.dp))
+                                else Modifier
+                            )
                             .clickable { onThumbnailClick(url) },
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.cat_image),
-                        error = painterResource(R.drawable.cat_image)
+                        placeholder = painterResource(R.drawable.no_image_found),
+                        error = painterResource(R.drawable.no_image_found)
                     )
                 }
             }
@@ -244,8 +267,8 @@ fun ImageGallery(
         IconButton(
             onClick = onNavigateBack,
             modifier = Modifier
-                .padding(12.dp)
-                .size(36.dp)
+                .padding(16.dp)
+                .size(40.dp)
                 .align(Alignment.TopEnd)
                 .background(Color(0x55000000), RoundedCornerShape(50))
         ) {
@@ -273,5 +296,85 @@ fun InfoLine(labelId: Int, value: String) {
     ) {
         Text(stringResource(labelId), fontWeight = FontWeight.Medium, fontSize = 15.sp)
         Text(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun PreviewAnimalDetailScreen() {
+
+    val mockAnimal = Animal(
+        id = "1",
+        name = "Leia",
+        breed = "Europeu Comum",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = dateStringToLong("2019-01-01"),
+        description = "Muito meiga, adora colo e mantinhas!",
+        imageUrls = listOf(
+            "https://placekitten.com/400/300",
+            "https://placekitten.com/350/280",
+            "https://placekitten.com/360/240"
+        ),
+        shelterId = "1"
+    )
+
+    val mockShelter = Shelter(
+        id = "1",
+        name = "Abrigo Porto",
+        address = "Rua dos Animais 123",
+        phone = "912345678",
+        email = "abrigo@email.com"
+    )
+
+    MaterialTheme {
+        AnimalDetailScreenContent(
+            animal = mockAnimal,
+            shelter = mockShelter,
+            showAdoptButton = true,
+            onAdoptClick = {},
+            onNavigateBack = {},
+            isExpanded = false
+        )
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun PreviewAnimalDetailWithoutAuth() {
+
+    val mockAnimal = Animal(
+        id = "1",
+        name = "Leia",
+        breed = "Europeu Comum",
+        species = "Gato",
+        size = "Pequeno",
+        birthDate = dateStringToLong("2019-01-01"),
+        description = "Muito meiga, adora colo e mantinhas!",
+        imageUrls = listOf(""),
+        shelterId = "1"
+    )
+
+    val mockShelter = Shelter(
+        id = "1",
+        name = "Abrigo Porto",
+        address = "Rua dos Animais 123",
+        phone = "912345678",
+        email = "abrigo@email.com"
+    )
+
+    MaterialTheme {
+        AnimalDetailScreenContent(
+            animal = mockAnimal,
+            shelter = mockShelter,
+            showAdoptButton = false,
+            onAdoptClick = {},
+            onNavigateBack = {},
+            isExpanded = false
+        )
     }
 }

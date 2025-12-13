@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ fun OwnershipFormScreen(
     userFirebaseUid: String,
     animalFirebaseUid: String,
     onSubmitSuccess: () -> Unit,
+    windowSize: WindowWidthSizeClass, // Mantemos o parâmetro para não partir quem chama, mas não é critico agora
     modifier: Modifier = Modifier
 ) {
     val viewModel: OwnershipViewModel = viewModel()
@@ -93,21 +95,6 @@ fun OwnershipFormScreen(
     }
 }
 
-/**
- * Internal UI component that renders the ownership form fields and handles
- * validation logic for:
- *  - Account number
- *  - Owner name
- *  - CVV
- *  - Citizen card number
- *
- * It manages loading states, input restrictions, form validation, and submission.
- *
- * @param isLoading Indicates whether the submission process is ongoing
- * @param snackbarHostState Snackbar host used to display form errors
- * @param onSubmit Callback triggered when the form is valid and submitted
- * @param modifier Modifier for layout adjustments
- */
 @Composable
 private fun OwnershipFormContent(
     isLoading: Boolean,
@@ -139,124 +126,314 @@ private fun OwnershipFormContent(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .widthIn(max = 600.dp)
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = stringResource(R.string.ownership_title),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2C2C2C),
-                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                )
+                OwnershipHeader(modifier = Modifier.padding(bottom = 16.dp))
 
-                Text(
-                    text = stringResource(R.string.ownership_subtitle),
-                    fontSize = 16.sp,
-                    color = Color(0xFF757575),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFB8D4D0)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        OwnershipTextField(
-                            value = accountNumber,
-                            onValueChange = {
-                                val filtered = it.filter { ch -> ch.isDigit() }
-                                if (filtered.length <= maxAccountDigits) accountNumber = filtered
-                            },
-                            label = stringResource(R.string.ownership_account_number),
-                            enabled = !isLoading,
-                            leadingIcon = {
-                                Text(
-                                    text = "PT50",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF2C8B7E),
-                                    modifier = Modifier.padding(start = 8.dp)
-                                )
-                            }
-                        )
-
-                        OwnershipTextField(
-                            value = ownerName,
-                            onValueChange = { ownerName = it },
-                            label = stringResource(R.string.ownership_owner_name),
-                            enabled = !isLoading
-                        )
-
-                        OwnershipTextField(
-                            value = cvv,
-                            onValueChange = {
-                                if (it.length <= 3 && it.all { char -> char.isDigit() }) {
-                                    cvv = it
-                                }
-                            },
-                            label = stringResource(R.string.ownership_cvv),
-                            enabled = !isLoading,
-                            placeholder = "123"
-                        )
-
-                        OwnershipTextField(
-                            value = cardNumber,
-                            onValueChange = {
-                                val filtered = it.filter { ch -> ch.isDigit() }
-                                if (filtered.length <= maxCardDigits) cardNumber = filtered
-                            },
-                            label = stringResource(R.string.ownership_citizen_card),
-                            enabled = !isLoading,
-                            placeholder = "12345678"
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        if (isFormValid) {
-                            onSubmit(ownerName, accountNumber, cvv, cardNumber)
-                        }
+                OwnershipFormCard(
+                    accountNumber = accountNumber,
+                    ownerName = ownerName,
+                    cvv = cvv,
+                    cardNumber = cardNumber,
+                    isLoading = isLoading,
+                    onAccountChange = {
+                        val filtered = it.filter { ch -> ch.isDigit() }
+                        if (filtered.length <= maxAccountDigits) accountNumber = filtered
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp)
-                        .height(48.dp),
-                    enabled = !isLoading && isFormValid,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color(0xFF2C8B7E),
-                        disabledContainerColor = Color(0xFFE0E0E0),
-                        disabledContentColor = Color(0xFF9E9E9E)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color(0xFF2C8B7E))
-                    } else {
-                        Text(
-                            text = stringResource(R.string.ownership_button),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                    onNameChange = { ownerName = it },
+                    onCvvChange = {
+                        if (it.length <= 3 && it.all { char -> char.isDigit() }) cvv = it
+                    },
+                    onCardChange = {
+                        val filtered = it.filter { ch -> ch.isDigit() }
+                        if (filtered.length <= maxCardDigits) cardNumber = filtered
                     }
-                }
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                OwnershipSubmitButton(
+                    isLoading = isLoading,
+                    isFormValid = isFormValid,
+                    onClick = { onSubmit(ownerName, accountNumber, cvv, cardNumber) }
+                )
 
                 Spacer(modifier = Modifier.height(32.dp))
             }
+        }
+    }
+}
+
+/**
+ * Internal UI component that renders the ownership form fields and handles
+ * validation logic for:
+ *  - Account number
+ *  - Owner name
+ *  - CVV
+ *  - Citizen card number
+ *
+ * It manages loading states, input restrictions, form validation, and submission.
+ *
+ * @param isLoading Indicates whether the submission process is ongoing
+ * @param snackbarHostState Snackbar host used to display form errors
+ * @param onSubmit Callback triggered when the form is valid and submitted
+ * @param modifier Modifier for layout adjustments
+ */
+@Composable
+private fun OwnershipFormContent(
+    windowSize: WindowWidthSizeClass,
+    isLoading: Boolean,
+    snackbarHostState: SnackbarHostState,
+    onSubmit: (String, String, String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val scrollState = rememberScrollState()
+
+    var ownerName by remember { mutableStateOf("") }
+    var accountNumber by remember { mutableStateOf("") }
+    var cvv by remember { mutableStateOf("") }
+    var cardNumber by remember { mutableStateOf("") }
+
+    val maxAccountDigits = 21
+    val maxCardDigits = 8
+
+    val isFormValid = accountNumber.isNotBlank() &&
+            accountNumber.length <= maxAccountDigits &&
+            ownerName.isNotBlank() &&
+            cvv.length == 3 &&
+            cardNumber.isNotBlank() &&
+            cardNumber.length <= maxCardDigits
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            if (windowSize == WindowWidthSizeClass.Compact) {
+                // --- VERTICAL LAYOUT (PHONE) ---
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OwnershipHeader(modifier = Modifier.padding(bottom = 16.dp))
+
+                    OwnershipFormCard(
+                        accountNumber = accountNumber,
+                        ownerName = ownerName,
+                        cvv = cvv,
+                        cardNumber = cardNumber,
+                        isLoading = isLoading,
+                        onAccountChange = {
+                            val filtered = it.filter { ch -> ch.isDigit() }
+                            if (filtered.length <= maxAccountDigits) accountNumber = filtered
+                        },
+                        onNameChange = { ownerName = it },
+                        onCvvChange = {
+                            if (it.length <= 3 && it.all { char -> char.isDigit() }) cvv = it
+                        },
+                        onCardChange = {
+                            val filtered = it.filter { ch -> ch.isDigit() }
+                            if (filtered.length <= maxCardDigits) cardNumber = filtered
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    OwnershipSubmitButton(
+                        isLoading = isLoading,
+                        isFormValid = isFormValid,
+                        onClick = { onSubmit(ownerName, accountNumber, cvv, cardNumber) }
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            } else {
+                // --- HORIZONTAL LAYOUT (TABLET) ---
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        OwnershipHeader()
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        OwnershipSubmitButton(
+                            isLoading = isLoading,
+                            isFormValid = isFormValid,
+                            onClick = { onSubmit(ownerName, accountNumber, cvv, cardNumber) }
+                        )
+                    }
+
+                    Column(modifier = Modifier.weight(1.2f)) {
+                        OwnershipFormCard(
+                            accountNumber = accountNumber,
+                            ownerName = ownerName,
+                            cvv = cvv,
+                            cardNumber = cardNumber,
+                            isLoading = isLoading,
+                            onAccountChange = {
+                                val filtered = it.filter { ch -> ch.isDigit() }
+                                if (filtered.length <= maxAccountDigits) accountNumber = filtered
+                            },
+                            onNameChange = { ownerName = it },
+                            onCvvChange = {
+                                if (it.length <= 3 && it.all { char -> char.isDigit() }) cvv = it
+                            },
+                            onCardChange = {
+                                val filtered = it.filter { ch -> ch.isDigit() }
+                                if (filtered.length <= maxCardDigits) cardNumber = filtered
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * Helper method to construct the header of the form.
+ */
+@Composable
+private fun OwnershipHeader(modifier: Modifier = Modifier) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        Text(
+            text = stringResource(R.string.ownership_title),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF2C2C2C),
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+        )
+        Text(
+            text = stringResource(R.string.ownership_subtitle),
+            fontSize = 16.sp,
+            color = Color(0xFF757575)
+        )
+    }
+}
+
+/**
+ * Helper method to show the submit button.
+ */
+@Composable
+private fun OwnershipSubmitButton(
+    isLoading: Boolean,
+    isFormValid: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        enabled = !isLoading && isFormValid,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color(0xFF2C8B7E),
+            disabledContainerColor = Color(0xFFE0E0E0),
+            disabledContentColor = Color(0xFF9E9E9E)
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color(0xFF2C8B7E))
+        } else {
+            Text(
+                text = stringResource(R.string.ownership_button),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+/**
+ * Helper method to construct the ownership form card.
+ */
+@Composable
+private fun OwnershipFormCard(
+    accountNumber: String,
+    ownerName: String,
+    cvv: String,
+    cardNumber: String,
+    isLoading: Boolean,
+    onAccountChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onCvvChange: (String) -> Unit,
+    onCardChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth().padding(vertical = 16.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFB8D4D0)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            OwnershipTextField(
+                value = accountNumber,
+                onValueChange = onAccountChange,
+                label = stringResource(R.string.ownership_account_number),
+                enabled = !isLoading,
+                leadingIcon = {
+                    Text(
+                        text = "PT50",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2C8B7E),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            )
+
+            OwnershipTextField(
+                value = ownerName,
+                onValueChange = onNameChange,
+                label = stringResource(R.string.ownership_owner_name),
+                enabled = !isLoading
+            )
+
+            OwnershipTextField(
+                value = cvv,
+                onValueChange = onCvvChange,
+                label = stringResource(R.string.ownership_cvv),
+                enabled = !isLoading,
+                placeholder = "123"
+            )
+
+            OwnershipTextField(
+                value = cardNumber,
+                onValueChange = onCardChange,
+                label = stringResource(R.string.ownership_citizen_card),
+                enabled = !isLoading,
+                placeholder = "12345678"
+            )
         }
     }
 }
@@ -322,6 +499,7 @@ private fun OwnershipTextField(
 fun OwnershipFormScreenPreview() {
     MaterialTheme {
         OwnershipFormContent(
+            windowSize = WindowWidthSizeClass.Compact,
             isLoading = false,
             snackbarHostState = SnackbarHostState(),
             onSubmit = { _, _, _, _ -> }

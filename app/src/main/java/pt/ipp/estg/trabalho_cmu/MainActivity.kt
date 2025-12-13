@@ -12,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
+import pt.ipp.estg.trabalho_cmu.ui.components.NotificationPermissionHandler
+import pt.ipp.estg.trabalho_cmu.ui.theme.Trabalho_CMUTheme
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
 /**
@@ -37,12 +39,14 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(null)
+        super.onCreate(savedInstanceState)
 
         setContent {
             val windowSize = calculateWindowSizeClass(this)
 
-            MaterialTheme {
+            Trabalho_CMUTheme {
+                NotificationPermissionHandler()
+
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -37,7 +38,8 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onRegisterSuccess: () -> Unit,
-    authviewModel: AuthViewModel
+    authviewModel: AuthViewModel,
+    windowSize: WindowWidthSizeClass
 ) {
     val name by authviewModel.name.observeAsState("")
     val address by authviewModel.address.observeAsState("")
@@ -60,6 +62,7 @@ fun RegisterScreen(
         isLoading = isLoading,
         error = error,
         message = message,
+        windowSize = windowSize,
         onNameChange = { authviewModel.name.value = it },
         onAddressChange = { authviewModel.address.value = it },
         onPhoneChange = {
@@ -89,6 +92,7 @@ fun RegisterScreenContent(
     isLoading: Boolean,
     error: String?,
     message: String?,
+    windowSize: WindowWidthSizeClass,
     onNameChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
@@ -129,90 +133,96 @@ fun RegisterScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
-                label = { Text(stringResource(R.string.name_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = address,
-                onValueChange = onAddressChange,
-                label = { Text(stringResource(R.string.address_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = phone,
-                onValueChange = onPhoneChange,
-                label = { Text(stringResource(R.string.phone_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = onEmailChange,
-                label = { Text(stringResource(R.string.email_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = onPasswordChange,
-                label = { Text(stringResource(R.string.password_label)) },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-                OutlinedTextField(
-                    value =
-                        if (accountType == AccountType.USER)
-                            stringResource(R.string.user_label)
-                        else
-                            stringResource(R.string.shelter_label),
-                    onValueChange = {},
-                    label = { Text(stringResource(R.string.account_type_label)) },
-                    readOnly = true,
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.user_label)) },
-                        onClick = {
-                            onAccountTypeChange(AccountType.USER)
-                            expanded = false
-                        }
+            AdaptiveFormLayout(
+                windowSize = windowSize,
+                part1 = {
+                    // Group 1: personal data
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = onNameChange,
+                        label = { Text(stringResource(R.string.name_label)) },
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.shelter_label)) },
-                        onClick = {
-                            onAccountTypeChange(AccountType.SHELTER)
-                            expanded = false
-                        }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = address,
+                        onValueChange = onAddressChange,
+                        label = { Text(stringResource(R.string.address_label)) },
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = phone,
+                        onValueChange = onPhoneChange,
+                        label = { Text(stringResource(R.string.phone_label)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                part2 = {
+                    // Gruou 2: account data
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = onEmailChange,
+                        label = { Text(stringResource(R.string.email_label)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = onPasswordChange,
+                        label = { Text(stringResource(R.string.password_label)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }
+                    ) {
+                        OutlinedTextField(
+                            value =
+                                if (accountType == AccountType.USER)
+                                    stringResource(R.string.user_label)
+                                else
+                                    stringResource(R.string.shelter_label),
+                            onValueChange = {},
+                            label = { Text(stringResource(R.string.account_type_label)) },
+                            readOnly = true,
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.user_label)) },
+                                onClick = {
+                                    onAccountTypeChange(AccountType.USER)
+                                    expanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.shelter_label)) },
+                                onClick = {
+                                    onAccountTypeChange(AccountType.SHELTER)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
                 }
-            }
+            )
 
             Spacer(Modifier.height(24.dp))
 
@@ -266,30 +276,64 @@ fun RegisterScreenContent(
     }
 }
 
-@Preview(showBackground = true)
-    @Composable
-    fun RegisterPreview() {
-        RegisterScreenContent(
-            name = "Maria",
-            address = "Rua das Flores",
-            phone = "912345678",
-            email = "maria@example.com",
-            password = "123456",
-            accountType = AccountType.USER,
-            isLoading = false,
-            error = null,
-            message = null,
-            onNameChange = {},
-            onAddressChange = {},
-            onPhoneChange = {},
-            onEmailChange = {},
-            onPasswordChange = {},
-            onAccountTypeChange = {},
-            onRegisterClick = {},
-            onNavigateBack = {},
-            onRegisterSuccess = {},
-            onClearError = {},
-            onClearMessage = {}
-        )
-    }
+/**
+ * Helper method to adapt the layout to register form fields depending on the screen size.
+ */
+@Composable
+private fun AdaptiveFormLayout(
+    windowSize: WindowWidthSizeClass,
+    part1: @Composable ColumnScope.() -> Unit,
+    part2: @Composable ColumnScope.() -> Unit
+) {
+    val isExpanded = windowSize == WindowWidthSizeClass.Expanded
 
+    if (isExpanded) {
+        // Tablet: Line with 2 columns
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                part1()
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                part2()
+            }
+        }
+    } else {
+        //phone: only one column
+        Column(modifier = Modifier.fillMaxWidth()) {
+            part1()
+            Spacer(Modifier.height(8.dp))
+            part2()
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterPreview() {
+    RegisterScreenContent(
+        name = "Maria",
+        address = "Rua das Flores",
+        phone = "912345678",
+        email = "maria@example.com",
+        password = "123456",
+        accountType = AccountType.USER,
+        isLoading = false,
+        error = null,
+        message = null,
+        onNameChange = {},
+        onAddressChange = {},
+        onPhoneChange = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onAccountTypeChange = {},
+        onRegisterClick = {},
+        onNavigateBack = {},
+        onRegisterSuccess = {},
+        onClearError = {},
+        onClearMessage = {},
+        windowSize = WindowWidthSizeClass.Compact
+    )
+}
