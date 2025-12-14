@@ -11,15 +11,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.HomeScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.LoginScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.RegisterScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalDetailScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalListScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.HomeScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.LoginScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.RegisterScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoriteViewModel
 
 /**
  * Navigation graph for the public (guest) section of the app.

@@ -82,7 +82,6 @@ class MainActivity : ComponentActivity() {
             val shouldNavigateToWalk by navigateToWalk
             val shouldStopWalk by stopWalkRequested
 
-            MaterialTheme {
             Trabalho_CMUTheme {
                 NotificationPermissionHandler()
 

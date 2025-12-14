@@ -15,8 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.shelter.ShelterMngViewModel
 
 /**
  * Main application scaffold responsible for:
@@ -65,8 +65,16 @@ fun AppScaffold(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val onLogoutAndNavigate: () -> Unit = {
-        authViewModel.logout()
-        onLogout()
+        scope.launch {
+            drawerState.close()
+
+            authViewModel.logout()
+            onLogout()
+
+            navController.navigate("Home") {
+                popUpTo(0) { inclusive = true }
+            }
+        }
     }
 
     val userDrawerOptions = getUserDrawerOptions()

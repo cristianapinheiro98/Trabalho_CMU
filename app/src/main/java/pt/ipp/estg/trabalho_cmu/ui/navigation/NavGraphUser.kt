@@ -10,26 +10,26 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipConfirmationScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.OwnershipFormScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitySchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitiesHistoryScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoritesScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.MainOptionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.PreferencesScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.User.UserViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Veterinarians.VeterinariansScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkHistoryScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.OwnershipConfirmationScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.OwnershipFormScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.TermsAndConditionsScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.activity.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.activity.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscomunity.SocialTailsCommunityScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalDetailScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalListScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.shelter.ShelterViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoritesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoriteViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.MainOptionsScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.PreferencesScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.user.UserViewModel
+import pt.ipp.estg.trabalho_cmu.ui.screens.veterinarians.VeterinariansScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkSummaryScreen
 
 /**
  * Navigation graph for regular logged-in users.
