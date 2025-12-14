@@ -39,6 +39,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.services.WalkTrackingService
 import pt.ipp.estg.trabalho_cmu.ui.components.AnimalSelectionDialog
 import androidx.compose.ui.graphics.Color
+import pt.ipp.estg.trabalho_cmu.ui.components.AdoptionCelebrationDialog
 
 /**
  * Main Options Screen (User Dashboard)
@@ -150,6 +151,42 @@ fun MainOptionsScreen(
                     )
                 }
 
+                is MainOptionsUiState.NoAnimals -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.welcome_message, state.userName),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+
+                            Text(
+                                text = stringResource(R.string.no_animals_adopted_message),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = { navController.navigate("AnimalsCatalogue") }
+                            ) {
+                                Text(stringResource(R.string.view_animals_catalog))
+                            }
+                        }
+                    }
+                }
+
                 is MainOptionsUiState.Error -> {
                     ErrorContent(
                         message = state.message,
@@ -175,7 +212,8 @@ fun MainOptionsScreen(
         },
         onMedalClick = { walkId ->
             navController.navigate(viewModel.getWalkHistoryNavigationRoute(walkId))
-        }
+        },
+        onDismissCelebration = { viewModel.dismissCelebrationDialog() }
     )
 }
 
@@ -671,7 +709,8 @@ private fun DialogsContainer(
     onDismissMedalCollection: () -> Unit,
     onAnimalSelectedForSchedule: (Animal) -> Unit,
     onAnimalSelectedForWalk: (Animal) -> Unit,
-    onMedalClick: (String) -> Unit
+    onMedalClick: (String) -> Unit,
+    onDismissCelebration: () -> Unit
 ) {
     // Animal selection dialog
     if (dialogState.isAnimalSelectionVisible) {
@@ -724,6 +763,16 @@ private fun DialogsContainer(
             medals = medals,
             onDismiss = onDismissMedalCollection,
             onMedalClick = onMedalClick
+        )
+    }
+
+    // Celebration dialog for approved adoption
+    if (dialogState.isCelebrationVisible && dialogState.celebrationData != null) {
+        AdoptionCelebrationDialog(
+            userName = dialogState.celebrationData.userName,
+            animalName = dialogState.celebrationData.animalName,
+            animalImageUrl = dialogState.celebrationData.animalImageUrl,
+            onDismiss = onDismissCelebration
         )
     }
 }

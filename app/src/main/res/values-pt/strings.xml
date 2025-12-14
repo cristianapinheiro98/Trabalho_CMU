@@ -491,6 +491,13 @@
     <string name="start_walk_no_animals_message">Não tens atividades ativas. Agenda uma visita primeiro.</string>
     <string name="last_walk_with">O teu último passeio com:</string>
     <string name="last_walk_distance">foi de %1$s</string>
+    <string name="welcome_message">Bem-vindo, %1$s!</string>
+    <string name="no_animals_adopted_message">Pede a um abrigo para adotar um animal antes de ter acesso às funcionalidades da App!</string>
+    <string name="view_animals_catalog">Ver Catálogo de Animais</string>
+    <!-- Adoption Celebration -->
+    <string name="celebration_thanks">Obrigada %1$s!</string>
+    <string name="celebration_eager_to_meet">Ansioso(a) por te conhecer!</string>
+    <string name="celebration_go_to_menu">Ir para menu principal</string>
 
     <!-- Last Walk -->
     <string name="last_walk_greeting">Olá %1$s!</string>

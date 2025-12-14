@@ -18,6 +18,13 @@ sealed class MainOptionsUiState {
     object Loading : MainOptionsUiState()
 
     /**
+     * User has no adopted animals yet
+     * Shows informational message to adopt an animal first
+     * @property userName User's name for personalized greeting
+     */
+    data class NoAnimals(val userName: String) : MainOptionsUiState()
+
+    /**
      * Successfully loaded dashboard data
      * @property animals User's owned animals
      * @property recentMedals Recently earned medals (last 5)
@@ -45,6 +52,8 @@ data class DialogState(
     val isAnimalSelectionVisible: Boolean = false,
     val isNoAnimalsVisible: Boolean = false,
     val isMedalCollectionVisible: Boolean = false,
+    val isCelebrationVisible: Boolean = false,
+    val celebrationData: CelebrationData? = null,
     val dialogType: DialogType = DialogType.SCHEDULE,
     val availableAnimalsForWalk: List<Animal> = emptyList(),
     val isLoadingAnimals: Boolean = false
@@ -59,3 +68,17 @@ enum class DialogType {
     /** Dialog for starting a walk */
     START_WALK
 }
+
+/**
+ * Data for adoption celebration popup
+ * @property ownershipId ID of the ownership to mark as celebrated
+ * @property userName User's name for personalized message
+ * @property animalName Animal's name
+ * @property animalImageUrl First image URL of the animal
+ */
+data class CelebrationData(
+    val ownershipId: String,
+    val userName: String,
+    val animalName: String,
+    val animalImageUrl: String
+)

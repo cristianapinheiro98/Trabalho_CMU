@@ -46,8 +46,7 @@ fun NavGraphPublic(
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
 
-
-    // GUEST → não há favoritos
+    // Guest has no favorites
     val favoriteViewModel: FavoriteViewModel? = null
 
     NavHost(navController = navController, startDestination = "Home") {
@@ -96,8 +95,7 @@ fun NavGraphPublic(
             )
         }
 
-
-        // GUEST — detalhes do animal sem botão de adoção
+        // GUEST — animal details without adoption button
         composable(
             route = "AnimalDetailGuest/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })

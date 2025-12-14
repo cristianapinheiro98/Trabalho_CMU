@@ -59,13 +59,10 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
 data class Ownership(
     @PrimaryKey
     val id: String,
-
     val userId: String,
     val animalId: String,
     val shelterId: String,
-
     val status: OwnershipStatus = OwnershipStatus.PENDING,
-
-    val createdAt: Long = System.currentTimeMillis()
-
+    val createdAt: Long = System.currentTimeMillis(),
+    val celebrationShown: Boolean = false
 )

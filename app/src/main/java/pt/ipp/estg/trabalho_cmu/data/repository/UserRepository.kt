@@ -116,6 +116,10 @@ class UserRepository(
                 user
             }
 
+            Log.d("UserRepository", "Users encontrados no Firebase: ${snapshot.documents.size}")
+            Log.d("UserRepository", "Users convertidos com sucesso: ${usersList.size}")
+            Log.d("UserRepository", "IDs dos users sincronizados: ${usersList.map { it.id }}")
+
             if (usersList.isNotEmpty()) {
                 userDao.insertAll(usersList)
             }

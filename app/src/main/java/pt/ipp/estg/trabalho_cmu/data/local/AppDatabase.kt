@@ -28,7 +28,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
  *
  * The database uses TypeConverters to support non-primitive fields.
  *
- * @version 14 Current database schema version.
+ * @version 20 Current database schema version.
  */
 @Database(
     entities = [
@@ -41,7 +41,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
         Favorite::class,
         Walk::class
     ],
-    version = 19,
+    version = 20,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.user
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
@@ -32,7 +35,8 @@ import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 @Composable
 fun PreferencesScreen(
     userViewModel: UserViewModel = viewModel(),
-    userId: String
+    userId: String,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -51,9 +55,6 @@ fun PreferencesScreen(
     var notificationsEnabled by remember { mutableStateOf(true) }
     var showLanguageChangedDialog by remember { mutableStateOf(false) }
     var dialogContext by remember { mutableStateOf(context) }
-
-
-
 
     Column(
         modifier = Modifier
@@ -87,7 +88,6 @@ fun PreferencesScreen(
             }
         }
 
-
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -106,7 +106,6 @@ fun PreferencesScreen(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             selected = selectedLanguage == "PT",
@@ -118,10 +117,8 @@ fun PreferencesScreen(
                                 showLanguageChangedDialog = true
                             }
                         )
-
                         Text("PT")
                     }
-
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
@@ -134,13 +131,11 @@ fun PreferencesScreen(
                                 showLanguageChangedDialog = true
                             }
                         )
-
                         Text("EN")
                     }
                 }
             }
         }
-
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -186,15 +181,27 @@ fun PreferencesScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showLanguageChangedDialog = false
-                    activity?.recreate()
+
+                    activity?.let { act ->
+                        val intent = act.intent
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                        act.finish()
+                        act.startActivity(intent)
+                    }
+
+//                    navController.navigate("UserHome") {
+//                        popUpTo(0) { inclusive = true }
+//                    }
+//
+//                    activity?.recreate()
                 }) {
                     Text(confirm)
                 }
             }
         )
     }
-
-
 }
 
 @Composable
@@ -222,6 +229,9 @@ fun UserInfoRow(icon: ImageVector, text: String) {
 @Composable
 private fun PreferenceScreenPreview() {
     MaterialTheme {
-        PreferencesScreen(userId = "preview_id")
+        PreferencesScreen(
+            userId = "preview_id",
+            navController = rememberNavController()
+        )
     }
 }

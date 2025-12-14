@@ -75,7 +75,10 @@ fun NavGraphUser(
 
         // ========== PREFERENCES ==========
         composable("Preferences") {
-            PreferencesScreen(userId = authViewModel.getCurrentUserFirebaseUid() ?: "")
+            PreferencesScreen(
+                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
+                navController = navController
+            )
         }
 
         // ========== VETERINARIANS ==========

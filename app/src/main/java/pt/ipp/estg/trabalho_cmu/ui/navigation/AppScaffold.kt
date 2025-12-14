@@ -9,14 +9,16 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthUiState
 import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.shelter.ShelterMngViewModel
 
 /**
  * Main application scaffold responsible for:
@@ -57,32 +59,39 @@ fun AppScaffold(
     onWalkNavigationHandled: () -> Unit = {}
 ) {
     val authViewModel: AuthViewModel = viewModel()
-    val shelterMngViewModel: ShelterMngViewModel = viewModel()
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val authUiState by authViewModel.uiState.observeAsState()
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val onLogoutAndNavigate: () -> Unit = {
-        scope.launch {
+    // Force drawer to close when user logs out
+    LaunchedEffect(isLoggedIn, isAdmin) {
+        if (!isLoggedIn || isAdmin) {
             drawerState.close()
-
-            authViewModel.logout()
-            onLogout()
-
-            navController.navigate("Home") {
-                popUpTo(0) { inclusive = true }
-            }
         }
+    }
+
+    // Automatic login when a valid session is detected
+    LaunchedEffect(authUiState) {
+        if (authUiState is AuthUiState.Success && !isLoggedIn) {
+            val loginResult = (authUiState as AuthUiState.Success).loginResult
+            val isAdminUser = loginResult.accountType == AccountType.SHELTER
+            onLoginSuccess(isAdminUser)
+        }
+    }
+
+    val onLogoutAndNavigate: () -> Unit = {
+        authViewModel.logout()
+        onLogout()
     }
 
     val userDrawerOptions = getUserDrawerOptions()
     val selectedDrawerOption = userDrawerOptions.find { it.route == currentRoute }
 
     // Handle navigation from notification actions
-    // When user taps "Stop Walk" button in notification, navigate to walk screen
-    // and trigger the stop confirmation dialog
+    // When user taps "Stop Walk" button in notification, navigates to walk screen and triggers the stop confirmation dialog
     LaunchedEffect(navigateToWalk, stopWalkRequested) {
         if (navigateToWalk && isLoggedIn && !isAdmin) {
             // Navigate to walk screen with stop request flag if applicable

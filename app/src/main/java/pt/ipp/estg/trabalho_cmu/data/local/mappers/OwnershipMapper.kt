@@ -15,7 +15,8 @@ fun Ownership.toFirebaseMap(): Map<String, Any> {
         "animalId" to animalId,
         "shelterId" to shelterId,
         "status" to status.name,
-        "createdAt" to createdAt
+        "createdAt" to createdAt,
+        "celebrationShown" to celebrationShown
     )
 }
 
@@ -42,7 +43,8 @@ fun DocumentSnapshot.toOwnership(): Ownership? {
             animalId = getString("animalId") ?: "",
             shelterId = getString("shelterId") ?: "",
             status = statusEnum,
-            createdAt = getLong("createdAt") ?: System.currentTimeMillis()
+            createdAt = getLong("createdAt") ?: System.currentTimeMillis(),
+            celebrationShown = getBoolean("celebrationShown") ?: false
         )
     } catch (e: Exception) {
         e.printStackTrace()

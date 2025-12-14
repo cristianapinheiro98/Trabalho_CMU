@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.repository.ActivityRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.AnimalRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.UserRepository
 import pt.ipp.estg.trabalho_cmu.data.repository.WalkRepository
+import pt.ipp.estg.trabalho_cmu.data.repository.OwnershipRepository
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 import pt.ipp.estg.trabalho_cmu.services.WalkTrackingService
@@ -27,7 +28,6 @@ import java.util.*
  * Follows MVVM pattern - all state is managed here, Screen is stateless
  */
 class MainOptionsViewModel(application: Application) : AndroidViewModel(application) {
-
     companion object {
         private const val TAG = "MainOptionsViewModel"
     }
@@ -39,12 +39,15 @@ class MainOptionsViewModel(application: Application) : AndroidViewModel(applicat
 
     private val userRepository: UserRepository
 
+    private val ownershipRepository: OwnershipRepository
+
     init {
         val application = getApplication<Application>()
         animalRepository = DatabaseModule.provideAnimalRepository(application)
         activityRepository = DatabaseModule.provideActivityRepository(application)
         walkRepository = DatabaseModule.provideWalkRepository(application)
         userRepository = DatabaseModule.provideUserRepository(application)
+        ownershipRepository = DatabaseModule.provideOwnershipRepository(application)
     }
 
     // ========== UI State ==========
@@ -78,24 +81,35 @@ class MainOptionsViewModel(application: Application) : AndroidViewModel(applicat
             try {
                 val userId = getCurrentUserId()
 
-                // 1. Sync user FIRST (required for walk foreign key)
+                // Sync user (required for walk foreign key)
                 userRepository.syncSpecificUser(userId)
 
-                // 2. Sync animals SECOND (required for walk foreign key)
+                // Sync animals (required for walk foreign key)
                 animalRepository.syncUserOwnedAnimals(userId)
 
-                // 3. Sync walks THIRD (now foreign keys are satisfied)
+                // Sync approved ownerships with celebration status
+                ownershipRepository.syncUserApprovedOwnershipsWithCelebration(userId)
+
+                // Sync walks (now foreign keys are satisfied)
                 walkRepository.syncWalks(userId)
 
-                // 4. Sync activities LAST
+                // Sync activities
                 activityRepository.syncActivities(userId)
 
-                // Now load data from Room (AFTER sync)
+                // Load data from Room (after sync)
                 val user = userRepository.getUserById(userId)
                 val userName = user?.name ?: "User"
 
+                // Check for uncelebrated approved ownership
+                checkForCelebration(userId, userName)
+
                 // Load user's owned animals
                 val animals = animalRepository.getOwnedAnimals(userId)
+
+                if (animals.isEmpty()) {
+                    _uiState.value = MainOptionsUiState.NoAnimals(userName = userName)
+                    return@launch
+                }
 
                 // Load recent medals (last 5)
                 val recentMedals = walkRepository.getRecentMedals(userId, 5)
@@ -389,6 +403,68 @@ class MainOptionsViewModel(application: Application) : AndroidViewModel(applicat
     private fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return dateFormat.format(Date())
+    }
+
+    /**
+     * Check if there's an approved ownership that needs celebration
+     */
+    private suspend fun checkForCelebration(userId: String, userName: String) {
+        try {
+            val uncelebratedOwnership = ownershipRepository.getUncelebratedApprovedOwnership(userId)
+
+            if (uncelebratedOwnership != null) {
+                val animal = animalRepository.getAnimalById(uncelebratedOwnership.animalId)
+
+                if (animal != null) {
+                    pt.ipp.estg.trabalho_cmu.notifications.NotificationManager.notifyOwnershipAccepted(
+                        context = context,
+                        animalName = animal.name,
+                        animalId = animal.id
+                    )
+
+                    _dialogState.postValue(
+                        _dialogState.value?.copy(
+                            isCelebrationVisible = true,
+                            celebrationData = CelebrationData(
+                                ownershipId = uncelebratedOwnership.id,
+                                userName = userName,
+                                animalName = animal.name,
+                                animalImageUrl = animal.imageUrls.firstOrNull() ?: ""
+                            )
+                        ) ?: DialogState(
+                            isCelebrationVisible = true,
+                            celebrationData = CelebrationData(
+                                ownershipId = uncelebratedOwnership.id,
+                                userName = userName,
+                                animalName = animal.name,
+                                animalImageUrl = animal.imageUrls.firstOrNull() ?: ""
+                            )
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking for celebration", e)
+        }
+    }
+
+    /**
+     * Dismiss celebration dialog and mark ownership as celebrated
+     */
+    fun dismissCelebrationDialog() {
+        val celebrationData = _dialogState.value?.celebrationData
+
+        _dialogState.value = _dialogState.value?.copy(
+            isCelebrationVisible = false,
+            celebrationData = null
+        )
+
+        // Mark as celebrated in background
+        celebrationData?.let { data ->
+            viewModelScope.launch {
+                ownershipRepository.markOwnershipAsCelebrated(data.ownershipId)
+            }
+        }
     }
 }
 

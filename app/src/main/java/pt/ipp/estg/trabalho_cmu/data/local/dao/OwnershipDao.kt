@@ -82,4 +82,16 @@ interface OwnershipDao {
      */
     @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'APPROVED'")
     suspend fun getApprovedOwnershipsByUser(userId: String): List<Ownership>
+
+    /**
+     * Returns the first approved ownership that hasn't been celebrated yet.
+     */
+    @Query("SELECT * FROM OwnershipRequests WHERE userId = :userId AND status = 'APPROVED' AND celebrationShown = 0 LIMIT 1")
+    suspend fun getUncelebratedApprovedOwnership(userId: String): Ownership?
+
+    /**
+     * Marks an ownership as celebrated.
+     */
+    @Query("UPDATE OwnershipRequests SET celebrationShown = 1 WHERE id = :ownershipId")
+    suspend fun markAsCelebrated(ownershipId: String)
 }

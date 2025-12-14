@@ -91,7 +91,7 @@ fun PodiumSection(
                 PodiumPlace(
                     walk = walks.getOrNull(1),
                     position = 2,
-                    podiumHeight = 100.dp.value.toInt(),
+                    podiumHeight = 135.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_silver,
                     podiumColor = GrayTrophy,
                     formatDuration = formatDuration,
@@ -104,7 +104,7 @@ fun PodiumSection(
                 PodiumPlace(
                     walk = walks.getOrNull(0),
                     position = 1,
-                    podiumHeight = 130.dp.value.toInt(),
+                    podiumHeight = 145.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_gold,
                     podiumColor = YellowTrophy,
                     formatDuration = formatDuration,
@@ -117,7 +117,7 @@ fun PodiumSection(
                 PodiumPlace(
                     walk = walks.getOrNull(2),
                     position = 3,
-                    podiumHeight = 80.dp.value.toInt(),
+                    podiumHeight = 115.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_bronze,
                     podiumColor = BronzeTrophy,
                     formatDuration = formatDuration,

@@ -63,7 +63,10 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
      */
     private val breedRepository = BreedRepository()
 
-
+    /**
+     * Provides access to cached shelter profiles and allows syncing missing shelters.
+     */
+    private val shelterRepository = DatabaseModule.provideShelterRepository(application)
 
     /**
      * Defines the current state of the shelter management UI.
@@ -165,6 +168,9 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
     private suspend fun syncAllData(shelterId: String) {
         try {
+            shelterRepository.syncShelters() //debug
+            Log.d(TAG, "Shelters sincronizados") //debug
+
             userRepository.syncUsers()
             Log.d(TAG, "Users sincronizados")
 
@@ -261,11 +267,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
             if (ownership != null) {
                 ownershipRepository.approveOwnershipRequest(request.id, ownership.animalId)
                     .onSuccess {
-                        NotificationManager.notifyOwnershipAccepted(
-                            context = ctx,
-                            animalName = request.animal,
-                            animalId = ownership.animalId
-                        )
                         _uiState.value = ShelterMngUiState.RequestApproved
                         _message.value = StringHelper.getString( ctx, R.string.request_approved)
                         val shelterId = _currentShelterId.value
@@ -301,10 +302,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
 
         ownershipRepository.rejectOwnershipRequest(request.id)
             .onSuccess {
-                NotificationManager.notifyOwnershipRejected(
-                    context = ctx,
-                    animalName = request.animal
-                )
                 _uiState.value = ShelterMngUiState.RequestRejected
                 _message.value = StringHelper.getString(ctx, R.string.request_rejected)
                 val shelterId = _currentShelterId.value

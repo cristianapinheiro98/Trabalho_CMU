@@ -170,20 +170,6 @@ private fun LoginScreenContent(
                 text = { Text(it) }
             )
         }
-
-        // Success dialog
-        message?.let {
-            AlertDialog(
-                onDismissRequest = onClearMessage,
-                confirmButton = {
-                    TextButton(onClick = onClearMessage) {
-                        Text(stringResource(R.string.confirm_button_ok))
-                    }
-                },
-                title = { Text(stringResource(R.string.success_title)) },
-                text = { Text(it) }
-            )
-        }
     }
 }
 

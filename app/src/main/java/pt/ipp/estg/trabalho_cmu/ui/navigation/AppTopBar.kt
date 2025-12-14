@@ -99,7 +99,7 @@ fun AppTopBar(
                     }
                 }
 
-                // User-only notifications
+                // User only notifications
                 if (!isAdmin) {
                     /*IconButton(onClick = onNotificationsClick) {
                         Icon(
@@ -112,8 +112,6 @@ fun AppTopBar(
                     // Mock dropdown
                     NotificationDropdown()
                 }
-
-
 
                 // Logout button
                 IconButton(onClick = onLogoutClick) {
