@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.history
 
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal

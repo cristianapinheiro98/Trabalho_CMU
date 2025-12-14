@@ -23,8 +23,8 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
  * and submitting it to the AuthViewModel.
  *
  * This screen dynamically adapts depending on the selected account type:
- * - USER → registers a normal user
- * - SHELTER → registers a shelter with identical base fields
+ * - USER: registers a normal user
+ * - SHELTER: registers a shelter with identical base fields
  *
  * The screen contains:
  * - A top app bar

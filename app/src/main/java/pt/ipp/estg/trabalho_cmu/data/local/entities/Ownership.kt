@@ -27,6 +27,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.enums.OwnershipStatus
  * @property shelterId Foreign key referencing the shelter responsible for the animal.
  * @property status Current status of the request (PENDING, APPROVED, REJECTED).
  * @property createdAt Timestamp representing when the request was created.
+ * @property celebrationShown Flag indicating whether the celebration animation has been shown.
  */
 @Entity(
     tableName = "OwnershipRequests",

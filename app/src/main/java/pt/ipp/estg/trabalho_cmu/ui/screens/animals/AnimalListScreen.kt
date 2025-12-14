@@ -142,10 +142,6 @@ fun AnimalListContent(
     Column(
         modifier = Modifier.fillMaxSize().padding(12.dp)
     ) {
-
-        // -----------------------------------------
-        // TOP BAR (BACK + SEARCH + FILTERS + SORT)
-        // -----------------------------------------
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically

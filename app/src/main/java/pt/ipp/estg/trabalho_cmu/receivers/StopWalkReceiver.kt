@@ -14,7 +14,6 @@ import pt.ipp.estg.trabalho_cmu.MainActivity
  * the stop confirmation dialog.
  */
 class StopWalkReceiver : BroadcastReceiver() {
-
     companion object {
         const val ACTION_STOP_WALK = "pt.ipp.estg.trabalho_cmu.STOP_WALK"
     }

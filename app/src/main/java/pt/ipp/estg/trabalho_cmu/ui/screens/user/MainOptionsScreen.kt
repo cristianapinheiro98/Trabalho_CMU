@@ -44,7 +44,6 @@ import pt.ipp.estg.trabalho_cmu.ui.components.AdoptionCelebrationDialog
 /**
  * Main Options Screen (User Dashboard)
  * Displays user's animals, recent medals, last walk, and action buttons
- * Follows MVVM pattern - all state is managed by ViewModel
  *
  * @param navController Navigation controller for screen navigation
  * @param windowSize Window size class for adaptive layouts

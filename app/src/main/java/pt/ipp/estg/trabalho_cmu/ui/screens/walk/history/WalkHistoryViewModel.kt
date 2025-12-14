@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.walk
+package pt.ipp.estg.trabalho_cmu.ui.screens.walk.history
 
 import android.app.Application
 import android.util.Log
@@ -21,7 +21,6 @@ import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
  * Manages paginated walk history display
  */
 class WalkHistoryViewModel(application: Application) : AndroidViewModel(application) {
-
     companion object {
         private const val TAG = "WalkHistoryViewModel"
         private const val PAGE_SIZE = 3 // 3 walks per page

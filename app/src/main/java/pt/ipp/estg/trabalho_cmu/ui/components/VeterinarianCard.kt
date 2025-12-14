@@ -13,6 +13,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Veterinarian
 
+/**
+ * Composable component representing a single veterinarian card in the list.
+ *
+ * Displays essential details such as name, address, operating hours, and status (Open/Closed).
+ * Includes interactive buttons for calling and viewing the location on a map.
+ *
+ * @param veterinarian The data object containing veterinarian details.
+ * @param onPhoneClick Callback triggered when the "Call" button is pressed. Passes the phone number.
+ * @param onMapClick Callback triggered when the "Map" button is pressed.
+ * @param modifier Modifier for styling and layout customization.
+ */
 @Composable
 fun VeterinarianCard(
     veterinarian: Veterinarian,
@@ -29,7 +40,7 @@ fun VeterinarianCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Nome
+            // Name
             Text(
                 text = veterinarian.name,
                 fontSize = 18.sp,
@@ -39,7 +50,7 @@ fun VeterinarianCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Endereço
+            // Address
             Text(
                 text = veterinarian.address,
                 fontSize = 14.sp,
@@ -48,7 +59,7 @@ fun VeterinarianCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Horário de hoje
+            // Today's Schedule
             Text(
                 text = veterinarian.todaySchedule,
                 fontSize = 14.sp,
@@ -57,7 +68,7 @@ fun VeterinarianCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Estado (Aberto/Fechado)
+            // State (Open/Closed)
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -81,7 +92,7 @@ fun VeterinarianCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Botões
+            // Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)

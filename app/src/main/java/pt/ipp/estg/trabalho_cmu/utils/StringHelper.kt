@@ -10,12 +10,6 @@ import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
  * This utility ensures that repositories, ViewModels, and other components that use
  * Application Context can still get properly localized strings according to the
  * user's selected language (stored in SharedPreferences), rather than the system locale.
- *
- * Usage:
- * ```
- * val msg = StringHelper.getString(context, R.string.error_offline)
- * val formatted = StringHelper.getString(context, R.string.welcome_user, userName)
- * ```
  */
 object StringHelper {
 

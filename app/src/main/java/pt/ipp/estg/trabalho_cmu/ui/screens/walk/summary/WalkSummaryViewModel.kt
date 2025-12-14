@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.walk
+package pt.ipp.estg.trabalho_cmu.ui.screens.walk.summary
 
 import android.app.Application
 import android.util.Log

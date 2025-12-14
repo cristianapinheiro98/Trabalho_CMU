@@ -15,7 +15,6 @@ import androidx.lifecycle.MutableLiveData
  * - shouldUseDarkTheme: whether the app should switch to dark mode
  */
 class LightSensorManager(context: Context) : SensorEventListener {
-
     private val sensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 

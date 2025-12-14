@@ -1,7 +1,6 @@
 package pt.ipp.estg.trabalho_cmu
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -9,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import pt.ipp.estg.trabalho_cmu.ui.navigation.AppScaffold
 
@@ -42,9 +40,6 @@ fun PetAdoptionApp(
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
 
-    // LOG 3: Estado do PetAdoptionApp
-    Log.d("LOGOUT_DEBUG", "PetAdoptionApp recomposed - isLoggedIn=$isLoggedIn, isAdmin=$isAdmin")
-
     MaterialTheme (colorScheme = MaterialTheme.colorScheme,
         typography = MaterialTheme.typography,
         shapes = MaterialTheme.shapes
@@ -53,15 +48,12 @@ fun PetAdoptionApp(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,
             onLoginSuccess = { admin ->
-                Log.d("LOGOUT_DEBUG", "onLoginSuccess chamado - admin=$admin") //debug
                 isLoggedIn = true
                 isAdmin = admin
             },
             onLogout = {
-                Log.d("LOGOUT_DEBUG", "onLogout (callback) CHAMADO - ANTES: isLoggedIn=$isLoggedIn, isAdmin=$isAdmin") //debug
                 isLoggedIn = false
                 isAdmin = false
-                Log.d("LOGOUT_DEBUG", "onLogout (callback) EXECUTADO - DEPOIS: isLoggedIn=$isLoggedIn, isAdmin=$isAdmin") //debug
             },
             windowSize = windowSize,
             navigateToWalk = navigateToWalk,

@@ -27,7 +27,6 @@ fun HomeScreen(
     // If it is tablet (expanded), use row, then use column.
     val isExpanded = windowSize == WindowWidthSizeClass.Expanded
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -52,7 +52,7 @@ fun AdoptionCelebrationDialog(
                 .wrapContentHeight(),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFB2DFDB) // Soft teal/mint green like in mockup
+                containerColor = Color(0xFFB2DFDB)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
@@ -211,7 +211,7 @@ private fun AnimatedHeart(
         label = "pulse"
     )
 
-    // Slight rotation for more organic feel
+    // Slight rotation
     val rotation by infiniteTransition.animateFloat(
         initialValue = -5f,
         targetValue = 5f,

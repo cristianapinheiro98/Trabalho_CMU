@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.walk
+package pt.ipp.estg.trabalho_cmu.ui.screens.walk.history
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -346,7 +347,7 @@ private fun WalkHistoryMap(routePoints: List<LatLng>) {
         // Draw route
         Polyline(
             points = routePoints,
-            color = androidx.compose.ui.graphics.Color.Blue,
+            color = Color.Blue,
             width = 8f
         )
     }

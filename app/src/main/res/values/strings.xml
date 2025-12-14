@@ -61,7 +61,7 @@
     <string name="pickup_time">Pickup Time</string>
     <string name="delivery_date">Return Date</string>
     <string name="delivery_time">Return Time</string>
-    <string name="view_location">View location on Google Maps</string>
+    <string name="view_location">Google Maps</string>
     <string name="no_activities_scheduled">No activities scheduled</string>
     <string name="activities_history_title">Activities History</string>
     <string name="ongoing_activities">Ongoing Activities</string>

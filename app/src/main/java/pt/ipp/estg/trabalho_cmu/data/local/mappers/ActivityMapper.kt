@@ -3,6 +3,13 @@ package pt.ipp.estg.trabalho_cmu.data.models.mappers
 import com.google.firebase.firestore.DocumentSnapshot
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Activity
 
+/**
+ * Converts a local Activity entity into a Firebase-compatible map.
+ *
+ * This is used when uploading or syncing activity data to Firestore.
+ *
+ * @return Map<String, Any> representing the fields stored in Firebase.
+ */
 fun Activity.toFirebaseMap(): Map<String, Any> {
     return mapOf(
         "userId" to userId,
@@ -15,6 +22,14 @@ fun Activity.toFirebaseMap(): Map<String, Any> {
     )
 }
 
+/**
+ * Converts a Firestore DocumentSnapshot into a local Activity entity.
+ *
+ * This is used when downloading or syncing activity data from Firestore.
+ *
+ * @receiver DocumentSnapshot received from Firestore
+ * @return Activity? object, or null if parsing fails
+ */
 fun DocumentSnapshot.toActivity(): Activity? {
     return try {
         Activity(

@@ -170,24 +170,18 @@ class OwnershipRepository(
      *
      * Replaces local Room cache.
      */
-    // Em OwnershipRepository.kt
-
     suspend fun syncPendingOwnerships(shelterId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             if (!NetworkUtils.isConnected()) {
-                return@withContext Result.failure(Exception("Sem internet"))
+                return@withContext Result.failure(Exception("Without internet"))
             }
 
             try {
-                Log.d("DEBUG_SYNC", "1. A iniciar Sync para o Shelter ID: '$shelterId'")
-
                 val snapshot = firestore.collection("ownerships")
                     .whereEqualTo("shelterId", shelterId)
                     .whereEqualTo("status", OwnershipStatus.PENDING.name)
                     .get()
                     .await()
-
-                Log.d("DEBUG_SYNC", "2. Documentos encontrados no Firebase: ${snapshot.size()}")
 
                 if (snapshot.isEmpty) {
                     Log.w("DEBUG_SYNC", "AVISO: Nenhum pedido encontrado. Verifica se o shelterId no Firebase é EXATAMENTE '$shelterId' e se o status é 'PENDING'.")
@@ -202,16 +196,11 @@ class OwnershipRepository(
                     }
                     item
                 }
-
-                Log.d("DEBUG_SYNC", "3. A inserir ${list.size} pedidos na BD Local (Room)...")
                 ownershipDao.insertAll(list)
-
-                Log.d("DEBUG_SYNC", "4. Sync concluído.")
 
                 Result.success(Unit)
 
             } catch (e: Exception) {
-                Log.e("DEBUG_SYNC", "ERRO FATAL NO SYNC", e)
                 Result.failure(e)
             }
         }

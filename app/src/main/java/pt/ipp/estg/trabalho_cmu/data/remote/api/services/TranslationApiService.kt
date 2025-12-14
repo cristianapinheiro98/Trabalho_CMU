@@ -1,7 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.data.remote.api.services
 
-import pt.ipp.estg.trabalho_cmu.data.remote.dtos.TranslationRequest
-import pt.ipp.estg.trabalho_cmu.data.remote.dtos.TranslationResponse
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.translation.TranslationRequest
+import pt.ipp.estg.trabalho_cmu.data.remote.dtos.translation.TranslationResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Headers

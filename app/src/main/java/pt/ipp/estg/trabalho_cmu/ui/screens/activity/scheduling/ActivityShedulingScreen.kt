@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.scheduling
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,12 +18,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
+import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityAnimalInfoCard
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivityDatesChosen
 import pt.ipp.estg.trabalho_cmu.ui.components.ActivitySuccessDialog
 import pt.ipp.estg.trabalho_cmu.ui.components.CalendarView
 import pt.ipp.estg.trabalho_cmu.ui.components.TimeInputFields
 
+/**
+ * Main screen for scheduling a new activity (visit/walk) with a specific animal.
+ *
+ * This stateful composable manages the [ActivitySchedulingViewModel], handles data loading,
+ * observes UI states (Loading, Success, Error, Offline), and displays the success dialog.
+ *
+ * @param userId The unique identifier of the current user.
+ * @param animalId The unique identifier of the animal to be scheduled.
+ * @param onScheduleSuccess Callback triggered when the scheduling is successfully completed.
+ * @param modifier Modifier for styling and layout customization.
+ */
 @Composable
 fun ActivitySchedulingScreen(
     userId: String,
@@ -117,10 +130,30 @@ fun ActivitySchedulingScreen(
     }
 }
 
+/**
+ * Stateless content composable representing the scheduling form.
+ *
+ * Displays the animal's details, a calendar for date selection, time input fields,
+ * shelter operating hours, and validation errors.
+ *
+ * @param animal The animal entity to display details for.
+ * @param shelter The shelter entity to display address and hours.
+ * @param selectedDates A set of dates currently selected by the user.
+ * @param onDateClicked Callback triggered when a date on the calendar is clicked.
+ * @param pickupTime Current value of the pickup time input.
+ * @param onPickupTimeChange Callback triggered when pickup time changes.
+ * @param deliveryTime Current value of the delivery time input.
+ * @param onDeliveryTimeChange Callback triggered when delivery time changes.
+ * @param validationError Current validation error state (if any).
+ * @param onScheduleClick Callback triggered when the confirm button is pressed.
+ * @param onClearError Callback triggered to clear displayed errors.
+ * @param bookedDates List of dates that are already booked and unavailable.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ActivitySchedulingContent(
-    animal: pt.ipp.estg.trabalho_cmu.data.local.entities.Animal,
-    shelter: pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter,
+    animal: Animal,
+    shelter: Shelter,
     selectedDates: Set<String>,
     onDateClicked: (String) -> Unit,
     pickupTime: String,

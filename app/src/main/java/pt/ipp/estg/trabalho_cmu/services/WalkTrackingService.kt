@@ -30,7 +30,6 @@ import kotlin.math.sqrt
  * Provides GPS tracking with 1-second updates even when app is minimized
  */
 class WalkTrackingService : Service() {
-
     companion object {
         private const val TAG = "WalkTrackingService"
         private const val NOTIFICATION_ID = 1001

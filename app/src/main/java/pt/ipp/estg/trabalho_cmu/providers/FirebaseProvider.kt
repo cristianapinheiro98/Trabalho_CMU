@@ -10,7 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore
  *
  * This provider does not display UI errors nor handle exceptions directly.
  */
-
 object FirebaseProvider {
     val auth: FirebaseAuth by lazy<FirebaseAuth> { FirebaseAuth.getInstance() }
     val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }

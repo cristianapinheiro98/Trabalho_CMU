@@ -1,5 +1,6 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.history
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,15 +26,22 @@ import pt.ipp.estg.trabalho_cmu.utils.openGoogleMaps
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Main screen displaying the user's activity history.
+ *
+ * This stateful composable fetches data via the ViewModel and handles various UI states:
+ * Loading, Empty, Online Success, and Offline Success.
+ *
+ * @param userId The unique identifier of the current user.
+ * @param modifier Modifier for styling and layout customization.
+ */
 @Composable
 fun ActivitiesHistoryScreen(
     userId: String,
     modifier: Modifier = Modifier
 ) {
     val viewModel: ActivitiesHistoryViewModel = viewModel()
-    val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
 
     // Observe UIState
     val uiState by viewModel.uiState.observeAsState(ActivitiesHistoryUiState.Initial)
@@ -127,6 +135,17 @@ fun ActivitiesHistoryScreen(
     }
 }
 
+/**
+ * Stateless content composable that renders the list of activities.
+ *
+ * It categorizes activities into "Ongoing", "Upcoming", and "Past" sections and displays
+ * them in a scrollable column.
+ *
+ * @param activities List of [ActivityWithDetails] to display.
+ * @param isOffline Boolean indicating if the app is currently in offline mode (shows warning).
+ * @param onDeleteActivity Callback triggered when a user cancels/deletes an activity.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ActivitiesHistoryContent(
     activities: List<ActivityWithDetails>,
@@ -186,12 +205,13 @@ private fun ActivitiesHistoryContent(
                 ActivityCard(
                     item = item,
                     context = context,
-                    onDelete = null // Não permite cancelar atividades passadas
+                    onDelete = null
                 )
             }
         }
     }
 }
+
 
 @Composable
 private fun CategoryHeader(title: String) {
@@ -206,10 +226,24 @@ private fun CategoryHeader(title: String) {
     )
 }
 
+/**
+ * Component representing a single activity card.
+ *
+ * Displays detailed information including:
+ * - Animal and Shelter details (using [ActivityAnimalInfoCard]).
+ * - Location with a map button.
+ * - Scheduled Pickup and Delivery times (using [ActivityDateTimeCard]).
+ * - A cancel button (only for future/ongoing activities).
+ *
+ * @param item The activity data object enriched with animal and shelter details.
+ * @param context Android context used for launching intents (e.g., Maps).
+ * @param onDelete Callback for the delete action (null if the activity is in the past).
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ActivityCard(
     item: ActivityWithDetails,
-    context: android.content.Context,
+    context: Context,
     onDelete: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -250,7 +284,6 @@ private fun ActivityCard(
                 deliveryTime = item.activity.deliveryTime
             )
 
-            // Só mostra botão de cancelar para atividades futuras
             onDelete?.let {
                 Spacer(Modifier.height(12.dp))
                 Button(
@@ -290,7 +323,16 @@ private fun ActivityCard(
 }
 
 /**
- * Categorizes activities into ongoing, upcoming, and past.
+ * Utility function to categorize activities based on the current date.
+ *
+ * Splits the list into three categories:
+ * - Ongoing: Today is between pickup and delivery dates.
+ * - Upcoming: Pickup date is in the future.
+ * - Past: Delivery date has passed.
+ *
+ * @param activities The list of activities to categorize.
+ * @param today The current date object.
+ * @return A Triple containing lists for (Ongoing, Upcoming, Past).
  */
 private fun categorizeActivities(
     activities: List<ActivityWithDetails>,

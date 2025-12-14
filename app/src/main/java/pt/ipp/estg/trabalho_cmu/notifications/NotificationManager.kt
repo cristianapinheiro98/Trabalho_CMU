@@ -23,20 +23,8 @@ import pt.ipp.estg.trabalho_cmu.R
  * - Notification channels for Android 8.0+
  * - Deep linking to specific screens
  * - Notification permission handling for Android 13+
- *
- * Usage:
- * ```
- * // Initialize channels (call once in Application or MainActivity)
- * TailWaggerNotificationManager.createNotificationChannels(context)
- *
- * // Send notification
- * TailWaggerNotificationManager.notifyNewAnimal(context, animalName, animalId)
- * TailWaggerNotificationManager.notifyOwnershipAccepted(context, animalName, animalId)
- * TailWaggerNotificationManager.notifyOwnershipRejected(context, animalName, reason)
- * ```
  */
 object NotificationManager {
-
     // Notification Channel IDs
     private const val CHANNEL_ANIMALS = "animals_channel"
     private const val CHANNEL_OWNERSHIP = "ownership_channel"

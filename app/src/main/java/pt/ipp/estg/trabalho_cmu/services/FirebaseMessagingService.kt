@@ -19,7 +19,6 @@ import com.google.firebase.messaging.RemoteMessage
  *
  */
 class FirebaseMessagingService : FirebaseMessagingService() {
-
     companion object {
         private const val TAG = "TailWaggerFCM"
 

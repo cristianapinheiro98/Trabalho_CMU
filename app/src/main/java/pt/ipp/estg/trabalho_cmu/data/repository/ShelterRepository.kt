@@ -64,13 +64,12 @@ class ShelterRepository(
     }
 
     /**
-     * Syncs specific shelters by animal IDs from Firebase → Room.
+     * Syncs specific shelters by animal IDs from Firebase to Room.
      *
-     * This method:
-     * 1. Fetches animals from Room by the provided animal IDs
-     * 2. Extracts unique shelter IDs from those animals
-     * 3. Fetches the corresponding shelters from Firebase (chunked to respect Firestore 'in' limit)
-     * 4. Inserts/updates the shelters in Room
+     * Fetches animals from Room by the provided animal IDs
+     * Extracts unique shelter IDs from those animals
+     * Fetches the corresponding shelters from Firebase (chunked to respect Firestore 'in' limit)
+     * Inserts/updates the shelters in Room
      *
      * Used when loading visit scheduling data to ensure shelter information is available.
      *

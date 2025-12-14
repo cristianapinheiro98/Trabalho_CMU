@@ -471,7 +471,6 @@ class ShelterMngViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-
     /** Clears last shown message */
     fun clearMessage() { _message.value = null }
 

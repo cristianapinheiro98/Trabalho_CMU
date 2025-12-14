@@ -40,7 +40,6 @@ import pt.ipp.estg.trabalho_cmu.utils.dateStringToLong
  * @param userId ID of the user whose favorites are shown
  * @param onAnimalClick Callback when an animal card is tapped
  */
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -159,7 +158,7 @@ private fun FavoritesScreenContent(
                 items(favorites) { animal ->
                     AnimalCard(
                         animal = animal,
-                        isFavorite = true, // Sempre true nesta lista
+                        isFavorite = true,
                         isLoggedIn = true,
                         onClick = { onAnimalClick(animal.id) },
                         onToggleFavorite = { onRemoveFavorite(animal) }

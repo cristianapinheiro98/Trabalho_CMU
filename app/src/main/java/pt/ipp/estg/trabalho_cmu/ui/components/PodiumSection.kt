@@ -30,13 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Walk
-import pt.ipp.estg.trabalho_cmu.ui.theme.BronzeTrophy
-import pt.ipp.estg.trabalho_cmu.ui.theme.GrayTrophy
-import pt.ipp.estg.trabalho_cmu.ui.theme.YellowTrophy
+import pt.ipp.estg.trabalho_cmu.ui.theme.BronzePaw
+import pt.ipp.estg.trabalho_cmu.ui.theme.SilverCollar
+import pt.ipp.estg.trabalho_cmu.ui.theme.GoldenBone
 
 /**
  * Podium section displaying top 3 walks with trophies.
@@ -93,7 +92,7 @@ fun PodiumSection(
                     position = 2,
                     podiumHeight = 135.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_silver,
-                    podiumColor = GrayTrophy,
+                    podiumColor = SilverCollar,
                     formatDuration = formatDuration,
                     modifier = Modifier.weight(1f)
                 )
@@ -106,7 +105,7 @@ fun PodiumSection(
                     position = 1,
                     podiumHeight = 145.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_gold,
-                    podiumColor = YellowTrophy,
+                    podiumColor = GoldenBone,
                     formatDuration = formatDuration,
                     modifier = Modifier.weight(1f)
                 )
@@ -119,7 +118,7 @@ fun PodiumSection(
                     position = 3,
                     podiumHeight = 115.dp.value.toInt(),
                     trophyIcon = R.drawable.ic_trophy_bronze,
-                    podiumColor = BronzeTrophy,
+                    podiumColor = BronzePaw,
                     formatDuration = formatDuration,
                     modifier = Modifier.weight(1f)
                 )

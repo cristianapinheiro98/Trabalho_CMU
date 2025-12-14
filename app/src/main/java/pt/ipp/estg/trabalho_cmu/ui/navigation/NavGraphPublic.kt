@@ -33,7 +33,6 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.user.FavoriteViewModel
  *
  * Handles transitions before authentication.
  */
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

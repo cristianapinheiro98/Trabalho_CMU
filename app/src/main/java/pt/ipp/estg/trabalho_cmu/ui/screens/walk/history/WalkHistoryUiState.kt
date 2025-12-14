@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.walk
+package pt.ipp.estg.trabalho_cmu.ui.screens.walk.history
 
 import com.google.android.gms.maps.model.LatLng
 

@@ -27,7 +27,6 @@ import pt.ipp.estg.trabalho_cmu.utils.StringHelper
  * can be accessed through getApplication().
  */
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-
     /**
      * Authentication repository that encapsulates all auth-related
      * data sources (Firebase Auth, Room DAOs for User and Shelter).
@@ -40,7 +39,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             shelterDao = db.shelterDao()
         )
     }
-
 
     /**
      * Backing field representing the current authentication UI state.
@@ -113,7 +111,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
      */
     private val _currentShelter = MutableLiveData<Shelter?>()
 
-
     /**
      * Public observable current shelter.
      */
@@ -153,14 +150,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun getCurrentUserFirebaseUid(): String? = authRepository.getCurrentUserId()
 
-
     /**
      * Returns true if the current account type corresponds to a shelter
      * (i.e., admin-like behavior in the app).
      */
 
     fun isAdmin(): Boolean = _accountType.value == AccountType.SHELTER
-
 
     /**
      * Tries to restore the user session.
@@ -298,7 +293,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     /**
      * Updates the ViewModel's internal authentication state and emits
      * a [AuthUiState.Success] result with the given [LoginResult] data.
@@ -337,7 +331,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = AuthUiState.Error(errorMsg)
     }
 
-
     /**
      * Helper data class that groups basic registration fields.
      */
@@ -348,7 +341,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val email: String,
         val password: String
     )
-
 
     /**
      * Reads and trims the current registration fields into a [BasicRegistrationFields] instance.
@@ -362,7 +354,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             password.value!!.trim()
         )
 
-
     /**
      * Validates that all basic registration fields are non-empty.
      */
@@ -375,7 +366,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
         return true
     }
-
 
     /**
      * Validates the email, password and phone according to app rules.
@@ -421,7 +411,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         clearFields()
     }
 
-
     /**
      * Clears all registration/login form fields and resets account type to USER.
      */
@@ -434,18 +423,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         accountTypeChoice.value = AccountType.USER
     }
 
-
     /**
      * Clears the current informational message.
      */
     fun clearMessage() { _message.value = null }
 
-
     /**
      * Clears the current error message.
      */
     fun clearError() { _error.value = null }
-
 
     /**
      * Resets the registration flag to false so that the UI can

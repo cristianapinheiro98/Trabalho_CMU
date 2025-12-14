@@ -153,7 +153,6 @@ private fun TermsHeader(
     )
 }
 
-
 /**
  * Helper method to construct the terms content.
  */
@@ -260,7 +259,6 @@ private fun TermsControlSection(
     }
 }
 
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TermsAndConditionsPreview() {
@@ -269,4 +267,3 @@ fun TermsAndConditionsPreview() {
         windowSize = WindowWidthSizeClass.Compact
     )
 }
-

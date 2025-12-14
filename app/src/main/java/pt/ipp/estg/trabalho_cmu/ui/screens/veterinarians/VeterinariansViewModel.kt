@@ -17,11 +17,8 @@ import pt.ipp.estg.trabalho_cmu.data.repository.VeterinarianRepository
  * - Managing GPS availability
  * - Fetching and caching veterinarian data
  * - Coordinating between API and local cache
- *
- * Follows MVVM pattern with LiveData as the source of truth.
  */
 class VeterinariansViewModel(application: Application) : AndroidViewModel(application) {
-
     private val repository: VeterinarianRepository
 
     private val _uiState = MutableLiveData<VeterinariansUiState>(VeterinariansUiState.LoadingLocation)

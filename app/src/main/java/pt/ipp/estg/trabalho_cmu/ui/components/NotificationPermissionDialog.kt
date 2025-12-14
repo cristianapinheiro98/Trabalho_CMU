@@ -19,7 +19,6 @@ import pt.ipp.estg.trabalho_cmu.notifications.NotificationManager
 
 /**
  * Dialog to request notification permission from user.
- *
  */
 @Composable
 fun NotificationPermissionDialog(
@@ -67,7 +66,6 @@ fun NotificationPermissionDialog(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     } else {
-                        // Android < 13, no permission needed
                         onPermissionResult(true)
                         onDismiss()
                     }
@@ -105,11 +103,6 @@ fun shouldShowNotificationPermissionDialog(): Boolean {
 
 /**
  * Composable that automatically shows notification permission dialog on first launch.
- *
- * Usage in MainActivity or main screen:
- * ```
- * NotificationPermissionHandler()
- * ```
  */
 @Composable
 fun NotificationPermissionHandler() {

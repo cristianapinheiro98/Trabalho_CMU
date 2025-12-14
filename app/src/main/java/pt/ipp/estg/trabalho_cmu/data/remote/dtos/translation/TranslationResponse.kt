@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.data.remote.dtos
+package pt.ipp.estg.trabalho_cmu.data.remote.dtos.translation
 
 import com.google.gson.annotations.SerializedName
 

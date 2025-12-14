@@ -346,7 +346,6 @@ private fun PreviewAnimalDetailScreen() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewAnimalDetailWithoutAuth() {
-
     val mockAnimal = Animal(
         id = "1",
         name = "Leia",

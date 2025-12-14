@@ -58,7 +58,7 @@ object MedalCalculator {
     }
 
     /**
-     * Alternative: Calculate medal based on distance
+     * Calculate medal based on distance
      *
      * To switch to distance-based medals:
      * 1. Uncomment this method

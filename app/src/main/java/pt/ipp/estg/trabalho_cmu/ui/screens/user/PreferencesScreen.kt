@@ -32,6 +32,18 @@ import pt.ipp.estg.trabalho_cmu.R
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
+/**
+ * Screen responsible for displaying and managing user preferences and profile information.
+ *
+ * This screen allows the user to:
+ * - View personal details (Name, Address, Phone, Email) loaded from the database.
+ * - Toggle notification settings.
+ * - Change the application language (PT/EN), which triggers a locale update and activity restart.
+ *
+ * @param userViewModel The ViewModel responsible for fetching user data.
+ * @param userId The unique identifier of the current user.
+ * @param navController Controller for handling navigation events.
+ */
 @Composable
 fun PreferencesScreen(
     userViewModel: UserViewModel = viewModel(),
@@ -190,12 +202,6 @@ fun PreferencesScreen(
                         act.finish()
                         act.startActivity(intent)
                     }
-
-//                    navController.navigate("UserHome") {
-//                        popUpTo(0) { inclusive = true }
-//                    }
-//
-//                    activity?.recreate()
                 }) {
                     Text(confirm)
                 }
@@ -204,6 +210,15 @@ fun PreferencesScreen(
     }
 }
 
+/**
+ * Reusable helper component to display a single row of user information.
+ *
+ * Renders an icon on the left followed by the corresponding text information.
+ * Used within the profile card to display fields like Email or Phone.
+ *
+ * @param icon The visual icon representing the data type (e.g., Email, Phone).
+ * @param text The actual user data string to display.
+ */
 @Composable
 fun UserInfoRow(icon: ImageVector, text: String) {
     Row(

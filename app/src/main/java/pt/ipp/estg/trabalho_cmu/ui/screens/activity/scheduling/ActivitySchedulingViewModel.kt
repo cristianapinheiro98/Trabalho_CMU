@@ -1,6 +1,7 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.scheduling
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,7 +23,6 @@ import java.util.*
  * - Creating new activities
  */
 class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(application) {
-
     private val activityRepository = DatabaseModule.provideActivityRepository(application)
     private val animalRepository = DatabaseModule.provideAnimalRepository(application)
     private val shelterRepository = DatabaseModule.provideShelterRepository(application)
@@ -35,14 +35,13 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
     /**
      * Loads all necessary data for scheduling an activity.
      *
-     * Steps:
-     * 1. Check internet connectivity
-     * 2. Sync approved ownerships
-     * 3. Sync owned animals
-     * 4. Load animal and shelter
-     * 5. Sync shelter data
-     * 6. Sync activities for this specific animal
-     * 7. Load booked dates for the animal
+     * Check internet connectivity
+     * Sync approved ownerships
+     * Sync owned animals
+     * Load animal and shelter
+     * Sync shelter data
+     * Sync activities for this specific animal
+     * Load booked dates for the animal
      *
      * @param animalId The ID of the animal to schedule an activity for.
      * @param userId The ID of the current user.
@@ -118,12 +117,10 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
         val currentState = _uiState.value
         if (currentState !is ActivitySchedulingUiState.Success) return
 
-        // Se a data está booked, ignorar
         if (date in currentState.bookedDates) return
 
         when {
             currentState.startDate == null -> {
-                // Primeiro clique - define start date
                 _uiState.value = currentState.copy(
                     startDate = date,
                     endDate = null,
@@ -132,7 +129,6 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
                 )
             }
             currentState.endDate == null -> {
-                // Segundo clique - tentar criar range
                 val range = fillDateRangeIfValid(
                     currentState.startDate!!,
                     date,
@@ -140,14 +136,12 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
                 )
 
                 if (range != null) {
-                    // Range válido - definir end date e selected dates
                     _uiState.value = currentState.copy(
                         endDate = date,
                         selectedDates = range,
                         validationError = null
                     )
                 } else {
-                    // Range inválido (tem datas booked no meio) - recomeçar
                     _uiState.value = currentState.copy(
                         startDate = date,
                         endDate = null,
@@ -157,7 +151,6 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
                 }
             }
             else -> {
-                // Terceiro clique - recomeçar seleção
                 _uiState.value = currentState.copy(
                     startDate = date,
                     endDate = null,
@@ -193,16 +186,13 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
         val endCalendar = Calendar.getInstance()
         endCalendar.time = endDate
 
-        // Se end < start, trocar
         if (endCalendar.before(calendar)) {
             return fillDateRangeIfValid(end, start, bookedDates)
         }
 
-        // Gerar todas as datas no range
         while (!calendar.after(endCalendar)) {
             val dateStr = sdf.format(calendar.time)
 
-            // Se encontrar uma data booked, range é inválido
             if (dateStr in bookedDates) {
                 return null
             }
@@ -378,7 +368,7 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
             }
         }
 
-        android.util.Log.d("BookedDates", "Extracted booked dates: $dates")
+        Log.d("BookedDates", "Extracted booked dates: $dates")
         return dates
     }
 
@@ -403,7 +393,7 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
 //            false
 //        }
 
-        // Debug mode (Walks), to allow to initiate a walk immediately after scheduling
+        // TEST MODE (Walks), to allow to initiate a walk immediately after scheduling
         return true
     }
 

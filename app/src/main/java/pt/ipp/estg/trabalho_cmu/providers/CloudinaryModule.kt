@@ -12,7 +12,6 @@ import com.cloudinary.utils.ObjectUtils
  * This object acts as a singleton provider and does not produce
  * UI-visible messages or require any error handling at this level.
  */
-
 object CloudinaryModule {
 
     private const val CLOUD_NAME = "dykreewmy"

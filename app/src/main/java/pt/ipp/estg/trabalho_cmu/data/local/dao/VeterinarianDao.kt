@@ -46,12 +46,6 @@ interface VeterinarianDao {
      * Retrieves veterinarians cached after a specific timestamp.
      * Useful for filtering out expired cache entries.
      *
-     * Example usage for 24h TTL:
-     * ```
-     * val minTime = System.currentTimeMillis() - (24 * 60 * 60 * 1000)
-     * dao.getValidCachedVeterinarians(minTime)
-     * ```
-     *
      * @param minTime Minimum cachedAt timestamp to include.
      * @return LiveData containing veterinarians cached after minTime.
      */

@@ -24,15 +24,14 @@ import pt.ipp.estg.trabalho_cmu.utils.StringHelper
  *
  * Responsibilities:
  *  - CRUD operations for animals
- *  - Synchronizing Firebase → Room cache
+ *  - Synchronizing Firebase to Room cache
  *  - Filtering, sorting, and searching using Room queries
  *
  * This repository depends on Context to fetch localized error strings.
  */
 class AnimalRepository(
     private val appContext: Context,
-    private val animalDao: AnimalDao,
-    private val ownershipDao: OwnershipDao
+    private val animalDao: AnimalDao
 ) {
 
     private val firestore: FirebaseFirestore = FirebaseProvider.firestore
@@ -87,7 +86,7 @@ class AnimalRepository(
 
 
     /**
-     * Syncs all AVAILABLE animals from Firebase → Room.
+     * Syncs all AVAILABLE animals from Firebase to Room.
      * Completely replaces the Room cache.
      */
     suspend fun syncAnimals() = withContext(Dispatchers.IO) {
@@ -112,13 +111,12 @@ class AnimalRepository(
     }
 
     /**
-     * Syncs animals owned by a specific user from Firebase → Room.
+     * Syncs animals owned by a specific user from Firebase to Room.
      *
-     * This method:
-     * 1. Fetches approved ownerships for the user from Room
-     * 2. Extracts animal IDs from those ownerships
-     * 3. Fetches the corresponding animals from Firebase (chunked to respect Firestore 'in' limit)
-     * 4. Inserts/updates the animals in Room
+     * Fetches approved ownerships for the user from Room
+     * Extracts animal IDs from those ownerships
+     * Fetches the corresponding animals from Firebase (chunked to respect Firestore 'in' limit)
+     * Inserts/updates the animals in Room
      *
      * @param userId The user ID whose owned animals should be synced.
      */

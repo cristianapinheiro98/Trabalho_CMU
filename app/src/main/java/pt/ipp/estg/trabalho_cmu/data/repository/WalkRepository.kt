@@ -29,8 +29,6 @@ class WalkRepository(
         private const val COLLECTION_WALKS = "walks"
     }
 
-    // ==================== PERSONAL WALKS ====================
-
     /**
      * Get all walks for a user as LiveData.
      *
@@ -83,8 +81,6 @@ class WalkRepository(
     suspend fun getRecentMedals(userId: String, limit: Int = 5): List<Walk> {
         return walkDao.getRecentMedals(userId, limit)
     }
-
-    // ==================== PUBLIC WALKS (SocialTails Community) ====================
 
     /**
      * Get public walks feed from Firebase with pagination.
@@ -175,10 +171,8 @@ class WalkRepository(
                 .sortedByDescending { it.duration }
                 .take(limit)
 
-            Log.d(TAG, "Fetched ${walks.size} top monthly walks from Firebase")
             Result.success(walks)
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching top monthly walks", e)
             Result.failure(e)
         }
     }
@@ -198,20 +192,14 @@ class WalkRepository(
                 .update("isPublic", true)
                 .await()
 
-            Log.d(TAG, "Walk shared to SocialTails in Firebase: $walkId")
-
             // Update in Room
             walkDao.updateWalkPublicStatus(walkId, true)
-            Log.d(TAG, "Walk shared to SocialTails in Room: $walkId")
 
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error sharing walk to SocialTails", e)
             Result.failure(e)
         }
     }
-
-    // ==================== CREATE / DELETE ====================
 
     /**
      * Create a new walk in Firebase and backup to Room.
@@ -227,15 +215,12 @@ class WalkRepository(
             val walkWithId = walk.copy(id = docRef.id)
 
             docRef.set(walkWithId.toFirebaseMap()).await()
-            Log.d(TAG, "Walk created in Firebase: ${walkWithId.id}")
 
             // Backup to Room
             walkDao.insertWalk(walkWithId)
-            Log.d(TAG, "Walk backed up to Room: ${walkWithId.id}")
 
             Result.success(walkWithId)
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating walk", e)
             Result.failure(e)
         }
     }
@@ -250,15 +235,12 @@ class WalkRepository(
         return try {
             // Delete from Firebase
             firestore.collection(COLLECTION_WALKS).document(walkId).delete().await()
-            Log.d(TAG, "Walk deleted from Firebase: $walkId")
 
             // Delete from Room
             walkDao.deleteWalkById(walkId)
-            Log.d(TAG, "Walk deleted from Room: $walkId")
 
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting walk", e)
             Result.failure(e)
         }
     }
@@ -284,14 +266,11 @@ class WalkRepository(
                     walkDao.insertWalk(walk)
                     successCount++
                 } catch (e: Exception) {
-                    Log.w(TAG, "Skipping walk ${walk.id} due to foreign key constraint")
                 }
             }
 
-            Log.d(TAG, "Synced $successCount/${walks.size} walks from Firebase")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error syncing walks", e)
             Result.failure(e)
         }
     }
@@ -324,7 +303,6 @@ class WalkRepository(
                 }
             }
 
-            Log.d(TAG, "Synced $successCount/${walks.size} public walks from Firebase")
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Error syncing public walks", e)

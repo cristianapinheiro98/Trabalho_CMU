@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.walk
+package pt.ipp.estg.trabalho_cmu.ui.screens.walk.summary
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -518,7 +518,7 @@ private fun WalkSummaryMap(routePoints: List<LatLng>) {
         // Draw route
         Polyline(
             points = routePoints,
-            color = androidx.compose.ui.graphics.Color.Blue,
+            color = Color.Blue,
             width = 10f
         )
 

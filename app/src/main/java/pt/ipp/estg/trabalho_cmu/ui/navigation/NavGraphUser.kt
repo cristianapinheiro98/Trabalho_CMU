@@ -13,8 +13,8 @@ import androidx.navigation.navArgument
 import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.OwnershipConfirmationScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.TermsAndConditionsScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.activity.ActivitySchedulingScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.activity.ActivitiesHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.activity.scheduling.ActivitySchedulingScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.activity.history.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscomunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalListScreen
@@ -27,9 +27,9 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.user.MainOptionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.PreferencesScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.user.UserViewModel
 import pt.ipp.estg.trabalho_cmu.ui.screens.veterinarians.VeterinariansScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkHistoryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.walk.history.WalkHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.walk.WalkSummaryScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.walk.summary.WalkSummaryScreen
 
 /**
  * Navigation graph for regular logged-in users.
@@ -86,7 +86,7 @@ fun NavGraphUser(
             VeterinariansScreen()
         }
 
-        // ========== ADOPTION WORKFLOW ==========
+        // ========== ADOPTION/OWNERSHIP WORKFLOW ==========
 
         // Terms and Conditions
         composable(
@@ -228,8 +228,6 @@ fun NavGraphUser(
         // ========== WALK FEATURE ==========
 
         // Resume Walk Screen - Used when returning from notification
-        // This route handles the case where a walk is already in progress
-        // and the user taps the notification or the "Stop Walk" action
         composable(
             route = "Walk?stopRequested={stopRequested}",
             arguments = listOf(
@@ -248,7 +246,6 @@ fun NavGraphUser(
         }
 
         // Active Walk Screen - Start new walk with specific animal
-        // Used when user initiates a walk from the animal selection screen
         composable(
             route = "Walk/{animalId}",
             arguments = listOf(
@@ -264,7 +261,6 @@ fun NavGraphUser(
         }
 
         // Walk Summary Screen - Displayed after completing a walk
-        // Shows route map, statistics, medal earned, and action buttons
         composable(
             route = "WalkSummary/{walkId}",
             arguments = listOf(
@@ -279,7 +275,6 @@ fun NavGraphUser(
         }
 
         // Walk History Screen - Paginated list of past walks
-        // Supports optional scrollToWalkId parameter for navigating from medal collection
         composable(
             route = "WalkHistory?scrollToWalkId={scrollToWalkId}",
             arguments = listOf(

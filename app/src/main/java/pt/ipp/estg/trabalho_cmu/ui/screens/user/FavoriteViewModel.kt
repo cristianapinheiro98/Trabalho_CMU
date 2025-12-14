@@ -101,10 +101,6 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // ==============================
-    // ADD FAVORITE
-    // ==============================
-
     /**
      * Adds a new favorite for the given user and animal.
      *

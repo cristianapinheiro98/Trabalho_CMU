@@ -11,7 +11,6 @@ import retrofit2.http.GET
  * The endpoint returns a list of dog breed objects.
  */
 interface DogApiService {
-
     /**
      * Retrieves all dog breeds available in the API.
      *
@@ -25,7 +24,6 @@ interface DogApiService {
  * Retrofit service for fetching cat breeds from the remote API.
  */
 interface CatApiService {
-
     /**
      * Retrieves all cat breeds available in the API.
      *

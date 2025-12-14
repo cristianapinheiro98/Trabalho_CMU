@@ -112,8 +112,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "pet_adoption_db"
                 )
-                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    // Currently disabled to avoid schema conflicts
+                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3) // example of migration
                     .fallbackToDestructiveMigration()
                     .build()
 

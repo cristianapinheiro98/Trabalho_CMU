@@ -127,8 +127,8 @@ fun CalendarView(
                                 .clip(CircleShape)
                                 .background(
                                     when {
-                                        isBooked -> Color(0xFFBDBDBD)  // Cinzento para datas booked
-                                        isSelected -> Color(0xFF2C8B7E)  // Verde para selecionadas
+                                        isBooked -> Color(0xFFBDBDBD)
+                                        isSelected -> Color(0xFF2C8B7E)
                                         else -> Color.Transparent
                                     }
                                 )
@@ -141,9 +141,9 @@ fun CalendarView(
                                 text = currentDay.toString(),
                                 fontSize = 14.sp,
                                 color = when {
-                                    isBooked -> Color(0xFF757575)  // Texto cinzento
-                                    isSelected -> Color.White  // Texto branco
-                                    else -> Color(0xFF2C2C2C)  // Texto preto
+                                    isBooked -> Color(0xFF757575)
+                                    isSelected -> Color.White
+                                    else -> Color(0xFF2C2C2C)
                                 }
                             )
                         }

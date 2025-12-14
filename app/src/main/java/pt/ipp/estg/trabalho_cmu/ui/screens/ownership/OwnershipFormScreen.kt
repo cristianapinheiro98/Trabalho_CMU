@@ -45,7 +45,7 @@ fun OwnershipFormScreen(
     userFirebaseUid: String,
     animalFirebaseUid: String,
     onSubmitSuccess: () -> Unit,
-    windowSize: WindowWidthSizeClass, // Mantemos o parâmetro para não partir quem chama, mas não é critico agora
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
     val viewModel: OwnershipViewModel = viewModel()

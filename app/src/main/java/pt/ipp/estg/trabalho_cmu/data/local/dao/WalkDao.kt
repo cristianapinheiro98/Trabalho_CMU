@@ -62,8 +62,6 @@ interface WalkDao {
     @Query("SELECT * FROM walks WHERE userId = :userId AND medalType IS NOT NULL ORDER BY createdAt DESC LIMIT :limit")
     suspend fun getRecentMedals(userId: String, limit: Int): List<Walk>
 
-    // ==================== PUBLIC WALKS (SocialTails Community) ====================
-
     /**
      * Get all public walks ordered by most recent.
      * Used for the SocialTails community feed.
@@ -115,8 +113,6 @@ interface WalkDao {
      */
     @Query("UPDATE walks SET isPublic = :isPublic WHERE id = :walkId")
     suspend fun updateWalkPublicStatus(walkId: String, isPublic: Boolean)
-
-    // ==================== INSERT / DELETE ====================
 
     /**
      * Insert or replace a walk.

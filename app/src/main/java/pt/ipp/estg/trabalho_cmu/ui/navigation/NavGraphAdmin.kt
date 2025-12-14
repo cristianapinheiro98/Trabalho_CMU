@@ -23,7 +23,6 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.veterinarians.VeterinariansScreen
  *
  * Provides admin-specific navigation flows.
  */
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraphAdmin(

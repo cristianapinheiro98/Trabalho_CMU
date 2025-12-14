@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.scheduling
 
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Animal
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter

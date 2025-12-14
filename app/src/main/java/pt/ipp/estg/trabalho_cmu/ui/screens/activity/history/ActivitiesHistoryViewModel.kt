@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.activity
+package pt.ipp.estg.trabalho_cmu.ui.screens.activity.history
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -18,8 +18,6 @@ import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
  * - Syncing activities from Firebase
  * - Handling offline/online states
  * - Deleting activities
- *
- * Follows MVVM pattern with a single LiveData<UiState> as the source of truth.
  */
 class ActivitiesHistoryViewModel(application: Application) : AndroidViewModel(application) {
 

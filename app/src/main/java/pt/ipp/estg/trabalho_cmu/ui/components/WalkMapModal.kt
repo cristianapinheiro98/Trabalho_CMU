@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -147,6 +148,7 @@ fun WalkMapModal(
  *
  * @param routePoints List of GPS coordinates for the route
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun InteractiveRouteMap(
     routePoints: List<LatLng>
