@@ -2,9 +2,11 @@ package pt.ipp.estg.trabalho_cmu.data.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import pt.ipp.estg.trabalho_cmu.data.local.dao.AnimalDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Shelter
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
@@ -27,7 +29,8 @@ import pt.ipp.estg.trabalho_cmu.data.models.mappers.toShelter
  *  - Local fallback when offline
  */
 class ShelterRepository(
-    private val shelterDao: ShelterDao
+    private val shelterDao: ShelterDao,
+    private val animalDao: AnimalDao
 ) {
     private val firestore = FirebaseProvider.firestore
     private val TAG = "ShelterRepository"
@@ -54,11 +57,53 @@ class ShelterRepository(
             val shelters = snapshot.documents.mapNotNull { it.toShelter() }
 
             shelterDao.insertAll(shelters)
-            Log.d(TAG, "SyncShelters: ${shelters.size} recebidos")
+            Log.d(TAG, "SyncShelters: ${shelters.size} received")
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    /**
+     * Syncs specific shelters by animal IDs from Firebase to Room.
+     *
+     * Fetches animals from Room by the provided animal IDs
+     * Extracts unique shelter IDs from those animals
+     * Fetches the corresponding shelters from Firebase (chunked to respect Firestore 'in' limit)
+     * Inserts/updates the shelters in Room
+     *
+     * Used when loading visit scheduling data to ensure shelter information is available.
+     *
+     * @param animalIds List of animal IDs whose shelters should be synced.
+     */
+    suspend fun syncSheltersByAnimalIds(animalIds: List<String>) = withContext(Dispatchers.IO) {
+        if (!NetworkUtils.isConnected()) return@withContext
+
+        try {
+            val animals = animalDao.getAnimalsByIds(animalIds)
+            val shelterIds = animals.map { it.shelterId }.distinct()
+
+            if (shelterIds.isEmpty()) {
+                Log.d(TAG, "SyncSheltersByAnimalIds: No shelters to sync")
+                return@withContext
+            }
+
+            val shelters = mutableListOf<Shelter>()
+
+            shelterIds.chunked(10).forEach { chunk ->
+                val snapshot = firestore.collection("shelters")
+                    .whereIn(FieldPath.documentId(), chunk)
+                    .get().await()
+
+                shelters.addAll(snapshot.documents.mapNotNull { it.toShelter() })
+            }
+
+            shelterDao.insertAll(shelters)
+
+            Log.d(TAG, "SyncSheltersByAnimalIds: ${shelters.size} shelters synced")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error syncing shelters by animal IDs", e)
+        }
+    }
 
 }

@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.VeterinarianDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.WalkDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.*
 
 /**
@@ -27,7 +28,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
  *
  * The database uses TypeConverters to support non-primitive fields.
  *
- * @version 14 Current database schema version.
+ * @version 20 Current database schema version.
  */
 @Database(
     entities = [
@@ -37,9 +38,10 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
         Shelter::class,
         User::class,
         Veterinarian::class,
-        Favorite::class
+        Favorite::class,
+        Walk::class
     ],
-    version = 16,
+    version = 20,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -65,6 +67,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     /** DAO for favorite animals. */
     abstract fun favoriteDao(): FavoriteDao
+
+    /** DAO for Walks. */
+    abstract fun walkDao(): WalkDao
 
     companion object {
         @Volatile
@@ -107,8 +112,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "pet_adoption_db"
                 )
-                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    // Currently disabled to avoid schema conflicts
+                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3) // example of migration
                     .fallbackToDestructiveMigration()
                     .build()
 

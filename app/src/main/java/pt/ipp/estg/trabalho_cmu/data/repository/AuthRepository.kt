@@ -162,15 +162,14 @@ class AuthRepository(
     /**
      * Attempts to authenticate an existing account using email and password.
      *
-     * Workflow:
-     * 1. Requires an active internet connection.
-     * 2. Authenticates with FirebaseAuth.
-     * 3. Retrieves the UID of the logged-in account.
-     * 4. Checks Firestore for a matching "users" document:
-     *      → If found, converts to User and caches it locally in Room.
-     * 5. If not found, checks "shelters":
-     *      → If found, converts to Shelter and caches it locally.
-     * 6. Returns a LoginResult indicating the account type (USER or SHELTER).
+     * Requires an active internet connection.
+     * Authenticates with FirebaseAuth.
+     * Retrieves the UID of the logged-in account.
+     * Checks Firestore for a matching "users" document:
+     *      If found, converts to User and caches it locally in Room.
+     * If not found, checks "shelters":
+     *      If found, converts to Shelter and caches it locally.
+     * Returns a LoginResult indicating the account type (USER or SHELTER).
      *
      * Errors:
      * - Invalid credentials.
@@ -178,7 +177,6 @@ class AuthRepository(
      *
      * @return Result<LoginResult> with user/shelter profile and account type.
      */
-
     suspend fun login(email: String, password: String): Result<LoginResult> =
         withContext(Dispatchers.IO) {
 
@@ -305,12 +303,10 @@ class AuthRepository(
      * This clears the authentication token but does not delete cached
      * Room data. Local profiles may still exist for offline reading.
      */
-
     fun logout() = firebaseAuth.signOut()
 
     /**
      * @return The UID of the currently authenticated Firebase user, or null if not logged in.
      */
-
     fun getCurrentUserId() = firebaseAuth.currentUser?.uid
 }

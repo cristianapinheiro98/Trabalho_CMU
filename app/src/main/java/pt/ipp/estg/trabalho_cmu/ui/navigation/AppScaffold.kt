@@ -7,21 +7,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pt.ipp.estg.trabalho_cmu.ui.screens.Auth.AuthViewModel
-import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
+import pt.ipp.estg.trabalho_cmu.data.models.enums.AccountType
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthUiState
+import pt.ipp.estg.trabalho_cmu.ui.screens.auth.AuthViewModel
 
 /**
  * Main application scaffold responsible for:
  * - Building the top-level UI structure
  * - Handling drawer navigation for logged-in users
  * - Routing between public, admin and user navigation graphs
+ * - Processing deep-link navigation from notifications (walk tracking actions)
  *
  * Behavior:
  * - Shows a navigation drawer only for logged-in non-admin users
@@ -30,6 +34,16 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
  *      • Guest mode
  *      • Admin mode
  *      • Regular user mode
+ * - Handles walk-related navigation requests from notification actions
+ *
+ * @param isLoggedIn Whether the user is currently authenticated
+ * @param isAdmin Whether the authenticated user has admin privileges
+ * @param onLoginSuccess Callback invoked on successful login with admin status
+ * @param onLogout Callback invoked when user logs out
+ * @param windowSize Current window size class for responsive layouts
+ * @param navigateToWalk Flag to trigger navigation to the active walk screen
+ * @param stopWalkRequested Flag indicating the stop walk action was triggered from notification
+ * @param onWalkNavigationHandled Callback to reset navigation flags after processing
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,15 +53,34 @@ fun AppScaffold(
     isAdmin: Boolean,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onLogout: () -> Unit,
-    windowSize: WindowWidthSizeClass
+    windowSize: WindowWidthSizeClass,
+    navigateToWalk: Boolean = false,
+    stopWalkRequested: Boolean = false,
+    onWalkNavigationHandled: () -> Unit = {}
 ) {
     val authViewModel: AuthViewModel = viewModel()
-    val shelterMngViewModel: ShelterMngViewModel = viewModel()
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val authUiState by authViewModel.uiState.observeAsState()
     val scope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // Force drawer to close when user logs out
+    LaunchedEffect(isLoggedIn, isAdmin) {
+        if (!isLoggedIn || isAdmin) {
+            drawerState.close()
+        }
+    }
+
+    // Automatic login when a valid session is detected
+    LaunchedEffect(authUiState) {
+        if (authUiState is AuthUiState.Success && !isLoggedIn) {
+            val loginResult = (authUiState as AuthUiState.Success).loginResult
+            val isAdminUser = loginResult.accountType == AccountType.SHELTER
+            onLoginSuccess(isAdminUser)
+        }
+    }
 
     val onLogoutAndNavigate: () -> Unit = {
         authViewModel.logout()
@@ -56,6 +89,24 @@ fun AppScaffold(
 
     val userDrawerOptions = getUserDrawerOptions()
     val selectedDrawerOption = userDrawerOptions.find { it.route == currentRoute }
+
+    // Handle navigation from notification actions
+    // When user taps "Stop Walk" button in notification, navigates to walk screen and triggers the stop confirmation dialog
+    LaunchedEffect(navigateToWalk, stopWalkRequested) {
+        if (navigateToWalk && isLoggedIn && !isAdmin) {
+            // Navigate to walk screen with stop request flag if applicable
+            if (stopWalkRequested) {
+                navController.navigate("Walk?stopRequested=true") {
+                    launchSingleTop = true
+                }
+            } else {
+                navController.navigate("Walk") {
+                    launchSingleTop = true
+                }
+            }
+            onWalkNavigationHandled()
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,

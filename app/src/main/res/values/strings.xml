@@ -5,7 +5,6 @@
     <string name="language_en">English</string>
     <string name="app_logo_description">Tailwagger logo</string>
 
-
     <!-- Terms and Conditions Screen -->
     <string name="terms_title">Important Information and Contractual Terms:</string>
     <string name="terms_content">
@@ -45,6 +44,13 @@
     <string name="select_at_least_one_date">Select at least one date</string>
     <string name="activity_scheduled_success">Activity scheduled successfully!</string>
     <string name="image_animal_description">Animal Image</string>
+    <string name="error_offline_scheduling">You need an internet connection to schedule activities</string>
+    <string name="error_time_outside_hours">Selected time is outside shelter opening hours</string>
+    <string name="error_date_conflict">Selected dates conflict with an existing activity</string>
+    <string name="error_less_than_24h">Activities must be scheduled at least 24 hours in advance</string>
+    <string name="error_active_activity_exists">There is already an active activity for this animal</string>
+    <string name="error_no_date_selected">Please select at least one date</string>
+    <string name="shelter_hours_info">Shelter hours: %1$s - %2$s</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Active Appointments</string>
@@ -55,8 +61,15 @@
     <string name="pickup_time">Pickup Time</string>
     <string name="delivery_date">Return Date</string>
     <string name="delivery_time">Return Time</string>
-    <string name="view_location">View location on Google Maps</string>
+    <string name="view_location">Google Maps</string>
     <string name="no_activities_scheduled">No activities scheduled</string>
+    <string name="activities_history_title">Activities History</string>
+    <string name="ongoing_activities">Ongoing Activities</string>
+    <string name="upcoming_activities">Upcoming Activities</string>
+    <string name="past_activities">Past Activities</string>
+    <string name="offline_warning">Showing cached data - you may not see recent activities</string>
+    <string name="delete_activity_confirm">Are you sure you want to cancel this activity?</string>
+    <string name="activity_deleted_success">Activity cancelled successfully</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>
@@ -104,7 +117,6 @@
     <string name="preferences">Preferences</string>
     <string name="admin_home">Admin Home</string>
 
-
     <!-- Buttons -->
     <string name="cancel_button">Cancel</string>
     <string name="confirm_button">Confirm</string>
@@ -129,7 +141,6 @@
     <string name="cvv_placeholder">123</string>
     <string name="card_number_placeholder">12345678</string>
 
-
     <!-- Animal List Screen -->
     <string name="search_label">Search</string>
     <string name="filter_label">Filter</string>
@@ -146,7 +157,6 @@
     <string name="sort_by_age_desc">Sort by age (oldest first)</string>
     <string name="no_animals_available">No animals available.</string>
 
-
     <!-- Animal Detail Screen -->
     <string name="loading_shelter">Loading…</string>
     <string name="unknown_shelter">Unknown</string>
@@ -155,7 +165,6 @@
     <string name="age_years">years</string>
     <string name="age_not_available">N/A</string>
 
-
     <!-- Preferences Screen -->
     <string name="notifications_label">Notifications</string>
     <string name="language_label">App Language</string>
@@ -163,9 +172,6 @@
     <string name="language_changed_title">Language changed successfully!</string>
     <string name="language_changed_message">The application will refresh to apply the new language.</string>
     <string name="go_back_home">Return to Main Menu</string>
-
-
-
 
     <!-- Image Gallery -->
     <string name="main_image_description">Main Image</string>
@@ -299,7 +305,6 @@
     <string name="login_success">Login successfully</string>
     <string name="unknown_error"> Unknown Error</string>
 
-
     <!-- ActivityViewModel Messages -->
     <string name="error_loading_animal_shelter">Error loading animal and shelter data:</string>
     <string name="error_scheduling_activity">Error scheduling activity:</string>
@@ -401,11 +406,136 @@
     <string name="notification_permission_button">Enable</string>
     <string name="notification_permission_skip">Later</string>
 
-
     <!-- ================= PHONE BUTTON ================= -->
     <string name="call_button_label">Call</string>
     <string name="phone_icon_description">Phone</string>
 
+    <!-- ================= ACTIVITY SUCCESS DIALOG ================= -->
+    <string name="activity_success_title">Activity Scheduled!</string>
+    <string name="activity_success_message">You scheduled 1 activity with %1$s from %2$s to %3$s</string>
+    <string name="view_activities_button">View Activities</string>
 
+    <!-- ================= VETERINARIANS SCREEN ================= -->
+    <string name="veterinarians_title">Veterinary Centers Near You</string>
+    <string name="location_permission_title">We need your location</string>
+    <string name="location_permission_message">To show veterinarians near you</string>
+    <string name="allow_location_button">Allow Location</string>
+    <string name="gps_disabled_title">📍 GPS Disabled</string>
+    <string name="gps_disabled_message">To find veterinarians near you,\nenable GPS in settings</string>
+    <string name="open_settings_button">Open Settings</string>
+    <string name="veterinarians_unavailable">Veterinary centers unavailable</string>
+    <string name="gps_disabled_cache_warning">GPS disabled. Showing previous results.</string>
+    <string name="no_veterinarians_found">No veterinarians found</string>
+    <string name="try_expanding_search">Try expanding the search area</string>
+    <string name="try_again_button">Try Again</string>
+
+    <!-- Walk Tracking Service -->
+    <string name="walk_tracking_channel_name">Walk Tracking</string>
+    <string name="walk_tracking_channel_description">Notifications for active walks</string>
+    <string name="walk_in_progress_title">Walking with %1$s</string>
+    <string name="walk_in_progress_text">Tap to view details</string>
+    <string name="walk_notification_stats">%1$s · %2$s km</string>
+    <string name="walk_in_progress">Walk in progress</string>
+
+    <!-- Walk Screen -->
+    <string name="walk_screen_title">Walk</string>
+    <string name="walk_offline_message">No internet connection. Cannot start a walk.</string>
+    <string name="walk_duration_label">Duration</string>
+    <string name="walk_distance_label">Distance</string>
+    <string name="walk_date_label">Date</string>
+    <string name="walk_finish_button">Finish Walk</string>
+    <string name="walk_finish_dialog_title">Finish Walk?</string>
+    <string name="walk_finish_dialog_message">Are you sure you want to end the walk?</string>
+    <string name="walk_finish_confirm">Finish</string>
+    <string name="walk_finish_cancel">Cancel</string>
+    <string name="walk_location_permission_title">Location Permission Required</string>
+    <string name="walk_location_permission_message">To track your walk route and distance, we need access to your location. Please grant location permission to continue.</string>
+    <string name="walk_grant_permission_button">Grant Permission</string>
+    <string name="walk_location_services_title">Enable Location Services</string>
+    <string name="walk_location_services_message">Please enable GPS to track your walk route and distance accurately.</string>
+    <string name="walk_enable_location_button">Enable GPS</string>
+
+    <!-- Walk Summary Screen -->
+    <string name="walk_summary_title">Walk Summary</string>
+    <string name="walk_medal_earned">Medal earned!</string>
+    <string name="walk_share_community">Share to SocialTails Community</string>
+    <string name="walk_save_history">Save to Personal History Only</string>
+    <string name="walk_discard_button">Discard Walk</string>
+    <string name="walk_discard_dialog_title">Discard Walk?</string>
+    <string name="walk_discard_dialog_message">Are you sure? All walk data will be lost.</string>
+    <string name="walk_discard_confirm">Discard</string>
+    <string name="walk_discard_cancel">Cancel</string>
+    <string name="walk_no_route_data">No route data</string>
+    <string name="medal_celebration_title">Congratulations!</string>
+    <string name="medal_celebration_message">You earned a medal walking with %1$s!</string>
+    <string name="medal_celebration_continue">Continue</string>
+    <string name="walk_shared_success">Walk shared to SocialTails Community!</string>
+
+
+    <!-- Walk History Screen -->
+    <string name="walk_history_title">Walk History</string>
+    <string name="walk_history_offline_message">Offline mode - showing cached data</string>
+    <string name="walk_history_empty">You have no recorded walks yet</string>
+    <string name="walk_history_load_more">Load More</string>
+    <string name="retry_button">Retry</string>
+
+    <!-- Main Options Screen -->
+    <string name="schedule_visit_button">Schedule Visit</string>
+    <string name="start_walk_button">Start Walk</string>
+    <string name="walk_already_active">Walk already active</string>
+    <string name="schedules_button">Schedules</string>
+    <string name="walk_history_button">Walk History</string>
+    <string name="community_button">Visit SocialTails Community</string>
+    <string name="schedule_visit_select_animal">Select Animal for Visit</string>
+    <string name="start_walk_select_animal">Select Animal for Walk</string>
+    <string name="start_walk_no_animals_title">No Animals Available</string>
+    <string name="start_walk_no_animals_message">You have no active activities. Schedule a visit first.</string>
+    <string name="last_walk_with">Your last walk with:</string>
+    <string name="last_walk_distance">was %1$s</string>
+    <string name="welcome_message">Welcome, %1$s!</string>
+    <string name="no_animals_adopted_message">Ask a shelter to adopt an animal before accessing the App features!</string>
+    <string name="view_animals_catalog">View Animals Catalog</string>
+    <!-- Adoption Celebration -->
+    <string name="celebration_thanks">Thank you %1$s!</string>
+    <string name="celebration_eager_to_meet">Looking forward to meeting you!</string>
+    <string name="celebration_go_to_menu">Go to main menu</string>
+
+    <!-- Last Walk -->
+    <string name="last_walk_greeting">Hello %1$s!</string>
+    <string name="last_walk_info">Your last walk with %1$s was %2$s</string>
+
+    <!-- Recent Medals -->
+    <string name="recent_medals_title">Recently Earned Medals</string>
+    <string name="view_medal_collection">View Medal Collection</string>
+    <string name="medal_collection_title">Medal Collection</string>
+    <string name="medal_collection_empty">You haven\'t earned any medals yet</string>
+
+    <!-- Common -->
+    <string name="ok_button">OK</string>
+    <string name="close_button">Close</string>
+
+    <!-- Smartphone Notifications -->
+    <string name="walk_notification_stop">Stop Walk</string>
+
+    <!-- SocialTails Community -->
+    <string name="socialtails_community_title">SocialTails Community</string>
+    <string name="podium_all_time">🏆 All-Time Top</string>
+    <string name="podium_monthly">🏆 Winning Team of %1$s</string>
+    <string name="podium_empty">Empty</string>
+    <string name="community_feed_title">Community Walks</string>
+    <string name="community_no_walks">There are no shared walks yet.\nBe the first to share!</string>
+    <string name="public_walk_description">%1$s walked %2$s for %3$s</string>
+
+    <!-- SocialTails Community Walk Map Modal -->
+    <string name="walk_map_title">%1$s\'s walk with %2$s</string>
+    <string name="walk_map_stats">%1$s • %2$s</string>
+    <string name="close">Close</string>
+
+    <!-- SocialTails Community Offline Dialog -->
+    <string name="offline_dialog_title">No Internet Connection</string>
+    <string name="offline_dialog_message">
+    An internet connection is required to access the SocialTails community. Please check your connection and try again.
+</string>
+    <string name="offline_dialog_button">Back</string>
 
 </resources>

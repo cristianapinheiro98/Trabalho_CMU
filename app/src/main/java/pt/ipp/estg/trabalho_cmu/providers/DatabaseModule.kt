@@ -26,6 +26,7 @@ object DatabaseModule {
     fun provideShelterDao(context: Context) = provideDatabase(context).shelterDao()
     fun provideVeterinarianDao(context: Context) = provideDatabase(context).veterinarianDao()
     fun provideFavoriteDao(context: Context) = provideDatabase(context).favoriteDao()
+    fun provideWalkDao(context: Context) = provideDatabase(context).walkDao()
 
     // ========== REPOSITORIES ==========
 
@@ -53,7 +54,8 @@ object DatabaseModule {
 
     fun provideActivityRepository(application: Application): ActivityRepository {
         return ActivityRepository(
-            activityDao = provideActivityDao(application)
+            activityDao = provideActivityDao(application),
+            animalDao = provideAnimalDao(application)
         )
     }
 
@@ -73,13 +75,20 @@ object DatabaseModule {
 
     fun provideShelterRepository(application: Application): ShelterRepository {
         return ShelterRepository(
-            shelterDao = provideShelterDao(application)
+            shelterDao = provideShelterDao(application),
+            animalDao = provideAnimalDao(application)
         )
     }
 
     fun provideVeterinarianRepository(application: Application): VeterinarianRepository {
         return VeterinarianRepository(
             veterinarianDao = provideVeterinarianDao(application)
+        )
+    }
+
+    fun provideWalkRepository(application: Application): WalkRepository {
+        return WalkRepository(
+            walkDao = provideWalkDao(application)
         )
     }
 }

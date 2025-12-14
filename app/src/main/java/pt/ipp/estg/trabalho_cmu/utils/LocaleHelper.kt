@@ -11,18 +11,11 @@ import java.util.*
  * is running. It creates a new configuration context with the selected locale,
  * which must then be applied in `attachBaseContext()` in the Activity.
  *
- * Usage:
- * ```
- * val updatedContext = LocaleHelper.setLocale(context, "pt")
- * ```
- *
  * @param context The base context used by the application/activity.
  * @param language A language code (e.g., "pt", "en").
  * @return A new context configured with the requested locale.
  */
-
 object LocaleHelper {
-
     fun setLocale(base: Context, language: String): Context {
         val locale = Locale(language)
         Locale.setDefault(locale)

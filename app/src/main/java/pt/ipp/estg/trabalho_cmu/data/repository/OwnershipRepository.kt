@@ -91,6 +91,7 @@ class OwnershipRepository(
      * Updates:
      * - ownership.status = APPROVED
      * - animal.status = HASOWNED
+     * - Other pending requests for the same animal = REJECTED
      */
     suspend fun approveOwnershipRequest(
         ownershipId: String,
@@ -103,12 +104,32 @@ class OwnershipRepository(
                 return@withContext Result.failure(Exception(msg))
             }
 
+            // Fetch other pending ownerships for the same animal BEFORE the transaction
+            val otherPendingSnapshot = firestore.collection("ownerships")
+                .whereEqualTo("animalId", animalId)
+                .whereEqualTo("status", OwnershipStatus.PENDING.name)
+                .get()
+                .await()
+
+            val otherPendingIds = otherPendingSnapshot.documents
+                .map { it.id }
+                .filter { it != ownershipId }
+
             firestore.runTransaction { transaction ->
                 val ownRef = firestore.collection("ownerships").document(ownershipId)
                 val animRef = firestore.collection("animals").document(animalId)
 
+                // Approve the selected request
                 transaction.update(ownRef, "status", OwnershipStatus.APPROVED.name)
+
+                // Mark animal as owned
                 transaction.update(animRef, "status", "HASOWNED")
+
+                // Reject all other pending requests for this animal
+                otherPendingIds.forEach { otherId ->
+                    val otherRef = firestore.collection("ownerships").document(otherId)
+                    transaction.update(otherRef, "status", OwnershipStatus.REJECTED.name)
+                }
             }.await()
 
             Result.success(Unit)
@@ -149,24 +170,18 @@ class OwnershipRepository(
      *
      * Replaces local Room cache.
      */
-    // Em OwnershipRepository.kt
-
     suspend fun syncPendingOwnerships(shelterId: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             if (!NetworkUtils.isConnected()) {
-                return@withContext Result.failure(Exception("Sem internet"))
+                return@withContext Result.failure(Exception("Without internet"))
             }
 
             try {
-                Log.d("DEBUG_SYNC", "1. A iniciar Sync para o Shelter ID: '$shelterId'")
-
                 val snapshot = firestore.collection("ownerships")
                     .whereEqualTo("shelterId", shelterId)
                     .whereEqualTo("status", OwnershipStatus.PENDING.name)
                     .get()
                     .await()
-
-                Log.d("DEBUG_SYNC", "2. Documentos encontrados no Firebase: ${snapshot.size()}")
 
                 if (snapshot.isEmpty) {
                     Log.w("DEBUG_SYNC", "AVISO: Nenhum pedido encontrado. Verifica se o shelterId no Firebase é EXATAMENTE '$shelterId' e se o status é 'PENDING'.")
@@ -181,16 +196,11 @@ class OwnershipRepository(
                     }
                     item
                 }
-
-                Log.d("DEBUG_SYNC", "3. A inserir ${list.size} pedidos na BD Local (Room)...")
                 ownershipDao.insertAll(list)
-
-                Log.d("DEBUG_SYNC", "4. Sync concluído.")
 
                 Result.success(Unit)
 
             } catch (e: Exception) {
-                Log.e("DEBUG_SYNC", "ERRO FATAL NO SYNC", e)
                 Result.failure(e)
             }
         }
@@ -224,4 +234,56 @@ class OwnershipRepository(
     suspend fun getPendingOwnershipsByShelterList(shelterId: String): List<Ownership> {
         return ownershipDao.getPendingOwnershipsByShelterList(shelterId)
     }
+
+    /**
+     * Gets an approved ownership that hasn't been celebrated yet.
+     */
+    suspend fun getUncelebratedApprovedOwnership(userId: String): Ownership? {
+        return ownershipDao.getUncelebratedApprovedOwnership(userId)
+    }
+
+    /**
+     * Marks ownership as celebrated both locally and in Firebase.
+     */
+    suspend fun markOwnershipAsCelebrated(ownershipId: String): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                // Update Firebase first
+                if (NetworkUtils.isConnected()) {
+                    firestore.collection("ownerships")
+                        .document(ownershipId)
+                        .update("celebrationShown", true)
+                        .await()
+                }
+
+                // Update local database
+                ownershipDao.markAsCelebrated(ownershipId)
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Log.e("OwnershipRepository", "Error marking ownership as celebrated", e)
+                Result.failure(e)
+            }
+        }
+
+    /**
+     * Syncs approved ownerships for a user, including celebration status.
+     */
+    suspend fun syncUserApprovedOwnershipsWithCelebration(userId: String) =
+        withContext(Dispatchers.IO) {
+            if (!NetworkUtils.isConnected()) return@withContext
+
+            try {
+                val snapshot = firestore.collection("ownerships")
+                    .whereEqualTo("userId", userId)
+                    .whereEqualTo("status", OwnershipStatus.APPROVED.name)
+                    .get().await()
+
+                val list = snapshot.documents.mapNotNull { it.toOwnership() }
+                ownershipDao.insertAll(list)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 }

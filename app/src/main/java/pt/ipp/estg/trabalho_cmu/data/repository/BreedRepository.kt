@@ -23,7 +23,6 @@ import pt.ipp.estg.trabalho_cmu.providers.RetrofitInstance
  * identifiers (R.string.*) for localization.
  */
 class BreedRepository {
-
     private val dogApi = RetrofitInstance.dogApi
     private val catApi = RetrofitInstance.catApi
     private val translationRepo = TranslationRepository()

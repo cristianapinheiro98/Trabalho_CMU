@@ -34,6 +34,13 @@
     <string name="select_at_least_one_date">Selecione pelo menos uma data</string>
     <string name="activity_scheduled_success">Atividade agendada com sucesso!</string>
     <string name="image_animal_description">Imagem do Anima</string>
+    <string name="error_offline_scheduling">Necessita de conexão à internet para agendar atividades</string>
+    <string name="error_time_outside_hours">Horário selecionado está fora do horário de abertura do abrigo</string>
+    <string name="error_date_conflict">As datas selecionadas conflituam com uma atividade existente</string>
+    <string name="error_less_than_24h">Atividades devem ser agendadas com pelo menos 24 horas de antecedência</string>
+    <string name="error_active_activity_exists">Já existe uma atividade ativa para este animal</string>
+    <string name="error_no_date_selected">Por favor selecione pelo menos uma data</string>
+    <string name="shelter_hours_info">Horário do abrigo: %1$s - %2$s</string>
 
     <!-- Activities History Screen -->
     <string name="appointment_title">Agendamentos Ativos</string>
@@ -44,8 +51,15 @@
     <string name="pickup_time">Hora de Levantamento</string>
     <string name="delivery_date">Data de Entrega</string>
     <string name="delivery_time">Hora de Entrega</string>
-    <string name="view_location">Ver localização no Google Maps</string>
+    <string name="view_location">Google Maps</string>
     <string name="no_activities_scheduled">Sem atividades agendadas</string>
+    <string name="activities_history_title">Histórico de Atividades</string>
+    <string name="ongoing_activities">Atividades em Curso</string>
+    <string name="upcoming_activities">Próximas Atividades</string>
+    <string name="past_activities">Atividades Passadas</string>
+    <string name="offline_warning">A mostrar dados em cache - pode não ver atividades recentes</string>
+    <string name="delete_activity_confirm">Tem certeza que deseja cancelar esta atividade?</string>
+    <string name="activity_deleted_success">Atividade cancelada com sucesso</string>
 
     <!-- SocialTails Ranking -->
     <string name="socialtails_ranking">SocialTails Ranking</string>
@@ -303,7 +317,7 @@
     <string name="error_creating_animal"> Erro ao criar animal. </string>
 
     <!-- AnimalRepository Messages -->
-.    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
+    .    <string name="error_offline">Erro de conexão: Offline. Precica de estar online para continuar com esta operação.</string>
     <string name="error_create_animal">Erro ao criar animal.</string>
     <string name="error_update_status">Erro ao atualizar estado do animal.</string>
     <string name="error_sync_animals">Erro ao sincronizar animais.</string>
@@ -339,7 +353,7 @@
     <string name="error_favorite_add">Erro ao adicionar favorito.</string>
     <string name="error_favorite_remove">Erro ao remover favorito.</string>
     <string name="error_favorite_sync">Erro ao sincronizar favoritos.</string>
-"
+    "
 
 
     <!-- ================= ANIMAL CARD ================= -->
@@ -396,10 +410,129 @@
     <string name="call_button_label">Ligar</string>
     <string name="phone_icon_description">Telefone</string>
 
+    <!-- ================= ACTIVITY SUCCESS DIALOG ================= -->
+    <string name="activity_success_title">Atividade Marcada!</string>
+    <string name="activity_success_message">Marcaste 1 atividade com o(a) %1$s entre o dia %2$s e %3$s</string>
+    <string name="view_activities_button">Ver Agendamentos</string>
 
+    <!-- ================= VETERINARIANS SCREEN ================= -->
+    <string name="veterinarians_title">Centros Veterinários perto de ti</string>
+    <string name="location_permission_title">Precisamos da tua localização</string>
+    <string name="location_permission_message">Para mostrar veterinários perto de ti</string>
+    <string name="allow_location_button">Permitir Localização</string>
+    <string name="gps_disabled_title">📍 GPS Desligado</string>
+    <string name="gps_disabled_message">Para encontrar veterinários perto de ti,\nliga o GPS nas definições</string>
+    <string name="open_settings_button">Abrir Definições</string>
+    <string name="veterinarians_unavailable">Centros veterinários indisponíveis</string>
+    <string name="gps_disabled_cache_warning">GPS desligado. A mostrar resultados anteriores.</string>
+    <string name="no_veterinarians_found">Nenhum veterinário encontrado</string>
+    <string name="try_expanding_search">Tenta alargar a área de pesquisa</string>
+    <string name="try_again_button">Tentar novamente</string>
 
+    <!-- Walk Tracking Service -->
+    <string name="walk_tracking_channel_name">Tracking de Passeio</string>
+    <string name="walk_tracking_channel_description">Notificações de passeios ativos</string>
+    <string name="walk_in_progress_title">Passeio com %1$s</string>
+    <string name="walk_in_progress_text">Toque para ver detalhes</string>
+    <string name="walk_notification_stats">%1$s · %2$s km</string>
+    <string name="walk_in_progress">Passeio em curso</string>
 
+    <!-- Walk Screen -->
+    <string name="walk_screen_title">Passeio</string>
+    <string name="walk_offline_message">Sem ligação à internet. Não é possível iniciar um passeio.</string>
+    <string name="walk_duration_label">Duração</string>
+    <string name="walk_distance_label">Distância</string>
+    <string name="walk_date_label">Data</string>
+    <string name="walk_finish_button">Concluir Passeio</string>
+    <string name="walk_finish_dialog_title">Concluir Passeio?</string>
+    <string name="walk_finish_dialog_message">Tens a certeza que queres terminar o passeio?</string>
+    <string name="walk_finish_confirm">Concluir</string>
+    <string name="walk_finish_cancel">Cancelar</string>
+    <string name="walk_location_permission_title">É necessário permissões de localização</string>
+    <string name="walk_location_permission_message">Para que o passeio do teu animal seja registado, precisamos de ter acesso à tua localização. Por favor, autoriza a localização para continuar.</string>
+    <string name="walk_grant_permission_button">Conceder permissão</string>
+    <string name="walk_location_services_title">Ativar serviços de localização</string>
+    <string name="walk_location_services_message">Por favor ativa o GPS para registar o passeio do teu animal corretamente.</string>
+    <string name="walk_enable_location_button">Ativar GPS</string>
 
+    <!-- Walk Summary Screen -->
+    <string name="walk_summary_title">Resumo do Passeio</string>
+    <string name="walk_medal_earned">Medalha conquistada!</string>
+    <string name="walk_share_community">Partilhar na Comunidade SocialTails</string>
+    <string name="walk_save_history">Guardar Apenas no Histórico Pessoal</string>
+    <string name="walk_discard_button">Descartar Passeio</string>
+    <string name="walk_discard_dialog_title">Descartar Passeio?</string>
+    <string name="walk_discard_dialog_message">Tens a certeza? Todos os dados do passeio serão perdidos.</string>
+    <string name="walk_discard_confirm">Descartar</string>
+    <string name="walk_discard_cancel">Cancelar</string>
+    <string name="walk_no_route_data">Sem dados de percurso</string>
+    <string name="medal_celebration_title">Parabéns!</string>
+    <string name="medal_celebration_message">Ganhaste uma medalha a passear com o/a %1$s!</string>
+    <string name="medal_celebration_continue">Continuar</string>
+    <string name="walk_shared_success">Passeio partilhado com a Comunidade SocialTails!</string>
 
+    <!-- Walk History Screen -->
+    <string name="walk_history_title">Histórico de Passeios</string>
+    <string name="walk_history_offline_message">Modo offline - a mostrar dados em cache</string>
+    <string name="walk_history_empty">Ainda não tens passeios registados</string>
+    <string name="walk_history_load_more">Carregar Mais</string>
+    <string name="retry_button">Tentar Novamente</string>
+
+    <!-- Main Options Screen -->
+    <string name="schedule_visit_button">Agendar Visita</string>
+    <string name="start_walk_button">Iniciar Passeio</string>
+    <string name="walk_already_active">Passeio já ativo</string>
+    <string name="schedules_button">Agendamentos</string>
+    <string name="walk_history_button">Histórico Passeios</string>
+    <string name="community_button">Visitar Comunidade SocialTails</string>
+    <string name="schedule_visit_select_animal">Selecionar Animal para Visita</string>
+    <string name="start_walk_select_animal">Selecionar Animal para Passeio</string>
+    <string name="start_walk_no_animals_title">Sem Animais Disponíveis</string>
+    <string name="start_walk_no_animals_message">Não tens atividades ativas. Agenda uma visita primeiro.</string>
+    <string name="last_walk_with">O teu último passeio com:</string>
+    <string name="last_walk_distance">foi de %1$s</string>
+    <string name="welcome_message">Bem-vindo, %1$s!</string>
+    <string name="no_animals_adopted_message">Pede a um abrigo para adotar um animal antes de ter acesso às funcionalidades da App!</string>
+    <string name="view_animals_catalog">Ver Catálogo de Animais</string>
+    <!-- Adoption Celebration -->
+    <string name="celebration_thanks">Obrigada %1$s!</string>
+    <string name="celebration_eager_to_meet">Ansioso(a) por te conhecer!</string>
+    <string name="celebration_go_to_menu">Ir para menu principal</string>
+
+    <!-- Last Walk -->
+    <string name="last_walk_greeting">Olá %1$s!</string>
+    <string name="last_walk_info">O teu último passeio com o/a %1$s foi de %2$s</string>
+
+    <!-- Recent Medals -->
+    <string name="recent_medals_title">Medalhas Recentemente Conquistadas</string>
+    <string name="view_medal_collection">Ver Coleção de Medalhas</string>
+    <string name="medal_collection_title">Coleção de Medalhas</string>
+    <string name="medal_collection_empty">Ainda não ganhaste medalhas</string>
+
+    <!-- Common -->
+    <string name="ok_button">OK</string>
+    <string name="close_button">Fechar</string>
+
+    <!-- Smartphone Notifications -->
+    <string name="walk_notification_stop">Parar Passeio</string>
+
+    <!-- SocialTails Community -->
+    <string name="socialtails_community_title">SocialTails Community</string>
+    <string name="podium_all_time">🏆 Top de Sempre</string>
+    <string name="podium_monthly">🏆 Equipa Vencedora de %1$s</string>
+    <string name="podium_empty">Vazio</string>
+    <string name="community_feed_title">Passeios da Comunidade</string>
+    <string name="community_no_walks">Ainda não há passeios partilhados.\nSê o primeiro a partilhar!</string>
+    <string name="public_walk_description">%1$s passeou o/a %2$s durante %3$s</string>
+
+    <!-- SocialTails Community Walk Map Modal -->
+    <string name="walk_map_title">Passeio de %1$s com %2$s</string>
+    <string name="walk_map_stats">%1$s • %2$s</string>
+    <string name="close">Fechar</string>
+
+    <!-- SocialTails Community Offline Dialog -->
+    <string name="offline_dialog_title">Sem Ligação à Internet</string>
+    <string name="offline_dialog_message">É necessária uma ligação à internet para aceder à comunidade SocialTails. Por favor, verifica a tua ligação e tenta novamente.</string>
+    <string name="offline_dialog_button">Voltar</string>
 
 </resources>

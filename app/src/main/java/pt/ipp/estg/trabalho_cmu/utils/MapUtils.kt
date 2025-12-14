@@ -15,7 +15,6 @@ import android.widget.Toast
  * @param context The calling context used to start the intent.
  * @param address The human-readable address to search in Google Maps.
  */
-
 fun openGoogleMaps(context: Context, address: String) {
     val encodedAddress = Uri.encode(address)
     val uri = Uri.parse("geo:0,0?q=$encodedAddress")

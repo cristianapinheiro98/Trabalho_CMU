@@ -26,20 +26,29 @@ import java.util.*
  * Features:
  * - Displays the month header
  * - Shows weekday initials using localized strings
- * - Highlights selected dates
- * - Calls onDateSelected() when the user toggles a day
+ * - Highlights selected dates in green
+ * - Shows booked dates in gray (non-clickable)
+ * - Calls onDateClicked() when the user clicks a day
+ *
+ * @param selectedDates Set of dates currently selected (format: "dd/MM/yyyy")
+ * @param onDateClicked Callback invoked when user clicks a date
+ * @param bookedDates List of dates that are already booked (format: "dd/MM/yyyy")
+ * @param modifier Modifier for this composable
  */
 @Composable
 fun CalendarView(
     selectedDates: Set<String>,
-    onDatesChanged: (Set<String>) -> Unit,
+    onDateClicked: (String) -> Unit,
+    bookedDates: List<String> = emptyList(),
     modifier: Modifier = Modifier
 ) {
+    android.util.Log.d("CalendarView", "Received bookedDates: $bookedDates")
+
     val currentCalendar = remember { Calendar.getInstance() }
     val year = currentCalendar.get(Calendar.YEAR)
     val month = currentCalendar.get(Calendar.MONTH)
 
-    // Primeiro dia do mês
+    // First day of the month
     val firstDayCalendar = Calendar.getInstance().apply {
         set(Calendar.YEAR, year)
         set(Calendar.MONTH, month)
@@ -57,7 +66,7 @@ fun CalendarView(
             .background(Color.White, RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
-        // Cabeçalho do mês
+        // Month header
         Text(
             text = monthFormat.format(currentCalendar.time).replaceFirstChar { it.uppercase() },
             fontSize = 16.sp,
@@ -69,7 +78,7 @@ fun CalendarView(
             textAlign = TextAlign.Center
         )
 
-        // Dias da semana
+        // Days of the week
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -102,8 +111,13 @@ fun CalendarView(
                         Spacer(modifier = Modifier.weight(1f))
                     } else {
                         val currentDay = dayCounter
-                        val dateString = "$currentDay/${month + 1}/${year % 100}"
+                        val dateString = String.format("%02d/%02d/%d", currentDay, month + 1, year)
                         val isSelected = selectedDates.contains(dateString)
+                        val isBooked = bookedDates.contains(dateString)
+
+                        if (isBooked) {
+                            android.util.Log.d("CalendarView", "Found booked date: $dateString")
+                        }
 
                         Box(
                             modifier = Modifier
@@ -112,22 +126,25 @@ fun CalendarView(
                                 .padding(2.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) Color(0xFF2C8B7E) else Color.Transparent
-                                )
-                                .clickable {
-                                    val newDates = if (isSelected) {
-                                        selectedDates - dateString
-                                    } else {
-                                        selectedDates + dateString
+                                    when {
+                                        isBooked -> Color(0xFFBDBDBD)
+                                        isSelected -> Color(0xFF2C8B7E)
+                                        else -> Color.Transparent
                                     }
-                                    onDatesChanged(newDates)
+                                )
+                                .clickable(enabled = !isBooked) {
+                                    onDateClicked(dateString)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = currentDay.toString(),
                                 fontSize = 14.sp,
-                                color = if (isSelected) Color.White else Color(0xFF2C2C2C)
+                                color = when {
+                                    isBooked -> Color(0xFF757575)
+                                    isSelected -> Color.White
+                                    else -> Color(0xFF2C2C2C)
+                                }
                             )
                         }
                         dayCounter++

@@ -22,7 +22,6 @@ import java.util.Locale
 private const val DATE_FORMAT = "dd/MM/yyyy"
 private val dateFormatter = SimpleDateFormat(DATE_FORMAT, Locale.US)
 
-
 fun dateStringToLong(dateString: String): Long {
     return try {
         dateFormatter.parse(dateString)?.time ?: 0L
@@ -31,7 +30,6 @@ fun dateStringToLong(dateString: String): Long {
         0L
     }
 }
-
 
 fun longToDateString(timestamp: Long): String {
     return try {

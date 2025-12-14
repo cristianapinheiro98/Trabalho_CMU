@@ -105,6 +105,16 @@ interface AnimalDao {
     suspend fun updateAnimalStatus(animalId: String, status: AnimalStatus)
 
     /**
+     * Retrieves multiple animals by their IDs.
+     * Used when syncing owned animals or loading activities.
+     *
+     * @param animalIds List of animal IDs to retrieve.
+     * @return List of animals matching the provided IDs.
+     */
+    @Query("SELECT * FROM animals WHERE id IN (:animalIds)")
+    suspend fun getAnimalsByIds(animalIds: List<String>): List<Animal>
+
+    /**
      * Clears the table and inserts new data.
      * Used during synchronization with remote backend.
      */
