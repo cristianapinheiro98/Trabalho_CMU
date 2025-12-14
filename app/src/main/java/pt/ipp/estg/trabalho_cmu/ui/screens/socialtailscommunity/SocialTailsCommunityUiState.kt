@@ -1,4 +1,4 @@
-package pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscomunity
+package pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscommunity
 
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Walk
 

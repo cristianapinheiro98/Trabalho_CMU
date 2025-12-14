@@ -15,7 +15,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.OwnershipFormScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.ownership.TermsAndConditionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.activity.scheduling.ActivitySchedulingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.activity.history.ActivitiesHistoryScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscomunity.SocialTailsCommunityScreen
+import pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscommunity.SocialTailsCommunityScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.animals.AnimalViewModel
