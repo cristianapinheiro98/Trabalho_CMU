@@ -3,6 +3,7 @@ package pt.ipp.estg.trabalho_cmu.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -39,6 +40,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.User.FavoriteViewModel
 fun NavGraphPublic(
     navController: NavHostController,
     authViewModel: AuthViewModel,
+    windowSize: WindowWidthSizeClass,
     onLoginSuccess: (isAdmin: Boolean) -> Unit
 ) {
     val animalViewModel: AnimalViewModel = viewModel()
@@ -54,7 +56,8 @@ fun NavGraphPublic(
             HomeScreen(
                 onLoginClick = { navController.navigate("Login") },
                 onRegisterClick = { navController.navigate("Register") },
-                onGuestAnimalsClick = { navController.navigate("AnimalsCatalogueGuest") }
+                onGuestAnimalsClick = { navController.navigate("AnimalsCatalogueGuest") },
+                windowSize = windowSize,
             )
         }
 
@@ -62,7 +65,8 @@ fun NavGraphPublic(
             LoginScreen(
                 authviewModel = authViewModel,
                 onLoginSuccess = { isAdmin -> onLoginSuccess(isAdmin) },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                windowSize = windowSize,
             )
         }
 
@@ -74,15 +78,17 @@ fun NavGraphPublic(
                     }
                 },
                 onNavigateBack = { navController.popBackStack() },
-                authviewModel = authViewModel
+                authviewModel = authViewModel,
+                windowSize = windowSize,
             )
         }
 
         composable("AnimalsCatalogueGuest") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = null,   // << GUEST MODE
+                favoriteViewModel = null,
                 userId = null,
+                windowSize = windowSize,
                 onAnimalClick = { id -> navController.navigate("AnimalDetailGuest/$id") },
                 onNavigateBack = { navController.navigate("Home") {
                     popUpTo("Home") { inclusive = true }
@@ -103,6 +109,7 @@ fun NavGraphPublic(
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
                 showAdoptButton = false,
+                windowSize = windowSize,
                 onAdoptClick = {},
                 onNavigateBack = {
                     navController.navigate("AnimalsCatalogueGuest") {

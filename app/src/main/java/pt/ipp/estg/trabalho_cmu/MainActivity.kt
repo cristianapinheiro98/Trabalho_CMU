@@ -14,6 +14,8 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import pt.ipp.estg.trabalho_cmu.preferences.LanguagePreferences
+import pt.ipp.estg.trabalho_cmu.ui.components.NotificationPermissionHandler
+import pt.ipp.estg.trabalho_cmu.ui.theme.Trabalho_CMUTheme
 import pt.ipp.estg.trabalho_cmu.utils.LocaleHelper
 
 /**
@@ -68,7 +70,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(null)
+        super.onCreate(savedInstanceState)
 
         // Handle intent from notification
         handleIntent(intent)
@@ -81,6 +83,9 @@ class MainActivity : ComponentActivity() {
             val shouldStopWalk by stopWalkRequested
 
             MaterialTheme {
+            Trabalho_CMUTheme {
+                NotificationPermissionHandler()
+
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {

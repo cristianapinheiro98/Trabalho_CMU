@@ -15,6 +15,7 @@ import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFavorite
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * Repository responsible for managing Favorite data across
@@ -89,7 +90,7 @@ class FavoriteRepository(
                 favoriteDao.insertFavorite(tempFavorite)
 
                 if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline)
+                    val msg = StringHelper.getString(appContext,R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 
@@ -130,7 +131,7 @@ class FavoriteRepository(
                 favoriteDao.removeFavorite(userId, animalId)
 
                 if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline)
+                    val msg = StringHelper.getString(appContext, R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 

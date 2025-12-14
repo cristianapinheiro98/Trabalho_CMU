@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import pt.ipp.estg.trabalho_cmu.ui.navigation.AppScaffold
 
@@ -40,7 +41,10 @@ fun PetAdoptionApp(
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
 
-    MaterialTheme {
+    MaterialTheme (colorScheme = MaterialTheme.colorScheme,
+        typography = MaterialTheme.typography,
+        shapes = MaterialTheme.shapes
+    ){
         AppScaffold(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,

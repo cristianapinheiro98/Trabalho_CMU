@@ -2,8 +2,11 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.Ownership
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,8 +45,10 @@ fun OwnershipConfirmationScreen(
     shelterViewModel: ShelterViewModel,
     animalId: String,
     onBackToHome: () -> Unit,
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
 
     val authViewModel: AuthViewModel = viewModel()
     val currentUserId = authViewModel.getCurrentUserFirebaseUid()
@@ -86,6 +91,7 @@ fun OwnershipConfirmationScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -101,62 +107,122 @@ fun OwnershipConfirmationScreen(
                 defaultElevation = 4.dp
             )
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.confirmation_title, userName),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2C2C2C),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(R.string.confirmation_message, shelterName, animalName),
-                    fontSize = 16.sp,
-                    color = Color(0xFF2C2C2C),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 24.sp
-                )
-                Text(
-                    text = stringResource(R.string.confirmation_notification),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C2C2C),
-                    textAlign = TextAlign.Center
-                )
 
-                Spacer(modifier = Modifier.height(16.dp))
+            ConfirmationContentLayout(
+                userName = userName,
+                shelterName = shelterName,
+                animalName = animalName,
+                onBackToHome = onBackToHome,
+                windowSize = windowSize
+            )
+        }
+    }
+}
 
-                CheckmarkIcon(
-                    modifier = Modifier.size(120.dp)
-                )
 
-                Spacer(modifier = Modifier.height(24.dp))
+/**
+ * Helper method to adapt the layout to confirmation screen depending on the screen size.
+ */
+@Composable
+private fun ConfirmationContentLayout(
+    userName: String,
+    shelterName: String,
+    animalName: String,
+    onBackToHome: () -> Unit,
+    windowSize: WindowWidthSizeClass
+) {
+    val isExpanded = windowSize == WindowWidthSizeClass.Expanded
 
-                Button(
-                    onClick = onBackToHome,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2C8B7E),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.confirmation_back_button),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+    val textSection = @Composable {
+        Column(
+            horizontalAlignment = if (isExpanded) Alignment.Start else Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.confirmation_title, userName),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2C2C2C),
+                textAlign = if (isExpanded) TextAlign.Start else TextAlign.Center
+            )
+            Text(
+                text = stringResource(R.string.confirmation_message, shelterName, animalName),
+                fontSize = 16.sp,
+                color = Color(0xFF2C2C2C),
+                textAlign = if (isExpanded) TextAlign.Start else TextAlign.Center,
+                lineHeight = 24.sp
+            )
+            Text(
+                text = stringResource(R.string.confirmation_notification),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF2C2C2C),
+                textAlign = if (isExpanded) TextAlign.Start else TextAlign.Center
+            )
+        }
+    }
+
+    val iconSection = @Composable {
+        Box(contentAlignment = Alignment.Center) {
+            CheckmarkIcon(modifier = Modifier.size(120.dp))
+        }
+    }
+
+    val buttonSection = @Composable {
+        Button(
+            onClick = onBackToHome,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2C8B7E),
+                contentColor = Color.White
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.confirmation_back_button),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+
+    if (isExpanded) {
+        // --- TABLET (Side by Side) ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            Box(modifier = Modifier.weight(0.4f), contentAlignment = Alignment.Center) {
+                iconSection()
             }
+
+            Column(
+                modifier = Modifier.weight(0.6f),
+                verticalArrangement = Arrangement.spacedBy(32.dp)
+            ) {
+                textSection()
+                buttonSection()
+            }
+        }
+    } else {
+        // --- Phone (Vertical) ---
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            textSection()
+            Spacer(modifier = Modifier.height(16.dp))
+            iconSection()
+            Spacer(modifier = Modifier.height(24.dp))
+            buttonSection() // Padding horizontal já tratado no fillMaxWidth do parent
         }
     }
 }
@@ -217,62 +283,13 @@ fun OwnershipConfirmationScreenPreview() {
                     defaultElevation = 4.dp
                 )
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    Text(
-                        text = "Obrigado André!",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2C2C2C),
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "O abrigo Animais Fofos recebeu a sua candidatura para adotar Mariana.",
-                        fontSize = 16.sp,
-                        color = Color(0xFF2C2C2C),
-                        textAlign = TextAlign.Center,
-                        lineHeight = 24.sp
-                    )
-
-                    Text(
-                        text = "Será notificado quando houver uma resposta.",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF2C2C2C),
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    CheckmarkIcon(modifier = Modifier.size(120.dp))
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2C8B7E),
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(
-                            text = "Regressar ao Menu Inicial",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+                ConfirmationContentLayout(
+                    userName = "André",
+                    shelterName = "Animais Fofos",
+                    animalName = "Mariana",
+                    onBackToHome = {},
+                    windowSize = WindowWidthSizeClass.Compact
+                )
             }
         }
     }

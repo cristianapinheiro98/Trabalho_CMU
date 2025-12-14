@@ -12,6 +12,7 @@ import pt.ipp.estg.trabalho_cmu.providers.FirebaseProvider.firestore
 import pt.ipp.estg.trabalho_cmu.utils.NetworkUtils
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toFirebaseMap
 import pt.ipp.estg.trabalho_cmu.data.models.mappers.toUser
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * Repository responsible for:
@@ -45,7 +46,7 @@ class UserRepository(
         withContext(Dispatchers.IO) {
             try {
                 if (!NetworkUtils.isConnected()) {
-                    val msg = appContext.getString(R.string.error_offline)
+                    val msg = StringHelper.getString(appContext, R.string.error_offline)
                     return@withContext Result.failure(Exception(msg))
                 }
 
@@ -57,7 +58,7 @@ class UserRepository(
                 Result.success(Unit)
 
             } catch (e: Exception) {
-                val msg = appContext.getString(R.string.error_update_user)
+                val msg = StringHelper.getString(appContext, R.string.error_update_user)
                 Result.failure(Exception(msg))
             }
         }
@@ -68,7 +69,7 @@ class UserRepository(
      */
     suspend fun syncSpecificUser(userId: String): Result<Unit> = withContext(Dispatchers.IO) {
         if (!NetworkUtils.isConnected()) {
-            val msg = appContext.getString(R.string.error_offline)
+            val msg = StringHelper.getString(appContext, R.string.error_offline)
             return@withContext Result.failure(Exception(msg))
         }
 
@@ -85,13 +86,13 @@ class UserRepository(
                     userDao.insert(user)
                     Result.success(Unit)
                 } else {
-                    Result.failure(Exception(appContext.getString(R.string.error_convert_user)))
+                    Result.failure(Exception(StringHelper.getString(appContext, R.string.error_convert_user)))
                 }
             } else {
-                Result.failure(Exception(appContext.getString(R.string.error_user_not_found)))
+                Result.failure(Exception(StringHelper.getString(appContext, R.string.error_user_not_found)))
             }
         } catch (e: Exception) {
-            Result.failure(Exception(appContext.getString(R.string.error_sync_user_generic)))
+            Result.failure(Exception(StringHelper.getString(appContext, R.string.error_sync_user_generic)))
         }
     }
 
@@ -102,7 +103,7 @@ class UserRepository(
     suspend fun syncUsers(): Result<Unit> = withContext(Dispatchers.IO) {
 
         if (!NetworkUtils.isConnected()) {
-            val msg = appContext.getString(R.string.error_offline)
+            val msg = StringHelper.getString(appContext, R.string.error_offline)
             return@withContext Result.failure(Exception(msg))
         }
 
@@ -122,7 +123,7 @@ class UserRepository(
             Result.success(Unit)
 
         } catch (e: Exception) {
-            val msg = appContext.getString(R.string.error_sync_users)
+            val msg = StringHelper.getString(appContext, R.string.error_sync_users)
             Result.failure(Exception(msg))
         }
     }

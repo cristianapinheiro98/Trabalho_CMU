@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.trabalho_cmu.data.local.entities.Favorite
 import pt.ipp.estg.trabalho_cmu.providers.DatabaseModule
 import pt.ipp.estg.trabalho_cmu.R
+import pt.ipp.estg.trabalho_cmu.utils.StringHelper
 
 /**
  * ViewModel responsible for managing favorites-related UI logic.
@@ -96,7 +97,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.syncFavorites(userId)
             _uiState.value = FavoriteUiState.Initial
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_sync))
+            _uiState.value = FavoriteUiState.Error(StringHelper.getString(ctx, R.string.error_favorite_sync))
         }
     }
 
@@ -128,7 +129,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.syncFavorites(userId)
             _uiState.value = FavoriteUiState.FavoriteAdded(favorite)
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_add))
+            _uiState.value = FavoriteUiState.Error(StringHelper.getString(ctx, R.string.error_favorite_add))
         }
     }
 
@@ -152,7 +153,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
             favoriteRepository.removeFavorite(userId, animalId)
             _uiState.value = FavoriteUiState.FavoriteRemoved
         } catch (e: Exception) {
-            _uiState.value = FavoriteUiState.Error(ctx.getString(R.string.error_favorite_remove))
+            _uiState.value = FavoriteUiState.Error(StringHelper.getString(ctx, R.string.error_favorite_remove))
         }
     }
 

@@ -93,7 +93,8 @@ fun NavGraphUser(
             val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
             TermsAndConditionsScreen(
                 onAccept = { navController.navigate("OwnershipForm/$animalId") },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                windowSize = windowSize
             )
         }
 
@@ -112,7 +113,8 @@ fun NavGraphUser(
                     navController.navigate("ownership_confirmation/$animalFirebaseUid") {
                         popUpTo("OwnershipForm/$animalFirebaseUid") { inclusive = true }
                     }
-                }
+                },
+                windowSize = windowSize
             )
         }
 
@@ -132,7 +134,8 @@ fun NavGraphUser(
                     navController.navigate("UserHome") {
                         popUpTo("UserHome") { inclusive = true }
                     }
-                }
+                },
+                windowSize = windowSize
             )
         }
 
@@ -180,6 +183,7 @@ fun NavGraphUser(
                 animalViewModel = animalViewModel,
                 favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid(),
+                windowSize = windowSize,
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -197,6 +201,7 @@ fun NavGraphUser(
                 animalViewModel = animalViewModel,
                 shelterViewModel = shelterViewModel,
                 showAdoptButton = isLoggedIn,
+                windowSize = windowSize,
                 onAdoptClick = { navController.navigate("TermsAndConditions/$animalId") },
                 onNavigateBack = {
                     navController.navigate("AnimalsCatalogue") {

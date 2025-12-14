@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -48,6 +49,7 @@ fun AnimalListScreen(
     animalViewModel: AnimalViewModel,
     favoriteViewModel: FavoriteViewModel? = null,   // null = guest
     userId: String?,
+    windowSize: WindowWidthSizeClass,
     onAnimalClick: (String) -> Unit = {},
     onNavigateBack: () -> Unit
 ) {
@@ -79,6 +81,8 @@ fun AnimalListScreen(
         return
     }
 
+    val numColumns = if (windowSize == WindowWidthSizeClass.Expanded) 3 else 2
+
     AnimalListContent(
         animals = listToShow,
         favorites = favorites,
@@ -108,7 +112,8 @@ fun AnimalListScreen(
             }else{
                 Log.d("FAV_DEBUG", "Não executou toggle: userId ou favoriteViewModel null")
             }
-        }
+        },
+        columns = numColumns
     )
 }
 @RequiresApi(Build.VERSION_CODES.O)
@@ -127,7 +132,8 @@ fun AnimalListContent(
     onSortAgeDesc: () -> Unit,
     onClearFilters: () -> Unit,
     onNavigateBack: () -> Unit,
-    onToggleFavorite: (Animal) -> Unit
+    onToggleFavorite: (Animal) -> Unit,
+    columns: Int = 2,
 ) {
     var search by remember { mutableStateOf("") }
     var filterMenu by remember { mutableStateOf(false) }
@@ -232,7 +238,7 @@ fun AnimalListContent(
 
         //Grid of Animals
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -298,7 +304,8 @@ fun AnimalListScreenPreviewLoggedIn() {
             onSortAgeDesc = {},
             onClearFilters = {},
             onNavigateBack = {},
-            onToggleFavorite = {}
+            onToggleFavorite = {},
+            columns = 2
         )
     }
 }
@@ -323,7 +330,8 @@ fun AnimalListScreenPreviewGuest() {
             onSortAgeDesc = {},
             onClearFilters = {},
             onNavigateBack = {},
-            onToggleFavorite = {}
+            onToggleFavorite = {},
+            columns = 2
         )
     }
 }
