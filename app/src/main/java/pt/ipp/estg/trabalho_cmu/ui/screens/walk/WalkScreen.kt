@@ -1,6 +1,7 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.walk
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -59,6 +61,7 @@ import com.google.android.gms.location.Priority
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun WalkScreen(
+    windowSize : WindowWidthSizeClass,
     navController: NavController,
     animalId: String?,
     stopRequested: Boolean = false,
@@ -168,6 +171,9 @@ fun WalkScreen(
         }
     }
 
+    val isTablet = windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val maxWidth = if (isTablet) 1200.dp else 600.dp
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -183,8 +189,15 @@ fun WalkScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+                    contentAlignment = Alignment.TopCenter
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = maxWidth)
+                    .padding(horizontal = if (isTablet) 24.dp else 0.dp)
+            ) {
             // Check permissions first
             if (!locationPermissions.allPermissionsGranted) {
                 // Show permission request UI
@@ -308,6 +321,7 @@ fun WalkScreen(
 
                     is WalkUiState.Tracking -> {
                         WalkTrackingContent(
+                            windowSize = windowSize,
                             state = state,
                             viewModel = viewModel,
                             onFinishClick = { showFinishDialog = true }
@@ -373,6 +387,7 @@ fun WalkScreen(
             }
         )
     }
+    }
 }
 
 /**
@@ -387,10 +402,13 @@ fun WalkScreen(
  */
 @Composable
 private fun WalkTrackingContent(
+    windowSize: WindowWidthSizeClass,
     state: WalkUiState.Tracking,
     viewModel: WalkViewModel,
     onFinishClick: () -> Unit
 ) {
+    val isTablet = windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val cardPadding = if (isTablet) 24.dp else 16.dp
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -410,7 +428,7 @@ private fun WalkTrackingContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(cardPadding),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(
@@ -488,6 +506,7 @@ private fun WalkTrackingContent(
  * @param currentLocation Current GPS coordinates, null if not yet available
  * @param routePoints List of GPS coordinates representing the walked route
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun WalkMap(
     currentLocation: LatLng?,

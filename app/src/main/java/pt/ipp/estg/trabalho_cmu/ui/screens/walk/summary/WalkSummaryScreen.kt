@@ -1,5 +1,6 @@
 package pt.ipp.estg.trabalho_cmu.ui.screens.walk.summary
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -38,6 +39,7 @@ import nl.dionsegijn.konfetti.core.models.Size
 import pt.ipp.estg.trabalho_cmu.R
 import java.util.concurrent.TimeUnit
 import android.widget.Toast
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.platform.LocalContext
 
 /**
@@ -51,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalkSummaryScreen(
+    windowSize: WindowWidthSizeClass,
     navController: NavController,
     walkId: String,
     viewModel: WalkSummaryViewModel = viewModel()
@@ -124,7 +127,8 @@ fun WalkSummaryScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
             ) {
                 when (val state = uiState) {
                     is WalkSummaryUiState.Initial,
@@ -139,6 +143,7 @@ fun WalkSummaryScreen(
 
                     is WalkSummaryUiState.Success -> {
                         WalkSummaryContent(
+                            windowSize = windowSize,
                             state = state,
                             onSaveToHistory = { viewModel.saveToHistory() },
                             onDiscard = { showDiscardDialog = true },
@@ -348,137 +353,153 @@ private fun MedalCelebrationOverlay(
  */
 @Composable
 private fun WalkSummaryContent(
+    windowSize: WindowWidthSizeClass,
     state: WalkSummaryUiState.Success,
     onSaveToHistory: () -> Unit,
     onDiscard: () -> Unit,
     onShareToCommunity: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        // Map with complete route
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        ) {
-            WalkSummaryMap(routePoints = state.routePoints)
-        }
+    val isTablet =
+        windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val sidePadding = if (isTablet) 24.dp else 0.dp
+    val cardPadding = if (isTablet) 24.dp else 16.dp
+    val buttonPadding = if (isTablet) 24.dp else 16.dp
+    val mapHeight = if (isTablet) 360.dp else 300.dp
+    val maxWidth = if (isTablet) 1200.dp else 600.dp
 
-        // Summary card
-        Card(
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                .fillMaxSize()
+                .widthIn(max=maxWidth)
+                .padding(horizontal=sidePadding)
+                .verticalScroll(rememberScrollState())
         ) {
+            // Map with complete route
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(mapHeight)
+            ) {
+                WalkSummaryMap(routePoints = state.routePoints)
+            }
+
+            // Summary card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(cardPadding),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    // Animal info with medal
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = state.animalImageUrl,
+                            contentDescription = state.animalName,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = state.animalName,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            // Medal display
+                            state.medalEmoji?.let { emoji ->
+                                Text(
+                                    text = "$emoji ${stringResource(R.string.walk_medal_earned)}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    HorizontalDivider()
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Stats
+                    WalkSummaryStat(
+                        label = stringResource(R.string.walk_duration_label),
+                        value = state.formattedDuration
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    WalkSummaryStat(
+                        label = stringResource(R.string.walk_distance_label),
+                        value = state.formattedDistance
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    WalkSummaryStat(
+                        label = stringResource(R.string.walk_date_label),
+                        value = state.walk.date
+                    )
+                }
+            }
+
+            // Action buttons
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = buttonPadding)
             ) {
-                // Animal info with medal
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                // Share to community
+                Button(
+                    onClick = onShareToCommunity,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    AsyncImage(
-                        model = state.animalImageUrl,
-                        contentDescription = state.animalName,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                    Text(stringResource(R.string.walk_share_community))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Save to personal history
+                Button(
+                    onClick = onSaveToHistory,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.walk_save_history))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Discard walk
+                OutlinedButton(
+                    onClick = onDiscard,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
                     )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = state.animalName,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        // Medal display
-                        state.medalEmoji?.let { emoji ->
-                            Text(
-                                text = "$emoji ${stringResource(R.string.walk_medal_earned)}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
+                ) {
+                    Text(stringResource(R.string.walk_discard_button))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                HorizontalDivider()
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Stats
-                WalkSummaryStat(
-                    label = stringResource(R.string.walk_duration_label),
-                    value = state.formattedDuration
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                WalkSummaryStat(
-                    label = stringResource(R.string.walk_distance_label),
-                    value = state.formattedDistance
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                WalkSummaryStat(
-                    label = stringResource(R.string.walk_date_label),
-                    value = state.walk.date
-                )
             }
-        }
-
-        // Action buttons
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            // Share to community
-            Button(
-                onClick = onShareToCommunity,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.walk_share_community))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Save to personal history
-            Button(
-                onClick = onSaveToHistory,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.walk_save_history))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Discard walk
-            OutlinedButton(
-                onClick = onDiscard,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text(stringResource(R.string.walk_discard_button))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -486,6 +507,7 @@ private fun WalkSummaryContent(
 /**
  * Google Maps component for walk summary
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun WalkSummaryMap(routePoints: List<LatLng>) {
     if (routePoints.isEmpty()) {

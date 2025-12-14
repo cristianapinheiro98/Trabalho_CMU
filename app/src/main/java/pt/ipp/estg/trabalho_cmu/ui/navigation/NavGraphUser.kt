@@ -240,6 +240,7 @@ fun NavGraphUser(
         ) { backStackEntry ->
             val stopRequested = backStackEntry.arguments?.getBoolean("stopRequested") ?: false
             WalkScreen(
+                windowSize = windowSize,
                 navController = navController,
                 animalId = null,
                 stopRequested = stopRequested
@@ -255,6 +256,7 @@ fun NavGraphUser(
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
             WalkScreen(
+                windowSize = windowSize,
                 navController = navController,
                 animalId = animalId,
                 stopRequested = false
@@ -270,6 +272,7 @@ fun NavGraphUser(
         ) { backStackEntry ->
             val walkId = backStackEntry.arguments?.getString("walkId") ?: ""
             WalkSummaryScreen(
+                windowSize = windowSize,
                 navController = navController,
                 walkId = walkId
             )
