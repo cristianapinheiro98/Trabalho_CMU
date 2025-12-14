@@ -130,7 +130,6 @@ class ActivityRepository(
 
             val activities = snapshot.documents.mapNotNull { it.toActivity() }
 
-            // Filtrar apenas atividades cujos animais existem localmente
             val validActivities = activities.filter { activity ->
                 animalDao.getAnimalById(activity.animalId) != null
             }

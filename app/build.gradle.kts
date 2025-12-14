@@ -19,6 +19,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GOOGLE_PLACES_API_KEY", "\"${project.findProperty("GOOGLE_PLACES_API_KEY") ?: ""}\"")
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = project.findProperty("GOOGLE_PLACES_API_KEY") ?: ""
     }
 
     buildTypes {
@@ -141,4 +142,7 @@ dependencies {
 
     //Cloudinary
     implementation("com.cloudinary:cloudinary-android:3.1.2")
+
+    // Konfetti (animations)
+    implementation("nl.dionsegijn:konfetti-compose:2.0.5")
 }

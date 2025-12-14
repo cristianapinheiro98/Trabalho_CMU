@@ -16,7 +16,6 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Ownership.TermsAndConditionsScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitySchedulingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Activity.ActivitiesHistoryScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsCommunityScreen
-import pt.ipp.estg.trabalho_cmu.ui.screens.SocialTailsComunity.SocialTailsRankingScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalDetailScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalListScreen
 import pt.ipp.estg.trabalho_cmu.ui.screens.Animals.AnimalViewModel
@@ -35,46 +34,58 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Walk.WalkSummaryScreen
 /**
  * Navigation graph for regular logged-in users.
  *
- * Contains:
- * - Home options
- * - Preferences
- * - Veterinarians
- * - Adoption workflow
- * - Activities scheduling
+ * Contains routes for:
+ * - Home/Dashboard (MainOptionsScreen)
+ * - User preferences
+ * - Veterinarians list
+ * - Adoption workflow (terms, form, confirmation)
+ * - Activity scheduling and history
  * - SocialTails community
- * - Catalog and detail screens
+ * - Animal catalog and details
  * - Favorites
- * - Walk and history screens
+ * - Walk tracking, summary, and history
+ *
+ * @param navController Navigation controller for handling navigation
+ * @param windowSize Window size class for adaptive layouts
+ * @param isLoggedIn Whether user is logged in (affects certain UI elements)
  */
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeClass, isLoggedIn: Boolean = false) {
+fun NavGraphUser(
+    navController: NavHostController,
+    windowSize: WindowWidthSizeClass,
+    isLoggedIn: Boolean = false
+) {
+    // Shared ViewModels
     val authViewModel: AuthViewModel = viewModel()
     val animalViewModel: AnimalViewModel = viewModel()
     val shelterViewModel: ShelterViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
-    val favoriteViewModel : FavoriteViewModel = viewModel ()
+    val favoriteViewModel: FavoriteViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "UserHome") {
+
+        // ========== USER HOME (Dashboard) ==========
         composable("UserHome") {
             MainOptionsScreen(
                 navController = navController,
-                hasAdoptedAnimal = true,
-                userId = authViewModel.getCurrentUserFirebaseUid() ?: "",
                 windowSize = windowSize
             )
         }
 
+        // ========== PREFERENCES ==========
         composable("Preferences") {
             PreferencesScreen(userId = authViewModel.getCurrentUserFirebaseUid() ?: "")
         }
 
+        // ========== VETERINARIANS ==========
         composable("Veterinarians") {
             VeterinariansScreen()
         }
 
-        // ========== TERMS AND CONDITIONS (ID String) ==========
+        // ========== ADOPTION WORKFLOW ==========
+
+        // Terms and Conditions
         composable(
             route = "TermsAndConditions/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })
@@ -86,7 +97,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== OWNERSHIP FORM ==========
+        // Ownership Form
         composable(
             route = "OwnershipForm/{animalFirebaseUid}",
             arguments = listOf(navArgument("animalFirebaseUid") { type = NavType.StringType })
@@ -105,7 +116,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== OWNERSHIP CONFIRMATION (ID String) ==========
+        // Ownership Confirmation
         composable(
             route = "ownership_confirmation/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })
@@ -125,7 +136,9 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== ACTIVITY SCHEDULING (ID String) ==========
+        // ========== ACTIVITIES ==========
+
+        // Activity Scheduling
         composable(
             route = "ActivityScheduling/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })
@@ -144,35 +157,35 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== ACTIVITIES HISTORY ==========
+        // Activities History
         composable("ActivitiesHistory") {
             val userId = authViewModel.getCurrentUserFirebaseUid() ?: ""
             ActivitiesHistoryScreen(userId = userId)
         }
 
         // ========== SOCIAL COMMUNITY ==========
+
+        // Community Feed
         composable("SocialTailsCommunity") {
             SocialTailsCommunityScreen(
-                onViewRanking = { navController.navigate("SocialTailsRanking") }
+                navController = navController
             )
         }
 
-        composable("SocialTailsRanking") {
-            SocialTailsRankingScreen()
-        }
+        // ========== ANIMALS ==========
 
-        // ========== ANIMALS CATALOGUE ==========
+        // Animals Catalogue
         composable("AnimalsCatalogue") {
             AnimalListScreen(
                 animalViewModel = animalViewModel,
-                favoriteViewModel = favoriteViewModel, // Usa o FavoriteViewModel
+                favoriteViewModel = favoriteViewModel,
                 userId = authViewModel.getCurrentUserFirebaseUid(),
                 onAnimalClick = { animalId -> navController.navigate("AnimalDetail/$animalId") },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        // ========== ANIMAL DETAIL (ID String) ==========
+        // Animal Detail
         composable(
             route = "AnimalDetail/{animalId}",
             arguments = listOf(navArgument("animalId") { type = NavType.StringType })
@@ -194,6 +207,7 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
         }
 
         // ========== FAVORITES ==========
+
         composable("Favorites") {
             FavoritesScreen(
                 animalViewModel = animalViewModel,
@@ -203,34 +217,76 @@ fun NavGraphUser(navController: NavHostController, windowSize: WindowWidthSizeCl
             )
         }
 
-        // ========== WALK (ID String) ==========
+        // ========== WALK FEATURE ==========
+
+        // Resume Walk Screen - Used when returning from notification
+        // This route handles the case where a walk is already in progress
+        // and the user taps the notification or the "Stop Walk" action
         composable(
-            route = "Walk/{animalId}/{animalName}",
+            route = "Walk?stopRequested={stopRequested}",
             arguments = listOf(
-                navArgument("animalId") { type = NavType.StringType },
-                navArgument("animalName") { type = NavType.StringType }
+                navArgument("stopRequested") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val stopRequested = backStackEntry.arguments?.getBoolean("stopRequested") ?: false
+            WalkScreen(
+                navController = navController,
+                animalId = null,
+                stopRequested = stopRequested
+            )
+        }
+
+        // Active Walk Screen - Start new walk with specific animal
+        // Used when user initiates a walk from the animal selection screen
+        composable(
+            route = "Walk/{animalId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val animalId = backStackEntry.arguments?.getString("animalId") ?: ""
-            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
-
             WalkScreen(
+                navController = navController,
                 animalId = animalId,
-                animalName = animalName,
-                navController = navController
+                stopRequested = false
             )
         }
 
+        // Walk Summary Screen - Displayed after completing a walk
+        // Shows route map, statistics, medal earned, and action buttons
         composable(
-            route = "WalkSummary/{animalName}",
-            arguments = listOf(navArgument("animalName") { type = NavType.StringType })
+            route = "WalkSummary/{walkId}",
+            arguments = listOf(
+                navArgument("walkId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
-            val animalName = backStackEntry.arguments?.getString("animalName") ?: ""
-            WalkSummaryScreen(navController = navController, animalName = animalName)
+            val walkId = backStackEntry.arguments?.getString("walkId") ?: ""
+            WalkSummaryScreen(
+                navController = navController,
+                walkId = walkId
+            )
         }
 
-        composable("WalkHistory") {
-            WalkHistoryScreen()
+        // Walk History Screen - Paginated list of past walks
+        // Supports optional scrollToWalkId parameter for navigating from medal collection
+        composable(
+            route = "WalkHistory?scrollToWalkId={scrollToWalkId}",
+            arguments = listOf(
+                navArgument("scrollToWalkId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val scrollToWalkId = backStackEntry.arguments?.getString("scrollToWalkId")
+            WalkHistoryScreen(
+                navController = navController,
+                scrollToWalkId = scrollToWalkId
+            )
         }
     }
 }

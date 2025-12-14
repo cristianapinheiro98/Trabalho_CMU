@@ -417,4 +417,106 @@
     <string name="try_expanding_search">Try expanding the search area</string>
     <string name="try_again_button">Try Again</string>
 
+    <!-- Walk Tracking Service -->
+    <string name="walk_tracking_channel_name">Walk Tracking</string>
+    <string name="walk_tracking_channel_description">Notifications for active walks</string>
+    <string name="walk_in_progress_title">Walking with %1$s</string>
+    <string name="walk_in_progress_text">Tap to view details</string>
+    <string name="walk_notification_stats">%1$s · %2$s km</string>
+    <string name="walk_in_progress">Walk in progress</string>
+
+    <!-- Walk Screen -->
+    <string name="walk_screen_title">Walk</string>
+    <string name="walk_offline_message">No internet connection. Cannot start a walk.</string>
+    <string name="walk_duration_label">Duration</string>
+    <string name="walk_distance_label">Distance</string>
+    <string name="walk_date_label">Date</string>
+    <string name="walk_finish_button">Finish Walk</string>
+    <string name="walk_finish_dialog_title">Finish Walk?</string>
+    <string name="walk_finish_dialog_message">Are you sure you want to end the walk?</string>
+    <string name="walk_finish_confirm">Finish</string>
+    <string name="walk_finish_cancel">Cancel</string>
+    <string name="walk_location_permission_title">Location Permission Required</string>
+    <string name="walk_location_permission_message">To track your walk route and distance, we need access to your location. Please grant location permission to continue.</string>
+    <string name="walk_grant_permission_button">Grant Permission</string>
+    <string name="walk_location_services_title">Enable Location Services</string>
+    <string name="walk_location_services_message">Please enable GPS to track your walk route and distance accurately.</string>
+    <string name="walk_enable_location_button">Enable GPS</string>
+
+    <!-- Walk Summary Screen -->
+    <string name="walk_summary_title">Walk Summary</string>
+    <string name="walk_medal_earned">Medal earned!</string>
+    <string name="walk_share_community">Share to SocialTails Community</string>
+    <string name="walk_save_history">Save to Personal History Only</string>
+    <string name="walk_discard_button">Discard Walk</string>
+    <string name="walk_discard_dialog_title">Discard Walk?</string>
+    <string name="walk_discard_dialog_message">Are you sure? All walk data will be lost.</string>
+    <string name="walk_discard_confirm">Discard</string>
+    <string name="walk_discard_cancel">Cancel</string>
+    <string name="walk_no_route_data">No route data</string>
+    <string name="medal_celebration_title">Congratulations!</string>
+    <string name="medal_celebration_message">You earned a medal walking with %1$s!</string>
+    <string name="medal_celebration_continue">Continue</string>
+    <string name="walk_shared_success">Walk shared to SocialTails Community!</string>
+
+
+    <!-- Walk History Screen -->
+    <string name="walk_history_title">Walk History</string>
+    <string name="walk_history_offline_message">Offline mode - showing cached data</string>
+    <string name="walk_history_empty">You have no recorded walks yet</string>
+    <string name="walk_history_load_more">Load More</string>
+    <string name="retry_button">Retry</string>
+
+    <!-- Main Options Screen -->
+    <string name="schedule_visit_button">Schedule Visit</string>
+    <string name="start_walk_button">Start Walk</string>
+    <string name="walk_already_active">Walk already active</string>
+    <string name="schedules_button">Schedules</string>
+    <string name="walk_history_button">Walk History</string>
+    <string name="community_button">Visit SocialTails Community</string>
+    <string name="schedule_visit_select_animal">Select Animal for Visit</string>
+    <string name="start_walk_select_animal">Select Animal for Walk</string>
+    <string name="start_walk_no_animals_title">No Animals Available</string>
+    <string name="start_walk_no_animals_message">You have no active activities. Schedule a visit first.</string>
+    <string name="last_walk_with">Your last walk with:</string>
+    <string name="last_walk_distance">was %1$s</string>
+
+    <!-- Last Walk -->
+    <string name="last_walk_greeting">Hello %1$s!</string>
+    <string name="last_walk_info">Your last walk with %1$s was %2$s</string>
+
+    <!-- Recent Medals -->
+    <string name="recent_medals_title">Recently Earned Medals</string>
+    <string name="view_medal_collection">View Medal Collection</string>
+    <string name="medal_collection_title">Medal Collection</string>
+    <string name="medal_collection_empty">You haven\'t earned any medals yet</string>
+
+    <!-- Common -->
+    <string name="ok_button">OK</string>
+    <string name="close_button">Close</string>
+
+    <!-- Smartphone Notifications -->
+    <string name="walk_notification_stop">Stop Walk</string>
+
+    <!-- SocialTails Community -->
+    <string name="socialtails_community_title">SocialTails Community</string>
+    <string name="podium_all_time">🏆 All-Time Top</string>
+    <string name="podium_monthly">🏆 Winning Team of %1$s</string>
+    <string name="podium_empty">Empty</string>
+    <string name="community_feed_title">Community Walks</string>
+    <string name="community_no_walks">There are no shared walks yet.\nBe the first to share!</string>
+    <string name="public_walk_description">%1$s walked %2$s for %3$s</string>
+
+    <!-- SocialTails Community Walk Map Modal -->
+    <string name="walk_map_title">%1$s\'s walk with %2$s</string>
+    <string name="walk_map_stats">%1$s • %2$s</string>
+    <string name="close">Close</string>
+
+    <!-- SocialTails Community Offline Dialog -->
+    <string name="offline_dialog_title">No Internet Connection</string>
+    <string name="offline_dialog_message">
+    An internet connection is required to access the SocialTails community. Please check your connection and try again.
+</string>
+    <string name="offline_dialog_button">Back</string>
+
 </resources>

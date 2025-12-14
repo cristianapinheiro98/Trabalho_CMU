@@ -61,8 +61,8 @@ interface ActivityDao {
 
     /**
      * Retrieves active activities for a specific animal.
-     * Active means the delivery date is greater than or equal to the current date.
-     * Used to validate if a new activity can be created.
+     * Active means the current date falls within the activity period
+     * (pickupDate <= currentDate <= deliveryDate).
      *
      * @param animalId The animal ID to filter by.
      * @param currentDate Current date in dd/MM/yyyy format.
@@ -71,6 +71,7 @@ interface ActivityDao {
     @Query("""
         SELECT * FROM activities
         WHERE animalId = :animalId
+        AND pickupDate  <= :currentDate
         AND deliveryDate >= :currentDate
         ORDER BY pickupDate ASC
     """)

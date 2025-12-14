@@ -196,4 +196,50 @@ class AnimalRepository(
             Result.failure(e)
         }
     }
+
+    /**
+     * Retrieves animals owned by a specific user.
+     * Fetches approved ownerships from Firebase and returns corresponding animals from Room.
+     *
+     * @param userId The user ID whose owned animals should be retrieved.
+     * @return List of animals owned by the user.
+     */
+    suspend fun getOwnedAnimals(userId: String): List<Animal> = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "DEBUG getOwnedAnimals: Starting for userId = $userId")
+
+            // Fetch approved ownerships directly from Firebase
+            val ownershipSnapshot = firestore.collection("ownerships")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("status", "APPROVED")
+                .get().await()
+
+            Log.d(TAG, "DEBUG getOwnedAnimals: Found ${ownershipSnapshot.documents.size} ownership documents")
+
+            val animalIds = ownershipSnapshot.documents.mapNotNull {
+                val animalId = it.getString("animalId")
+                Log.d(TAG, "DEBUG getOwnedAnimals: Ownership doc ${it.id} -> animalId = $animalId, status = ${it.getString("status")}")
+                animalId
+            }
+
+            Log.d(TAG, "DEBUG getOwnedAnimals: Extracted ${animalIds.size} animalIds: $animalIds")
+
+            if (animalIds.isEmpty()) {
+                Log.d(TAG, "DEBUG getOwnedAnimals: No approved ownerships for user $userId")
+                return@withContext emptyList()
+            }
+
+            // Get animals from Room
+            val animals = animalDao.getAnimalsByIds(animalIds)
+            Log.d(TAG, "DEBUG getOwnedAnimals: Room returned ${animals.size} animals")
+            animals.forEach {
+                Log.d(TAG, "DEBUG getOwnedAnimals: Animal id=${it.id}, name=${it.name}")
+            }
+
+            animals
+        } catch (e: Exception) {
+            Log.e(TAG, "DEBUG getOwnedAnimals: Exception", e)
+            emptyList()
+        }
+    }
 }

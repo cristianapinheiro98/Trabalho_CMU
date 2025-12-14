@@ -14,6 +14,7 @@ import pt.ipp.estg.trabalho_cmu.data.local.dao.OwnershipDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.ShelterDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.UserDao
 import pt.ipp.estg.trabalho_cmu.data.local.dao.VeterinarianDao
+import pt.ipp.estg.trabalho_cmu.data.local.dao.WalkDao
 import pt.ipp.estg.trabalho_cmu.data.local.entities.*
 
 /**
@@ -37,9 +38,10 @@ import pt.ipp.estg.trabalho_cmu.data.local.entities.*
         Shelter::class,
         User::class,
         Veterinarian::class,
-        Favorite::class
+        Favorite::class,
+        Walk::class
     ],
-    version = 17,
+    version = 19,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -65,6 +67,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     /** DAO for favorite animals. */
     abstract fun favoriteDao(): FavoriteDao
+
+    /** DAO for Walks. */
+    abstract fun walkDao(): WalkDao
 
     companion object {
         @Volatile

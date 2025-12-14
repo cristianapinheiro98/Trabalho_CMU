@@ -393,15 +393,18 @@ class ActivitySchedulingViewModel(application: Application) : AndroidViewModel(a
      * Checks if the date/time is at least 24 hours in the future.
      */
     private fun isAtLeast24HoursAhead(dateStr: String, timeStr: String): Boolean {
-        return try {
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            val scheduledDateTime = sdf.parse("$dateStr $timeStr") ?: return false
-            val now = Date()
-            val twentyFourHoursLater = Date(now.time + 24 * 60 * 60 * 1000)
-            scheduledDateTime.after(twentyFourHoursLater)
-        } catch (e: Exception) {
-            false
-        }
+//        return try {
+//            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+//            val scheduledDateTime = sdf.parse("$dateStr $timeStr") ?: return false
+//            val now = Date()
+//            val twentyFourHoursLater = Date(now.time + 24 * 60 * 60 * 1000)
+//            scheduledDateTime.after(twentyFourHoursLater)
+//        } catch (e: Exception) {
+//            false
+//        }
+
+        // Debug mode (Walks), to allow to initiate a walk immediately after scheduling
+        return true
     }
 
     private fun getCurrentDateString(): String {

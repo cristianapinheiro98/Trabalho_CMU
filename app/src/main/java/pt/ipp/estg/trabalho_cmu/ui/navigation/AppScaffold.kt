@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
  * - Building the top-level UI structure
  * - Handling drawer navigation for logged-in users
  * - Routing between public, admin and user navigation graphs
+ * - Processing deep-link navigation from notifications (walk tracking actions)
  *
  * Behavior:
  * - Shows a navigation drawer only for logged-in non-admin users
@@ -30,6 +32,16 @@ import pt.ipp.estg.trabalho_cmu.ui.screens.Shelter.ShelterMngViewModel
  *      • Guest mode
  *      • Admin mode
  *      • Regular user mode
+ * - Handles walk-related navigation requests from notification actions
+ *
+ * @param isLoggedIn Whether the user is currently authenticated
+ * @param isAdmin Whether the authenticated user has admin privileges
+ * @param onLoginSuccess Callback invoked on successful login with admin status
+ * @param onLogout Callback invoked when user logs out
+ * @param windowSize Current window size class for responsive layouts
+ * @param navigateToWalk Flag to trigger navigation to the active walk screen
+ * @param stopWalkRequested Flag indicating the stop walk action was triggered from notification
+ * @param onWalkNavigationHandled Callback to reset navigation flags after processing
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +51,10 @@ fun AppScaffold(
     isAdmin: Boolean,
     onLoginSuccess: (isAdmin: Boolean) -> Unit,
     onLogout: () -> Unit,
-    windowSize: WindowWidthSizeClass
+    windowSize: WindowWidthSizeClass,
+    navigateToWalk: Boolean = false,
+    stopWalkRequested: Boolean = false,
+    onWalkNavigationHandled: () -> Unit = {}
 ) {
     val authViewModel: AuthViewModel = viewModel()
     val shelterMngViewModel: ShelterMngViewModel = viewModel()
@@ -56,6 +71,25 @@ fun AppScaffold(
 
     val userDrawerOptions = getUserDrawerOptions()
     val selectedDrawerOption = userDrawerOptions.find { it.route == currentRoute }
+
+    // Handle navigation from notification actions
+    // When user taps "Stop Walk" button in notification, navigate to walk screen
+    // and trigger the stop confirmation dialog
+    LaunchedEffect(navigateToWalk, stopWalkRequested) {
+        if (navigateToWalk && isLoggedIn && !isAdmin) {
+            // Navigate to walk screen with stop request flag if applicable
+            if (stopWalkRequested) {
+                navController.navigate("Walk?stopRequested=true") {
+                    launchSingleTop = true
+                }
+            } else {
+                navController.navigate("Walk") {
+                    launchSingleTop = true
+                }
+            }
+            onWalkNavigationHandled()
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
