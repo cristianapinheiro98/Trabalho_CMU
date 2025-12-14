@@ -3,17 +3,22 @@ package pt.ipp.estg.trabalho_cmu.ui.screens.socialtailscommunity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -24,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,8 +57,10 @@ import pt.ipp.estg.trabalho_cmu.ui.components.WalkMapModal
  * @param navController Navigation controller for handling back navigation
  * @param viewModel ViewModel managing the community data state
  */
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun SocialTailsCommunityScreen(
+    windowSize: WindowWidthSizeClass,
     navController: NavController,
     viewModel: SocialTailsCommunityViewModel = viewModel()
 ) {
@@ -89,6 +97,7 @@ fun SocialTailsCommunityScreen(
                 SuccessContent(
                     state = state,
                     viewModel = viewModel,
+                    windowSize = windowSize,
                     onMapClick = { walk -> selectedWalkForMap = walk },
                     onLoadMore = { viewModel.loadMoreWalks() }
                 )
@@ -151,6 +160,7 @@ private fun ErrorContent(message: String) {
  *
  * @param state Current success state with all community data
  * @param viewModel ViewModel for formatting functions
+ * * @param widthSizeClass Window width size class to adapt phone/tablet layout
  * @param onMapClick Callback when user taps a walk's map
  * @param onLoadMore Callback to load more walks for pagination
  */
@@ -158,9 +168,12 @@ private fun ErrorContent(message: String) {
 private fun SuccessContent(
     state: SocialTailsCommunityUiState.Success,
     viewModel: SocialTailsCommunityViewModel,
+    windowSize: WindowWidthSizeClass,
     onMapClick: (Walk) -> Unit,
     onLoadMore: () -> Unit
 ) {
+    val isTablet = windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+
     val listState = rememberLazyListState()
 
     // Detect when user scrolls near the end for pagination
@@ -179,10 +192,16 @@ private fun SuccessContent(
         }
     }
 
+    val contentPadding = if (isTablet) 24.dp else 16.dp
+    val titleTopPadding = if (isTablet) 16.dp else 0.dp
+    val maxWidth = if (isTablet) 1200.dp else 600.dp
+
     LazyColumn(
         state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal=contentPadding)
+            .widthIn(max=maxWidth),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Screen title
@@ -191,10 +210,12 @@ private fun SuccessContent(
                 text = stringResource(R.string.socialtails_community_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = titleTopPadding)
             )
         }
 
+        if(!isTablet){
         // All-time podium
         item {
             PodiumSection(
@@ -205,12 +226,35 @@ private fun SuccessContent(
         }
 
         // Monthly podium
-        item {
-            PodiumSection(
-                title = stringResource(R.string.podium_monthly, state.currentMonthName),
-                walks = state.topWalksMonthly,
-                formatDuration = { viewModel.formatDuration(it) }
-            )
+            item {
+                PodiumSection(
+                    title = stringResource(R.string.podium_monthly, state.currentMonthName),
+                    walks = state.topWalksMonthly,
+                    formatDuration = { viewModel.formatDuration(it) }
+                )
+            }
+        }else{
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        PodiumSection(
+                            title = stringResource(R.string.podium_all_time),
+                            walks = state.topWalksAllTime,
+                            formatDuration = { viewModel.formatDuration(it) }
+                        )
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        PodiumSection(
+                            title = stringResource(R.string.podium_monthly, state.currentMonthName),
+                            walks = state.topWalksMonthly,
+                            formatDuration = { viewModel.formatDuration(it) }
+                        )
+                    }
+                }
+            }
         }
 
         // Feed section title

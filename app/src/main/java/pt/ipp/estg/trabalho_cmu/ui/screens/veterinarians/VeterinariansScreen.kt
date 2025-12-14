@@ -7,8 +7,12 @@ import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -41,6 +45,7 @@ import pt.ipp.estg.trabalho_cmu.ui.components.VeterinarianCard
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VeterinariansScreen(
+    windowSize: WindowWidthSizeClass,
     viewModel: VeterinariansViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -61,6 +66,7 @@ fun VeterinariansScreen(
     }
 
     VeterinariansScreenContent(
+        windowSize=windowSize,
         uiState = uiState,
         onRequestPermission = { locationPermissionState.launchPermissionRequest() },
         onOpenSettings = {
@@ -91,6 +97,7 @@ fun VeterinariansScreen(
  */
 @Composable
 private fun VeterinariansScreenContent(
+    windowSize: WindowWidthSizeClass,
     uiState: VeterinariansUiState,
     onRequestPermission: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -98,56 +105,71 @@ private fun VeterinariansScreenContent(
     onPhoneClick: (String) -> Unit,
     onMapClick: (Veterinarian) -> Unit
 ) {
-    Column(
+    val isTablet =
+        windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val screenPadding = if (isTablet) 24.dp else 16.dp
+    val maxWidth = if (isTablet) 1200.dp else 600.dp
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-            .padding(16.dp)
+            .background(Color(0xFFF5F5F5)),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Text(
-            text = stringResource(R.string.veterinarians_title),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF2C3E50)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+                .padding(screenPadding)
+                .widthIn(max = maxWidth)
+        ) {
+            Text(
+                text = stringResource(R.string.veterinarians_title),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2C3E50)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        when (uiState) {
-            is VeterinariansUiState.LoadingLocation -> {
-                LoadingState()
-            }
+            when (uiState) {
+                is VeterinariansUiState.LoadingLocation -> {
+                    LoadingState()
+                }
 
-            is VeterinariansUiState.NoPermission -> {
-                LocationPermissionRequest(onRequestPermission = onRequestPermission)
-            }
+                is VeterinariansUiState.NoPermission -> {
+                    LocationPermissionRequest(onRequestPermission = onRequestPermission)
+                }
 
-            is VeterinariansUiState.GpsDisabledNoCache -> {
-                GpsDisabledNoCache(onOpenSettings = onOpenSettings)
-            }
+                is VeterinariansUiState.GpsDisabledNoCache -> {
+                    GpsDisabledNoCache(onOpenSettings = onOpenSettings)
+                }
 
-            is VeterinariansUiState.GpsDisabledWithCache -> {
-                Column {
-                    GpsDisabledWithCacheMessage()
-                    Spacer(modifier = Modifier.height(16.dp))
+                is VeterinariansUiState.GpsDisabledWithCache -> {
+                    Column {
+                        GpsDisabledWithCacheMessage()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        VeterinariansList(
+                            windowSize = windowSize,
+                            veterinarians = uiState.veterinarians,
+                            onPhoneClick = onPhoneClick,
+                            onMapClick = onMapClick
+                        )
+                    }
+                }
+
+                is VeterinariansUiState.EmptyList -> {
+                    EmptyVeterinariansState(onRefresh = onRefresh)
+                }
+
+                is VeterinariansUiState.Success -> {
                     VeterinariansList(
+                        windowSize = windowSize,
                         veterinarians = uiState.veterinarians,
                         onPhoneClick = onPhoneClick,
                         onMapClick = onMapClick
                     )
                 }
-            }
-
-            is VeterinariansUiState.EmptyList -> {
-                EmptyVeterinariansState(onRefresh = onRefresh)
-            }
-
-            is VeterinariansUiState.Success -> {
-                VeterinariansList(
-                    veterinarians = uiState.veterinarians,
-                    onPhoneClick = onPhoneClick,
-                    onMapClick = onMapClick
-                )
             }
         }
     }
@@ -175,20 +197,48 @@ private fun LoadingState() {
  */
 @Composable
 private fun VeterinariansList(
+    windowSize: WindowWidthSizeClass,
     veterinarians: List<Veterinarian>,
     onPhoneClick: (String) -> Unit,
     onMapClick: (Veterinarian) -> Unit
 ) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(veterinarians, key = { it.placeId }) { vet ->
-            VeterinarianCard(
-                veterinarian = vet,
-                onPhoneClick = { onPhoneClick(vet.phone ?: "") },
-                onMapClick = { onMapClick(vet) }
-            )
+    val columns = when (windowSize) {
+        WindowWidthSizeClass.Compact -> 1
+        WindowWidthSizeClass.Medium -> 2
+        WindowWidthSizeClass.Expanded -> 2
+        else -> 1
+    }
+    val spacing = if (columns == 1) 16.dp else 12.dp
+    val gridPadding = if (columns == 1) 0.dp else 4.dp
+
+    if(columns==1) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(veterinarians, key = { it.placeId }) { vet ->
+                VeterinarianCard(
+                    veterinarian = vet,
+                    onPhoneClick = { onPhoneClick(vet.phone ?: "") },
+                    onMapClick = { onMapClick(vet) }
+                )
+            }
         }
+    }else{
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            verticalArrangement = Arrangement.spacedBy(spacing),
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            contentPadding = PaddingValues(gridPadding)
+        ) {
+            items(veterinarians, key = { it.placeId }) { vet ->
+                VeterinarianCard(
+                    veterinarian = vet,
+                    onPhoneClick = { onPhoneClick(vet.phone ?: "") },
+                    onMapClick = { onMapClick(vet) }
+                )
+            }
+        }
+
     }
 }
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import pt.ipp.estg.trabalho_cmu.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalkHistoryScreen(
+    windowSize: WindowWidthSizeClass,
     navController: NavController,
     scrollToWalkId: String? = null,
     viewModel: WalkHistoryViewModel = viewModel()
@@ -115,6 +117,7 @@ fun WalkHistoryScreen(
 
                 is WalkHistoryUiState.Success -> {
                     WalkHistoryList(
+                        windowSize = windowSize,
                         walks = state.walks,
                         hasMore = state.hasMore,
                         listState = listState,
@@ -127,6 +130,7 @@ fun WalkHistoryScreen(
                     val successState = uiState as? WalkHistoryUiState.Success
                     if (successState != null) {
                         WalkHistoryList(
+                            windowSize=windowSize,
                             walks = successState.walks,
                             hasMore = true,
                             listState = listState,
@@ -181,57 +185,73 @@ fun WalkHistoryScreen(
  */
 @Composable
 private fun WalkHistoryList(
+    windowSize: WindowWidthSizeClass,
     walks: List<WalkHistoryItem>,
     hasMore: Boolean,
     listState: LazyListState,
     onLoadMore: () -> Unit,
     isLoadingMore: Boolean = false
 ) {
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(walks, key = { it.walkId }) { walk ->
-            WalkHistoryItemCard(walk)
-        }
+    val isTablet =
+        windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val contentPadding = if (isTablet) 24.dp else 16.dp
+    val maxWidth = if (isTablet) 1200.dp else 600.dp
 
-        // Load more trigger
-        if (hasMore) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isLoadingMore) {
-                        CircularProgressIndicator()
-                    } else {
-                        Button(onClick = onLoadMore) {
-                            Text(stringResource(R.string.walk_history_load_more))
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+            .padding(horizontal=contentPadding)
+                .widthIn(max=maxWidth),
+            contentPadding = PaddingValues(vertical=contentPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(walks, key = { it.walkId }) { walk ->
+                WalkHistoryItemCard(
+                    windowSize = windowSize,
+                    walk=walk)
+            }
+
+            // Load more trigger
+            if (hasMore) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isLoadingMore) {
+                            CircularProgressIndicator()
+                        } else {
+                            Button(onClick = onLoadMore) {
+                                Text(stringResource(R.string.walk_history_load_more))
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    // Auto-load more when scrolled near bottom
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null &&
-                    lastVisibleItem.index >= walks.size - 1 &&
-                    hasMore &&
-                    !isLoadingMore
+        // Auto-load more when scrolled near bottom
+        val shouldLoadMore = remember {
+            derivedStateOf {
+                val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                lastVisibleItem != null &&
+                        lastVisibleItem.index >= walks.size - 1 &&
+                        hasMore &&
+                        !isLoadingMore
+            }
         }
-    }
 
-    LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
-            onLoadMore()
+        LaunchedEffect(shouldLoadMore.value) {
+            if (shouldLoadMore.value) {
+                onLoadMore()
+            }
         }
     }
 }
@@ -240,7 +260,12 @@ private fun WalkHistoryList(
  * Individual walk history item card with interactive map
  */
 @Composable
-private fun WalkHistoryItemCard(walk: WalkHistoryItem) {
+private fun WalkHistoryItemCard(
+    windowSize: WindowWidthSizeClass,
+    walk: WalkHistoryItem) {
+
+    val isTablet = windowSize == WindowWidthSizeClass.Medium || windowSize == WindowWidthSizeClass.Expanded
+    val mapHeight = if (isTablet) 260.dp else 200.dp
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -253,7 +278,7 @@ private fun WalkHistoryItemCard(walk: WalkHistoryItem) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .height(mapHeight)
                 ) {
                     WalkHistoryMap(routePoints = walk.routePoints)
                 }

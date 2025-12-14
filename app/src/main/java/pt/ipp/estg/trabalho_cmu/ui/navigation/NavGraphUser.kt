@@ -83,7 +83,7 @@ fun NavGraphUser(
 
         // ========== VETERINARIANS ==========
         composable("Veterinarians") {
-            VeterinariansScreen()
+            VeterinariansScreen(windowSize=windowSize)
         }
 
         // ========== ADOPTION/OWNERSHIP WORKFLOW ==========
@@ -174,6 +174,7 @@ fun NavGraphUser(
         // Community Feed
         composable("SocialTailsCommunity") {
             SocialTailsCommunityScreen(
+                windowSize = windowSize,
                 navController = navController
             )
         }
@@ -287,6 +288,7 @@ fun NavGraphUser(
         ) { backStackEntry ->
             val scrollToWalkId = backStackEntry.arguments?.getString("scrollToWalkId")
             WalkHistoryScreen(
+                windowSize = windowSize,
                 navController = navController,
                 scrollToWalkId = scrollToWalkId
             )

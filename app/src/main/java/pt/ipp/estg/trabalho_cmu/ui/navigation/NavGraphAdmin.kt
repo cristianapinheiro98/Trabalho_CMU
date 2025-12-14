@@ -51,7 +51,7 @@ fun NavGraphAdmin(
         }
 
         composable("Veterinarians") {
-            VeterinariansScreen()
+            VeterinariansScreen(windowSize = windowSize)
         }
     }
 }
